@@ -1,0 +1,86 @@
+body {
+  background-color: black;
+}
+.main {
+  max-width: 350px;
+  margin: 20px auto;
+}
+.form-div {
+  text-align: center;
+}
+.form-div input {
+  width: 250px;
+}
+
+.LeftColumn {
+  float: left;
+}
+.TitleRow {
+  color: white;
+  padding: 5px;
+}
+.Title {
+  color: white;
+  font-size: 50px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.TitleText {
+  color: red;
+  margin: 50;
+  padding-right: 30px;
+  padding-left: 80px;
+}
+.ArenaMap {
+  border: 3px solid black;
+  position: absolute;
+  height: 85%;
+  width: 75%;
+  overflow: scroll;
+  background-color: lightgray;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.MapBorder {
+  overflow: hidden;
+  margin: 0 auto;
+}
+.RightColumn {
+  float: right;
+  color: white;
+  width: 24%;
+  padding-top: 10px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.CurrentPlayer {
+  color: white;
+  padding-left: 50px;
+  font-size: 50px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.CarInset {
+  padding-left:15px;
+  float: left;
+  font-size: 24px;
+}
+.CarStats {
+  padding-left: 15%;
+  width: 150px;
+  float: right;
+  fill: black;
+  font-size: 24px;
+  position:absolute;
+}
+.ActionControls {
+  padding-top: 410px;
+  padding-left: 35px;
+  color: white;
+  font-size: 32px;
+  /*position:absolute;*/
+  /*position:absolute;bottom:0;*/
+
+/*bottom: -1;*/
+  /*background-color: black;*/
+}
