@@ -1,9 +1,7 @@
-## Redux with hooks
+# Car Wars
+An attempt to computerize the paper-and-pencil game Car Wars.
 
-(code for [The Redux with Hooks](https://www.youtube.com/watch?v=_oK9Jd8LH1E) tutorial)
+# Why?
+To learn React and Redux and bone up on related tech.
 
-branch `redux-connect` has the app implemented using the `connect` HOC approach
-
-branch `redux-hooks` has the app implemented using the new react-redux hooks
-
-branch `markerikson-simplify-code` has the app with hooks and a couple of cool simplifications, courtesy of @markerikson
+But also because I've just wanted to for a while. It's a great game and this project is hard. Well, Knuth's "medium," probably.
