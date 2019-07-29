@@ -85,7 +85,8 @@ const Car = ({id, state, inset=false, ghost=false}) => {
 
   var rotate_point = { x: temp_rect.BR_point().x,
                        y: temp_rect.BR_point().y };
-  var transform = `rotate(${ temp_rect.facing },
+  // BUGBUG: Why + 90 degree rotation
+  var transform = `rotate(${ temp_rect.facing + 90 },
                           ${ rotate_point.x },
                           ${ rotate_point.y })`;
 

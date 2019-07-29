@@ -29,10 +29,10 @@ export class PhasingMove {
   }
 
   //car.phasing.rect = PhasingMove.forward({ car, distance = INCH });
-  //car.phasing.rect = car.phasing.rect.move({distance: INCH, direction: car.phasing.rect.facing });
+  //car.phasing.rect = car.phasing.rect.move({distance: INCH, degrees: car.phasing.rect.facing });
 
   static forward({ car, distance = INCH }) {
-    return car.rect.move({ distance, direction: car.rect.facing });
+    return car.rect.move({ distance, degrees: car.rect.facing });
   }
 
   static bend({ car, degrees }) {
@@ -93,7 +93,7 @@ export class PhasingMove {
 
     const drift = (direction='right') => {
       result_rect = result_rect.move({
-        direction: (result_rect.facing + FACE.RIGHT),
+        degrees: (result_rect.facing + FACE.RIGHT),
         distance: ((direction === 'right') ? INCH/4 : -INCH/4)
       });
       result_rect.facing += FACE.LEFT;
@@ -101,7 +101,7 @@ export class PhasingMove {
 
     if (turning_to_front) {
       result_rect.__BR_point = result_rect.BR_point().clone();
-      result_rect = car.rect.move({ direction: car.rect.facing,
+      result_rect = car.rect.move({ degrees: car.rect.facing,
                                        distance: INCH});
     } else if (turning_right) {
       if (facing_right) {
@@ -131,8 +131,8 @@ export class PhasingMove {
 
   static drift({ car, distance }) {
     const fwd_null = PhasingMove.forward({ car });
-    //const fwd_null = car.rect.move({ direction: car.rect.facing + FACE.FRONT, distance: INCH });
-    const result = car.phasing.rect.move({ direction: car.rect.facing + FACE.RIGHT, distance })
+    //const fwd_null = car.rect.move({ degrees: car.rect.facing + FACE.FRONT, distance: INCH });
+    const result = car.phasing.rect.move({ degrees: car.rect.facing + FACE.RIGHT, distance })
     result.facing = car.rect.facing;
     const current_dist = Math.floor(fwd_null.BR_point().distance_to(result.BR_point()));
 

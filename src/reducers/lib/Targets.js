@@ -80,7 +80,7 @@ export class Targets {
     return this.all_wall_rects().some(function(wall_rect) {
       var sides = wall_rect.sides();
       return Object.keys(sides).some(function(side_key) {
-        return line_to_target.intersect_segment(sides[side_key]);
+        return line_to_target.intersects_segment(sides[side_key]);
       });
     });
   }
@@ -90,7 +90,7 @@ export class Targets {
     var all_car_rects = this.cars.map(element => { return element.rect; });
     return all_car_rects.some(function(car_rect) {
       return Object.keys(car_rect.sides()).some(function(side_key) {
-        return line_to_target.intersect_segment(car_rect.side(side_key));
+        return line_to_target.intersects_segment(car_rect.side(side_key));
       });
     });
   }
@@ -102,7 +102,7 @@ export class Targets {
         if(ignore !== null && ignore.equals(rect.side(side_key))) {
           return false;
         }
-        return line_to_target.intersect_segment(rect.side(side_key));
+        return line_to_target.intersects_segment(rect.side(side_key));
       });
     });
   }

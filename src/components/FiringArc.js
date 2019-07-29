@@ -43,13 +43,17 @@ const FiringArc = () => {
         // Could do all of these with rect FL_angle, FR_angle, BR_angle, and BL_angle
         case 'F':
         case 'B':
-          left  = rect.center().move(rect.facing + FACE[arc_facing] + 30, inches * INCH);
-          right = rect.center().move(rect.facing + FACE[arc_facing] - 30, inches * INCH);
+          left  = rect.center().move({ degrees: rect.facing + FACE[arc_facing] + 30,
+                                       distance: inches * INCH });
+          right = rect.center().move({ degrees: rect.facing + FACE[arc_facing] - 30,
+                                       distance: inches * INCH });
           break;
         case 'L':
         case 'R':
-          left  = rect.center().move(rect.facing + FACE[arc_facing] + 60, inches * INCH);
-          right = rect.center().move(rect.facing + FACE[arc_facing] - 60, inches * INCH);
+          left  = rect.center().move({ degrees: rect.facing + FACE[arc_facing] + 60,
+                                       distance: inches * INCH });
+          right = rect.center().move({ degrees: rect.facing + FACE[arc_facing] - 60,
+                                       distance: inches * INCH });
           break;
         case 'none':
           return null;
@@ -66,7 +70,7 @@ const FiringArc = () => {
     if (arc_sides() === null) { return; }
 
     const text_loc = (inches) => {
-      return rect.center().move(arc_sides().facing, inches * INCH);
+      return rect.center().move({ degrees: arc_sides().facing, distance: inches * INCH });
     }
 
     const arc_fill = () => {
