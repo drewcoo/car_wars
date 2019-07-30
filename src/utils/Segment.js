@@ -1,4 +1,5 @@
 import Point from './Point'
+import Intersection from './Intersection'
 import {intersect} from 'mathjs'
 import { degrees_parallel } from './conversions'
 
@@ -45,38 +46,9 @@ class Segment {
              (this.points[0].equals(segment2.points[1]) && this.points[1].equals(segment2.points[0])) )
   }
 
-  contains_point(point) {
-    const parts = point.distance_to(this.points[0]) + point.distance_to(this.points[1])
-    return parts.toFixed(2)  === this.length().toFixed(2) 
-  }
+  intersects(thing) { return this.is_intersecting(thing) }
 
-  intersects_segment(segment2) {
-    // from Stack Overflow - url forgotten
-    const copypasta = (a, b, c, d, p, q, r, s) => {
-      var det, gamma, lambda
-      det = (c - a) * (s - q) - (r - p) * (d - b)
-      if (det === 0) { return false }
-      lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det
-      gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det
-      return (0 < lambda && lambda < 1) && (0 < gamma && gamma < 1)
-    }
-
-    const crosses = () => {
-      return copypasta(this.points[0].x, this.points[0].y,
-                       this.points[1].x, this.points[1].y,
-                       segment2.points[0].x, segment2.points[0].y,
-                       segment2.points[1].x, segment2.points[1].y)
-    }
-
-    const touches_or_overlaps = () => {
-      return (this.contains_point(segment2.points[0]) ||
-              this.contains_point(segment2.points[1]) ||
-              segment2.contains_point(this.points[0]) ||
-              segment2.contains_point(this.points[1]))
-    }
-
-    return crosses() || touches_or_overlaps()
-  }
+  is_intersecting(thing) { return Intersection.exists(this, thing) }
 
   skew(segment2) {
     var this_dir = (this.points[0].degrees_to(this.points[1]) + 360) % 180

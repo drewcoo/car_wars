@@ -154,54 +154,35 @@ describe('Rectangle', () => {
     expect(points[1].equals(rectangle.BL_point())).toBe(true)
   })
 
-  describe('#intersects_segment', () => {
+  describe('#intersects', () => {
     // (2,2) -> (5,5), axis-aligned
     const rect = new Rectangle({ facing: COMPASS.NORTH, BR_point: Factory.Point(5, 5), length: 3, width: 3 })
 
     it('outside example', () => {
       const seg = new Segment([new Point({x: 1, y: 1}), new Point({x: 1, y: 0})])
-
-
-
-      expect(rect.sides_intersect_segment(seg)).toBe(false)
-
-      expect(rect.segment_is_inside(seg)).toBe(false)
-
-      expect(rect.intersects_segment(seg)).toBe(false)
+      expect(rect.intersects(seg)).toBe(false)
     })
 
     it('cross helper example', () => {
       const seg = new Segment([new Point({x: 4, y: 4}), new Point({x: 7, y: 7})])
-      expect(rect.sides_intersect_segment(seg)).toBe(true)
+      expect(rect.intersects(seg)).toBe(true)
     })
 
     it('cross example', () => {
       const seg = new Segment([new Point({x: 4, y: 4}), new Point({x: 8, y: 8})])
-      expect(rect.intersects_segment(seg)).toBe(true)
+      expect(rect.intersects(seg)).toBe(true)
     })
 
-    //segment_is_inside(segment) {
     it('segment inside example', ()=> {
       const seg = new Segment([new Point({x: 4, y: 4}), new Point({x: 3, y: 3})])
-      /*
-      return !(this.sides_intersect_segment(new Segment([this.FR_point(), segment.points[0]])) ||
-               this.sides_intersect_segment(new Segment([this.FL_point(), segment.points[0]])) ||
-               this.sides_intersect_segment(new Segment([this.BR_point(), segment.points[0]])) ||
-               this.sides_intersect_segment(new Segment([this.BL_point(), segment.points[0]])))
-      */
-      //const s = new Segment([rect.FR_point(), seg.points[0]])
-      //expect(s.toString()).toEqual('')
-      //expect(rect.sides_intersect_segment(new Segment([rect.FR_point(), seg.points[0]]))).toBe(false)
-      expect(rect.segment_is_inside(seg)).toBe(true);
+      expect(rect.intersects(seg)).toBe(true);
     })
 
 
     // This one is left. It fails to show as intersected when entirely inside the rect.
     it('inside example', ()=> {
       const seg = new Segment([new Point({x: 4, y: 4}), new Point({x: 3, y: 3})])
-      ///segment_is_inside
-
-      expect(rect.intersects_segment(seg)).toBe(true);
+      expect(rect.intersects(seg)).toBe(true);
     })
   })
 
@@ -215,7 +196,7 @@ describe('Rectangle', () => {
                                     facing: COMPASS.NORTH,
                                     length: 2,
                                     width: 2 })
-      expect(rect1.intersect_rectangle(rect2)).toBe(true)
+      expect(rect1.intersects(rect2)).toBe(true)
     })
 
     it('does not intersect', () => {
@@ -223,7 +204,7 @@ describe('Rectangle', () => {
                                     facing: COMPASS.NORTH,
                                     length: 1/2,
                                     width: 1/2 })
-      expect(rect1.intersect_rectangle(rect2)).toBe(true)
+      expect(rect1.intersects(rect2)).toBe(true)
     })
   })
 
@@ -236,7 +217,7 @@ describe('Rectangle', () => {
   // Helper #in_intersecting methods in each geometric class.
   // That also allows in-depth intersection testing to be in a file matching dev file.
 
-  describe('#is_intersecting', () => {
+  describe('#intersects', () => {
     const rectangle = new Rectangle({ BR_point: new Point({ x: 3, y: 3 }),
                                       facing:   COMPASS.NORTH,
                                       length:   2,
@@ -244,12 +225,12 @@ describe('Rectangle', () => {
     describe('point', () => {
       it('intersects', () => {
         const point = new Point({ x: 2, y: 2 })
-        expect(rectangle.is_intersecting(point)).toBe(true)
+        expect(rectangle.intersects(point)).toBe(true)
       })
 
       it('does not intersect', () => {
         const point = new Point({ x: 5, y: 5 })
-        expect(rectangle.is_intersecting(point)).toBe(false)
+        expect(rectangle.intersects(point)).toBe(false)
       })
     })
 
@@ -257,13 +238,13 @@ describe('Rectangle', () => {
       it('intersects', () => {
         const segment = new Segment([new Point({ x: 2, y: 2 }),
                                      new Point({ x: 4, y: 4 })])
-        expect(rectangle.is_intersecting(segment)).toBe(true)
+        expect(rectangle.intersects(segment)).toBe(true)
       })
 
       it('does not intersect', () => {
         const segment = new Segment([new Point({ x: 5, y: 5 }),
                                      new Point({ x: 5, y: 8 })])
-        expect(rectangle.is_intersecting(segment)).toBe(false)
+        expect(rectangle.intersects(segment)).toBe(false)
       })
     })
 
@@ -273,7 +254,7 @@ describe('Rectangle', () => {
                                            facing:   COMPASS.NORTH,
                                            length:   1,
                                            width:    1 })
-        expect(rectangle.is_intersecting(rectangle2)).toBe(true)
+        expect(rectangle.intersects(rectangle2)).toBe(true)
       })
 
       it('does not intersect', () => {
@@ -281,13 +262,13 @@ describe('Rectangle', () => {
                                            facing:   COMPASS.NORTH,
                                            length:   1,
                                            width:    1 })
-        expect(rectangle.is_intersecting(rectangle2)).toBe(false)
+        expect(rectangle.intersects(rectangle2)).toBe(false)
       })
     })
 
     describe('non-thing', () => {
       it('throws', () => {
-        expect(function() { rectangle.is_intersecting(null) }).toThrow(Error)
+        expect(function() { rectangle.intersects(null) }).toThrow(Error)
       })
     })
   })

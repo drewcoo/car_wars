@@ -38,6 +38,20 @@ class Point {
                      Math.pow(this.y - point.y, 2))
   }
 
+  intersects(thing) { return is_intersecting(thing) }
+
+  is_intersecting(thing) {
+    switch(true) {
+      case thing instanceof Point:
+        return Intersection.point_point_exists({ point2: thing, point: this })
+      case thing instanceof Segment:
+        return Intersection.point_segment_exists({ point: this, segment: thing })
+      case thing instanceof Rectangle:
+        return Intersection.rectangle_point_exists({ rectangle: thing, point: this })
+      default:
+        throw new Error (`Checking intersection of unrecognized thing: ${thing}`)
+    }
+  }
 
   move({ degrees, radians, distance }) {
     if (degrees != null && radians != null) {

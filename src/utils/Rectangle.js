@@ -1,7 +1,9 @@
+import Intersection from './Intersection'
 import Point from './Point'
 import Segment from './Segment'
 import { FACE, INCH } from './constants'
 import { degrees_to_radians } from './conversions'
+
 
 class Rectangle {
   //
@@ -127,89 +129,9 @@ class Rectangle {
   // TODO: Should I aslo have some kind of drifty, sidling move here? One that
   // can take into account direction of movement?
 
-  is_intersecting(thing) {
-    switch(true) {
-      case thing instanceof Point:
-        return this.point_is_inside(thing)
-      case thing instanceof Segment:
-        return this.intersects_segment(thing)
-      case thing instanceof Rectangle:
-        return this.intersect_rectangle(thing)
-      default:
-        throw new Error (`Checking intersection of unrecognized thing: ${thing}`)
-    }
-  }
+  intersects(thing) { return this.is_intersecting(thing) }
 
-
-
-  sides_intersect_segment(segment) {
-    return (segment.intersects_segment(this.F_side()) ||
-            segment.intersects_segment(this.R_side()) ||
-            segment.intersects_segment(this.L_side()) ||
-            segment.intersects_segment(this.B_side()))
-  }
-
-  point_is_inside(point) {
-    // Actually, "is at least partially inside" would be mmore apt.
-    // If a segment from a vertex to one of its ends crosses the opposite
-    // rect sides, it's ouside.
-    const segFR = new Segment([this.FR_point(), point])
-    const segFL = new Segment([this.FL_point(), point])
-    const segBR = new Segment([this.BR_point(), point])
-    const segBL = new Segment([this.BL_point(), point])
-    const outside = (
-      segFR.intersects_segment(this.B_side()) || segFR.intersects_segment(this.L_side()) ||
-      segFL.intersects_segment(this.B_side()) || segFL.intersects_segment(this.R_side()) ||
-      segBR.intersects_segment(this.F_side()) || segBR.intersects_segment(this.L_side()) ||
-      segBL.intersects_segment(this.F_side()) || segBL.intersects_segment(this.R_side())
-    )
-    return !outside
-  }
-
-  segment_is_inside(segment) {
-    return (this.point_is_inside(segment.points[0]) ||
-            this.point_is_inside(segment.points[1]))
-  }
-
-  // boolean
-  intersects_segment(segment) {
-    // Also if a segment has both points inside the rect, call it intersecting.
-    // We can check just one point.
-    if (this.sides_intersect_segment(segment)) { return true; }
-    return this.segment_is_inside(segment)
-  }
-
-  // returns false or skew between facing and a rect side
-  // BUGBUG: Does this handle corners?
-  intersect_rectangle(rect) {
-    // BUGBUG: Doesn't handle overlapping rects with parallel lines
-    // incl. exactly overlapping rects!
-
-    return (this.intersects_segment(rect.F_side()) ||
-            this.intersects_segment(rect.L_side()) ||
-            this.intersects_segment(rect.B_side()) ||
-            this.intersects_segment(rect.R_side()))
-
-
-
-/*
-    const rect_sides = rect.sides()
-
-    const intersects_rect = (side) => {
-      return Object.keys(rect_sides).find(function(rect_key) {
-        return side.intersects_segment(rect_sides[rect_key])
-      })
-    }
-
-    return intersects_rect;
-*/
-
-    // BUGBUG back collisions not handled!
-    // Also this is missed up for sidling into things like with bootleggers.
-  }
-
-
-
+  is_intersecting(thing) { return Intersection.exists(this, thing) }
 
   points() {
     return [this.BR_point(), this.BL_point(), this.FR_point(), this.FL_point()]
