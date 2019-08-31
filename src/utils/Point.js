@@ -1,3 +1,5 @@
+import Intersection from './Intersection'
+import Rectangle from './Rectangle'
 import Segment from './Segment'
 import { degrees_to_radians } from './conversions'
 
@@ -38,7 +40,7 @@ class Point {
                      Math.pow(this.y - point.y, 2))
   }
 
-  intersects(thing) { return is_intersecting(thing) }
+  intersects(thing) { return this.is_intersecting(thing) }
 
   is_intersecting(thing) {
     switch(true) {
