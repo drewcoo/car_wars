@@ -12,7 +12,6 @@ export class Collisions {
     }
   }
 
-
   static damage_modifier_from_weight(weight) {
     // p.17
     // pedestrians have DM of 1/5
@@ -83,7 +82,8 @@ export class Collisions {
       var rammer = { rammed: car.id };
       var rammed = { rammed_by: this_car.id };
 
-      var skew = this_car.phasing.rect.intersect_rectangle( car.rect);
+      //var skew = this_car.phasing.rect.intersect_rectangle( car.rect);
+      var skew = this_car.phasing.rect.intersects(car.rect);
 
       if (skew) {
         car.collision_detected = true;
@@ -174,7 +174,8 @@ export class Collisions {
     if (this_car.phasing.collision_detected) { return; }
 
     for (let wall of walls) {
-      var skew = this_car.phasing.rect.intersect_rectangle(wall.rect);
+      //var skew = this_car.phasing.rect.intersect_rectangle(wall.rect);
+      var skew = this_car.phasing.rect.intersects(wall.rect);
 
       if (skew) {
         this_car.phasing.collision_detected = true;

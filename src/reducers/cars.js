@@ -264,8 +264,8 @@ export const carsSlice = createSlice({
       if(car.phasing.targets === null) {
         console.log('fetch targets');
         var targets = new Targets({ car, cars: state, walls: WallData });
-        //var data = targets.targets();
         var data = targets.targets_in_arc();
+        console.log(`targets in arc: ${data[0]}`)
         car.phasing.targets = data ? data : null;
         car.phasing.target_index = 0;
       } else {
@@ -276,7 +276,7 @@ export const carsSlice = createSlice({
       // show that with the reticule
       // take it into account when firing
 
-      console.log('next target');
+      console.log(`next target: ${car.phasing.targets[car.phasing.target_index]}`);
       car.phasing.damage_marker = null;
     },
     ghost_target_previous(state, action) {

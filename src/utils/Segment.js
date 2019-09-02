@@ -1,16 +1,16 @@
 import Point from './Point'
 import Intersection from './Intersection'
-import {intersect} from 'mathjs'
+//import {intersect} from 'mathjs'
 import { degrees_parallel } from './conversions'
 
 class Segment {
   constructor(points) {
     if (points.length !== 2) {
-      throw new Error(`\"${points}\" is not an array of two elements!`)
+      throw new Error(`"${points}" is not an array of two elements!`)
     }
     for (var i = 0; i < 2; i ++) {
        if (!(points[i] instanceof Point)) {
-         throw new Error(`arg0, \"${points[i]}\" (${typeof(points[i])}), must be a point!`)
+         throw new Error(`arg0, "${points[i]}" (${typeof(points[i])}), must be a point!`)
        }
     }
     this.points = points

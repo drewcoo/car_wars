@@ -7,7 +7,7 @@ class Dice {
   static roll(string='1d') {
     // BUGBUG: I don't think this first on is a type error,
     // but what's the right type?
-    if (!string.match(/\d+d/)) { throw new TypeError('requires number followed by \"d\"') }
+    if (!string.match(/\d+d/)) { throw new TypeError('requires number followed by "d"') }
     var [dice, modifier] = string.split('d').map(elem => { return parseInt(elem) })
     modifier = modifier ? modifier : 0
     var total = 0

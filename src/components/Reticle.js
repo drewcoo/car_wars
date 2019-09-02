@@ -57,7 +57,7 @@ console.log(car.design.components.weapons[car.phasing.weapon_index].location);
       }
 
       // two-letter loc is a tire - doesn't take into account facing - FR always R
-      if (target.name.length == 2) { mod -= 3; }
+      if (target.name.length === 2) { mod -= 3; }
 
       return draw_reticle({ x: target.display_point.x,
                             y: target.display_point.y,

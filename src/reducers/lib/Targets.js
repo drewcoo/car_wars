@@ -80,7 +80,8 @@ export class Targets {
     return this.all_wall_rects().some(function(wall_rect) {
       var sides = wall_rect.sides();
       return Object.keys(sides).some(function(side_key) {
-        return line_to_target.intersects_segment(sides[side_key]);
+        console.log('shot blocked by wall')
+        return line_to_target.intersects(sides[side_key]);
       });
     });
   }
@@ -90,7 +91,8 @@ export class Targets {
     var all_car_rects = this.cars.map(element => { return element.rect; });
     return all_car_rects.some(function(car_rect) {
       return Object.keys(car_rect.sides()).some(function(side_key) {
-        return line_to_target.intersects_segment(car_rect.side(side_key));
+        console.log('shot blocked by car')
+        return line_to_target.intersects(car_rect.side(side_key));
       });
     });
   }
@@ -102,7 +104,7 @@ export class Targets {
         if(ignore !== null && ignore.equals(rect.side(side_key))) {
           return false;
         }
-        return line_to_target.intersects_segment(rect.side(side_key));
+        return line_to_target.intersects(rect.side(side_key));
       });
     });
   }
@@ -210,6 +212,7 @@ target_points_in_arc() {
   targets_in_arc() {
     var weapon_loc = this.car.design.components.weapons[this.car.phasing.weapon_index].location;
     var source = this.car.phasing.rect.side(weapon_loc).middle();
+    console.log(this.target_points_in_arc().concat(this.target_sides_in_arc()))
     return this.target_points_in_arc().concat(this.target_sides_in_arc()).sort(
       (a, b) => source.distance_to(a.display_point) - source.distance_to(b.display_point)
     );
