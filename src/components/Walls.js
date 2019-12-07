@@ -18,7 +18,7 @@ const Walls = () => {
             width = { wall.rect.width }
             height = { wall.rect.length }
             style = { wall_style }
-            transform = {`rotate(${ wall.rect.facing } ${ wall.rect.BR_point().x } ${ wall.rect.BR_point().y })`}
+            transform = {`rotate(${ wall.rect.facing + 90 } ${ wall.rect.BR_point().x } ${ wall.rect.BR_point().y })`}
           />
           </g>
         ))

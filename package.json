@@ -15,7 +15,8 @@
       }
     },
     "coverageReporters": [
-       "html", "lcov"
+      "html",
+      "lcov"
     ]
   },
   "version": "0.1.0",
