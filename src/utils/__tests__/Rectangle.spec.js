@@ -6,32 +6,32 @@ import Factory from './Factory'
 import { COMPASS } from '../../utils/constants'
 
 describe('Rectangle', () => {
-  describe('#constructor', () =>{
+  describe('#constructor', () => {
     it('throws if pointless', () => {
-      expect(function() { new Rectangle({ BR_point: null }) }).toThrow(Error)
+      expect(function () { new Rectangle({ BR_point: null }) }).toThrow(Error)
     })
 
     it('throws if no point', () => {
-      expect(function() { new Rectangle({ facing: COMPASS.NORTH }) }).toThrow(Error)
+      expect(function () { new Rectangle({ facing: COMPASS.NORTH }) }).toThrow(Error)
     })
 
     it('throws if no facing', () => {
-      expect(function() { new Rectangle({ BR_point: Factory.Point() }) }).toThrow(Error)
+      expect(function () { new Rectangle({ BR_point: Factory.Point() }) }).toThrow(Error)
     })
   })
 
   describe('#toString', () => {
     it('JSON.stringifies', () => {
-      let rectangle = Factory.Rectangle()
+      const rectangle = Factory.Rectangle()
       expect(rectangle.toString()).toEqual(JSON.stringify(rectangle))
     })
   })
 
   describe('points', () => {
     it('#BR_point thows on __BR_point not point', () => {
-      let rectangle = Factory.Rectangle()
+      const rectangle = Factory.Rectangle()
       rectangle.__BR_point = 'not_a_point'
-      expect(function() { rectangle.BR_point() }).toThrow(Error)
+      expect(function () { rectangle.BR_point() }).toThrow(Error)
     })
 
     describe('valid', () => {
@@ -53,14 +53,18 @@ describe('Rectangle', () => {
       })
 
       it('#FL_point is one length to front and one width to left of #BR_point', () => {
-        const expected_point = new Point({ x: brp.x - rectangle.width,
-                                           y: brp.y - rectangle.length })
+        const expected_point = new Point({
+          x: brp.x - rectangle.width,
+          y: brp.y - rectangle.length
+        })
         expect(rectangle.FL_point().equals(expected_point)).toBe(true)
       })
 
       it('#center is 1/2 length to the front and 1/2 width to left of #BR_point', () => {
-        const expected_point = new Point({ x: brp.x - rectangle.width / 2,
-                                           y: brp.y - rectangle.length / 2 })
+        const expected_point = new Point({
+          x: brp.x - rectangle.width / 2,
+          y: brp.y - rectangle.length / 2
+        })
         expect(rectangle.center().equals(expected_point)).toBe(true)
       })
     })
@@ -122,14 +126,14 @@ describe('Rectangle', () => {
   })
 
   it('#clone rectangle #equals the original', () => {
-     const rectangle = Factory.Rectangle()
-     expect(rectangle.clone().equals(rectangle)).toBe(true)
+    const rectangle = Factory.Rectangle()
+    expect(rectangle.clone().equals(rectangle)).toBe(true)
   })
 
   describe('#move', () => {
     const original = Factory.Rectangle()
     const degrees = 360 * Math.random()
-    //const distance = 1000 - 2000 * Math.random()
+    // const distance = 1000 - 2000 * Math.random()
     const distance = 1000 * Math.random()
     const translated = original.move({ degrees, distance })
 
@@ -159,51 +163,56 @@ describe('Rectangle', () => {
     const rect = new Rectangle({ facing: COMPASS.NORTH, BR_point: Factory.Point(5, 5), length: 3, width: 3 })
 
     it('outside example', () => {
-      const seg = new Segment([new Point({x: 1, y: 1}), new Point({x: 1, y: 0})])
+      const seg = new Segment([new Point({ x: 1, y: 1 }), new Point({ x: 1, y: 0 })])
       expect(rect.intersects(seg)).toBe(false)
     })
 
     it('cross helper example', () => {
-      const seg = new Segment([new Point({x: 4, y: 4}), new Point({x: 7, y: 7})])
+      const seg = new Segment([new Point({ x: 4, y: 4 }), new Point({ x: 7, y: 7 })])
       expect(rect.intersects(seg)).toBe(true)
     })
 
     it('cross example', () => {
-      const seg = new Segment([new Point({x: 4, y: 4}), new Point({x: 8, y: 8})])
+      const seg = new Segment([new Point({ x: 4, y: 4 }), new Point({ x: 8, y: 8 })])
       expect(rect.intersects(seg)).toBe(true)
     })
 
-    it('segment inside example', ()=> {
-      const seg = new Segment([new Point({x: 4, y: 4}), new Point({x: 3, y: 3})])
-      expect(rect.intersects(seg)).toBe(true);
+    it('segment inside example', () => {
+      const seg = new Segment([new Point({ x: 4, y: 4 }), new Point({ x: 3, y: 3 })])
+      expect(rect.intersects(seg)).toBe(true)
     })
 
-
     // This one is left. It fails to show as intersected when entirely inside the rect.
-    it('inside example', ()=> {
-      const seg = new Segment([new Point({x: 4, y: 4}), new Point({x: 3, y: 3})])
-      expect(rect.intersects(seg)).toBe(true);
+    it('inside example', () => {
+      const seg = new Segment([new Point({ x: 4, y: 4 }), new Point({ x: 3, y: 3 })])
+      expect(rect.intersects(seg)).toBe(true)
     })
   })
 
   describe('intersect rects?', () => {
-    const rect1 = new Rectangle({ BR_point: new Point({ x: 3, y: 3 }),
-                                  facing: COMPASS.NORTH,
-                                  length: 2,
-                                  width: 2 })
+    const rect1 = new Rectangle({
+      BR_point: new Point({ x: 3, y: 3 }),
+      facing: COMPASS.NORTH,
+      length: 2,
+      width: 2
+    })
     it('intersects', () => {
-      const rect2 = new Rectangle({ BR_point: new Point({ x: 4, y: 4 }),
-                                    facing: COMPASS.NORTH,
-                                    length: 2,
-                                    width: 2 })
+      const rect2 = new Rectangle({
+        BR_point: new Point({ x: 4, y: 4 }),
+        facing: COMPASS.NORTH,
+        length: 2,
+        width: 2
+      })
       expect(rect1.intersects(rect2)).toBe(true)
     })
 
     it('does not intersect', () => {
-      const rect2 = new Rectangle({ BR_point: new Point({ x: 1, y: 1 }),
-                                    facing: COMPASS.NORTH,
-                                    length: 1/2,
-                                    width: 1/2 })
+      const rect2 = new Rectangle({
+        BR_point: new Point({ x: 1, y: 1 }),
+        facing: COMPASS.NORTH,
+        length: 1 / 2,
+        width: 1 / 2
+      })
       expect(rect1.intersects(rect2)).toBe(true)
     })
   })
@@ -218,10 +227,12 @@ describe('Rectangle', () => {
   // That also allows in-depth intersection testing to be in a file matching dev file.
 
   describe('#intersects', () => {
-    const rectangle = new Rectangle({ BR_point: new Point({ x: 3, y: 3 }),
-                                      facing:   COMPASS.NORTH,
-                                      length:   2,
-                                      width:    2 })
+    const rectangle = new Rectangle({
+      BR_point: new Point({ x: 3, y: 3 }),
+      facing: COMPASS.NORTH,
+      length: 2,
+      width: 2
+    })
     describe('point', () => {
       it('intersects', () => {
         const point = new Point({ x: 2, y: 2 })
@@ -237,38 +248,42 @@ describe('Rectangle', () => {
     describe('segments', () => {
       it('intersects', () => {
         const segment = new Segment([new Point({ x: 2, y: 2 }),
-                                     new Point({ x: 4, y: 4 })])
+          new Point({ x: 4, y: 4 })])
         expect(rectangle.intersects(segment)).toBe(true)
       })
 
       it('does not intersect', () => {
         const segment = new Segment([new Point({ x: 5, y: 5 }),
-                                     new Point({ x: 5, y: 8 })])
+          new Point({ x: 5, y: 8 })])
         expect(rectangle.intersects(segment)).toBe(false)
       })
     })
 
     describe('rectangles', () => {
       it('intersects', () => {
-        const rectangle2 = new Rectangle({ BR_point: new Point({ x: 1.5, y: 1.5 }),
-                                           facing:   COMPASS.NORTH,
-                                           length:   1,
-                                           width:    1 })
+        const rectangle2 = new Rectangle({
+          BR_point: new Point({ x: 1.5, y: 1.5 }),
+          facing: COMPASS.NORTH,
+          length: 1,
+          width: 1
+        })
         expect(rectangle.intersects(rectangle2)).toBe(true)
       })
 
       it('does not intersect', () => {
-        const rectangle2 = new Rectangle({ BR_point: new Point({ x: 5, y: 5 }),
-                                           facing:   COMPASS.NORTH,
-                                           length:   1,
-                                           width:    1 })
+        const rectangle2 = new Rectangle({
+          BR_point: new Point({ x: 5, y: 5 }),
+          facing: COMPASS.NORTH,
+          length: 1,
+          width: 1
+        })
         expect(rectangle.intersects(rectangle2)).toBe(false)
       })
     })
 
     describe('non-thing', () => {
       it('throws', () => {
-        expect(function() { rectangle.intersects(null) }).toThrow(Error)
+        expect(function () { rectangle.intersects(null) }).toThrow(Error)
       })
     })
   })

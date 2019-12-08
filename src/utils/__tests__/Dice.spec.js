@@ -2,11 +2,11 @@ import Dice from '../../utils/Dice'
 
 describe('Dice#roll', () => {
   it('should throw if not passed a string', () => {
-    expect(function() { Dice.roll(5) }).toThrow(TypeError)
+    expect(function () { Dice.roll(5) }).toThrow(TypeError)
   })
 
   it('should throw when not passed a \"d\"', () => {
-    expect(function() { Dice.roll('1') }).toThrow(TypeError)
+    expect(function () { Dice.roll('1') }).toThrow(TypeError)
   })
 
   it('should roll a six-sided die for \"1d\"', () => {

@@ -4,18 +4,18 @@ import Rectangle from '../../utils/Rectangle'
 import { COMPASS, FACE, INCH } from '../../utils/constants'
 
 class Factory {
-  static RandomNumber(max = 1000) {
+  static RandomNumber (max = 1000) {
     return max * Math.random()
   }
 
-  static Point(x = Factory.RandomNumber(), y = Factory.RandomNumber()) {
+  static Point (x = Factory.RandomNumber(), y = Factory.RandomNumber()) {
     return new Point({ x, y })
   }
 
-  static Segment(orientation = null) {
+  static Segment (orientation = null) {
     var p1 = Factory.Point()
     var p2 = Factory.Point()
-    switch(orientation) {
+    switch (orientation) {
       case 'vertical':
         p2.x = p1.x
         break
@@ -28,7 +28,7 @@ class Factory {
     return new Segment([p1, p2])
   }
 
-  static Rectangle() {
+  static Rectangle () {
     return new Rectangle({ facing: COMPASS.NORTH, BR_point: Factory.Point() })
   }
 }

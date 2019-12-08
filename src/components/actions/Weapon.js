@@ -22,49 +22,51 @@
 // Cycling things should accept <Shift>+<key> to cycle in reverse direction.
 //
 
-import React from 'react';
-import { weapon_set } from '../../redux';
-import { useSelector, useActions } from 'react-redux';
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { weapon_set } from '../../redux'
 
 const Weapon = (props) => {
-  const set_weapon = useActions(weapon_set);
+  const dispatch = useDispatch()
 
   const option_style = {
     background: 'black',
     color: 'white',
     fontSize: '24px',
     fontFamily: 'fantasy',
-    fontVariant: 'small-caps',
-  };
+    fontVariant: 'small-caps'
+  }
 
-  const players = useSelector((state) => state.players);
-  const cars = useSelector((state) => state.cars);
+  const players = useSelector((state) => state.players)
+  const cars = useSelector((state) => state.cars)
   const get_current_car = () => {
-    const player_color = players.all[players.current_index].color;
-    const car_color = player_color;
-    return cars.find(function(elem) { return elem.color === car_color});
-  };
+    const player_color = players.all[players.current_index].color
+    const car_color = player_color
+    return cars.find(function (elem) { return elem.color === car_color })
+  }
 
-  const weapons = get_current_car().design.components.weapons;
+  const weapons = get_current_car().design.components.weapons
 
   const list_weapons = () => {
-    var result = [];
+    var result = []
     for (var i = 0; i < weapons.length; i++) {
-      result.push(<option key={i} value={i}>{weapons[i].abbreviation} - {weapons[i].location}</option>);
+      result.push(<option key={i} value={i}>{weapons[i].abbreviation} - {weapons[i].location}</option>)
     }
-    return result;
-  };
+    return result
+  }
 
   const onChange = (event) => {
-    set_weapon({ id:  get_current_car().id, weapon: event.target.value });
-  };
-
+    dispatch(weapon_set({
+      id: get_current_car().id,
+      weapon: event.target.value
+    }))
+  }
 
   return (
     <select id='weapon' style={option_style} value={get_current_car().phasing.weapon_index} onChange={onChange}>
       { list_weapons() }
     </select>
-  );
-};
+  )
+}
 
-export default Weapon;
+export default Weapon
