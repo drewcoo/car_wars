@@ -1,4 +1,4 @@
-import {INCH} from '../../utils/constants';
+//import {INCH} from '../../utils/constants';
 import Segment from '../../utils/Segment';
 import Point from '../../utils/Point';
 /*
@@ -75,6 +75,12 @@ export class Targets {
     });
   }
 
+  // FUTURE COMMENT!
+  // NOTE: Also use this.car.phasing.rect.arcForPoint(point) to see if the side
+  // targeted can target me back - to-hit mod
+  // And while we're there, we should add targeted loc plus a hash of modifiers
+  // to the targets we return.
+
   shot_blocked_by_wall({source_point, target_point}) {
     var line_to_target = new Segment([source_point, target_point]);
     return this.all_wall_rects().some(function(wall_rect) {
@@ -102,7 +108,11 @@ export class Targets {
     return this.all_rects().some(function(rect) {
       return Object.keys(rect.sides()).some(function(side_key) {
         if(ignore !== null && ignore.equals(rect.side(side_key))) {
+          console.log('ignored')
           return false;
+        }
+        if (rect.side(side_key).intersects(target_point)) {
+          return false
         }
         return line_to_target.intersects(rect.side(side_key));
       });
@@ -144,6 +154,15 @@ target_points_in_arc() {
 
     console.log(all_points);
 
+    return all_points.filter(point => {
+      console.log(`${point.location} in arc: ${this.car.phasing.rect.point_is_in_arc({ point: point.location, arc_name: weapon_loc })}`)
+      console.log(`blocked? ${this.shot_blocked({ source_point: source_point, target_point: point.location })}`)
+      return (
+        this.car.phasing.rect.point_is_in_arc({ point: point.location, arc_name: weapon_loc }) &&
+        !this.shot_blocked({ source_point: source_point, target_point: point.location })
+      )
+    })
+/*
     var results = all_points.filter(point => {
       return (
         this.car.phasing.rect.point_is_in_arc({ point: point.location, arc_name: weapon_loc }) &&
@@ -152,6 +171,7 @@ target_points_in_arc() {
     });
 
     return results;
+    */
   }
 
 
@@ -176,37 +196,26 @@ target_points_in_arc() {
     // triangles in the arc, figuring out what parts are occluded.
     // The cheat is to sample. Pick a higher sample rate to do better
     // and maybe take longer.
-    var results = all_sides.filter(side => {
-      //var matches = 0;
-      var slices = 32;
-
-      var log_str = '';
-      var hits = 0;
-
+    return all_sides.filter(side => {
+      var slices = 32
+      var hits = 0
       for (var i = 1; i < slices; i++) {
-        var try_point = new Point({ x: side.location.points[0].x + (side.location.points[1].x - side.location.points[0].x) * (i/slices),
-                                    y: side.location.points[0].y + (side.location.points[1].y - side.location.points[0].y) * (i/slices) });
-        log_str += `${side.name} point: ${try_point}\n`;
-
-        //if (this.car.phasing.rect.point_is_in_arc({ point: try_point, arc_name: weapon_loc }) &&
+        var try_point = new Point({
+          x: side.location.points[0].x + (side.location.points[1].x - side.location.points[0].x) * (i / slices),
+          y: side.location.points[0].y + (side.location.points[1].y - side.location.points[0].y) * (i / slices)
+        })
+        // if (this.car.phasing.rect.pointIsInArc({ point: tryPoint, arcName: weaponLoc }) &&
         if (this.car.phasing.rect.arc_for_point(try_point) === weapon_loc &&
-            !this.shot_blocked({ source_point: source_point, target_point: try_point, /*ignore: side.location*/})) {
-              //matches++;
-                console.log(log_str);
-              hits++;
-              console.log(`${side.name} point: ${try_point}`);
-              // Because we don't count end points as intersections.
-              // BUGBUG: FIX inersect code to handle corners/ends of segments
-              if (hits > 1) { return true; }
-
+            !this.shot_blocked({ source_point: source_point, target_point: try_point /* ignore: side.location */ })) {
+          hits++
+          console.log(`${side.name} point: ${try_point}`)
+          // Because we don't count end points as intersections.
+          // BUGBUG: FIX inersect code to handle corners/ends of segments
+          if (hits > 1) { return true }
         }
-
-        //if (matches > 1) { return true; }
       }
-    });
-    /////////////////////////////
-
-    return results;
+      return null
+    })
   }
 
   targets_in_arc() {
@@ -217,9 +226,6 @@ target_points_in_arc() {
       (a, b) => source.distance_to(a.display_point) - source.distance_to(b.display_point)
     );
   }
-
-
-
 }
 export default Targets;
 
