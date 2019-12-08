@@ -349,7 +349,10 @@ export const carsSlice = createSlice({
       car.phasing.damage_message = damage; //'BANG!';
     },
     maneuver_next(state, action) {
+      console.log('NEXT MAN!!!')
+      console.log(action.payload)
       const car = state.find((carState) => carState.id === action.payload.id);
+
       car.phasing.maneuver_index = (car.phasing.maneuver_index + 1) % car.status.maneuvers.length;
       console.log('collisions?');
       Collisions.detect({ cars: state, walls: WallData, this_car: car });

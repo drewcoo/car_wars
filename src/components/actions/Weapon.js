@@ -23,11 +23,12 @@
 //
 
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { weapon_set } from '../../redux';
-import { useSelector, useActions } from 'react-redux';
+
 
 const Weapon = (props) => {
-  const set_weapon = useActions(weapon_set);
+  const dispatch = useDispatch()
 
   const option_style = {
     background: 'black',
@@ -56,7 +57,8 @@ const Weapon = (props) => {
   };
 
   const onChange = (event) => {
-    set_weapon({ id:  get_current_car().id, weapon: event.target.value });
+    dispatch(weapon_set({ id:  get_current_car().id,
+                          weapon: event.target.value }))
   };
 
 

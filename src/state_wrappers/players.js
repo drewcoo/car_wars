@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useActions } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 
 export default class Players {

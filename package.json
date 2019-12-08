@@ -37,6 +37,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "lint": "eslint src/**/*.js",
     "test": "react-scripts test --testMatch **/__tests__/**/*.spec.js",
     "test:coverage": "npm test -- --coverage --verbose --watchAll",
     "eject": "react-scripts eject"

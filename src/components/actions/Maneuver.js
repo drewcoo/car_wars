@@ -22,16 +22,17 @@
 // Cycling things should accept <Shift>+<key> to cycle in reverse direction.
 //
 
-
 import React from 'react';
+
+import { useDispatch, useSelector } from 'react-redux';
+
 import { maneuver_set } from '../../redux';
-import { useSelector, useActions } from 'react-redux';
 
 //ghost_forward, ghost_reset, ghost_turn_bend, ghost_move_drift,
 //accept_move } from '../redux';
 
 const Maneuver = (props) => {
-  const set_maneuver = useActions(maneuver_set);
+  const dispatch = useDispatch()
 
   const option_style = {
     background: 'black',
@@ -58,7 +59,8 @@ const Maneuver = (props) => {
   }
 
   const onChange = (event) => {
-    set_maneuver({ id:  get_current_car().id, maneuver_index: event.target.value });
+    dispatch(maneuver_set({ id:  get_current_car().id,
+                            maneuver_index: event.target.value }))
   };
 
   const list_maneuvers = () => {
