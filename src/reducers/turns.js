@@ -1,18 +1,18 @@
-import { createSlice } from "redux-starter-kit";
+import { createSlice } from 'redux-starter-kit'
 
 const initialTurnInfo = {
-  number: 0,
-};
+  number: 0
+}
 
 export const turnsSlice = createSlice({
-  slice : "turns",
+  slice: 'turns',
   initialState: initialTurnInfo,
-  reducers : {
-    turn_next(state, action) {
-      state.number++;
+  reducers: {
+    turn_next (state, action) {
+      state.number++
       // bump hc up
       // mark cars to be able to change speed
       // etc.
-    },
+    }
   }
-});
+})

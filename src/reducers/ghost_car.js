@@ -1,45 +1,44 @@
-import { createSlice } from "redux-starter-kit";
-import { INCH } from '../utils/constants';
-import { KillerKart } from '../vehicle_designs/KillerKart';
+import { createSlice } from 'redux-starter-kit'
+import { INCH } from '../utils/constants'
+import { KillerKart } from '../vehicle_designs/KillerKart'
 
-import { useSelector } from 'react-redux';
-
+import { useSelector } from 'react-redux'
 
 const maneuver_values = [
   'none',
-  //'half',
+  // 'half',
   'forward',
   'bend',
   'drift',
-  'swerve',
+  'swerve'
   // more
-];
+]
 
 // bugbug - one car per player
-//const car_index = 0;
-const initialStats = {};
+// const car_index = 0;
+const initialStats = {}
 
 export const ghostSlice = createSlice({
-  slice : "ghostStates",
+  slice: 'ghostStates',
   initialState: initialStats,
-  reducers : {
-    ghost_initialize(state, action) {
+  reducers: {
+    ghost_initialize (state, action) {
       // expect car in action.payload
-      state = action.payload.copy();
-      console.log("state position");
-      console.log(state.position);
-      state.phasing = state.position;
+      state = action.payload.copy()
+      console.log('state position')
+      console.log(state.position)
+      state.phasing = state.position
     },
-    ghost_forward(state, action) {
-      var rad = state.position.facing / 360 * 2 * Math.PI;
+    ghost_forward (state, action) {
+      var rad = state.position.facing / 360 * 2 * Math.PI
       var temp = {
         facing: state.position.facing,
         front_left: {
           x: state.position.x += 60 * Math.sin(rad),
           y: state.position.y -= 60 * Math.cos(rad)
         }
-      };
-      state.phasing = temp;
+      }
+      state.phasing = temp
     }
     /*
     addCarState(state, action) {

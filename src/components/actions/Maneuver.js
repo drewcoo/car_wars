@@ -22,14 +22,14 @@
 // Cycling things should accept <Shift>+<key> to cycle in reverse direction.
 //
 
-import React from 'react';
+import React from 'react'
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux'
 
-import { maneuver_set } from '../../redux';
+import { maneuver_set } from '../../redux'
 
-//ghost_forward, ghost_reset, ghost_turn_bend, ghost_move_drift,
-//accept_move } from '../redux';
+// ghost_forward, ghost_reset, ghost_turn_bend, ghost_move_drift,
+// accept_move } from '../redux';
 
 const Maneuver = (props) => {
   const dispatch = useDispatch()
@@ -39,37 +39,39 @@ const Maneuver = (props) => {
     color: 'white',
     fontSize: '24px',
     fontFamily: 'fantasy',
-    fontVariant: 'small-caps',
-  };
-
-  //const non_select_color_override = {
-  //  color: 'darkgray',
-  //};
-
-  const hidden_style = {
-    visibility: 'hidden',
+    fontVariant: 'small-caps'
   }
 
-  const players = useSelector((state) => state.players);
-  const cars = useSelector((state) => state.cars);
+  // const non_select_color_override = {
+  //  color: 'darkgray',
+  // };
+
+  const hidden_style = {
+    visibility: 'hidden'
+  }
+
+  const players = useSelector((state) => state.players)
+  const cars = useSelector((state) => state.cars)
   const get_current_car = () => {
-    var player_color = players.all[players.current_index].color;
-    var car_color = player_color;
-    return cars.find(function(elem) { return elem.color === car_color});
+    var player_color = players.all[players.current_index].color
+    var car_color = player_color
+    return cars.find(function (elem) { return elem.color === car_color })
   }
 
   const onChange = (event) => {
-    dispatch(maneuver_set({ id:  get_current_car().id,
-                            maneuver_index: event.target.value }))
-  };
+    dispatch(maneuver_set({
+      id: get_current_car().id,
+      maneuver_index: event.target.value
+    }))
+  }
 
   const list_maneuvers = () => {
-    const car = get_current_car();
-    var result = [];
+    const car = get_current_car()
+    var result = []
     for (var i = 0; i < car.status.maneuvers.length; i++) {
-      result.push(<option key={i} value={i}>{car.status.maneuvers[i]}</option>);
+      result.push(<option key={i} value={i}>{car.status.maneuvers[i]}</option>)
     }
-    return result;
+    return result
   }
 
   return (
@@ -84,7 +86,7 @@ const Maneuver = (props) => {
         <option>1</option>
       </select>
     </span>
-  );
-};
+  )
+}
 
-export default Maneuver;
+export default Maneuver

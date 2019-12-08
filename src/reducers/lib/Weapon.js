@@ -1,5 +1,5 @@
 class Weapon {
-  static can_fire(weapon) {
+  static can_fire (weapon) {
     /*
     console.log(`WEAPON:`);
     console.log(`  location : ${weapon.location}`);
@@ -12,7 +12,7 @@ class Weapon {
       weapon.ammo === 0 ||
       weapon.damage_points === 0 ||
       weapon.fired_this_turn
-    );
+    )
   }
 }
-export default Weapon;
+export default Weapon
