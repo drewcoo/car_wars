@@ -1,4 +1,3 @@
-import React from 'react'
 import { useSelector } from 'react-redux'
 
 export default class Players {
@@ -10,11 +9,11 @@ export default class Players {
     return useSelector((state) => state.players)
   }
 
-  current_index () {
-    return this.__players().current_index
+  currentIndex () {
+    return this.__players().currentIndex
   }
 
   current () {
-    return this.__players().all[this.current_index()]
+    return this.__players().all[this.currentIndex()]
   }
 }

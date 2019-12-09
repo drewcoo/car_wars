@@ -1,11 +1,11 @@
 
-export const generic_component_style = {
+export const genericComponentStyle = {
   fill: 'white',
   stroke: 'black',
   strokeWidth: 2
 }
 
-export const generic_red_style = {
+export const genericRedStyle = {
   fill: 'red',
   stroke: 'black',
   strokeWidth: 2

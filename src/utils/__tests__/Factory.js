@@ -1,7 +1,7 @@
 import Point from '../../utils/Point'
 import Segment from '../../utils/Segment'
 import Rectangle from '../../utils/Rectangle'
-import { COMPASS, FACE, INCH } from '../../utils/constants'
+import { COMPASS } from '../../utils/constants'
 
 class Factory {
   static RandomNumber (max = 1000) {
@@ -29,7 +29,7 @@ class Factory {
   }
 
   static Rectangle () {
-    return new Rectangle({ facing: COMPASS.NORTH, BR_point: Factory.Point() })
+    return new Rectangle({ facing: COMPASS.NORTH, brPoint: Factory.Point() })
   }
 }
 export default Factory

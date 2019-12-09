@@ -5,15 +5,21 @@ import Factory from './Factory'
 describe('Segment', () => {
   describe('#constuctor', () => {
     it('throws on constructor not called with two elements', () => {
-      expect(function () { new Segment([1, 2, 3]) }).toThrow(Error)
+      expect(function () {
+        return new Segment([1, 2, 3])
+      }).toThrow(Error)
     })
 
     it('throws on element 0 not Point', () => {
-      expect(function () { new Segment(['not_a_point', Factory.Point()]) }).toThrow(Error)
+      expect(function () {
+        return new Segment(['notAPoint', Factory.Point()])
+      }).toThrow(Error)
     })
 
     it('throws on element 1 not Point', () => {
-      expect(function () { new Segment([Factory.Point(), []]) }).toThrow(Error)
+      expect(function () {
+        return new Segment([Factory.Point(), []])
+      }).toThrow(Error)
     })
   })
 
@@ -27,27 +33,27 @@ describe('Segment', () => {
   describe('#length', () => {
     it('is distance between points', () => {
       const segment = Factory.Segment()
-      expect(segment.length()).toEqual(segment.points[0].distance_to(segment.points[1]))
+      expect(segment.length()).toEqual(segment.points[0].distanceTo(segment.points[1]))
     })
   })
 
-  describe('#is_parallel_to', () => {
+  describe('#isParallelTo', () => {
     it('vertical lines are parallel', () => {
-      expect(Factory.Segment('vertical').is_parallel_to(Factory.Segment('vertical'))).toBe(true)
+      expect(Factory.Segment('vertical').isParallelTo(Factory.Segment('vertical'))).toBe(true)
     })
 
     it('horizontal lines are parallel', () => {
-      expect(Factory.Segment('horizontal').is_parallel_to(Factory.Segment('horizontal'))).toBe(true)
+      expect(Factory.Segment('horizontal').isParallelTo(Factory.Segment('horizontal'))).toBe(true)
     })
   })
 
-  describe('#is_colinear_with', () => {
+  describe('#isColinearWith', () => {
     it('is vertical colinear', () => {
       const seg1 = Factory.Segment('vertical')
       const seg2 = Factory.Segment('vertical')
       seg2.points[0].x = seg1.points[1].x
       seg2.points[1].x = seg1.points[1].x
-      expect(seg1.is_colinear_with(seg2)).toBe(true)
+      expect(seg1.isColinearWith(seg2)).toBe(true)
     })
   })
 
@@ -155,7 +161,7 @@ describe('Segment', () => {
     })
   })
 
-  describe('#touches_or_overlaps', () => {
+  describe('#touchesOrOverlaps', () => {
     it('one', () => {
       const seg = Factory.Segment()
       const pt = new Point({

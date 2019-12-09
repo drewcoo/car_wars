@@ -24,8 +24,8 @@
 
 import React from 'react'
 
-const Target = (props) => {
-  const option_style = {
+const Speed = (props) => {
+  const optionStyle = {
     background: 'black',
     color: 'white',
     fontSize: '24px',
@@ -33,17 +33,17 @@ const Target = (props) => {
     fontVariant: 'small-caps'
   }
 
-  // const non_select_color_override = {
+  // const nonSelectColor_override = {
   //  color: 'darkgray',
   // };
 
   return (
-    <select id='target' style={option_style}>
-      <option>what</option>
-      <option>goes</option>
-      <option>here?</option>
+    <select id='speed' style={optionStyle} defaultValue='maintain'>
+      <option>slower</option>
+      <option>maintain</option>
+      <option>faster</option>
     </select>
   )
 }
 
-export default Target
+export default Speed

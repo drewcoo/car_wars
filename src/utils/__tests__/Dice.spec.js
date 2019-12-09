@@ -5,11 +5,11 @@ describe('Dice#roll', () => {
     expect(function () { Dice.roll(5) }).toThrow(TypeError)
   })
 
-  it('should throw when not passed a \"d\"', () => {
+  it('should throw when not passed a "d"', () => {
     expect(function () { Dice.roll('1') }).toThrow(TypeError)
   })
 
-  it('should roll a six-sided die for \"1d\"', () => {
+  it('should roll a six-sided die for "1d"', () => {
     const roll = Dice.roll('1d')
     expect(roll).toBeGreaterThan(0)
     expect(roll).toBeLessThan(7)

@@ -3,11 +3,11 @@ import Segment from '../../utils/Segment'
 import Point from '../../utils/Point'
 /*
 Target = {
-  car_id: number,
-  location_name: string,
+  carId: number,
+  locationName: string,
   point: Point,
   segment: Segment,
-  // ??? hit_modifier(s):,
+  // ??? hitModifier(s):,
 }
 
 */
@@ -19,37 +19,37 @@ export class Targets {
     this.walls = walls
   }
 
-  targetable_points (target) {
-    // var turret_loc = new Segement([target.rect.BR_point(), target.rect.FL_point()]).middle();
+  targetablePoints (target) {
+    // var turretLoc = new Segement([target.rect.brPoint(), target.rect.flPoint()]).middle();
     return [
-      { car_id: target.id, name: 'FR', location: target.rect.FR_point(), display_point: target.rect.FR_point() },
-      { car_id: target.id, name: 'FL', location: target.rect.FL_point(), display_point: target.rect.FL_point() },
-      { car_id: target.id, name: 'BR', location: target.rect.BR_point(), display_point: target.rect.BR_point() },
-      { car_id: target.id, name: 'BL', location: target.rect.BL_point(), display_point: target.rect.BL_point() }
-    //  { car_id: target.id, name: 'turret', location: turret_loc, display_point: turret_loc },
+      { carId: target.id, name: 'FR', location: target.rect.frPoint(), displayPoint: target.rect.frPoint() },
+      { carId: target.id, name: 'FL', location: target.rect.flPoint(), displayPoint: target.rect.flPoint() },
+      { carId: target.id, name: 'BR', location: target.rect.brPoint(), displayPoint: target.rect.brPoint() },
+      { carId: target.id, name: 'BL', location: target.rect.blPoint(), displayPoint: target.rect.blPoint() }
+    //  { carId: target.id, name: 'turret', location: turretLoc, displayPoint: turretLoc },
     ]
   }
 
-  targetable_sides (target) {
+  targetableSides (target) {
     return [
-      { car_id: target.id, name: 'F', location: target.rect.F_side(), display_point: target.rect.F_side().middle() },
-      { car_id: target.id, name: 'B', location: target.rect.B_side(), display_point: target.rect.B_side().middle() },
-      { car_id: target.id, name: 'L', location: target.rect.L_side(), display_point: target.rect.L_side().middle() },
-      { car_id: target.id, name: 'R', location: target.rect.R_side(), display_point: target.rect.R_side().middle() }
+      { carId: target.id, name: 'F', location: target.rect.fSide(), displayPoint: target.rect.fSide().middle() },
+      { carId: target.id, name: 'B', location: target.rect.bSide(), displayPoint: target.rect.bSide().middle() },
+      { carId: target.id, name: 'L', location: target.rect.lSide(), displayPoint: target.rect.lSide().middle() },
+      { carId: target.id, name: 'R', location: target.rect.rSide(), displayPoint: target.rect.rSide().middle() }
     ]
   }
 
-  all_targetable_locations () {
+  allTargetableLocations () {
     return this.cars.filter(element => {
       return this.car.id !== element.id
     }).map(element => {
-      return this.targetable_locations(element)
+      return this.targetableLocations(element)
     }).flat()
   }
   /// ///////////////////
 
   // VVV
-  all_other_car_rects () {
+  allOtherCarRects () {
     return this.cars.filter(element => {
       return this.car.id !== element.id
     }).map(element => {
@@ -57,21 +57,21 @@ export class Targets {
     })
   }
 
-  all_wall_rects () {
+  allWallRects () {
     return this.walls.map(element => {
       return element.rect
     })
   }
 
-  all_rects () {
-    return this.all_wall_rects().concat(this.all_other_car_rects())
+  allRects () {
+    return this.allWallRects().concat(this.allOtherCarRects())
   }
 
-  rect_points_in_arc (rect) {
-    var firing_arc = this.car.design.components.weapons[this.car.phasing.weapon_index].location
+  rectPointsInArc (rect) {
+    var firingArc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
     return rect.points().filter(point => {
-      // return this.car.phasing.rect.point_is_in_arc({ point: point, arc_name: firing_arc })
-      return (this.car.phasing.rect.arc_for_point(point) === firing_arc)
+      // return this.car.phasing.rect.pointIsInArc({ point: point, arcName: firingArc })
+      return (this.car.phasing.rect.arcForPoint(point) === firingArc)
     })
   }
 
@@ -81,57 +81,57 @@ export class Targets {
   // And while we're there, we should add targeted loc plus a hash of modifiers
   // to the targets we return.
 
-  shot_blocked_by_wall ({ source_point, target_point }) {
-    var line_to_target = new Segment([source_point, target_point])
-    return this.all_wall_rects().some(function (wall_rect) {
-      var sides = wall_rect.sides()
-      return Object.keys(sides).some(function (side_key) {
+  shotBlockedByWall ({ sourcePoint, targetPoint }) {
+    var lineToTarget = new Segment([sourcePoint, targetPoint])
+    return this.allWallRects().some(function (wallRect) {
+      var sides = wallRect.sides()
+      return Object.keys(sides).some(function (sideKey) {
         console.log('shot blocked by wall')
-        return line_to_target.intersects(sides[side_key])
+        return lineToTarget.intersects(sides[sideKey])
       })
     })
   }
 
-  shot_blocked_by_car ({ source_point, target_point }) {
-    var line_to_target = new Segment([source_point, target_point])
-    var all_car_rects = this.cars.map(element => { return element.rect })
-    return all_car_rects.some(function (car_rect) {
-      return Object.keys(car_rect.sides()).some(function (side_key) {
+  shotBlockedByCar ({ sourcePoint, targetPoint }) {
+    var lineToTarget = new Segment([sourcePoint, targetPoint])
+    var allCarRects = this.cars.map(element => { return element.rect })
+    return allCarRects.some(function (carRect) {
+      return Object.keys(carRect.sides()).some(function (sideKey) {
         console.log('shot blocked by car')
-        return line_to_target.intersects(car_rect.side(side_key))
+        return lineToTarget.intersects(carRect.side(sideKey))
       })
     })
   }
 
-  shot_blocked ({ source_point, target_point, ignore = null }) {
-    var line_to_target = new Segment([source_point, target_point])
-    return this.all_rects().some(function (rect) {
-      return Object.keys(rect.sides()).some(function (side_key) {
-        if (ignore !== null && ignore.equals(rect.side(side_key))) {
+  shotBlocked ({ sourcePoint, targetPoint, ignore = null }) {
+    var lineToTarget = new Segment([sourcePoint, targetPoint])
+    return this.allRects().some(function (rect) {
+      return Object.keys(rect.sides()).some(function (sideKey) {
+        if (ignore !== null && ignore.equals(rect.side(sideKey))) {
           console.log('ignored')
           return false
         }
-        if (rect.side(side_key).intersects(target_point)) {
+        if (rect.side(sideKey).intersects(targetPoint)) {
           return false
         }
-        return line_to_target.intersects(rect.side(side_key))
+        return lineToTarget.intersects(rect.side(sideKey))
       })
     })
   }
 
   /*
-target_points_in_arc() {
-  //var car = get_current_car();
-  var weapon_loc = this.car.design.components.weapons[this.car.phasing.weapon_index].location;
-  var source_point = this.car.phasing.rect.side(weapon_loc).middle();
+targetPointsInArc() {
+  //var car = getCurrentCar();
+  var weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location;
+  var sourcePoint = this.car.phasing.rect.side(weaponLoc).middle();
 
   // .flatMap instead??  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flatMap
-  var possible_targets = this.all_other_car_rects().map(rect => {
+  var possible_targets = this.allOtherCarRects().map(rect => {
     return rect.points().filter(point => {
       return (
-        //this.car.phasing.rect.point_is_in_arc({ point: point, arc_name: weapon_loc }) &&
-        this.car.phasing.rect.arc_for_point(point) === weapon_loc &&
-        !this.shot_blocked({source_point: source_point, target_point: point})
+        //this.car.phasing.rect.pointIsInArc({ point: point, arcName: weaponLoc }) &&
+        this.car.phasing.rect.arcForPoint(point) === weaponLoc &&
+        !this.shotBlocked({sourcePoint: sourcePoint, targetPoint: point})
       )
     });
   }).flat(); //.reverse();
@@ -139,34 +139,34 @@ target_points_in_arc() {
 }
 */
 
-  target_points_in_arc () {
-    // var car = get_current_car();
-    var weapon_loc = this.car.design.components.weapons[this.car.phasing.weapon_index].location
-    var source_point = this.car.phasing.rect.side(weapon_loc).middle()
+  targetPointsInArc () {
+    // var car = getCurrentCar();
+    var weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
+    var sourcePoint = this.car.phasing.rect.side(weaponLoc).middle()
 
-    var other_cars = this.cars.filter(element => {
+    var otherCars = this.cars.filter(element => {
       return this.car.id !== element.id
     })
 
-    var all_points = other_cars.map(other_car => {
-      return this.targetable_points(other_car)
+    var allPoints = otherCars.map(otherCar => {
+      return this.targetablePoints(otherCar)
     }).flat()
 
-    console.log(all_points)
+    console.log(allPoints)
 
-    return all_points.filter(point => {
-      console.log(`${point.location} in arc: ${this.car.phasing.rect.point_is_in_arc({ point: point.location, arc_name: weapon_loc })}`)
-      console.log(`blocked? ${this.shot_blocked({ source_point: source_point, target_point: point.location })}`)
+    return allPoints.filter(point => {
+      console.log(`${point.location} in arc: ${this.car.phasing.rect.pointIsInArc({ point: point.location, arcName: weaponLoc })}`)
+      console.log(`blocked? ${this.shotBlocked({ sourcePoint: sourcePoint, targetPoint: point.location })}`)
       return (
-        this.car.phasing.rect.point_is_in_arc({ point: point.location, arc_name: weapon_loc }) &&
-        !this.shot_blocked({ source_point: source_point, target_point: point.location })
+        this.car.phasing.rect.pointIsInArc({ point: point.location, arcName: weaponLoc }) &&
+        !this.shotBlocked({ sourcePoint: sourcePoint, targetPoint: point.location })
       )
     })
     /*
-    var results = all_points.filter(point => {
+    var results = allPoints.filter(point => {
       return (
-        this.car.phasing.rect.point_is_in_arc({ point: point.location, arc_name: weapon_loc }) &&
-        !this.shot_blocked({source_point: source_point, target_point: point.location})
+        this.car.phasing.rect.pointIsInArc({ point: point.location, arcName: weaponLoc }) &&
+        !this.shotBlocked({sourcePoint: sourcePoint, targetPoint: point.location})
       )
     });
 
@@ -174,38 +174,38 @@ target_points_in_arc() {
     */
   }
 
-  target_sides_in_arc () {
-    // var car = get_current_car();
-    var weapon_loc = this.car.design.components.weapons[this.car.phasing.weapon_index].location
-    var source_point = this.car.phasing.rect.side(weapon_loc).middle()
+  targetSidesInArc () {
+    // var car = getCurrentCar();
+    var weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
+    var sourcePoint = this.car.phasing.rect.side(weaponLoc).middle()
 
-    console.log(`source point: ${source_point}`)
+    console.log(`source point: ${sourcePoint}`)
 
-    var other_cars = this.cars.filter(element => {
+    var otherCars = this.cars.filter(element => {
       return this.car.id !== element.id
     })
 
-    var all_sides = other_cars.map(other_car => {
-      return this.targetable_sides(other_car)
+    var allSides = otherCars.map(otherCar => {
+      return this.targetableSides(otherCar)
     }).flat()
 
     // BUGBUG: This is cheating so that I don't need to map out a bunch of
     // triangles in the arc, figuring out what parts are occluded.
     // The cheat is to sample. Pick a higher sample rate to do better
     // and maybe take longer.
-    return all_sides.filter(side => {
+    return allSides.filter(side => {
       var slices = 32
       var hits = 0
       for (var i = 1; i < slices; i++) {
-        var try_point = new Point({
+        var tryPoint = new Point({
           x: side.location.points[0].x + (side.location.points[1].x - side.location.points[0].x) * (i / slices),
           y: side.location.points[0].y + (side.location.points[1].y - side.location.points[0].y) * (i / slices)
         })
         // if (this.car.phasing.rect.pointIsInArc({ point: tryPoint, arcName: weaponLoc }) &&
-        if (this.car.phasing.rect.arc_for_point(try_point) === weapon_loc &&
-            !this.shot_blocked({ source_point: source_point, target_point: try_point /* ignore: side.location */ })) {
+        if (this.car.phasing.rect.arcForPoint(tryPoint) === weaponLoc &&
+            !this.shotBlocked({ sourcePoint: sourcePoint, targetPoint: tryPoint /* ignore: side.location */ })) {
           hits++
-          console.log(`${side.name} point: ${try_point}`)
+          console.log(`${side.name} point: ${tryPoint}`)
           // Because we don't count end points as intersections.
           // BUGBUG: FIX inersect code to handle corners/ends of segments
           if (hits > 1) { return true }
@@ -215,12 +215,12 @@ target_points_in_arc() {
     })
   }
 
-  targets_in_arc () {
-    var weapon_loc = this.car.design.components.weapons[this.car.phasing.weapon_index].location
-    var source = this.car.phasing.rect.side(weapon_loc).middle()
-    console.log(this.target_points_in_arc().concat(this.target_sides_in_arc()))
-    return this.target_points_in_arc().concat(this.target_sides_in_arc()).sort(
-      (a, b) => source.distance_to(a.display_point) - source.distance_to(b.display_point)
+  targetsInArc () {
+    var weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
+    var source = this.car.phasing.rect.side(weaponLoc).middle()
+    console.log(this.targetPointsInArc().concat(this.targetSidesInArc()))
+    return this.targetPointsInArc().concat(this.targetSidesInArc()).sort(
+      (a, b) => source.distanceTo(a.displayPoint) - source.distanceTo(b.displayPoint)
     )
   }
 }
@@ -230,9 +230,9 @@ export default Targets
 /*
 
 TargetLocation:
-car_id
+carId
 name
-is_side // point if false
-nearest_point
-display_point
+isSide // point if false
+nearestPoint
+displayPoint
 */

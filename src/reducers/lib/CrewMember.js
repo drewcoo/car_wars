@@ -1,13 +1,13 @@
 class CrewMember {
-  static can_fire (crew_member) {
+  static canFire (crewMember) {
     /*
     console.log(`CREW:`);
-    console.log(`  fired_this_turn : ${crew_member.fired_this_turn}`);
-    console.log(`  damage_points : ${crew_member.damage_points}`);
+    console.log(`  fired_this_turn : ${crewMember.fired_this_turn}`);
+    console.log(`  damagePoints : ${crewMember.damagePoints}`);
     */
     return !(
-      crew_member.fired_this_turn ||
-      crew_member.damage_points < 1
+      crewMember.fired_this_turn ||
+      crewMember.damagePoints < 1
     )
   }
 }

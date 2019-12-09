@@ -24,8 +24,17 @@
 
 import React from 'react'
 
-const Speed = (props) => {
-  const option_style = {
+import { useDispatch, useSelector } from 'react-redux'
+
+import { maneuverSet } from '../../redux'
+
+// ghostForward, ghostReset, ghostTurnBend, ghostMoveDrift,
+// acceptMove } from '../redux';
+
+const Maneuver = (props) => {
+  const dispatch = useDispatch()
+
+  const optionStyle = {
     background: 'black',
     color: 'white',
     fontSize: '24px',
@@ -33,17 +42,51 @@ const Speed = (props) => {
     fontVariant: 'small-caps'
   }
 
-  // const non_select_color_override = {
+  // const nonSelectColor_override = {
   //  color: 'darkgray',
   // };
 
+  const hiddenStyle = {
+    visibility: 'hidden'
+  }
+
+  const players = useSelector((state) => state.players)
+  const cars = useSelector((state) => state.cars)
+  const getCurrentCar = () => {
+    var playerColor = players.all[players.currentIndex].color
+    var carColor = playerColor
+    return cars.find(function (elem) { return elem.color === carColor })
+  }
+
+  const onChange = (event) => {
+    dispatch(maneuverSet({
+      id: getCurrentCar().id,
+      maneuverIndex: event.target.value
+    }))
+  }
+
+  const listManeuvers = () => {
+    const car = getCurrentCar()
+    var result = []
+    for (var i = 0; i < car.status.maneuvers.length; i++) {
+      result.push(<option key={i} value={i}>{car.status.maneuvers[i]}</option>)
+    }
+    return result
+  }
+
   return (
-    <select id='speed' style={option_style} defaultValue='maintain'>
-      <option>slower</option>
-      <option>maintain</option>
-      <option>faster</option>
-    </select>
+    <span>
+      <select id='maneuver' style={optionStyle} value={getCurrentCar().phasing.maneuverIndex} onChange={onChange}>
+        {listManeuvers()}
+      </select>
+      <span>&nbsp;&nbsp;</span>
+      <select id='degrees' style={hiddenStyle} defaultValue='0'>
+        <option>-1</option>
+        <option>0</option>
+        <option>1</option>
+      </select>
+    </span>
   )
 }
 
-export default Speed
+export default Maneuver

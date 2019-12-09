@@ -1,39 +1,25 @@
 import { createSlice } from 'redux-starter-kit'
-import { INCH } from '../utils/constants'
-import { KillerKart } from '../vehicle_designs/KillerKart'
-
-import { useSelector } from 'react-redux'
-
-const maneuver_values = [
-  'none',
-  // 'half',
-  'forward',
-  'bend',
-  'drift',
-  'swerve'
-  // more
-]
 
 // bugbug - one car per player
-// const car_index = 0;
+// const carIndex = 0;
 const initialStats = {}
 
 export const ghostSlice = createSlice({
   slice: 'ghostStates',
   initialState: initialStats,
   reducers: {
-    ghost_initialize (state, action) {
+    ghostInitialize (state, action) {
       // expect car in action.payload
       state = action.payload.copy()
       console.log('state position')
       console.log(state.position)
       state.phasing = state.position
     },
-    ghost_forward (state, action) {
+    ghostForward (state, action) {
       var rad = state.position.facing / 360 * 2 * Math.PI
       var temp = {
         facing: state.position.facing,
-        front_left: {
+        frontLeft: {
           x: state.position.x += 60 * Math.sin(rad),
           y: state.position.y -= 60 * Math.cos(rad)
         }
@@ -54,26 +40,26 @@ export const ghostSlice = createSlice({
       console.log(result);
       return result;
     },
-    maneuver_next(state, action) {
+    maneuverNext(state, action) {
       const car = state.find((carState) => carState.color === action.payload.color);
-      var temp_index = car.status.maneuver_index + 1;
-      if (temp_index >= car.status.maneuvers.length) { temp_index = 0; }
-      car.status.maneuver_index = temp_index;
+      var tempIndex = car.status.maneuverIndex + 1;
+      if (tempIndex >= car.status.maneuvers.length) { tempIndex = 0; }
+      car.status.maneuverIndex = tempIndex;
     },
-    maneuver_set(state, action) {
+    maneuverSet(state, action) {
       const car = state.find((carState) => carState.color === action.payload.color);
-      car.status.maneuver_index = action.payload.maneuver_index;
+      car.status.maneuverIndex = action.payload.maneuverIndex;
     },
-    weapon_next(state, action) {
+    weaponNext(state, action) {
       const car = state.find((carState) => carState.color === action.payload.color);
-      var temp_index = car.status.weapon_index + 1;
-      if (temp_index >= car.design.components.weapons.length) { temp_index = 0; }
-      car.status.weapon_index = temp_index;
+      var tempIndex = car.status.weaponIndex + 1;
+      if (tempIndex >= car.design.components.weapons.length) { tempIndex = 0; }
+      car.status.weaponIndex = tempIndex;
     },
-    weapon_set(state, action) {
+    weaponSet(state, action) {
       console.log(action.payload);
       const car = state.find((carState) => carState.color === action.payload.color);
-      car.status.weapon_index = action.payload.weapon;
+      car.status.weaponIndex = action.payload.weapon;
     },
     */
   }

@@ -3,9 +3,13 @@
         "browser": true,
         "commonjs": true,
         "es6": true,
+        "jest/globals": true,
         "node": true
     },
-    "extends": "standard",
+    "extends": [
+      "standard",
+      "plugin:react/recommended"
+    ],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
@@ -17,8 +21,10 @@
         "ecmaVersion": 2018
     },
     "plugins": [
+        "jest",
         "react"
     ],
     "rules": {
+      "react/prop-types": 0
     }
 }

@@ -1,25 +1,24 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { generic_component_style, generic_red_style } from './style'
+import { genericComponentStyle, genericRedStyle } from './style'
 
 export const Tire = ({ car, length, width, front, left }) => {
-  const location_name = () => {
+  const locationName = () => {
     var result = front ? 'F' : 'B'
     result += left ? 'L' : 'R'
     return result
   }
 
-  const text_x = (left) => {
+  const textX = (left) => {
     // left / right
     return left ? width * 11 / 64 : width * 48 / 64
   }
 
-  const text_y = (front) => {
+  const textY = (front) => {
     // front / back
     return front ? length * 25 / 64 : length * 49 / 64
   }
 
-  const DP = car.design.components.tires.find(function (tire) { return tire.location === location_name(front, left) }).damage_points
+  const DP = car.design.components.tires.find(function (tire) { return tire.location === locationName(front, left) }).damagePoints
 
   return (
     <g>
@@ -29,9 +28,9 @@ export const Tire = ({ car, length, width, front, left }) => {
         y = { front ? length * 18 / 64 : length * 42 / 64 }
         width = { width * 8 / 64 }
         height = { length * 11 / 64 }
-        style = { DP < 1 ? generic_red_style : generic_component_style }
+        style = { DP < 1 ? genericRedStyle : genericComponentStyle }
       />
-      <text x={ text_x(left) } y={ text_y(front) }> { DP } </text>
+      <text x={ textX(left) } y={ textY(front) }> { DP } </text>
     </g>
   )
 }

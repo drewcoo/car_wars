@@ -3,21 +3,22 @@ import { Provider } from 'react-redux'
 import { store } from './redux'
 import './App.css'
 
-import Maneuver from './components/actions/Maneuver'
-import Speed from './components/actions/Speed'
-import Target from './components/actions/Target'
-import Weapon from './components/actions/Weapon'
+import KeystrokeInput from './components/controls/KeystrokeInput'
+import Maneuver from './components/controls/ManeuverSelector'
+import Speed from './components/controls/SpeedSelector'
+import Target from './components/controls/TargetSelector'
+import Weapon from './components/controls/WeaponSelector'
 
 import ArenaMap from './components/ArenaMap'
 import CarInset from './components/CarInset'
 import CarStats from './components/CarStats'
-import KeystrokeInput from './components/KeystrokeInput'
+
 import PlayerName from './components/PlayerName'
 
 class App extends Component {
   componentDidMount () {
     console.log('mount')
-    // var car = get_current_car();
+    // var car = getCurrentCar();
     var element = document.getElementById('ghost')
     element.scrollIntoViewIfNeeded() // scrollIntoView();//{ block: 'center', inline: 'center' });
     element.scrollIntoView({ block: 'center', inline: 'center' })
@@ -25,7 +26,7 @@ class App extends Component {
 
   componentDidUpdate () {
     console.log('hello')
-    // var car = get_current_car();
+    // var car = getCurrentCar();
     var element = document.getElementById('ghost')
     element.scrollIntoViewIfNeeded() // scrollIntoView();//{ block: 'center', inline: 'center' });
     element.scrollIntoView({ block: 'center', inline: 'center' })

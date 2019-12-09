@@ -1,8 +1,4 @@
 import React from 'react'
-import { INCH, FACE } from '../utils/constants'
-import Point from '../utils/Point'
-
-import FiringArc from './FiringArc'
 
 const InsetLayout = ({ width, length, car }) => {
   return (
@@ -30,137 +26,127 @@ const InsetLayout = ({ width, length, car }) => {
 }
 
 const Car = ({ id, state, inset = false, ghost = false }) => {
-  const temp_rect = ghost ? state.phasing.rect : state.rect
-  const collision_detected = ghost ? state.phasing.collision_detected : state.collision_detected
+  const tempRect = ghost ? state.phasing.rect : state.rect
+  const collisionDetected = ghost ? state.phasing.collisionDetected : state.collisionDetected
   const opacity = ghost ? 1 / 2 : 1
 
-  const my_style = {
-    fill: 'black',
-    stroke: 'pink',
-    strokeWidth: 5
-  }
-
-  const body_style = {
+  const bodyStyle = {
     fill: state.color,
     stroke: 'black',
     strokeWidth: 3,
     opacity: opacity
   }
-  const roof_style = {
+  const roofStyle = {
     fill: state.color,
     opacity: opacity
   }
-  const main_body_style = {
+  const mainBodyStyle = {
     fill: state.color,
     stroke: 'black',
     strokeWidth: 2,
     opacity: opacity
   }
-  const glass_style = {
+  const glassStyle = {
     fill: 'white',
     stroke: 'gray',
     strokeWidth: 3,
     opacity: opacity
   }
-  const many_colored_fill = () => {
-    if (collision_detected) { return 'red' }
+  const manyColoredFill = () => {
+    if (collisionDetected) { return 'red' }
     if (ghost) { return 'yellow' }
     return 'white'
   }
-  const outline_style = {
-    fill: many_colored_fill(),
+  const outlineStyle = {
+    fill: manyColoredFill(),
     stroke: 'black',
     strokeWidth: 3,
-    opacity: collision_detected ? 1 : opacity
+    opacity: collisionDetected ? 1 : opacity
   }
 
-  const margin = temp_rect.width / 6
-  const smidge = temp_rect.width / 15 // bug?
-  const hood_length = 6 * margin
-  const windshield_margin = 2 * margin - smidge / 2
-  const roof_length = 3 * margin
-  const roof_width = temp_rect.width - (1.75 * windshield_margin)
+  const margin = tempRect.width / 6
+  const smidge = tempRect.width / 15 // bug?
+  const hoodLength = 6 * margin
+  const windshieldMargin = 2 * margin - smidge / 2
+  const roofLength = 3 * margin
+  const roofWidth = tempRect.width - (1.75 * windshieldMargin)
 
-  var rotate_point = {
-    x: temp_rect.BR_point().x,
-    y: temp_rect.BR_point().y
+  var rotatePoint = {
+    x: tempRect.brPoint().x,
+    y: tempRect.brPoint().y
   }
   // BUGBUG: Why + 90 degree rotation
-  var transform = `rotate(${temp_rect.facing + 90},
-                          ${rotate_point.x},
-                          ${rotate_point.y})`
+  var transform = `rotate(${tempRect.facing + 90},
+                          ${rotatePoint.x},
+                          ${rotatePoint.y})`
 
-  const show_inset = () => {
+  const showInset = () => {
     if (inset) {
-      return (<InsetLayout car={state} length={temp_rect.length} width={temp_rect.width} />)
+      return (<InsetLayout car={state} length={tempRect.length} width={tempRect.width} />)
     }
-  }
-
-  const changeDimensions = () => {
-    console.log('I AM HERE!!')
   }
 
   return (
     <g id={id } >
       { /* outline */ }
       <rect
-        x = { temp_rect.BR_point().x - temp_rect.width }
-        y = { temp_rect.BR_point().y - temp_rect.length }
-        width = { temp_rect.width }
-        height = { temp_rect.length }
-        style = { outline_style }
+        x = { tempRect.brPoint().x - tempRect.width }
+        y = { tempRect.brPoint().y - tempRect.length }
+        width = { tempRect.width }
+        height = { tempRect.length }
+        style = { outlineStyle }
         transform = { transform }
       />
       { /* body */ }
       <rect
-        rx = { temp_rect.width / 4 }
-        x = { temp_rect.BR_point().x - temp_rect.width + margin }
-        y = { temp_rect.BR_point().y - temp_rect.length + 2 * margin }
-        width = { temp_rect.width - 2 * margin }
-        height = { temp_rect.length - 3 * margin }
-        style = { main_body_style }
+        rx = { tempRect.width / 4 }
+        x = { tempRect.brPoint().x - tempRect.width + margin }
+        y = { tempRect.brPoint().y - tempRect.length + 2 * margin }
+        width = { tempRect.width - 2 * margin }
+        height = { tempRect.length - 3 * margin }
+        style = { mainBodyStyle }
         transform = { transform }
       />
       { /* windshield/back window */ }
       <rect
-        rx = { temp_rect.width / 8 }
-        x = { temp_rect.BR_point().x - temp_rect.width + windshield_margin }
-        y = { temp_rect.BR_point().y - temp_rect.length + 5.5 * margin }
-        width = { temp_rect.width - 2 * windshield_margin }
-        height = { 1.5 * roof_length }
-        style = { glass_style }
+        rx = { tempRect.width / 8 }
+        x = { tempRect.brPoint().x - tempRect.width + windshieldMargin }
+        y = { tempRect.brPoint().y - tempRect.length + 5.5 * margin }
+        width = { tempRect.width - 2 * windshieldMargin }
+        height = { 1.5 * roofLength }
+        style = { glassStyle }
         transform = { transform }
       />
       { /* side windows */ }
       <rect
-        rx = { temp_rect.width / 8 }
-        x = { temp_rect.BR_point().x - temp_rect.width / 2 - (roof_width + smidge) / 2 }
-        y = { temp_rect.BR_point().y - temp_rect.length + hood_length + 2 * smidge }
-        width = { roof_width + smidge }
-        height = { roof_length - smidge }
-        style = { glass_style }
+        rx = { tempRect.width / 8 }
+        x = { tempRect.brPoint().x - tempRect.width / 2 - (roofWidth + smidge) / 2 }
+        y = { tempRect.brPoint().y - tempRect.length + hoodLength + 2 * smidge }
+        width = { roofWidth + smidge }
+        height = { roofLength - smidge }
+        style = { glassStyle }
         transform = { transform }
       />
       { /* roof */ }
       <rect
-        rx = { temp_rect.width / 8 }
-        x = { temp_rect.BR_point().x - temp_rect.width / 2 - roof_width / 2 }
-        y = { temp_rect.BR_point().y - temp_rect.length + hood_length + smidge * 3 / 2 }
-        width = { roof_width }
-        height = { roof_length }
-        style = { roof_style }
+        rx = { tempRect.width / 8 }
+        x = { tempRect.brPoint().x - tempRect.width / 2 - roofWidth / 2 }
+        y = { tempRect.brPoint().y - tempRect.length + hoodLength + smidge * 3 / 2 }
+        width = { roofWidth }
+        height = { roofLength }
+        style = { roofStyle }
         transform = { transform }
       />
       { /* front pip */ }
       <circle
         visibility = {(!inset) ? 'visible' : 'hidden' }
-        cx = { temp_rect.BR_point().x - temp_rect.width / 2 }
-        cy = { temp_rect.BR_point().y - temp_rect.length + 2 + smidge }
-        r = { temp_rect.width / 16 }
-        style = { body_style }
+        cx = { tempRect.brPoint().x - tempRect.width / 2 }
+        cy = { tempRect.brPoint().y - tempRect.length + 2 + smidge }
+        r = { tempRect.width / 16 }
+        style = { bodyStyle }
         transform = { transform }
       />
-      { show_inset() }
+      { showInset() }
     </g>
   )
 }

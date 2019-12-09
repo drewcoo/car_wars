@@ -1,34 +1,36 @@
 import Point from '../../utils/Point'
 import { COMPASS } from '../../utils/constants'
-import { degrees_equal, degrees_to_radians } from '../../utils/conversions'
+import { degreesEqual } from '../../utils/conversions'
 import Factory from './Factory'
 
 describe('Point', () => {
   describe('#constuctor', () => {
     it('throws on undefined inputs', () => {
-      expect(function () { new Point({}) }).toThrow(Error)
+      expect(function () {
+        return new Point({})
+      }).toThrow(Error)
     })
   })
 
-  describe('#to_array', () => {
+  describe('#toArray', () => {
     it('can return an array', () => {
       const point = Factory.Point()
-      expect(point.to_array()).toEqual([point.x, point.y])
+      expect(point.toArray()).toEqual([point.x, point.y])
     })
   })
 
-  describe('#rotate_around', () => {
+  describe('#rotateAround', () => {
     it('can rotate 90 degrees clockwise around a point', () => {
       const init = new Point({ x: 2, y: 1 })
       const fulcrum = new Point({ x: 1, y: 1 })
-      const result = init.rotate_around({ fulcrum: fulcrum, degrees: 90 })
-      expect(result.to_array()).toEqual([1, 2])
+      const result = init.rotateAround({ fulcrum: fulcrum, degrees: 90 })
+      expect(result.toArray()).toEqual([1, 2])
     })
 
     it('can rotate 90 degrees counterclockwise around a point', () => {
       const init = new Point({ x: 1, y: 2 })
       const fulcrum = new Point({ x: 1, y: 1 })
-      const result = init.rotate_around({ fulcrum: fulcrum, degrees: -90 })
+      const result = init.rotateAround({ fulcrum: fulcrum, degrees: -90 })
       const expected = new Point({ x: 2, y: 1 })
       expect(result.equals(expected)).toBe(true)
     })
@@ -49,17 +51,17 @@ describe('Point', () => {
     expect(initial.y.toFixed(digits)).toEqual(fixed.y)
   })
 
-  describe('#degrees_to', () => {
+  describe('#degreesTo', () => {
     it('returns degrees to NORTH', () => {
       const p1 = new Point({ x: 3, y: 3 })
       const p2 = new Point({ x: 3, y: 0 })
-      expect(degrees_equal(p1.degrees_to(p2), COMPASS.NORTH)).toBe(true)
+      expect(degreesEqual(p1.degreesTo(p2), COMPASS.NORTH)).toBe(true)
     })
 
     it('returns degrees to WEST', () => {
       const p1 = new Point({ x: 3, y: 3 })
       const p2 = new Point({ x: 0, y: 3 })
-      expect(degrees_equal(p1.degrees_to(p2), COMPASS.WEST)).toBe(true)
+      expect(degreesEqual(p1.degreesTo(p2), COMPASS.WEST)).toBe(true)
     })
   })
 

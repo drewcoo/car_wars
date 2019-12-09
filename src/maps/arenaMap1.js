@@ -10,7 +10,7 @@ export const MAP_SIZE = {
 
 const place = ({ x, y, facing, length, width }) => {
   return new Rectangle({
-    BR_point: new Point({ x: x, y: y }),
+    brPoint: new Point({ x: x, y: y }),
     facing: facing,
     length: length,
     width: width

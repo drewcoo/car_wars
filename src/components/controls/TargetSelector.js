@@ -23,13 +23,9 @@
 //
 
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { weapon_set } from '../../redux'
 
-const Weapon = (props) => {
-  const dispatch = useDispatch()
-
-  const option_style = {
+const Target = (props) => {
+  const optionStyle = {
     background: 'black',
     color: 'white',
     fontSize: '24px',
@@ -37,36 +33,17 @@ const Weapon = (props) => {
     fontVariant: 'small-caps'
   }
 
-  const players = useSelector((state) => state.players)
-  const cars = useSelector((state) => state.cars)
-  const get_current_car = () => {
-    const player_color = players.all[players.current_index].color
-    const car_color = player_color
-    return cars.find(function (elem) { return elem.color === car_color })
-  }
-
-  const weapons = get_current_car().design.components.weapons
-
-  const list_weapons = () => {
-    var result = []
-    for (var i = 0; i < weapons.length; i++) {
-      result.push(<option key={i} value={i}>{weapons[i].abbreviation} - {weapons[i].location}</option>)
-    }
-    return result
-  }
-
-  const onChange = (event) => {
-    dispatch(weapon_set({
-      id: get_current_car().id,
-      weapon: event.target.value
-    }))
-  }
+  // const nonSelectColor_override = {
+  //  color: 'darkgray',
+  // };
 
   return (
-    <select id='weapon' style={option_style} value={get_current_car().phasing.weapon_index} onChange={onChange}>
-      { list_weapons() }
+    <select id='target' style={optionStyle}>
+      <option>what</option>
+      <option>goes</option>
+      <option>here?</option>
     </select>
   )
 }
 
-export default Weapon
+export default Target

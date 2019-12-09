@@ -23,18 +23,13 @@
 //
 
 import React from 'react'
-
 import { useDispatch, useSelector } from 'react-redux'
+import { weaponSet } from '../../redux'
 
-import { maneuver_set } from '../../redux'
-
-// ghost_forward, ghost_reset, ghost_turn_bend, ghost_move_drift,
-// accept_move } from '../redux';
-
-const Maneuver = (props) => {
+const Weapon = (props) => {
   const dispatch = useDispatch()
 
-  const option_style = {
+  const optionStyle = {
     background: 'black',
     color: 'white',
     fontSize: '24px',
@@ -42,51 +37,36 @@ const Maneuver = (props) => {
     fontVariant: 'small-caps'
   }
 
-  // const non_select_color_override = {
-  //  color: 'darkgray',
-  // };
-
-  const hidden_style = {
-    visibility: 'hidden'
-  }
-
   const players = useSelector((state) => state.players)
   const cars = useSelector((state) => state.cars)
-  const get_current_car = () => {
-    var player_color = players.all[players.current_index].color
-    var car_color = player_color
-    return cars.find(function (elem) { return elem.color === car_color })
+  const getCurrentCar = () => {
+    const playerColor = players.all[players.currentIndex].color
+    const carColor = playerColor
+    return cars.find(function (elem) { return elem.color === carColor })
   }
 
-  const onChange = (event) => {
-    dispatch(maneuver_set({
-      id: get_current_car().id,
-      maneuver_index: event.target.value
-    }))
-  }
+  const weapons = getCurrentCar().design.components.weapons
 
-  const list_maneuvers = () => {
-    const car = get_current_car()
+  const listWeapons = () => {
     var result = []
-    for (var i = 0; i < car.status.maneuvers.length; i++) {
-      result.push(<option key={i} value={i}>{car.status.maneuvers[i]}</option>)
+    for (var i = 0; i < weapons.length; i++) {
+      result.push(<option key={i} value={i}>{weapons[i].abbreviation} - {weapons[i].location}</option>)
     }
     return result
   }
 
+  const onChange = (event) => {
+    dispatch(weaponSet({
+      id: getCurrentCar().id,
+      weapon: event.target.value
+    }))
+  }
+
   return (
-    <span>
-      <select id='maneuver' style={option_style} value={get_current_car().phasing.maneuver_index} onChange={onChange}>
-        {list_maneuvers()}
-      </select>
-      <span>&nbsp;&nbsp;</span>
-      <select id='degrees' style={hidden_style} defaultValue='0'>
-        <option>-1</option>
-        <option>0</option>
-        <option>1</option>
-      </select>
-    </span>
+    <select id='weapon' style={optionStyle} value={getCurrentCar().phasing.weaponIndex} onChange={onChange}>
+      { listWeapons() }
+    </select>
   )
 }
 
-export default Maneuver
+export default Weapon

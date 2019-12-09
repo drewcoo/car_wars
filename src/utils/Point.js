@@ -1,7 +1,7 @@
 import Intersection from './Intersection'
 import Rectangle from './Rectangle'
 import Segment from './Segment'
-import { degrees_to_radians } from './conversions'
+import { degreesToRadians } from './conversions'
 
 class Point {
   constructor ({ x, y }) {
@@ -12,7 +12,7 @@ class Point {
     }
   }
 
-  to_array () {
+  toArray () {
     return [this.x, this.y]
   }
 
@@ -33,25 +33,25 @@ class Point {
            this.y.toFixed(2) === point2.y.toFixed(2)
   }
 
-  degrees_to (point) {
+  degreesTo (point) {
     return (Math.atan2((point.y - this.y), (point.x - this.x)) * 180 / Math.PI)
   }
 
-  distance_to (point) {
+  distanceTo (point) {
     return Math.sqrt(Math.pow(this.x - point.x, 2) +
                      Math.pow(this.y - point.y, 2))
   }
 
-  intersects (thing) { return this.is_intersecting(thing) }
+  intersects (thing) { return this.isIntersecting(thing) }
 
-  is_intersecting (thing) {
+  isIntersecting (thing) {
     switch (true) {
       case thing instanceof Point:
-        return Intersection.point_point_exists({ point2: thing, point: this })
+        return Intersection.pointPointExists({ point2: thing, point: this })
       case thing instanceof Segment:
-        return Intersection.point_segment_exists({ point: this, segment: thing })
+        return Intersection.pointSegmentExists({ point: this, segment: thing })
       case thing instanceof Rectangle:
-        return Intersection.rectangle_point_exists({ rectangle: thing, point: this })
+        return Intersection.rectanglePointExists({ rectangle: thing, point: this })
       default:
         throw new Error(`Checking intersection of unrecognized thing: ${thing}`)
     }
@@ -61,7 +61,7 @@ class Point {
     if (degrees != null && radians != null) {
       throw new Error('Can only pass degrees or radians!')
     }
-    const rads = radians || degrees_to_radians(degrees)
+    const rads = radians || degreesToRadians(degrees)
     return new Point({
       x: this.x + distance * Math.cos(rads),
       y: this.y + distance * Math.sin(rads)
@@ -72,13 +72,13 @@ class Point {
     return JSON.stringify(this)
   }
 
-  rotate_around ({ fulcrum, degrees }) {
-    const radians = degrees_to_radians(degrees) +
+  rotateAround ({ fulcrum, degrees }) {
+    const radians = degreesToRadians(degrees) +
                       Math.atan2((this.y - fulcrum.y), (this.x - fulcrum.x))
-    const dist = fulcrum.distance_to(this)
-    const new_x = Math.cos(radians) * dist + fulcrum.x
-    const new_y = Math.sin(radians) * dist + fulcrum.y
-    return new Point({ x: new_x, y: new_y })
+    const dist = fulcrum.distanceTo(this)
+    const newX = Math.cos(radians) * dist + fulcrum.x
+    const newY = Math.sin(radians) * dist + fulcrum.y
+    return new Point({ x: newX, y: newY })
   }
 }
 export default Point

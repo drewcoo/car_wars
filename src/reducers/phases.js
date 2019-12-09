@@ -8,7 +8,7 @@ export const phasesSlice = createSlice({
   slice: 'phases',
   initialState: initialPhaseInfo,
   reducers: {
-    turn_next (state, action) {
+    turnNext (state, action) {
       state.number++
       // bump hc up
       // mark cars to be able to change speed

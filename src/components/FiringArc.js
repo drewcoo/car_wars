@@ -1,11 +1,5 @@
 import React from 'react'
-// import Car from './Car';
 import { useSelector } from 'react-redux'
-
-import { WallData } from '../maps/arena_map_1'
-import Rectangle from '../utils/Rectangle'
-import Segment from '../utils/Segment'
-import Point from '../utils/Point'
 import CrewMember from '../reducers/lib/CrewMember'
 import Weapon from '../reducers/lib/Weapon'
 
@@ -13,99 +7,96 @@ import { FACE, INCH } from '../utils/constants'
 
 const FiringArc = () => {
   const players = useSelector((state) => state.players)
-  const current_player = players.all[players.current_index]
   const cars = useSelector((state) => state.cars)
-  const get_current_car = () => {
-    const player_color = players.all[players.current_index].color
-    return cars.find(function (car) { return car.color === player_color })
+  const getCurrentCar = () => {
+    const playerColor = players.all[players.currentIndex].color
+    return cars.find(function (car) { return car.color === playerColor })
   }
 
-  const car = get_current_car()
+  const car = getCurrentCar()
+  const currentWeapon = car.design.components.weapons[car.phasing.weaponIndex]
+  const currentCrewMember = car.design.components.crew.driver
 
-  const current_weapon = car.design.components.weapons[car.phasing.weapon_index]
-  const current_crew_member = car.design.components.crew.driver
-  // if (!Weapon.can_fire(current_weapon)) { return; }
-
-  const draw_arc = () => {
-    if (!(Weapon.can_fire(current_weapon) &&
-           CrewMember.can_fire(current_crew_member))) { return }
-    const arc_facing = current_weapon.location
+  const drawArc = () => {
+    if (!(Weapon.canFire(currentWeapon) &&
+           CrewMember.canFire(currentCrewMember))) { return }
+    const arcFacing = currentWeapon.location
 
     const rect = car.phasing.rect
-    const arc_ray_len = 50 * INCH
+    const arcRayLen = 50 * INCH
 
-    const arc_sides = (inches) => {
+    const arcSides = (inches) => {
       var left = null
       var right = null
-      switch (arc_facing) {
-        // Could do all of these with rect FL_angle, FR_angle, BR_angle, and BL_angle
+      switch (arcFacing) {
+        // Could do all of these with rect flAngle, frAngle, brAngle, and blAngle
         case 'F':
         case 'B':
           left = rect.center().move({
-            degrees: rect.facing + FACE[arc_facing] + 30,
+            degrees: rect.facing + FACE[arcFacing] + 30,
             distance: inches * INCH
           })
           right = rect.center().move({
-            degrees: rect.facing + FACE[arc_facing] - 30,
+            degrees: rect.facing + FACE[arcFacing] - 30,
             distance: inches * INCH
           })
           break
         case 'L':
         case 'R':
           left = rect.center().move({
-            degrees: rect.facing + FACE[arc_facing] + 60,
+            degrees: rect.facing + FACE[arcFacing] + 60,
             distance: inches * INCH
           })
           right = rect.center().move({
-            degrees: rect.facing + FACE[arc_facing] - 60,
+            degrees: rect.facing + FACE[arcFacing] - 60,
             distance: inches * INCH
           })
           break
         case 'none':
           return null
         default:
-          throw Error(`ERROR: UNKNOWN ${arc_facing}`)
+          throw Error(`ERROR: UNKNOWN ${arcFacing}`)
       }
       return ({
-        facing: rect.facing + FACE[arc_facing],
+        facing: rect.facing + FACE[arcFacing],
         left: left,
         right: right
       })
     }
 
-    if (arc_sides() === null) { return }
+    if (arcSides() === null) { return }
 
-    const text_loc = (inches) => {
-      return rect.center().move({ degrees: arc_sides().facing, distance: inches * INCH })
+    const textLoc = (inches) => {
+      return rect.center().move({ degrees: arcSides().facing, distance: inches * INCH })
     }
 
-    const arc_fill = () => {
-      const sides = arc_sides(arc_ray_len)
+    const arcFill = () => {
+      const sides = arcSides(arcRayLen)
       if (sides === null) { return }
       return (
         <path
-          d={`M${arc_sides(arc_ray_len).left.x},${arc_sides(arc_ray_len).left.y}
-              A${arc_ray_len},${arc_ray_len} 0 0,0 ${arc_sides(arc_ray_len).right.x},${arc_sides(arc_ray_len).right.y}
+          d={`M${arcSides(arcRayLen).left.x},${arcSides(arcRayLen).left.y}
+              A${arcRayLen},${arcRayLen} 0 0,0 ${arcSides(arcRayLen).right.x},${arcSides(arcRayLen).right.y}
               L${rect.center().x},${rect.center().y}
-              L${arc_sides(arc_ray_len).left.x},${arc_sides(arc_ray_len).left.y}`}
-          style={ filled_arc_style }
+              L${arcSides(arcRayLen).left.x},${arcSides(arcRayLen).left.y}`}
+          style={ filledArcStyle }
         />
       )
     }
 
     // Change this to show the +4 inside the 1" arc?
-    const arc_at_inches = ({ label, inches }) => {
+    const arcAtInches = ({ label, inches }) => {
       return (
         <g key={`arc-${inches}-in`}>
           <path
-            d={`M${arc_sides(inches).left.x},${arc_sides(inches).left.y}
-              A${inches * INCH},${inches * INCH} 0 0,0 ${arc_sides(inches).right.x},${arc_sides(inches).right.y}`}
-            style={ arc_style }
+            d={`M${arcSides(inches).left.x},${arcSides(inches).left.y}
+              A${inches * INCH},${inches * INCH} 0 0,0 ${arcSides(inches).right.x},${arcSides(inches).right.y}`}
+            style={ arcStyle }
           />
           <text
-            x={text_loc(inches).x}
-            y={text_loc(inches).y}
-            style= { arc_text_style }
+            x={textLoc(inches).x}
+            y={textLoc(inches).y}
+            style= { arcTextStyle }
           >
             { label }
           </text>
@@ -113,8 +104,8 @@ const FiringArc = () => {
       )
     }
 
-    const arc_facing_distance_mod = () => {
-      switch (arc_facing) {
+    const arcFacingDistanceMod = () => {
+      switch (arcFacing) {
         case 'F':
         case 'B':
           return 0.5
@@ -126,42 +117,42 @@ const FiringArc = () => {
       }
     }
 
-    const arc_increments = () => {
+    const arcIncrements = () => {
       var result = {}
-      result[arc_facing_distance_mod() + 1] = '+4'
+      result[arcFacingDistanceMod() + 1] = '+4'
       var modifier = 0
-      for (var i = arc_facing_distance_mod() + 4; i < 50; i += 4) {
+      for (var i = arcFacingDistanceMod() + 4; i < 50; i += 4) {
         result[i] = --modifier
       }
       return result
     }
 
     return (
-      <g key={`${get_current_car().id}-arc`}>
-        { arc_fill() }
-        { Object.keys(arc_increments()).map(function (key) {
-          return arc_at_inches({ label: arc_increments()[key], inches: key })
+      <g key={`${getCurrentCar().id}-arc`}>
+        { arcFill() }
+        { Object.keys(arcIncrements()).map(function (key) {
+          return arcAtInches({ label: arcIncrements()[key], inches: key })
         })
         }
       </g>
     )
   }
 
-  const filled_arc_style = {
+  const filledArcStyle = {
     fill: 'yellow',
     //  stroke: 'orange',
     //  strokeWidth: 5,
     opacity: 0.20
   }
 
-  const arc_style = {
+  const arcStyle = {
     fill: 'none',
     stroke: 'red',
     // strokeWidth: 5,
     opacity: 0.8
   }
 
-  const arc_text_style = {
+  const arcTextStyle = {
     fill: 'red',
     fontSize: '16px',
     fontFamily: 'fantasy',
@@ -171,7 +162,7 @@ const FiringArc = () => {
 
   return (
     <g>
-      { draw_arc() }
+      { drawArc() }
     </g>
   )
 }

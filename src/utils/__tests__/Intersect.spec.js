@@ -1,3 +1,4 @@
+/*
 import Intersection from '../../utils/Intersection'
 
 describe('Intersection', () => {
@@ -5,3 +6,4 @@ describe('Intersection', () => {
 
   })
 })
+*/
