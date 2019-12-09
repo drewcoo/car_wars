@@ -155,15 +155,10 @@ export const carsSlice = createSlice({
       // BUGBUG: We shouldn't allow other actions (firing) from the
       // nom-final position.
       /// /////////////////////////////////////
-      car.phasing.collisions.map((coll) => {
-        console.log('my coll is . . .')
-        console.log(coll)
-        // BUGBUG: Extra buggy when we collide with more than one thing, I think.
+      for (const coll of car.phasing.collisions) {
         console.log(`unresolved collision with: ${coll.rammed.id}`)
-        console.log('hi')
-        // BUGBUG: Chokes on cars.
         Collisions.resolve({ car, collision: coll })
-      })
+      }
 
       /// /////////////////////////////////////
       car.status.handling -= car.phasing.difficulty
@@ -174,12 +169,12 @@ export const carsSlice = createSlice({
       PhasingMove.reset({ car })
       /// ////
       // BUGBUG: once per turn at and of turn instead:
-      state.map((Car) => {
+      for (const Car of state) {
         Car.design.components.crew.driver.fired_this_turn = false
-        Car.design.components.weapons.map((Weapon) => {
+        for (const Weapon of Car.design.components.weapons) {
           Weapon.fired_this_turn = false
-        })
-      })
+        }
+      }
       /// ////
 
       Collisions.clear({ cars: state })

@@ -79,7 +79,7 @@ export class Collisions {
     cars.forEach(function (car) {
       if (car.id === thisCar.id) { return }
 
-      var rammer = { rammed: car.id }
+      var rammer = { rammed: { id: car.id } }
       var rammed = { rammedBy: thisCar.id }
 
       // var skew = thisCar.phasing.rect.intersectRectangle( car.rect);
@@ -207,11 +207,9 @@ export class Collisions {
   }
 
   static resolve ({ car, collision }) {
-    if (collision.rammed.id.match(/wall/)) {
-      console.log(`hit a wall: ${collision.rammed.id}`)
+    if (collision.rammed.id.match(/car|wall/)) {
+      console.log(`hit: ${collision.rammed.id}`)
       console.log(`type: ${collision.type}`)
-    } else if (collision.rammed.id.match(/car/)) {
-      console.log(`hit a car: ${collision.rammed.id}`)
     } else {
       throw new Error(`unknown rammed thing: "${collision}"`)
     }
