@@ -1,7 +1,9 @@
 import React from 'react'
-import { genericComponentStyle, genericRedStyle } from './style'
+import Component from './GenericComponent'
 
 export const Tire = ({ car, length, width, front, left }) => {
+  const component = new Component({ width, length })
+
   const locationName = () => {
     var result = front ? 'F' : 'B'
     result += left ? 'L' : 'R'
@@ -28,7 +30,7 @@ export const Tire = ({ car, length, width, front, left }) => {
         y = { front ? length * 18 / 64 : length * 42 / 64 }
         width = { width * 8 / 64 }
         height = { length * 11 / 64 }
-        style = { DP < 1 ? genericRedStyle : genericComponentStyle }
+        style = { DP < 1 ? component.style.red : component.style.default }
       />
       <text x={ textX(left) } y={ textY(front) }> { DP } </text>
     </g>

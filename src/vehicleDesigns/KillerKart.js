@@ -1,3 +1,5 @@
+import { NULL_WEAPON, MG, HR, RL, L } from './Weapons'
+
 export const KillerKart = {
   attributes: {
     size: 'subcompact',
@@ -41,39 +43,12 @@ export const KillerKart = {
       type: 'HD',
       damagePoints: 6
     }],
-    weapons: [{
-      type: 'machine_gun',
-      abbreviation: 'MG',
-      location: 'F',
-      ammo: 20,
-      toHit: 7,
-      damage: '1d',
-      damagePoints: 3,
-      effect: 'area',
-      fired_this_turn: false
-    },
-    {
-      type: 'none',
-      abbreviation: 'n/a',
-      location: 'none',
-      ammo: 0,
-      toHit: 0,
-      damage: '0d',
-      damagePoints: 0,
-      effect: 'area',
-      fired_this_turn: false
-    },
-    {
-      type: 'machine_gun',
-      abbreviation: 'MG',
-      location: 'R',
-      ammo: 20,
-      toHit: 7,
-      damage: '1d',
-      damagePoints: 3,
-      effect: 'area',
-      fired_this_turn: false
-    }
+    weapons: [
+      NULL_WEAPON(),
+      MG('F'),
+      RL('R'),
+      HR('B'),
+      L('L')
     ]
   }
 }

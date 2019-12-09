@@ -1,20 +1,41 @@
 import React from 'react'
-import { genericComponentStyle, genericRedStyle } from './style'
+import Component from './GenericComponent'
 
 // BUGBUG: This is a kludge to just get Killer Karts going.
 export const FrontMG = ({ car, width, length }) => {
-  const DP = car.design.components.weapons[0].damagePoints
+  const weaponIndex = 1
+  const DP = car.design.components.weapons[weaponIndex].damagePoints
+  const ammo = car.design.components.weapons[weaponIndex].ammo
+  const name = car.design.components.weapons[weaponIndex].abbreviation
+
+  const x = width * 23 / 64
+  const y = length * 10 / 64
+
+  const component = new Component({ length, width })
+
   return (
     <g>
       <rect
-        x = { width * 23 / 64}
-        y = { length * 10 / 64 }
-        width = { width * 18 / 64 }
-        height = { length * 9 / 64 }
-        style = { DP < 1 ? genericRedStyle : genericComponentStyle }
+        x = { x }
+        y = { y }
+        width = { component.width }
+        height = { component.length }
+        style = { DP < 1 ? component.style.red : component.style.default }
       />
-      <text x={ width * 24 / 64 } y={ length * 14 / 64 }>mg { car.design.components.weapons[0].ammo }</text>
-      <text x={ width * 30 / 64 } y={ length * 18 / 64 }> { DP } </text>
+      <text
+        x={ x }
+        y={ y + component.row1 }
+        dx={ component.indent() }
+        style={ component.style.name }>
+        { name } { ammo }
+      </text>
+      <text
+        x={ x }
+        y={ y + component.row2 }
+        dx={ component.centerX }>
+        { DP }
+      </text>
+
     </g>
   )
 }
