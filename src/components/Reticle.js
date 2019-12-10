@@ -26,7 +26,6 @@ const Reticle = ({ color = 'red', x = 160, y = 160 }) => {
       console.log('car.phasing.targets[car.phasing.targetIndex]')
       console.log(car.phasing.targets[car.phasing.targetIndex])
       var prettyName = (target.name.length === 2) ? ' tire' : ''
-
       var mod = (target.name === 'F' || target.name === 'B') ? -1 : 0
 
       // BUGBUG: middle is wrong.
@@ -79,7 +78,7 @@ const Reticle = ({ color = 'red', x = 160, y = 160 }) => {
     return (
       <g key={ `target-${x}=${y}` } style={ reticleStyle }>
         <text x ={ x + 12 } y={ y - 12 } style={ reticleText }>{name}</text>
-        <circle cx={ x } cy={ y } r={ 12 } />
+        <circle id='reticle' cx={ x } cy={ y } r={ 12 } />
         <circle cx={ x } cy={ y } r={ 7 } />
         <circle cx={ x } cy={ y } r={ 2 } />
         <line x1={ x - 17 } y1={ y } x2={ x + 17 } y2={ y } />

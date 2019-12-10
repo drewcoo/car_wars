@@ -29,7 +29,7 @@ const KeystrokeInput = () => {
     previousManeuver: 'shift+m',
     nextWeapon: 'w',
     previousWeapon: 'shift+w',
-    next_target: 't',
+    nextTarget: 't',
     previous_target: 'shift+t',
     acceptMove: 'enter',
     turnLeft: ['z', 'shift+x'],
@@ -37,9 +37,9 @@ const KeystrokeInput = () => {
     home: '.'
   }
 
-  var viewCurrentCar = () => {
-    var car = getCurrentCar()
-    var element = document.getElementById(car.id)
+  var viewElement = (id) => {
+    var element = document.getElementById(id)
+    if (!element) { return }
     element.scrollIntoViewIfNeeded() // scrollIntoView();//{ block: 'center', inline: 'center' });
     element.scrollIntoView({ block: 'center', inline: 'center' })
   }
@@ -61,7 +61,6 @@ const KeystrokeInput = () => {
 
   const turnRight = (fRight) => {
     var car = getCurrentCar()
-    // viewCurrentCar();
     switch (currentManeuver(car)) {
       case 'forward':
         dispatch(maneuverSet({
@@ -87,31 +86,39 @@ const KeystrokeInput = () => {
 
   const handlers = {
     nextManeuver: (event) => {
-      viewCurrentCar()
       var car = getCurrentCar()
+      viewElement(car.id)
       dispatch(maneuverNext(car))
       dispatch(ghostShowCollisions(car))
       showHideCar(car, 1)
     },
     previousManeuver: (event) => {
       var car = getCurrentCar()
+      viewElement(car.id)
       dispatch(maneuverPrevious(car))
       dispatch(ghostShowCollisions(car))
       showHideCar(car, -1)
     },
     nextWeapon: (event) => {
-      dispatch(weaponNext(getCurrentCar()))
+      var car = getCurrentCar()
+      viewElement(car.id)
+      dispatch(weaponNext(car))
     },
     previousWeapon: (event) => {
-      dispatch(weaponPrevious(getCurrentCar()))
+      var car = getCurrentCar()
+      viewElement(car.id)
+      dispatch(weaponPrevious(car))
     },
-    next_target: (event) => {
+    nextTarget: (event) => {
       dispatch(ghostTargetNext(getCurrentCar()))
+      viewElement('reticle')
     },
     previous_target: (event) => {
       dispatch(ghostTargetPrevious(getCurrentCar()))
+      viewElement('reticle')
     },
     fireWeapon: (event) => {
+      viewElement('reticle')
       dispatch(ghostFire(getCurrentCar()))
     },
     acceptMove: (event) => {
@@ -121,20 +128,24 @@ const KeystrokeInput = () => {
       if (moved) {
         dispatch(acceptMove(car))
         dispatch(playerNext())
+        viewElement('ghost')
       }
     },
     turnRight: (event) => {
+      viewElement(getCurrentCar().id)
       turnRight(true)
     },
     turnLeft: (event) => {
+      viewElement(getCurrentCar().id)
       turnRight(false)
     },
     home: (event) => {
-      viewCurrentCar()
+      var car = getCurrentCar()
+      viewElement(car.id)
       // console.log(`car id: ${car.id}`);
       // var element = document.getElementById(car.id);
       // element.scrollIntoView({block: 'center', inline: 'center'});
-      dispatch(ghostReset(getCurrentCar()))
+      dispatch(ghostReset(car))
     }
   }
 

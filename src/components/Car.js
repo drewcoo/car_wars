@@ -87,7 +87,7 @@ const Car = ({ id, state, inset = false, ghost = false }) => {
   }
 
   return (
-    <g id={id } >
+    <g id={ id } >
       { /* outline */ }
       <rect
         x = { tempRect.brPoint().x - tempRect.width }
