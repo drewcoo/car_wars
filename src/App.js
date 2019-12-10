@@ -14,6 +14,8 @@ import CarInset from './components/CarInset'
 import CarStats from './components/CarStats'
 
 import PlayerName from './components/PlayerName'
+import Phase from './components/timing/Phase'
+import Turn from './components/timing/Turn'
 
 class App extends Component {
   componentDidMount () {
@@ -39,7 +41,11 @@ class App extends Component {
         <div>
           <div className='LeftColumn'>
             <div className='TitleRow'>
-              <span className='Title'>turn using:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x &lt;-- . --&gt; z</span>
+              <span className='Title'>Car Wars</span>
+              <span>
+                <Turn />
+                <Phase />
+              </span>
             </div>
             <div className='MapBorder'>
               <div className='ArenaMap'>

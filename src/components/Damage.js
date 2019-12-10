@@ -2,7 +2,8 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 
 const Damage = () => {
-  const players = useSelector((state) => state.players)
+//  const players = useSelector((state) => state.players)
+  const players = useSelector((state) => state.time.moveMe.players)
   const cars = useSelector((state) => state.cars)
   const getCurrentCar = () => {
     const playerColor = players.all[players.currentIndex].color

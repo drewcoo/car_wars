@@ -37,7 +37,8 @@ const Weapon = (props) => {
     fontVariant: 'small-caps'
   }
 
-  const players = useSelector((state) => state.players)
+  //  const players = useSelector((state) => state.players)
+  const players = useSelector((state) => state.time.moveMe.players)
   const cars = useSelector((state) => state.cars)
   const getCurrentCar = () => {
     const playerColor = players.all[players.currentIndex].color

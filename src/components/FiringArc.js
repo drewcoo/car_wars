@@ -6,7 +6,8 @@ import Weapon from '../reducers/lib/Weapon'
 import { FACE, INCH } from '../utils/constants'
 
 const FiringArc = () => {
-  const players = useSelector((state) => state.players)
+//  const players = useSelector((state) => state.players)
+  const players = useSelector((state) => state.time.moveMe.players)
   const cars = useSelector((state) => state.cars)
   const getCurrentCar = () => {
     const playerColor = players.all[players.currentIndex].color

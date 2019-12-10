@@ -50,7 +50,8 @@ const Maneuver = (props) => {
     visibility: 'hidden'
   }
 
-  const players = useSelector((state) => state.players)
+  // const players = useSelector((state) => state.players)
+  const players = useSelector((state) => state.time.moveMe.players)
   const cars = useSelector((state) => state.cars)
   const getCurrentCar = () => {
     var playerColor = players.all[players.currentIndex].color

@@ -2,15 +2,11 @@ import { combineReducers } from 'redux'
 import { configureStore, getDefaultMiddleware } from 'redux-starter-kit'
 
 import { carsSlice } from './reducers/cars'
-import { playersSlice } from './reducers/players'
-import { turnsSlice } from './reducers/turns'
-import { phasesSlice } from './reducers/phases'
+import { timeSlice } from './reducers/time'
 
 const reducer = combineReducers({
   cars: carsSlice.reducer,
-  players: playersSlice.reducer,
-  turns: turnsSlice.reducer,
-  phases: phasesSlice.reducer
+  time: timeSlice.reducer
 })
 
 export const store = configureStore({
@@ -28,6 +24,4 @@ export const {
   acceptMove,
   weaponNext, weaponPrevious, weaponSet
 } = carsSlice.actions
-export const { playerNext } = playersSlice.actions
-export const { turnNext } = turnsSlice.actions
-export const { phaseNext } = phasesSlice.actions
+export const { phaseNext, playerNext, currentPlayer } = timeSlice.actions

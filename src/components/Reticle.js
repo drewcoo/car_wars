@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux'
 import { INCH } from '../utils/constants'
 
 const Reticle = ({ color = 'red', x = 160, y = 160 }) => {
-  const players = useSelector((state) => state.players)
+//  const players = useSelector((state) => state.players)
+  const players = useSelector((state) => state.time.moveMe.players)
   const cars = useSelector((state) => state.cars)
   const getCurrentCar = () => {
     const playerColor = players.all[players.currentIndex].color
@@ -50,7 +51,6 @@ const Reticle = ({ color = 'red', x = 160, y = 160 }) => {
       return drawReticle({
         x: target.displayPoint.x,
         y: target.displayPoint.y,
-        // name: `${target.carId} ${target.name}`,
         name: `${mod > 0 ? '+' : ''}${mod}${prettyName}`
       })
     }
@@ -77,7 +77,7 @@ const Reticle = ({ color = 'red', x = 160, y = 160 }) => {
     console.log(`X: ${x}, Y: ${y}, Name: ${name}`)
     return (
       <g key={ `target-${x}=${y}` } style={ reticleStyle }>
-        <text x ={ x + 12 } y={ y - 12 } style={ reticleText }>{name}</text>
+        <text x ={ x + 12 } y={ y - 12 } style={ reticleText }>{ name }</text>
         <circle id='reticle' cx={ x } cy={ y } r={ 12 } />
         <circle cx={ x } cy={ y } r={ 7 } />
         <circle cx={ x } cy={ y } r={ 2 } />

@@ -15,7 +15,8 @@ import {
 const KeystrokeInput = () => {
   const dispatch = useDispatch()
   const cars = useSelector((state) => state.cars)
-  const players = useSelector((state) => state.players)
+  // const players = useSelector((state) => state.players)
+  const players = useSelector((state) => state.time.moveMe.players)
 
   const getCurrentCar = () => {
     var player = players.all[players.currentIndex]
