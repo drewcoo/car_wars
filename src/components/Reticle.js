@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { INCH } from '../utils/constants'
 
 const Reticle = ({ color = 'red', x = 160, y = 160 }) => {
-//  const players = useSelector((state) => state.players)
   const players = useSelector((state) => state.time.moveMe.players)
   const cars = useSelector((state) => state.cars)
   const getCurrentCar = () => {

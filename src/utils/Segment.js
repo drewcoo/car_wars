@@ -1,6 +1,5 @@
 import Point from './Point'
 import Intersection from './Intersection'
-// import {intersect} from 'mathjs'
 import { degreesParallel } from './conversions'
 
 class Segment {

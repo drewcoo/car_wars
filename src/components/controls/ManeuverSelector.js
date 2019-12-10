@@ -23,13 +23,8 @@
 //
 
 import React from 'react'
-
 import { useDispatch, useSelector } from 'react-redux'
-
 import { maneuverSet } from '../../redux'
-
-// ghostForward, ghostReset, ghostTurnBend, ghostMoveDrift,
-// acceptMove } from '../redux';
 
 const Maneuver = (props) => {
   const dispatch = useDispatch()
@@ -42,15 +37,10 @@ const Maneuver = (props) => {
     fontVariant: 'small-caps'
   }
 
-  // const nonSelectColor_override = {
-  //  color: 'darkgray',
-  // };
-
   const hiddenStyle = {
     visibility: 'hidden'
   }
 
-  // const players = useSelector((state) => state.players)
   const players = useSelector((state) => state.time.moveMe.players)
   const cars = useSelector((state) => state.cars)
   const getCurrentCar = () => {

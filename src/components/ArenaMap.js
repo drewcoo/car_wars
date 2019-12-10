@@ -13,9 +13,7 @@ import { MAP_SIZE } from '../maps/arenaMap1'
 
 const ArenaMap = () => {
   const cars = useSelector((state) => state.cars)
-  // const players = useSelector((state) => state.players)
   const players = useSelector((state) => state.time.moveMe.players)
-
   const getCarById = (id) => {
     return cars.find(function (elem) { return elem.id === id })
   }
@@ -32,10 +30,8 @@ const ArenaMap = () => {
         ))
       }
       <GhostCar />
-
       <Reticle />
       <Damage />
-
     </svg>
   )
 }

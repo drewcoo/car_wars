@@ -15,7 +15,6 @@ import {
 const KeystrokeInput = () => {
   const dispatch = useDispatch()
   const cars = useSelector((state) => state.cars)
-  // const players = useSelector((state) => state.players)
   const players = useSelector((state) => state.time.moveMe.players)
 
   const getCurrentCar = () => {
@@ -143,9 +142,6 @@ const KeystrokeInput = () => {
     home: (event) => {
       var car = getCurrentCar()
       viewElement(car.id)
-      // console.log(`car id: ${car.id}`);
-      // var element = document.getElementById(car.id);
-      // element.scrollIntoView({block: 'center', inline: 'center'});
       dispatch(ghostReset(car))
     }
   }

@@ -3,10 +3,8 @@ import Component from './GenericComponent'
 
 export const Driver = ({ car, width, length }) => {
   const DP = car.design.components.crew.driver.damagePoints
-
   const x = width * 23 / 64
   const y = length * 34 / 64
-
   const component = new Component({ length, width })
 
   return (

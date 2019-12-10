@@ -1,4 +1,3 @@
-// import {INCH} from '../../utils/constants';
 import Segment from '../../utils/Segment'
 import Point from '../../utils/Point'
 /*
@@ -9,7 +8,6 @@ Target = {
   segment: Segment,
   // ??? hitModifier(s):,
 }
-
 */
 
 export class Targets {
@@ -140,7 +138,6 @@ targetPointsInArc() {
 */
 
   targetPointsInArc () {
-    // var car = getCurrentCar();
     var weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
     var sourcePoint = this.car.phasing.rect.side(weaponLoc).middle()
 

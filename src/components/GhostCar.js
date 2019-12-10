@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux'
 import FiringArc from './FiringArc'
 
 const GhostCar = () => {
-//  const players = useSelector((state) => state.players)
   const players = useSelector((state) => state.time.moveMe.players)
   const cars = useSelector((state) => state.cars)
   const getCurrentCar = () => {

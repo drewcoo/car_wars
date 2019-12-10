@@ -89,7 +89,6 @@ const CarInset = () => {
   const id = 'inset'
   const scaling = 1 // inset ? 1 : 1;    ///5; //40/INCH : 1/10;
 
-  // const players = useSelector((state) => state.players)
   const players = useSelector((state) => state.time.moveMe.players)
   const currentPlayer = players.all[players.currentIndex]
   // BUGBUG: Should select current car.

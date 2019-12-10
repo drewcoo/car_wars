@@ -19,16 +19,12 @@ import Turn from './components/timing/Turn'
 
 class App extends Component {
   componentDidMount () {
-    console.log('mount')
-    // var car = getCurrentCar();
     var element = document.getElementById('ghost')
     element.scrollIntoViewIfNeeded() // scrollIntoView();//{ block: 'center', inline: 'center' });
     element.scrollIntoView({ block: 'center', inline: 'center' })
   }
 
   componentDidUpdate () {
-    console.log('hello')
-    // var car = getCurrentCar();
     var element = document.getElementById('ghost')
     element.scrollIntoViewIfNeeded() // scrollIntoView();//{ block: 'center', inline: 'center' });
     element.scrollIntoView({ block: 'center', inline: 'center' })

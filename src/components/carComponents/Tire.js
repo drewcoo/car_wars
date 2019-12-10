@@ -11,12 +11,12 @@ export const Tire = ({ car, length, width, front, left }) => {
   }
 
   const textX = (left) => {
-    // left / right
+    // left : right
     return left ? width * 11 / 64 : width * 48 / 64
   }
 
   const textY = (front) => {
-    // front / back
+    // front : back
     return front ? length * 25 / 64 : length * 49 / 64
   }
 

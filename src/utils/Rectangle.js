@@ -164,13 +164,6 @@ class Rectangle {
 
   arcForPoint (point) {
     var direction = this.center().degreesTo(point) % 360
-    /*
-console.log(`arcForPoint: direction === ${direction}`)
-console.log(`arcForPoint: this.flAngle() ==== ${this.flAngle()}`)
-console.log(`arcForPoint: this.frAngle() ==== ${this.frAngle()}`)
-console.log(`arcForPoint: this.brAngle() ==== ${this.brAngle()}`)
-console.log(`arcForPoint: this.blAngle() ==== ${this.blAngle()}`)
-*/
     if (this.angleDelta(direction, this.flAngle(), this.frAngle())) {
       return 'F'
     } else if (this.angleDelta(direction, this.frAngle(), this.brAngle())) {

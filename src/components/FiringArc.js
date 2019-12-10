@@ -2,18 +2,15 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import CrewMember from '../reducers/lib/CrewMember'
 import Weapon from '../reducers/lib/Weapon'
-
 import { FACE, INCH } from '../utils/constants'
 
 const FiringArc = () => {
-//  const players = useSelector((state) => state.players)
   const players = useSelector((state) => state.time.moveMe.players)
   const cars = useSelector((state) => state.cars)
   const getCurrentCar = () => {
     const playerColor = players.all[players.currentIndex].color
     return cars.find(function (car) { return car.color === playerColor })
   }
-
   const car = getCurrentCar()
   const currentWeapon = car.design.components.weapons[car.phasing.weaponIndex]
   const currentCrewMember = car.design.components.crew.driver

@@ -35,7 +35,6 @@ export const FrontMG = ({ car, width, length }) => {
         dx={ component.centerX }>
         { DP }
       </text>
-
     </g>
   )
 }

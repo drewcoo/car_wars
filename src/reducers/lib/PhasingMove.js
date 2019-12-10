@@ -27,9 +27,6 @@ export class PhasingMove {
     }
   }
 
-  // car.phasing.rect = PhasingMove.forward({ car, distance = INCH });
-  // car.phasing.rect = car.phasing.rect.move({distance: INCH, degrees: car.phasing.rect.facing });
-
   static forward ({ car, distance = INCH }) {
     return car.rect.move({ distance, degrees: car.rect.facing })
   }
@@ -72,7 +69,7 @@ export class PhasingMove {
     //  |
     // \|/
     //  V
-    // TODO: make this use firsst the new drift and then the new bend usage
+    // TODO: make this use first the new drift and then the new bend usage
     // Each possibility tries to make a complete move - that way we can ghost collisions
     const currentFacing = car.phasing.rect.facing - car.rect.facing
     const desiredFacing = currentFacing + degrees

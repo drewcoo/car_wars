@@ -1,5 +1,4 @@
 import React from 'react'
-// import MapLine from './MapLine';
 import { INCH } from '../utils/constants'
 import { MAP_SIZE } from '../maps/arenaMap1'
 
