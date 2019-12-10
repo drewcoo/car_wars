@@ -22,67 +22,62 @@
 // Cycling things should accept <Shift>+<key> to cycle in reverse direction.
 //
 
-
-import React from 'react';
-import { maneuver_set } from '../../redux';
-import { useSelector, useActions } from 'react-redux';
-
-//ghost_forward, ghost_reset, ghost_turn_bend, ghost_move_drift,
-//accept_move } from '../redux';
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { maneuverSet } from '../../redux'
 
 const Maneuver = (props) => {
-  const set_maneuver = useActions(maneuver_set);
+  const dispatch = useDispatch()
 
-  const option_style = {
+  const optionStyle = {
     background: 'black',
     color: 'white',
     fontSize: '24px',
     fontFamily: 'fantasy',
-    fontVariant: 'small-caps',
-  };
-
-  //const non_select_color_override = {
-  //  color: 'darkgray',
-  //};
-
-  const hidden_style = {
-    visibility: 'hidden',
+    fontVariant: 'small-caps'
   }
 
-  const players = useSelector((state) => state.players);
-  const cars = useSelector((state) => state.cars);
-  const get_current_car = () => {
-    var player_color = players.all[players.current_index].color;
-    var car_color = player_color;
-    return cars.find(function(elem) { return elem.color === car_color});
+  const hiddenStyle = {
+    visibility: 'hidden'
+  }
+
+  const players = useSelector((state) => state.time.moveMe.players)
+  const cars = useSelector((state) => state.cars)
+  const getCurrentCar = () => {
+    var playerColor = players.all[players.currentIndex].color
+    var carColor = playerColor
+    return cars.find(function (elem) { return elem.color === carColor })
   }
 
   const onChange = (event) => {
-    set_maneuver({ id:  get_current_car().id, maneuver_index: event.target.value });
-  };
+    dispatch(maneuverSet({
+      id: getCurrentCar().id,
+      maneuverIndex: event.target.value
+    }))
+  }
 
-  const list_maneuvers = () => {
-    const car = get_current_car();
-    var result = [];
+  const listManeuvers = () => {
+    const car = getCurrentCar()
+    var result = []
     for (var i = 0; i < car.status.maneuvers.length; i++) {
-      result.push(<option key={i} value={i}>{car.status.maneuvers[i]}</option>);
+      result.push(<option key={i} value={i}>{car.status.maneuvers[i]}</option>)
     }
-    return result;
+    return result
   }
 
   return (
     <span>
-      <select id='maneuver' style={option_style} value={get_current_car().phasing.maneuver_index} onChange={onChange}>
-        {list_maneuvers()}
+      <select id='maneuver' style={optionStyle} value={getCurrentCar().phasing.maneuverIndex} onChange={onChange}>
+        {listManeuvers()}
       </select>
       <span>&nbsp;&nbsp;</span>
-      <select id='degrees' style={hidden_style} defaultValue='0'>
+      <select id='degrees' style={hiddenStyle} defaultValue='0'>
         <option>-1</option>
         <option>0</option>
         <option>1</option>
       </select>
     </span>
-  );
-};
+  )
+}
 
-export default Maneuver;
+export default Maneuver

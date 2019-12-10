@@ -1,153 +1,149 @@
-import Point from '../../utils/Point';
-import { FACE, INCH } from '../../utils/constants';
+import { FACE, INCH } from '../../utils/constants'
 
 export class PhasingMove {
-  static nothing({ car }) {
-    console.log('nothing here');
-    console.log(car.id);
+  static nothing ({ car }) {
+    console.log('nothing here')
+    console.log(car.id)
   }
 
-  static has_moved({ car }) {
-    return !car.rect.BR_point().equals(car.phasing.rect.BR_point()) ||
-           car.rect.facing !== car.phasing.rect.facing;
+  static hasMoved ({ car }) {
+    return !car.rect.brPoint().equals(car.phasing.rect.brPoint()) ||
+           car.rect.facing !== car.phasing.rect.facing
   }
 
-  static reset({ car }) {
+  static reset ({ car }) {
     car.phasing = {
       rect: car.rect.clone(),
-      damage_marker_location: null,
-      damage_message: '',
+      damageMarkerLocation: null,
+      damageMessage: '',
       difficulty: 0,
-      //focus: true, do something with next player/next car instead.
-      maneuver_index: 0,
-      weapon_index: car.phasing.weapon_index,
+      // focus: true, do something with next player/next car instead.
+      maneuverIndex: 0,
+      weaponIndex: car.phasing.weaponIndex,
       targets: null,
-      target_index: 0, // BUGBUG: keep old targets? We want sustained fire . . .
-      collision_detected: false,
-      collisions: [],
-    };
+      targetIndex: 0, // BUGBUG: keep old targets? We want sustained fire . . .
+      collisionDetected: false,
+      collisions: []
+    }
   }
 
-  //car.phasing.rect = PhasingMove.forward({ car, distance = INCH });
-  //car.phasing.rect = car.phasing.rect.move({distance: INCH, direction: car.phasing.rect.facing });
-
-  static forward({ car, distance = INCH }) {
-    return car.rect.move({ distance, direction: car.rect.facing });
+  static forward ({ car, distance = INCH }) {
+    return car.rect.move({ distance, degrees: car.rect.facing })
   }
 
-  static bend({ car, degrees }) {
-    const current_facing_delta = car.phasing.rect.facing - car.rect.facing;
-    const desired_facing = current_facing_delta + degrees;
+  static bend ({ car, degrees }) {
+    const currentFacingDelta = car.phasing.rect.facing - car.rect.facing
+    const desiredFacing = currentFacingDelta + degrees
     // Can't turn more than 90 deg.
-    if (Math.abs(desired_facing) > 90) { return car.phasing.rect; }
+    if (Math.abs(desiredFacing) > 90) { return car.phasing.rect }
 
-    const facing_right = current_facing_delta > 0;
-    const facing_left  = current_facing_delta < 0;
-    const turning_right = degrees > 0;
-    const turning_left  = degrees < 0;
+    const facingRight = currentFacingDelta > 0
+    const facingLeft = currentFacingDelta < 0
+    const turningRight = degrees > 0
 
-    var result_rect = PhasingMove.forward({ car });
+    var resultRect = PhasingMove.forward({ car })
 
-    if (turning_right) {
-      if (!facing_left) {
-        result_rect = result_rect.right_corner_turn(desired_facing);
+    if (turningRight) {
+      if (!facingLeft) {
+        resultRect = resultRect.rightCornerTurn(desiredFacing)
       } else /* facing left */ {
-        result_rect = result_rect.left_corner_turn(desired_facing);
+        resultRect = resultRect.leftCornerTurn(desiredFacing)
       }
     } else /* turning left */ {
-      if (!facing_right) {
-        result_rect = result_rect.left_corner_turn(desired_facing);
+      if (!facingRight) {
+        resultRect = resultRect.leftCornerTurn(desiredFacing)
       } else /* facing right */ {
-        result_rect = result_rect.right_corner_turn(desired_facing);
+        resultRect = resultRect.rightCornerTurn(desiredFacing)
       }
     }
 
-    car.phasing.difficulty = Math.ceil(Math.abs(result_rect.facing - car.rect.facing) / 15);
+    car.phasing.difficulty = Math.ceil(Math.abs(resultRect.facing - car.rect.facing) / 15)
 
-    return result_rect;
+    return resultRect
   }
 
-  static swerve({ car, degrees }) {
+  static swerve ({ car, degrees }) {
     //  |
     //  |
     //  |
     //  |
     // \|/
     //  V
-    // TODO: make this use firsst the new drift and then the new bend usage
+    // TODO: make this use first the new drift and then the new bend usage
     // Each possibility tries to make a complete move - that way we can ghost collisions
-    const current_facing = car.phasing.rect.facing - car.rect.facing;
-    const desired_facing = current_facing + degrees;
+    const currentFacing = car.phasing.rect.facing - car.rect.facing
+    const desiredFacing = currentFacing + degrees
 
-    var result_rect = car.phasing.rect.clone();
+    var resultRect = car.phasing.rect.clone()
 
     // Can't turn more than 90 deg.
-    if (Math.abs(desired_facing) > 90) { return result_rect; }
+    if (Math.abs(desiredFacing) > 90) { return resultRect }
 
-    const facing_front = current_facing;
-    const facing_left  = current_facing < 0;
-    const facing_right = current_facing > 0;
-    const turning_to_front = desired_facing === 0;
-    const turning_left     = degrees < 0;
-    const turning_right    = degrees > 0;
+    const facingLeft = currentFacing < 0
+    const facingRight = currentFacing > 0
+    const turningToFront = desiredFacing === 0
+    const turningLeft = degrees < 0
+    const turningRight = degrees > 0
 
-    const drift = (direction='right') => {
-      result_rect = result_rect.move({
-        direction: (result_rect.facing + FACE.RIGHT),
-        distance: ((direction === 'right') ? INCH/4 : -INCH/4)
-      });
-      result_rect.facing += FACE.LEFT;
+    const drift = (direction = 'right') => {
+      resultRect = resultRect.move({
+        degrees: (resultRect.facing + FACE.RIGHT),
+        distance: ((direction === 'right') ? INCH / 4 : -INCH / 4)
+      })
+      resultRect.facing += FACE.LEFT
     }
 
-    if (turning_to_front) {
-      result_rect.__BR_point = result_rect.BR_point().clone();
-      result_rect = car.rect.move({ direction: car.rect.facing,
-                                       distance: INCH});
-    } else if (turning_right) {
-      if (facing_right) {
-        result_rect = result_rect.right_corner_turn(degrees);
-      } else if (facing_left) {
-        result_rect = result_rect.left_corner_turn(degrees);
+    if (turningToFront) {
+      resultRect.__brPoint = resultRect.brPoint().clone()
+      resultRect = car.rect.move({
+        degrees: car.rect.facing,
+        distance: INCH
+      })
+    } else if (turningRight) {
+      if (facingRight) {
+        resultRect = resultRect.rightCornerTurn(degrees)
+      } else if (facingLeft) {
+        resultRect = resultRect.leftCornerTurn(degrees)
       } else /* facing forward */ {
-         drift('left');
-         result_rect = result_rect.right_corner_turn(degrees);
+        drift('left')
+        resultRect = resultRect.rightCornerTurn(degrees)
       }
-    } else if (turning_left) {
-      if (facing_left) {
-        result_rect = result_rect.left_corner_turn(degrees);
-      } else if (facing_right) {
-        result_rect = result_rect.right_corner_turn(degrees);
+    } else if (turningLeft) {
+      if (facingLeft) {
+        resultRect = resultRect.leftCornerTurn(degrees)
+      } else if (facingRight) {
+        resultRect = resultRect.rightCornerTurn(degrees)
       } else /* facing forward */ {
-        drift('right');
-        result_rect = result_rect.left_corner_turn(degrees);
+        drift('right')
+        resultRect = resultRect.leftCornerTurn(degrees)
       }
     }
 
-    car.phasing.difficulty = Math.ceil(Math.abs(desired_facing) / 15);
-    if (car.phasing.difficulty > 0) { car.phasing.difficulty++; }
+    car.phasing.difficulty = Math.ceil(Math.abs(desiredFacing) / 15)
+    if (car.phasing.difficulty > 0) { car.phasing.difficulty++ }
 
-    return result_rect;
+    return resultRect
   }
 
-  static drift({ car, distance }) {
-    const fwd_null = PhasingMove.forward({ car });
-    //const fwd_null = car.rect.move({ direction: car.rect.facing + FACE.FRONT, distance: INCH });
-    const result = car.phasing.rect.move({ direction: car.rect.facing + FACE.RIGHT, distance })
-    result.facing = car.rect.facing;
-    const current_dist = Math.floor(fwd_null.BR_point().distance_to(result.BR_point()));
+  static drift ({ car, distance }) {
+    const fwdNull = PhasingMove.forward({ car })
+    // const fwdNull = car.rect.move({ degrees: car.rect.facing + FACE.FRONT, distance: INCH });
+    const result = car.phasing.rect.move({ degrees: car.rect.facing + FACE.RIGHT, distance })
+    result.facing = car.rect.facing
+    const currentDist = Math.floor(fwdNull.brPoint().distanceTo(result.brPoint()))
 
     // Drifts are max 1/2".
-    if (current_dist > INCH/2) { return car.phasing.rect; }
+    if (currentDist > INCH / 2) { return car.phasing.rect }
 
     // Set maneuver difficulty. Resolve that when the move is accepted.
-    if (current_dist === 0) {
-      car.phasing.difficulty = 0;
-    } else if (current_dist > INCH/4) {
-      car.phasing.difficulty = 3;
+    if (currentDist === 0) {
+      car.phasing.difficulty = 0
+    } else if (currentDist > INCH / 4) {
+      car.phasing.difficulty = 3
     } else {
-      car.phasing.difficulty = 1;
+      car.phasing.difficulty = 1
     }
 
-    return result;
+    return result
   }
 }

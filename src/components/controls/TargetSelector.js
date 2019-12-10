@@ -22,30 +22,28 @@
 // Cycling things should accept <Shift>+<key> to cycle in reverse direction.
 //
 
+import React from 'react'
 
-import React from 'react';
-
-const Speed = (props) => {
-
-  const option_style = {
+const Target = (props) => {
+  const optionStyle = {
     background: 'black',
     color: 'white',
     fontSize: '24px',
     fontFamily: 'fantasy',
-    fontVariant: 'small-caps',
-  };
+    fontVariant: 'small-caps'
+  }
 
-  //const non_select_color_override = {
+  // const nonSelectColor_override = {
   //  color: 'darkgray',
-  //};
+  // };
 
   return (
-    <select id='speed' style={option_style} defaultValue='maintain'>
-      <option>slower</option>
-      <option>maintain</option>
-      <option>faster</option>
+    <select id='target' style={optionStyle}>
+      <option>what</option>
+      <option>goes</option>
+      <option>here?</option>
     </select>
-  );
-};
+  )
+}
 
-export default Speed;
+export default Target

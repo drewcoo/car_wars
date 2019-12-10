@@ -22,29 +22,51 @@
 // Cycling things should accept <Shift>+<key> to cycle in reverse direction.
 //
 
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { weaponSet } from '../../redux'
 
-import React from 'react';
+const Weapon = (props) => {
+  const dispatch = useDispatch()
 
-const Target = (props) => {
-  const option_style = {
+  const optionStyle = {
     background: 'black',
     color: 'white',
     fontSize: '24px',
     fontFamily: 'fantasy',
-    fontVariant: 'small-caps',
-  };
+    fontVariant: 'small-caps'
+  }
 
-  //const non_select_color_override = {
-  //  color: 'darkgray',
-  //};
+  const players = useSelector((state) => state.time.moveMe.players)
+  const cars = useSelector((state) => state.cars)
+  const getCurrentCar = () => {
+    const playerColor = players.all[players.currentIndex].color
+    const carColor = playerColor
+    return cars.find(function (elem) { return elem.color === carColor })
+  }
+
+  const weapons = getCurrentCar().design.components.weapons
+
+  const listWeapons = () => {
+    var result = []
+    for (var i = 0; i < weapons.length; i++) {
+      result.push(<option key={i} value={i}>{weapons[i].abbreviation} - {weapons[i].location}</option>)
+    }
+    return result
+  }
+
+  const onChange = (event) => {
+    dispatch(weaponSet({
+      id: getCurrentCar().id,
+      weapon: event.target.value
+    }))
+  }
 
   return (
-      <select id='target' style={option_style}>
-        <option>what</option>
-        <option>goes</option>
-        <option>here?</option>
-      </select>
-  );
-};
+    <select id='weapon' style={optionStyle} value={getCurrentCar().phasing.weaponIndex} onChange={onChange}>
+      { listWeapons() }
+    </select>
+  )
+}
 
-export default Target;
+export default Weapon

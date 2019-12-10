@@ -1,19 +1,19 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react'
+import { useSelector } from 'react-redux'
 
 const PlayerName = () => {
-  const players = useSelector((state) => state.players);
-  const current_player = players.all[players.current_index];
-  const color_style = {
-    color: current_player.color,
-    padding: '10px',
-  };
+  const players = useSelector((state) => state.time.moveMe.players)
+  const currentPlayer = players.all[players.currentIndex]
+  const colorStyle = {
+    color: currentPlayer.color,
+    padding: '10px'
+  }
 
   return (
-    <span style={color_style}>
-      {current_player.name}
+    <span style={ colorStyle }>
+      { currentPlayer.name }
     </span>
-  );
-};
+  )
+}
 
-export default PlayerName;
+export default PlayerName

@@ -1,5 +1,24 @@
 {
-  "name": "redux-basic",
+  "name": "car_wars",
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!<rootDir>/node_modules/",
+      "!<rootDir>/path/to/dir/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 90,
+        "lines": 90,
+        "statements": 90
+      }
+    },
+    "coverageReporters": [
+      "html",
+      "lcov"
+    ]
+  },
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -18,7 +37,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "lint": "eslint src/**/*.js",
+    "test": "react-scripts test --testMatch **/__tests__/**/*.spec.js",
+    "test:coverage": "npm test -- --coverage --verbose --watchAll",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -40,6 +61,13 @@
     "pnp": true
   },
   "devDependencies": {
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "^23.1.1",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-standard": "^4.0.1",
     "redux-immutable-state-invariant": "^2.1.0"
   }
 }

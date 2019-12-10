@@ -1,56 +1,84 @@
-import Segment from './Segment';
-import { degrees_to_radians } from './conversions';
-
-// assumes a point as array [x, y]
+import Intersection from './Intersection'
+import Rectangle from './Rectangle'
+import Segment from './Segment'
+import { degreesToRadians } from './conversions'
 
 class Point {
-  constructor({x, y}) {
-    this.x = x;
-    this.y = y;
+  constructor ({ x, y }) {
+    this.x = x
+    this.y = y
     if (this.x === undefined || this.y === undefined) {
-      throw new Error(`(${this.x}, ${this.y}) - UNDEFINED!!!`);
+      throw new Error(`(${this.x}, ${this.y}) - UNDEFINED!!!`)
     }
   }
 
-  as_array() {
-    return [this.x, this.y];
+  toArray () {
+    return [this.x, this.y]
   }
 
-  clone() {
-    return new Point({x: this.x, y: this.y});
+  clone () {
+    return new Point({ x: this.x, y: this.y })
   }
 
-  equals(point2) {
-    return point2 && this.x === point2.x && this.y === point2.y;
+  toFixed (digits) {
+    return new Point({
+      x: this.x.toFixed(digits),
+      y: this.y.toFixed(digits)
+    })
   }
 
-  // degrees
-  direction_to(point) {
-    return (Math.atan2((point.y - this.y), (point.x - this.x)) * 180 / Math.PI + 90);
+  equals (point2) {
+    return point2 instanceof Point &&
+           this.x.toFixed(2) === point2.x.toFixed(2) &&
+           this.y.toFixed(2) === point2.y.toFixed(2)
   }
 
-  distance_to(point) {
+  degreesTo (point) {
+    return (Math.atan2((point.y - this.y), (point.x - this.x)) * 180 / Math.PI)
+  }
+
+  distanceTo (point) {
     return Math.sqrt(Math.pow(this.x - point.x, 2) +
-                     Math.pow(this.y - point.y, 2));
+                     Math.pow(this.y - point.y, 2))
   }
 
-  move(direction, distance) {
-    let radians = degrees_to_radians(direction);
-    return new Point({ x: this.x + distance * Math.sin(radians),
-                       y: this.y - distance * Math.cos(radians) });
+  intersects (thing) { return this.isIntersecting(thing) }
+
+  isIntersecting (thing) {
+    switch (true) {
+      case thing instanceof Point:
+        return Intersection.pointPointExists({ point2: thing, point: this })
+      case thing instanceof Segment:
+        return Intersection.pointSegmentExists({ point: this, segment: thing })
+      case thing instanceof Rectangle:
+        return Intersection.rectanglePointExists({ rectangle: thing, point: this })
+      default:
+        throw new Error(`Checking intersection of unrecognized thing: ${thing}`)
+    }
   }
 
-  toString() {
-    return JSON.stringify(this);
+  move ({ degrees, radians, distance }) {
+    if (degrees != null && radians != null) {
+      throw new Error('Can only pass degrees or radians!')
+    }
+    const rads = radians || degreesToRadians(degrees)
+    return new Point({
+      x: this.x + distance * Math.cos(rads),
+      y: this.y + distance * Math.sin(rads)
+    })
   }
 
-  rotate_around({ fulcrum, degrees }) {
-    let radians = degrees_to_radians(degrees) +
-                      Math.atan2((this.y - fulcrum.y), (this.x - fulcrum.x));
-    let dist = fulcrum.distance_to(this);
-    let new_x = Math.cos(radians) * dist + fulcrum.x;
-    let new_y = Math.sin(radians) * dist + fulcrum.y;
-    return new Point({ x: new_x, y: new_y });
+  toString () {
+    return JSON.stringify(this)
+  }
+
+  rotateAround ({ fulcrum, degrees }) {
+    const radians = degreesToRadians(degrees) +
+                      Math.atan2((this.y - fulcrum.y), (this.x - fulcrum.x))
+    const dist = fulcrum.distanceTo(this)
+    const newX = Math.cos(radians) * dist + fulcrum.x
+    const newY = Math.sin(radians) * dist + fulcrum.y
+    return new Point({ x: newX, y: newY })
   }
 }
-export default Point;
+export default Point
