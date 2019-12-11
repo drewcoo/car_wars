@@ -3,6 +3,7 @@ import { HotKeys } from 'react-hotkeys'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   maneuverSet, maneuverNext, maneuverPrevious,
+  speedNext, speedPrevious,
   weaponNext, weaponPrevious,
   playerNext,
   ghostForward, ghostReset, ghostTurnBend, ghostMoveDrift, ghostTurnSwerve,
@@ -29,8 +30,10 @@ const KeystrokeInput = () => {
     previousManeuver: 'shift+m',
     nextWeapon: 'w',
     previousWeapon: 'shift+w',
+    nextSpeed: 's',
+    previousSpeed: 'shift+s',
     nextTarget: 't',
-    previous_target: 'shift+t',
+    previousTarget: 'shift+t',
     acceptMove: 'enter',
     turnLeft: ['z', 'shift+x'],
     turnRight: ['x', 'shift+z'],
@@ -101,6 +104,16 @@ const KeystrokeInput = () => {
       dispatch(ghostShowCollisions(car))
       showHideCar(car, -1)
     },
+    nextSpeed: (event) => {
+      var car = getCurrentCar()
+      viewElement(car.id)
+      dispatch(speedNext(car))
+    },
+    previousSpeed: (event) => {
+      var car = getCurrentCar()
+      viewElement(car.id)
+      dispatch(speedPrevious(car))
+    },
     nextWeapon: (event) => {
       var car = getCurrentCar()
       viewElement(car.id)
@@ -115,7 +128,7 @@ const KeystrokeInput = () => {
       dispatch(ghostTargetNext(getCurrentCar()))
       viewElement('reticle')
     },
-    previous_target: (event) => {
+    previousTarget: (event) => {
       dispatch(ghostTargetPrevious(getCurrentCar()))
       viewElement('reticle')
     },

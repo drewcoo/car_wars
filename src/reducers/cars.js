@@ -37,6 +37,8 @@ const initialCars = [
       damageMessage: '',
       difficulty: 0,
       maneuverIndex: 0,
+      speedChanges: [0, 5, 10, 15, 20],
+      speedChangeIndex: 2,
       weaponIndex: 0,
       targets: null,
       targetIndex: 0,
@@ -63,6 +65,8 @@ const initialCars = [
       damageMessage: '',
       difficulty: 0,
       maneuverIndex: 0,
+      speedChanges: [0, 5, 10, 15, 20],
+      speedChangeIndex: 2,
       weaponIndex: 0,
       targets: null,
       targetIndex: 0,
@@ -89,6 +93,8 @@ const initialCars = [
       damageMessage: '',
       difficulty: 0,
       maneuverIndex: 0,
+      speedChanges: [0, 5, 10, 15, 20],
+      speedChangeIndex: 2,
       weaponIndex: 0,
       targets: null,
       targetIndex: 0,
@@ -115,6 +121,8 @@ const initialCars = [
       damageMessage: '',
       difficulty: 0,
       maneuverIndex: 0,
+      speedChanges: [0, 5, 10, 15, 20],
+      speedChangeIndex: 2,
       weaponIndex: 0,
       targets: null,
       targetIndex: 0,
@@ -159,6 +167,9 @@ export const carsSlice = createSlice({
         console.log(`unresolved collision with: ${coll.rammed.id}`)
         Collisions.resolve({ car, collision: coll })
       }
+
+      //  Speeds.setSpeed({ car })
+      // Speeds.setPossibleAndIndex({ car })
 
       /// /////////////////////////////////////
       car.status.handling -= car.phasing.difficulty
@@ -344,19 +355,14 @@ export const carsSlice = createSlice({
       car.phasing.damageMessage = damage // 'BANG!';
     },
     maneuverNext (state, action) {
-      console.log('NEXT MAN!!!')
-      console.log(action.payload)
       const car = state.find((carState) => carState.id === action.payload.id)
-
       car.phasing.maneuverIndex = (car.phasing.maneuverIndex + 1) % car.status.maneuvers.length
-      console.log('collisions?')
       Collisions.detect({ cars: state, walls: WallData, thisCar: car })
-      console.log('returning from maneuverNext')
     },
     maneuverPrevious (state, action) {
       const car = state.find((carState) => carState.id === action.payload.id)
       car.phasing.maneuverIndex = (car.phasing.maneuverIndex - 1 + car.status.maneuvers.length) % car.status.maneuvers.length
-      console.log(`man idx: ${car.phasing.maneuverIndex}`)
+      Collisions.detect({ cars: state, walls: WallData, thisCar: car })
     },
     maneuverSet (state, action) {
       const car = state.find((carState) => carState.id === action.payload.id)
@@ -365,10 +371,39 @@ export const carsSlice = createSlice({
       // TODO: call into PhasingMove->the maneuver(car, 0)
       //
     },
+    /// ////////////////
+    speedNext (state, action) {
+      const car = state.find((carState) => carState.id === action.payload.id)
+      // BUGBBUG: Haven't handled:
+      // - hazard from excessive braking
+      // - components to modify braking
+      // - components to modify acceleration
+      const maxIndex = car.phasing.speedChanges.length - 1
+      console.assert(car.phasing.speedChangeIndex <= maxIndex)
+      if (car.phasing.speedChangeIndex < maxIndex) {
+        car.phasing.speedChangeIndex += 1
+      }
+    },
+    speedPrevious (state, action) {
+      const car = state.find((carState) => carState.id === action.payload.id)
+      // BUGBBUG: Haven't handled:
+      // - hazard from excessive braking
+      // - components to modify braking
+      // - components to modify acceleration
+      console.assert(car.phasing.speedChangeIndex >= 0)
+      if (car.phasing.speedChangeIndex > 0) {
+        car.phasing.speedChangeIndex -= 1
+      }
+    },
+    speedSet (state, action) {
+      const car = state.find((carState) => carState.id === action.payload.id)
+      car.phasing.speedChangeIndex = parseInt(action.payload.speedChangeIndex)
+      //
+      // TODO: call into PhasingMove->the maneuver(car, 0)
+      //
+    },
     weaponNext (state, action) {
       const car = state.find((carState) => carState.id === action.payload.id)
-      console.log(car.phasing.weaponIndex)
-      console.log(car.design.components.weapons[car.phasing.weaponIndex].type)
       car.phasing.targets = null
       car.phasing.weaponIndex = (car.phasing.weaponIndex + 1) % car.design.components.weapons.length
     },

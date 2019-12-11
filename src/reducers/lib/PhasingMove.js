@@ -11,7 +11,28 @@ export class PhasingMove {
            car.rect.facing !== car.phasing.rect.facing
   }
 
+  static possibleSpeeds ({ car }) {
+    const currentSpeed = car.status.speed
+    console.log(car)
+    console.log(car.status.speed)
+    const top = car.design.attributes.topSpeed
+    const acc = car.design.attributes.acceleration
+    const possibleMax = currentSpeed + acc
+    var max = (top >= possibleMax) ? possibleMax : top
+
+    const possibleMin = currentSpeed - 45
+    var min = possibleMin >= 0 ? possibleMin : 0
+    console.log(`min: ${min}; max: ${max}`)
+
+    var resultArray = []
+    for (var i = min; i <= max; i += 5) { resultArray.push(i) }
+    return resultArray
+  }
+
   static reset ({ car }) {
+    car.status.speed = car.phasing.speedChanges[car.phasing.speedChangeIndex]
+    const possibles = this.possibleSpeeds({ car })
+
     car.phasing = {
       rect: car.rect.clone(),
       damageMarkerLocation: null,
@@ -19,6 +40,8 @@ export class PhasingMove {
       difficulty: 0,
       // focus: true, do something with next player/next car instead.
       maneuverIndex: 0,
+      speedChanges: possibles, // .phasing.speedChanges,
+      speedChangeIndex: possibles.indexOf(car.status.speed),
       weaponIndex: car.phasing.weaponIndex,
       targets: null,
       targetIndex: 0, // BUGBUG: keep old targets? We want sustained fire . . .

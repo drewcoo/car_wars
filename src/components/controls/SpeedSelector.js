@@ -23,8 +23,12 @@
 //
 
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { speedSet } from '../../redux'
 
 const Speed = (props) => {
+  const dispatch = useDispatch()
+
   const optionStyle = {
     background: 'black',
     color: 'white',
@@ -37,11 +41,50 @@ const Speed = (props) => {
   //  color: 'darkgray',
   // };
 
+  const players = useSelector((state) => state.time.moveMe.players)
+  const cars = useSelector((state) => state.cars)
+  const getCurrentCar = () => {
+    var playerColor = players.all[players.currentIndex].color
+    var carColor = playerColor
+    return cars.find(function (elem) { return elem.color === carColor })
+  }
+
+  const onChange = (event) => {
+    dispatch(speedSet({
+      id: getCurrentCar().id,
+      speedChangeIndex: event.target.value
+    }))
+  }
+
+  const listSpeedChanges = () => {
+    const car = getCurrentCar()
+    var result = []
+    for (var i = 0; i < car.phasing.speedChanges.length; i++) {
+      result.push(
+        <option key={i} value={i}>
+          { car.phasing.speedChanges[i] }
+        </option>
+      )
+    }
+    return result
+  }
+  /*
+  console.log('speeds')
+  console.log(getCurrentCar().status.speed)
+  console.log(getCurrentCar().phasing.speedChanges)
+  console.log(getCurrentCar().phasing.speedChanges.indexOf(10 - getCurrentCar().status.speed))
+  console.log(getCurrentCar().phasing.speedChanges[getCurrentCar().phasing.speedChangeIndex] + getCurrentCar().status.speed)
+*/
+  // getCurrentCar().status.speed
+
   return (
-    <select id='speed' style={optionStyle} defaultValue='maintain'>
-      <option>slower</option>
-      <option>maintain</option>
-      <option>faster</option>
+    <select
+      id='speed'
+      style={ optionStyle }
+      value={ getCurrentCar().phasing.speedChangeIndex }
+      defaultValue={ getCurrentCar().phasing.speedChanges.indexOf(getCurrentCar().status.speed) }
+      onChange={onChange}>
+      { listSpeedChanges() }
     </select>
   )
 }
