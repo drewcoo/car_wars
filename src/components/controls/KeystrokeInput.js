@@ -67,6 +67,8 @@ const KeystrokeInput = () => {
           id: car.id,
           maneuverIndex: car.status.maneuvers.indexOf('bend')
         }))
+        // Make it easy to maneuver (bend from forward position) as long as that's possible.
+        if (!car.status.maneuvers.includes('bend')) { break }
         // fall through
       case 'bend':
         dispatch(ghostTurnBend({ car: car, degrees: (fRight ? 15 : -15) }))

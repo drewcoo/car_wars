@@ -105,19 +105,43 @@ class Damage {
   }
 
   // BUGBUG: handle driver injury effects
-  // BUGBUG: Also p.29 has details about hitting random crew. Current
+  // BUGBUG: Also pp.29-30 has details about hitting random crew. Current
   // design doesn't support that.
   static damageCrew ({ car, damage }) {
+    if (damage < 1) { return 0 }
     const randomCrewMember = (car) => {
       const keys = Array.from(Object.keys(car.design.components.crew))
       return keys[Math.floor(Math.random() * keys.length)]
     }
     const crewMember = car.design.components.crew[randomCrewMember(car)]
     crewMember.damagePoints -= damage
+
+    if (crewMember.damagePoints === 2) {
+      // injured
+      // - all skills at -2
+      // assume driver for now
+      // - D2 hazard
+    } else if (crewMember.damagePoints === 1) {
+      // unconscious
+      // - all skill and reflex bonuses gone
+      // assume driver for now
+      // - no turning
+      // - D2 hazard
+      car.status.maneuvers = ['none', 'forward']
+    } else if (crewMember.damagePoints < 1) {
+      // dead
+      // - all skill and reflex bonuses gone
+      // assume driver for now
+      // - no turning
+      // - D2 hazard
+      car.status.maneuvers = ['none', 'forward']
+    }
+
     var remaining = 0
     if (crewMember.damagePoints < 0) {
       remaining = -crewMember.damagePoints
       crewMember.damagePoints = 0
+      //  car.status.maneuvers = [ 'now', 'there', 'are', 'none' ]
     }
     return remaining
   }
