@@ -407,10 +407,7 @@ export const carsSlice = createSlice({
       targets.refresh()
     },
     weaponSet (state, action) {
-      console.log(action)
       const car = state.find((carState) => carState.id === action.payload.id)
-      console.log(`weapon: ${action.payload.weapon}`)
-      console.log(typeof (action.payload.weapon))
       car.phasing.weaponIndex = parseInt(action.payload.weapon)
       var targets = new Targets({ car, cars: state, walls: WallData })
       targets.refresh()
