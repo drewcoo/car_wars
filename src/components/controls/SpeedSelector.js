@@ -68,21 +68,13 @@ const Speed = (props) => {
     }
     return result
   }
-  /*
-  console.log('speeds')
-  console.log(getCurrentCar().status.speed)
-  console.log(getCurrentCar().phasing.speedChanges)
-  console.log(getCurrentCar().phasing.speedChanges.indexOf(10 - getCurrentCar().status.speed))
-  console.log(getCurrentCar().phasing.speedChanges[getCurrentCar().phasing.speedChangeIndex] + getCurrentCar().status.speed)
-*/
-  // getCurrentCar().status.speed
 
   return (
     <select
       id='speed'
       style={ optionStyle }
       value={ getCurrentCar().phasing.speedChangeIndex }
-      defaultValue={ getCurrentCar().phasing.speedChanges.indexOf(getCurrentCar().status.speed) }
+
       onChange={onChange}>
       { listSpeedChanges() }
     </select>

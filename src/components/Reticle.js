@@ -23,18 +23,12 @@ const Reticle = ({ color = 'red', x = 160, y = 160 }) => {
       /// TODO: This for real instead of just show.
       // including things like not in target's firing arc, speed mods,
       // handling, sustained fire, etc.
-      console.log('car.phasing.targets[car.phasing.targetIndex]')
-      console.log(car.phasing.targets[car.phasing.targetIndex])
       var prettyName = (target.name.length === 2) ? ' tire' : ''
       var mod = (target.name === 'F' || target.name === 'B') ? -1 : 0
 
       // BUGBUG: middle is wrong.
       //  var targetPoint = car.phasing.rect.side(target.name) instanceof Point ?
       //    car.phasing.rect.side(target.name).displayPoint :
-      console.log('spew')
-      console.log(car.phasing.weaponIndex)
-      console.log(car.design.components.weapons[car.phasing.weaponIndex])
-      console.log(car.design.components.weapons[car.phasing.weaponIndex].location)
       var currentWeaponLocation = car.design.components.weapons[car.phasing.weaponIndex].location
 
       var dist = car.phasing.rect.side(currentWeaponLocation).middle().distanceTo(target.displayPoint)

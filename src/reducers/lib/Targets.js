@@ -10,12 +10,26 @@ Target = {
 }
 */
 
-export class Targets {
+class Targets {
   constructor ({ car, cars, walls }) {
     this.car = car
     this.cars = cars
     this.walls = walls
   }
+
+  refresh () {
+    this.car.phasing.targets = this.targetsInArc()
+    this.car.phasing.targetIndex = 0
+  }
+
+  /*
+  console.log('fetch targets')
+  var targets = new Targets({ car, cars: state, walls: WallData })
+  var data = targets.targetsInArc()
+  console.log(`targets in arc: ${data[0]}`)
+  car.phasing.targets = data || null
+  car.phasing.targetIndex = 0
+  */
 
   targetablePoints (target) {
     // var turretLoc = new Segement([target.rect.brPoint(), target.rect.flPoint()]).middle();
@@ -214,8 +228,10 @@ targetPointsInArc() {
 
   targetsInArc () {
     var weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
+    if (weaponLoc === 'none') {
+      return []
+    }
     var source = this.car.phasing.rect.side(weaponLoc).middle()
-    console.log(this.targetPointsInArc().concat(this.targetSidesInArc()))
     return this.targetPointsInArc().concat(this.targetSidesInArc()).sort(
       (a, b) => source.distanceTo(a.displayPoint) - source.distanceTo(b.displayPoint)
     )

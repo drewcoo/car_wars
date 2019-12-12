@@ -43,7 +43,7 @@ export class PhasingMove {
       speedChanges: possibles, // .phasing.speedChanges,
       speedChangeIndex: possibles.indexOf(car.status.speed),
       weaponIndex: car.phasing.weaponIndex,
-      targets: null,
+      targets: [],
       targetIndex: 0, // BUGBUG: keep old targets? We want sustained fire . . .
       collisionDetected: false,
       collisions: []

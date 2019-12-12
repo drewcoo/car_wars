@@ -20,7 +20,7 @@ export const {
   speedNext, speedPrevious, speedSet,
   ghostForward, ghostReset, ghostTurnBend, ghostMoveDrift, ghostTurnSwerve,
   ghostShowCollisions,
-  ghostTargetNext, ghostTargetPrevious,
+  ghostTargetNext, ghostTargetPrevious, ghostTargetSet,
   ghostFire,
   acceptMove,
   weaponNext, weaponPrevious, weaponSet

@@ -55,11 +55,11 @@ const KeystrokeInput = () => {
     var index = (car.phasing.maneuverIndex + manIdxDelta) %
                  car.status.maneuvers.length
     if (car.status.maneuvers[index] === 'none') {
-      dispatch(ghostReset(car))
+      dispatch(ghostReset({ id: car.id }))
     } else {
-      dispatch(ghostForward(car))
+      dispatch(ghostForward({ id: car.id }))
     }
-    dispatch(ghostShowCollisions(car))
+    dispatch(ghostShowCollisions({ id: car.id }))
   }
 
   const turnRight = (fRight) => {
@@ -118,14 +118,16 @@ const KeystrokeInput = () => {
       var car = getCurrentCar()
       viewElement(car.id)
       dispatch(weaponNext(car))
+      viewElement('reticle')
     },
     previousWeapon: (event) => {
       var car = getCurrentCar()
       viewElement(car.id)
       dispatch(weaponPrevious(car))
+      viewElement('reticle')
     },
     nextTarget: (event) => {
-      dispatch(ghostTargetNext(getCurrentCar()))
+      dispatch(ghostTargetNext({ id: getCurrentCar().id }))
       viewElement('reticle')
     },
     previousTarget: (event) => {
@@ -163,10 +165,10 @@ const KeystrokeInput = () => {
 
   return (
     <HotKeys
-      attach={document}
-      focused={true}
-      handlers={handlers}
-      keyMap={keyMap} />
+      attach={ document }
+      focused={ true }
+      handlers={ handlers }
+      keyMap={ keyMap } />
   )
 }
 

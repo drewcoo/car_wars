@@ -1,6 +1,7 @@
 import { NULL_WEAPON, MG, HR, RL, L } from './Weapons'
 
 export const KillerKart = {
+  name: 'Killer Kart',
   attributes: {
     size: 'subcompact',
     chassis: 'std',

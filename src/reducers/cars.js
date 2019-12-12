@@ -7,7 +7,7 @@ import { KillerKart } from '../vehicleDesigns/KillerKart'
 
 import { Collisions } from './lib/Collisions'
 import { PhasingMove } from './lib/PhasingMove'
-import { Targets } from './lib/Targets'
+import Targets from './lib/Targets'
 import Damage from './lib/Damage'
 import CrewMember from './lib/CrewMember'
 import Weapon from './lib/Weapon'
@@ -40,7 +40,7 @@ const initialCars = [
       speedChanges: [0, 5, 10, 15, 20],
       speedChangeIndex: 2,
       weaponIndex: 0,
-      targets: null,
+      targets: [],
       targetIndex: 0,
       collisionDetected: false,
       collisions: []
@@ -68,7 +68,7 @@ const initialCars = [
       speedChanges: [0, 5, 10, 15, 20],
       speedChangeIndex: 2,
       weaponIndex: 0,
-      targets: null,
+      targets: [],
       targetIndex: 0,
       collisionDetected: false,
       collisions: []
@@ -96,7 +96,7 @@ const initialCars = [
       speedChanges: [0, 5, 10, 15, 20],
       speedChangeIndex: 2,
       weaponIndex: 0,
-      targets: null,
+      targets: [],
       targetIndex: 0,
       collisionDetected: false,
       collisions: []
@@ -124,7 +124,7 @@ const initialCars = [
       speedChanges: [0, 5, 10, 15, 20],
       speedChangeIndex: 2,
       weaponIndex: 0,
-      targets: null,
+      targets: [],
       targetIndex: 0,
       collisionDetected: false,
       collisions: []
@@ -194,31 +194,36 @@ export const carsSlice = createSlice({
       const car = state.find((carState) => carState.id === action.payload.id)
       car.phasing.rect = car.rect.clone()
       car.phasing.rect = PhasingMove.forward({ car, distance: INCH })
-      car.phasing.targets = null
+      var targets = new Targets({ car, cars: state, walls: WallData })
+      targets.refresh()
     },
     ghostReset (state, action) {
       const car = state.find((carState) => carState.id === action.payload.id)
       PhasingMove.reset({ car })
       Collisions.clear({ cars: state })
-      car.phasing.targets = null
+      var targets = new Targets({ car, cars: state, walls: WallData })
+      targets.refresh()
     },
     ghostTurnBend (state, action) {
       const car = state.find((carState) => carState.id === action.payload.car.id)
       const degrees = action.payload.degrees
       car.phasing.rect = PhasingMove.bend({ car, degrees })
-      car.phasing.targets = null
+      var targets = new Targets({ car, cars: state, walls: WallData })
+      targets.refresh()
     },
     ghostTurnSwerve (state, action) {
       const car = state.find((carState) => carState.id === action.payload.car.id)
       const degrees = action.payload.degrees
       car.phasing.rect = PhasingMove.swerve({ car, degrees })
-      car.phasing.targets = null
+      var targets = new Targets({ car, cars: state, walls: WallData })
+      targets.refresh()
     },
     ghostMoveDrift (state, action) {
       const car = state.find((carState) => carState.color === action.payload.car.color)
       var distance = (action.payload.direction === 'right') ? INCH / 4 : -INCH / 4
       car.phasing.rect = PhasingMove.drift({ car, distance })
-      car.phasing.targets = null
+      var targets = new Targets({ car, cars: state, walls: WallData })
+      targets.refresh()
     },
     ghostShowCollisions (state, action) {
       //
@@ -241,19 +246,12 @@ export const carsSlice = createSlice({
 
       console.log('have detected')
     },
-    ghost_targetsSet (state, action) {
+    ghostTargetSet (state, action) {
       const car = state.find((carState) => carState.id === action.payload.id)
-      // car.phasing.targets = Targets.find({car, walls: WallData});
-      // action.payload.maneuverIndex;
-
-      // targetPointsInArc
-      console.log(JSON.stringify(car))
-
-      console.log('targets set')
+      car.phasing.targetIndex = parseInt(action.payload.targetIndex)
     },
     ghostTargetNext (state, action) {
       const car = state.find((carState) => carState.id === action.payload.id)
-
       const currentWeapon = car.design.components.weapons[car.phasing.weaponIndex]
       const currentCrewMember = car.design.components.crew.driver
       if (!Weapon.canFire(currentWeapon)) { return }
@@ -270,10 +268,7 @@ export const carsSlice = createSlice({
       if (car.phasing.targets === null) {
         console.log('fetch targets')
         var targets = new Targets({ car, cars: state, walls: WallData })
-        var data = targets.targetsInArc()
-        console.log(`targets in arc: ${data[0]}`)
-        car.phasing.targets = data || null
-        car.phasing.targetIndex = 0
+        targets.refresh()
       } else {
         car.phasing.targetIndex = (car.phasing.targetIndex + 1) % car.phasing.targets.length
       }
@@ -296,10 +291,7 @@ export const carsSlice = createSlice({
       if (car.phasing.targets === null) {
         console.log('fetch targets')
         var targets = new Targets({ car, cars: state, walls: WallData })
-        // var data = targets.targets();
-        var data = targets.targetsInArc()
-        car.phasing.targets = data || null
-        car.phasing.targetIndex = 0
+        targets.refresh()
       } else {
         car.phasing.targetIndex = (car.phasing.targetIndex - 1 + car.phasing.targets.length) % car.phasing.targets.length
       }
@@ -404,21 +396,24 @@ export const carsSlice = createSlice({
     },
     weaponNext (state, action) {
       const car = state.find((carState) => carState.id === action.payload.id)
-      car.phasing.targets = null
       car.phasing.weaponIndex = (car.phasing.weaponIndex + 1) % car.design.components.weapons.length
+      var targets = new Targets({ car, cars: state, walls: WallData })
+      targets.refresh()
     },
     weaponPrevious (state, action) {
       const car = state.find((carState) => carState.id === action.payload.id)
-      car.phasing.targets = null
       car.phasing.weaponIndex = (car.phasing.weaponIndex - 1 + car.design.components.weapons.length) % car.design.components.weapons.length
+      var targets = new Targets({ car, cars: state, walls: WallData })
+      targets.refresh()
     },
     weaponSet (state, action) {
       console.log(action)
-      console.log('tahat!!!')
       const car = state.find((carState) => carState.id === action.payload.id)
       console.log(`weapon: ${action.payload.weapon}`)
       console.log(typeof (action.payload.weapon))
       car.phasing.weaponIndex = parseInt(action.payload.weapon)
+      var targets = new Targets({ car, cars: state, walls: WallData })
+      targets.refresh()
     }
   }
 })

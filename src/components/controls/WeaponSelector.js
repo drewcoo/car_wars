@@ -55,11 +55,25 @@ const Weapon = (props) => {
     return result
   }
 
+  /*
+  var viewElement = (id) => {
+    console.log(`getting element: ${id}`)
+    var element = document.getElementById(id)
+    if (!element) { return }
+    element.scrollIntoViewIfNeeded() // scrollIntoView();//{ block: 'center', inline: 'center' });
+    element.scrollIntoView({ block: 'center', inline: 'center' })
+  }
+*/
+
   const onChange = (event) => {
+    console.log('CHANGE ME')
+    var car = getCurrentCar()
     dispatch(weaponSet({
-      id: getCurrentCar().id,
+      id: car.id,
       weapon: event.target.value
     }))
+    // BUGBUG - timing makes this focus-setting fail.
+    // viewElement('reticle')
   }
 
   return (
