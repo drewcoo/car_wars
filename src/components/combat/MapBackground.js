@@ -1,6 +1,6 @@
 import React from 'react'
-import { INCH } from '../utils/constants'
-import { MAP_SIZE } from '../maps/arenaMap1'
+import { INCH } from '../../utils/constants'
+import { MAP_SIZE } from '../../maps/arenaMap1'
 
 const MapLine = ({ x1, y1, x2, y2, lineWidth = 1 }) => {
   const style = {

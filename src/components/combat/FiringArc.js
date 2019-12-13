@@ -1,8 +1,8 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import CrewMember from '../reducers/lib/CrewMember'
-import Weapon from '../reducers/lib/Weapon'
-import { FACE, INCH } from '../utils/constants'
+import CrewMember from '../../reducers/lib/CrewMember'
+import Weapon from '../../reducers/lib/Weapon'
+import { FACE, INCH } from '../../utils/constants'
 
 const FiringArc = () => {
   const players = useSelector((state) => state.time.moveMe.players)
@@ -14,9 +14,13 @@ const FiringArc = () => {
   const car = getCurrentCar()
   const currentWeapon = car.design.components.weapons[car.phasing.weaponIndex]
   const currentCrewMember = car.design.components.crew.driver
+  const plant = car.design.components.power_plant
 
   const drawArc = () => {
-    if (!(Weapon.canFire(currentWeapon) &&
+    if (!(Weapon.canFire({
+      weapon: currentWeapon,
+      plantDisabled: plant.damagePoints < 1
+    }) &&
            CrewMember.canFire(currentCrewMember))) { return }
     const arcFacing = currentWeapon.location
 

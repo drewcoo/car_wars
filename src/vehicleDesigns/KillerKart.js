@@ -1,6 +1,6 @@
 import { NULL_WEAPON, MG, HR, RL, L } from './Weapons'
 
-export const KillerKart = {
+export const Design = {
   name: 'Killer Kart',
   attributes: {
     size: 'subcompact',
@@ -53,3 +53,5 @@ export const KillerKart = {
     ]
   }
 }
+
+export default Design

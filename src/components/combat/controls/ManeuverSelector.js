@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { maneuverSet } from '../../redux'
+import { maneuverSet } from '../../../redux'
 
 const Maneuver = (props) => {
   const thisId = 'maneuver'

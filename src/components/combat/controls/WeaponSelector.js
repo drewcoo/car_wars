@@ -1,9 +1,9 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ghostTargetSet } from '../../redux'
+import { weaponSet } from '../../../redux'
 
-const Target = (props) => {
-  const thisId = 'target'
+const Weapon = (props) => {
+  const thisId = 'weapon'
   const dispatch = useDispatch()
 
   const optionStyle = {
@@ -17,23 +17,17 @@ const Target = (props) => {
   const players = useSelector((state) => state.time.moveMe.players)
   const cars = useSelector((state) => state.cars)
   const getCurrentCar = () => {
-    var playerColor = players.all[players.currentIndex].color
-    var carColor = playerColor
+    const playerColor = players.all[players.currentIndex].color
+    const carColor = playerColor
     return cars.find(function (elem) { return elem.color === carColor })
   }
 
-  const listTargets = () => {
-    const car = getCurrentCar()
+  const weapons = getCurrentCar().design.components.weapons
+
+  const listWeapons = () => {
     var result = []
-    if (car.phasing.targets.length > 0) {
-      for (var i = 0; i < car.phasing.targets.length; i++) {
-        const locType = (car.phasing.targets[i].name.length === 1) ? 'side' : 'tire'
-        const locString = `${car.phasing.targets[i].carId} ${car.phasing.targets[i].name} ${locType}`
-        result.push(<option key={i} value={i}>{locString}</option>)
-      }
-    } else {
-      console.assert(car.phasing.targetIndex === 0)
-      result.push(<option key={ 'none' } value={' none' }>none</option>)
+    for (var i = 0; i < weapons.length; i++) {
+      result.push(<option key={i} value={i}>{weapons[i].abbreviation} - {weapons[i].location}</option>)
     }
     return result
   }
@@ -47,11 +41,15 @@ const Target = (props) => {
   }
 
   const onChange = (event) => {
-    dispatch(ghostTargetSet({
-      id: getCurrentCar().id,
-      targetIndex: event.target.value
+    var car = getCurrentCar()
+    viewElement(car.id)
+    dispatch(weaponSet({
+      id: car.id,
+      weapon: event.target.value
     }))
-    viewElement('reticle')
+    // BUGBUG - timing makes this focus-setting fail.
+    // viewElement('reticle')
+
     // release focus so we can pick up keyoard input again
     document.getElementById(thisId).blur()
   }
@@ -60,11 +58,12 @@ const Target = (props) => {
     <select
       id={ thisId }
       style={ optionStyle }
-      value={ getCurrentCar().phasing.targetIndex }
-      onChange={ onChange }>
-      { listTargets() }
+      value={ getCurrentCar().phasing.weaponIndex }
+      onChange={ onChange }
+    >
+      { listWeapons() }
     </select>
   )
 }
 
-export default Target
+export default Weapon

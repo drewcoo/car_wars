@@ -11,7 +11,7 @@ import {
   ghostTargetNext, ghostTargetPrevious,
   ghostFire,
   acceptMove
-} from '../../redux'
+} from '../../../redux'
 
 const KeystrokeInput = () => {
   const dispatch = useDispatch()

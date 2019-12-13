@@ -1,5 +1,6 @@
 import Segment from '../../utils/Segment'
 import Point from '../../utils/Point'
+import Weapon from './Weapon'
 /*
 Target = {
   carId: number,
@@ -18,7 +19,10 @@ class Targets {
   }
 
   refresh () {
-    this.car.phasing.targets = this.targetsInArc()
+    const weapon = this.car.design.components.weapons[this.car.phasing.weaponIndex]
+    const plantDisabled = this.car.design.components.power_plant.dp < 1
+    const canFire = Weapon.canFire({ weapon, plantDisabled })
+    this.car.phasing.targets = canFire ? this.targetsInArc() : []
     this.car.phasing.targetIndex = 0
   }
 

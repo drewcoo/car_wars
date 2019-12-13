@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { speedSet } from '../../redux'
+import { speedSet } from '../../../redux'
 
 const Speed = (props) => {
   const thisId = 'speed'
@@ -52,7 +52,6 @@ const Speed = (props) => {
       id={ thisId }
       style={ optionStyle }
       value={ getCurrentCar().phasing.speedChangeIndex }
-
       onChange={onChange}>
       { listSpeedChanges() }
     </select>

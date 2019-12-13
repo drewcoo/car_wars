@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { INCH } from '../utils/constants'
+import { INCH } from '../../utils/constants'
 
 const Reticle = ({ color = 'red', x = 160, y = 160 }) => {
   const players = useSelector((state) => state.time.moveMe.players)

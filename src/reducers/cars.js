@@ -3,157 +3,46 @@ import { INCH } from '../utils/constants'
 import { WallData, StartingPositions } from '../maps/arenaMap1'
 import Dice from '../utils/Dice'
 
-import { KillerKart } from '../vehicleDesigns/KillerKart'
-
+import CarStatus from './lib/CarStatus'
 import { Collisions } from './lib/Collisions'
+import CrewMember from './lib/CrewMember'
+import Damage from './lib/Damage'
+// import { Maneuvers } from './lib/Maneuvers'
 import { PhasingMove } from './lib/PhasingMove'
 import Targets from './lib/Targets'
-import Damage from './lib/Damage'
-import CrewMember from './lib/CrewMember'
 import Weapon from './lib/Weapon'
 
-const maneuverValues = [
-  'none',
-  // 'half',
-  // At the beginning of the turn, add/remove 'half' if the vehicle's speed
-  // ends in 5.
-  'forward',
-  'bend',
-  'drift',
-  'swerve'
-  // more
-]
-
 const initialCars = [
-  {
+  CarStatus.addCar({
     id: 'car0',
-    design: KillerKart, // change name to design?
+    design: 'KillerKart',
     color: 'red',
-    collisionDetected: false,
-    collisions: [],
-    phasing: {
-      rect: StartingPositions[0].clone(),
-      damageMarkerLocation: null,
-      damageMessage: '',
-      difficulty: 0,
-      maneuverIndex: 0,
-      speedChanges: [0, 5, 10, 15, 20],
-      speedChangeIndex: 2,
-      weaponIndex: 0,
-      targets: [],
-      targetIndex: 0,
-      collisionDetected: false,
-      collisions: []
-    },
-    rect: StartingPositions[0].clone(),
-    status: {
-      handling: KillerKart.attributes.handlingClass,
-      speed: 10,
-      changedSpeed: false,
-      maneuvers: maneuverValues
-    }
-  },
-  {
+    startingPosition: StartingPositions[0]
+  }),
+  CarStatus.addCar({
     id: 'car1',
-    design: KillerKart,
+    design: 'KillerKart',
     color: 'blue',
-    collisionDetected: false,
-    collisions: [],
-    phasing: {
-      rect: StartingPositions[1].clone(),
-      damageMarkerLocation: null,
-      damageMessage: '',
-      difficulty: 0,
-      maneuverIndex: 0,
-      speedChanges: [0, 5, 10, 15, 20],
-      speedChangeIndex: 2,
-      weaponIndex: 0,
-      targets: [],
-      targetIndex: 0,
-      collisionDetected: false,
-      collisions: []
-    },
-    rect: StartingPositions[1].clone(),
-    status: {
-      handling: KillerKart.attributes.handlingClass,
-      speed: 10,
-      changedSpeed: false,
-      maneuvers: maneuverValues
-    }
-  },
-  {
+    startingPosition: StartingPositions[1]
+  }),
+  CarStatus.addCar({
     id: 'car2',
-    design: KillerKart,
+    design: 'KillerKart',
     color: 'green',
-    collisionDetected: false,
-    collisions: [],
-    phasing: {
-      rect: StartingPositions[2].clone(),
-      damageMarkerLocation: null,
-      damageMessage: '',
-      difficulty: 0,
-      maneuverIndex: 0,
-      speedChanges: [0, 5, 10, 15, 20],
-      speedChangeIndex: 2,
-      weaponIndex: 0,
-      targets: [],
-      targetIndex: 0,
-      collisionDetected: false,
-      collisions: []
-    },
-    rect: StartingPositions[2].clone(),
-    status: {
-      handling: KillerKart.attributes.handlingClass,
-      speed: 10,
-      changedSpeed: false,
-      maneuvers: maneuverValues
-    }
-  },
-  {
+    startingPosition: StartingPositions[2]
+  }),
+  CarStatus.addCar({
     id: 'car3',
-    design: KillerKart,
+    design: 'KillerKart',
     color: 'purple',
-    collisionDetected: false,
-    collisions: [],
-    phasing: {
-      rect: StartingPositions[3].clone(),
-      damageMarkerLocation: null,
-      damageMessage: '',
-      difficulty: 0,
-      maneuverIndex: 0,
-      speedChanges: [0, 5, 10, 15, 20],
-      speedChangeIndex: 2,
-      weaponIndex: 0,
-      targets: [],
-      targetIndex: 0,
-      collisionDetected: false,
-      collisions: []
-    },
-    rect: StartingPositions[3].clone(),
-    status: {
-      handling: KillerKart.attributes.handlingClass,
-      speed: 10,
-      changedSpeed: false,
-      maneuvers: maneuverValues
-    }
-  }
+    startingPosition: StartingPositions[3]
+  })
 ]
 
 export const carsSlice = createSlice({
   slice: 'carStates',
   initialState: initialCars,
   reducers: {
-    addCarState (state, action) {
-      // You can "mutate" the state in a reducer, thanks to Immer
-      state.push(action.payload)
-    },
-    deleteCarState (state, action) {
-      return state.filter((carState) => carState.color !== action.payload)
-    },
-    getCarStates (state, action) {
-      var result = state.filter((carState) => carState.color !== action.payload)
-      return result
-    },
     acceptMove (state, action) {
       const car = state.find((carState) => carState.id === action.payload.id)
 
@@ -178,6 +67,8 @@ export const carsSlice = createSlice({
 
       car.rect = car.phasing.rect.clone()
       PhasingMove.reset({ car })
+      //  var targets = new Targets({ car, cars: state, walls: WallData })
+      //  targets.refresh()
       /// ////
       // BUGBUG: once per turn at and of turn instead:
       for (const Car of state) {
@@ -219,7 +110,7 @@ export const carsSlice = createSlice({
       targets.refresh()
     },
     ghostMoveDrift (state, action) {
-      const car = state.find((carState) => carState.color === action.payload.car.color)
+      const car = state.find((carState) => carState.id === action.payload.car.id)
       var distance = (action.payload.direction === 'right') ? INCH / 4 : -INCH / 4
       car.phasing.rect = PhasingMove.drift({ car, distance })
       var targets = new Targets({ car, cars: state, walls: WallData })
@@ -254,7 +145,11 @@ export const carsSlice = createSlice({
       const car = state.find((carState) => carState.id === action.payload.id)
       const currentWeapon = car.design.components.weapons[car.phasing.weaponIndex]
       const currentCrewMember = car.design.components.crew.driver
-      if (!Weapon.canFire(currentWeapon)) { return }
+      const plant = car.design.components.power_plant
+      if (!Weapon.canFire({
+        weapon: currentWeapon,
+        plantDisabled: plant.damagePoints < 1
+      })) { return }
       if (!CrewMember.canFire(currentCrewMember)) { return }
 
       /// ///////////////
@@ -285,7 +180,11 @@ export const carsSlice = createSlice({
 
       const currentWeapon = car.design.components.weapons[car.phasing.weaponIndex]
       const currentCrewMember = car.design.components.crew.driver
-      if (!Weapon.canFire(currentWeapon)) { return }
+      const plant = car.design.components.power_plant
+      if (!Weapon.canFire({
+        weapon: currentWeapon,
+        plantDisabled: plant.damagePoints < 1
+      })) { return }
       if (!CrewMember.canFire(currentCrewMember)) { return }
 
       if (car.phasing.targets === null) {
@@ -308,8 +207,12 @@ export const carsSlice = createSlice({
 
       const weapon = car.design.components.weapons[car.phasing.weaponIndex]
       const crewMember = car.design.components.crew.driver
-
-      var canFire = Weapon.canFire(weapon) && CrewMember.canFire(crewMember)
+      const plant = car.design.components.power_plant
+      var canFire = Weapon.canFire({
+        weapon: weapon,
+        plantDisabled: plant.damagePoints < 1
+      }) &&
+                    CrewMember.canFire(crewMember)
 
       if (car.phasing.targets === null ||
           car.phasing.targets.length === 0 ||

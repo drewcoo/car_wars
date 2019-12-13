@@ -9,7 +9,7 @@ import Reticle from './Reticle'
 
 import { useSelector } from 'react-redux'
 
-import { MAP_SIZE } from '../maps/arenaMap1'
+import { MAP_SIZE } from '../../maps/arenaMap1'
 
 const ArenaMap = () => {
   const cars = useSelector((state) => state.cars)

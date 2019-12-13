@@ -15,7 +15,6 @@ export const store = configureStore({
 })
 
 export const {
-  addCarState, deleteCarState, getCarByColor, getCarStates,
   maneuverNext, maneuverPrevious, maneuverSet,
   speedNext, speedPrevious, speedSet,
   ghostForward, ghostReset, ghostTurnBend, ghostMoveDrift, ghostTurnSwerve,
@@ -25,4 +24,4 @@ export const {
   acceptMove,
   weaponNext, weaponPrevious, weaponSet
 } = carsSlice.actions
-export const { phaseNext, playerNext, currentPlayer } = timeSlice.actions
+export const { phaseNext, playerNext, currentPlayer, playerSet } = timeSlice.actions

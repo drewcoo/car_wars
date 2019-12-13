@@ -1,5 +1,5 @@
 import React from 'react'
-import { WallData } from '../maps/arenaMap1'
+import { WallData } from '../../maps/arenaMap1'
 
 const Walls = () => {
   const wallStyle = {

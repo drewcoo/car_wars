@@ -11,7 +11,6 @@ body {
 .form-div input {
   width: 250px;
 }
-
 .LeftColumn {
   float: left;
 }
@@ -20,6 +19,25 @@ body {
   padding: 5px;
 }
 .Title {
+  color: white;
+  font-size: 50px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.StartGame {
+  background-color: black;
+  color: white;
+  font-size: 50px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.RegularText {
+  color: white;
+  font-size: 20px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.FormText {
   color: white;
   font-size: 50px;
   font-family: fantasy;

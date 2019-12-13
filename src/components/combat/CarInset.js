@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { INCH } from '../utils/constants'
+import { INCH } from '../../utils/constants'
 
 import { Driver } from './carComponents/Driver'
 import { Plant } from './carComponents/Plant'

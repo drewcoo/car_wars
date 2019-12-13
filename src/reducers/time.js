@@ -2,14 +2,13 @@ import { createSlice } from 'redux-starter-kit'
 import uuid from 'uuid/v4'
 import { shuffle } from '../utils/shuffle'
 
-const orderedPlayers = shuffle(
+const orderedPlayers =
   [
     { id: uuid(), name: 'Alice', color: 'red', carIds: ['car0'], currentCarIndex: 0, currentSpeed: 20 },
     { id: uuid(), name: 'Bob', color: 'blue', carIds: ['car1'], currentCarIndex: 0, currentSpeed: 20 },
     { id: uuid(), name: 'Carol', color: 'green', carIds: ['car2'], currentCarIndex: 0, currentSpeed: 20 },
     { id: uuid(), name: 'Donald', color: 'purple', carIds: ['car3'], currentCarIndex: 0, currentSpeed: 20 }
   ]
-)
 
 const initialTimeInfo = {
   turn: {
@@ -58,6 +57,35 @@ export const timeSlice = createSlice({
         state.phase.number = newPhase
       }
       state.moveMe.players.currentIndex = tempIndex
+    },
+    playerSet (state, action) {
+      const player = state.moveMe.players.all.find(player => player.id === action.payload.id)
+      console.log(action.payload)
+      console.log(player)
+      if (action.payload.name) {
+        player.name = action.payload.name
+      }
+      if (action.payload.color) {
+        console.log(action.payload.color)
+        console.log(player)
+        console.log(player.color)
+        player.color = action.payload.color
+      }
+      /*
+      playerAdd (state, action) {
+        const player_collision = state.moveMe.players.all.find(player => player.id === action.payload.id)
+        if (player_collision) { throw new Error 'user id already exists!' }
+        player = {}
+        player.id = action.payload.id
+        player.name = action.payload.name
+        player.color = action.payload.color
+        player.carIds = []
+        state.moveMe.Players.all.push(player)
+        // don't put currentCarIndex or currentSpeed here.
+        { id: uuid(), name: 'Alice', color: 'red', carIds: ['car0'], currentCarIndex: 0, currentSpeed: 20 },\
+        // deal with sorting order by car instead
+      }
+      */
     }
   }
 })
