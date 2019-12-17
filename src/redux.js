@@ -24,4 +24,4 @@ export const {
   acceptMove,
   weaponNext, weaponPrevious, weaponSet
 } = carsSlice.actions
-export const { phaseNext, playerNext, currentPlayer, playerSet } = timeSlice.actions
+export const { phaseNext, playerNext, currentPlayer, playerSet, playersReset } = timeSlice.actions

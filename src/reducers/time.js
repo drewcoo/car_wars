@@ -2,8 +2,7 @@ import { createSlice } from 'redux-starter-kit'
 import uuid from 'uuid/v4'
 import { shuffle } from '../utils/shuffle'
 
-const orderedPlayers =
-  [
+const orderedPlayers = [
     { id: uuid(), name: 'Alice', color: 'red', carIds: ['car0'], currentCarIndex: 0, currentSpeed: 20 },
     { id: uuid(), name: 'Bob', color: 'blue', carIds: ['car1'], currentCarIndex: 0, currentSpeed: 20 },
     { id: uuid(), name: 'Carol', color: 'green', carIds: ['car2'], currentCarIndex: 0, currentSpeed: 20 },
@@ -71,6 +70,7 @@ export const timeSlice = createSlice({
         console.log(player.color)
         player.color = action.payload.color
       }
+    },
       /*
       playerAdd (state, action) {
         const player_collision = state.moveMe.players.all.find(player => player.id === action.payload.id)
@@ -86,6 +86,19 @@ export const timeSlice = createSlice({
         // deal with sorting order by car instead
       }
       */
+    playersReset (state, action) {
+    //const players = state.moveMe.players
+      var temp = action.payload.players
+      console.log(temp)
+      temp.forEach(player => {
+        player.carIds = player.cars.map(car => {
+          return car.name
+        })
+        delete player.cars
+      })
+      console.log(temp)
+      state.moveMe.players.all = temp
+      //console.log(state.moveMe)
     }
   }
 })

@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <div>
       <span className='Title'>You are home.</span><br/>
-      <span className='RegularText'>This should explain. And link to Gitub and SJ and such.</span>
+      <span className='RegularText'>This should explain. And link to Github and SJ and such.</span>
     </div>
   )
 }

@@ -10,6 +10,7 @@ import {
 
 import Arena from './Arena'
 import Home from './Home'
+import NewGame from '../components/pages/NewGame'
 import Start from './Start'
 
 const NavSelector = (props) => {
@@ -33,6 +34,7 @@ const NavSelector = (props) => {
           onChange={ onChange }
         >
           <option value='/'>Home</option>
+          <option value='/new_game'>New Game</option>
           <option value='/arena'>The Arena</option>
           <option value='/start'>Start a Battle</option>
         </select>
@@ -40,6 +42,9 @@ const NavSelector = (props) => {
       <Switch>
         <Route path="/arena">
           <Arena />
+        </Route>
+        <Route path="/new_game">
+          <NewGame />
         </Route>
         <Route path="/start">
           <Start />
