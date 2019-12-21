@@ -74,56 +74,56 @@ const KeystrokeInput = () => {
         if (!car.status.maneuvers.includes('bend')) { break }
         // fall through
       case 'bend':
-        dispatch(ghostTurnBend({ car: car, degrees: (fRight ? 15 : -15) }))
+        dispatch(ghostTurnBend({ id: car.id, degrees: (fRight ? 15 : -15) }))
         break
       case 'drift':
-        dispatch(ghostMoveDrift({ car: car, direction: (fRight ? 'right' : 'left') }))
+        dispatch(ghostMoveDrift({ id: car.id, direction: (fRight ? 'right' : 'left') }))
         break
       case 'swerve':
-        dispatch(ghostTurnSwerve({ car: car, degrees: (fRight ? 15 : -15) }))
+        dispatch(ghostTurnSwerve({ id: car.id, degrees: (fRight ? 15 : -15) }))
         break
       default:
         console.log(`maneuver: ${currentManeuver(car)}`)
         return
     }
-    dispatch(ghostShowCollisions(car))
+    dispatch(ghostShowCollisions({ id: car.id }))
   }
 
   const handlers = {
     nextManeuver: (event) => {
       var car = getCurrentCar()
       viewElement(car.id)
-      dispatch(maneuverNext(car))
-      dispatch(ghostShowCollisions(car))
+      dispatch(maneuverNext({ id: car.id }))
+      dispatch(ghostShowCollisions({ id: car.id }))
       showHideCar(car, 1)
     },
     previousManeuver: (event) => {
       var car = getCurrentCar()
       viewElement(car.id)
-      dispatch(maneuverPrevious(car))
-      dispatch(ghostShowCollisions(car))
+      dispatch(maneuverPrevious({ id: car.id }))
+      dispatch(ghostShowCollisions({ id: car.id }))
       showHideCar(car, -1)
     },
     nextSpeed: (event) => {
       var car = getCurrentCar()
       viewElement(car.id)
-      dispatch(speedNext(car))
+      dispatch(speedNext({ id: car.id }))
     },
     previousSpeed: (event) => {
       var car = getCurrentCar()
       viewElement(car.id)
-      dispatch(speedPrevious(car))
+      dispatch(speedPrevious({ id: car.id }))
     },
     nextWeapon: (event) => {
       var car = getCurrentCar()
       viewElement(car.id)
-      dispatch(weaponNext(car))
+      dispatch(weaponNext({ id: car.id }))
       viewElement('reticle')
     },
     previousWeapon: (event) => {
       var car = getCurrentCar()
       viewElement(car.id)
-      dispatch(weaponPrevious(car))
+      dispatch(weaponPrevious({ id: car.id }))
       viewElement('reticle')
     },
     nextTarget: (event) => {
@@ -131,19 +131,19 @@ const KeystrokeInput = () => {
       viewElement('reticle')
     },
     previousTarget: (event) => {
-      dispatch(ghostTargetPrevious(getCurrentCar()))
+      dispatch(ghostTargetPrevious({ id: getCurrentCar().id }))
       viewElement('reticle')
     },
     fireWeapon: (event) => {
       viewElement('reticle')
-      dispatch(ghostFire(getCurrentCar()))
+      dispatch(ghostFire({ id: getCurrentCar().id }))
     },
     acceptMove: (event) => {
       var car = getCurrentCar()
       var moved = (car.rect.brPoint().x !== car.phasing.rect.brPoint().x) ||
                   (car.rect.brPoint().y !== car.phasing.rect.brPoint().y)
       if (moved) {
-        dispatch(acceptMove(car))
+        dispatch(acceptMove({ id: car.id }))
         dispatch(playerNext())
         viewElement('ghost')
       }
@@ -159,7 +159,7 @@ const KeystrokeInput = () => {
     home: (event) => {
       var car = getCurrentCar()
       viewElement(car.id)
-      dispatch(ghostReset(car))
+      dispatch(ghostReset({ id: car.id }))
     }
   }
 

@@ -16,6 +16,11 @@ class Rectangle {
     }
     if (rectData.facing === undefined) { throw new Error('facing undefined!') }
     this.__brPoint = rectData.__brPoint || rectData.brPoint
+    /*
+    if (!(this.__brPoint instanceof Point)) {
+      this.__brPoint = new Point(this.__brPoint)
+    }
+    */
     this.facing = (rectData.facing + 360) % 360
     this.length = rectData.length || INCH
     this.width = rectData.width || INCH / 2
@@ -23,6 +28,14 @@ class Rectangle {
 
   toString () {
     return JSON.stringify(this)
+    /*
+    return JSON.stringify({
+      __brPoint: this.__brPoint.toString(),
+      facing: this.facing,
+      length: this.length,
+      width: this.width
+    })
+    */
   }
 
   brPoint () {

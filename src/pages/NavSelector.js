@@ -36,7 +36,7 @@ const NavSelector = (props) => {
           <option value='/'>Home</option>
           <option value='/new_game'>New Game</option>
           <option value='/arena'>The Arena</option>
-          <option value='/start'>Start a Battle</option>
+          <option value='/start'>Start a Match</option>
         </select>
       </div>
       <Switch>

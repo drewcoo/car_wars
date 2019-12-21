@@ -96,21 +96,21 @@ export const carsSlice = createSlice({
       targets.refresh()
     },
     ghostTurnBend (state, action) {
-      const car = state.find((carState) => carState.id === action.payload.car.id)
+      const car = state.find((carState) => carState.id === action.payload.id)
       const degrees = action.payload.degrees
       car.phasing.rect = PhasingMove.bend({ car, degrees })
       var targets = new Targets({ car, cars: state, walls: WallData })
       targets.refresh()
     },
     ghostTurnSwerve (state, action) {
-      const car = state.find((carState) => carState.id === action.payload.car.id)
+      const car = state.find((carState) => carState.id === action.payload.id)
       const degrees = action.payload.degrees
       car.phasing.rect = PhasingMove.swerve({ car, degrees })
       var targets = new Targets({ car, cars: state, walls: WallData })
       targets.refresh()
     },
     ghostMoveDrift (state, action) {
-      const car = state.find((carState) => carState.id === action.payload.car.id)
+      const car = state.find((carState) => carState.id === action.payload.id)
       var distance = (action.payload.direction === 'right') ? INCH / 4 : -INCH / 4
       car.phasing.rect = PhasingMove.drift({ car, distance })
       var targets = new Targets({ car, cars: state, walls: WallData })

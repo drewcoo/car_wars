@@ -5,7 +5,7 @@ import { store } from '../redux'
 
 import '../App.css'
 
-import PlayersForm from '../components/planBattle/PlayersForm'
+import PlayersForm from '../components/planMatch/PlayersForm'
 
 /*  <span className='FormText'>Map:<MapSelector/></span><br/> */
 
