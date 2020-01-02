@@ -1,30 +1,15 @@
 import React, { Component } from 'react'
-// import { Provider } from 'react-redux'
-// import { store } from './redux'
-
+import { BrowserRouter as Router } from 'react-router-dom'
 import './App.css'
-
-import NavSelector from './pages/NavSelector'
+import NavSelector from './components/pages/NavSelector'
 
 class App extends Component {
-  /*
-  componentDidMount () {
-    var element = document.getElementById('ghost')
-    element.scrollIntoViewIfNeeded() // scrollIntoView();//{ block: 'center', inline: 'center' });
-    element.scrollIntoView({ block: 'center', inline: 'center' })
-  }
-
-  componentDidUpdate () {
-    var element = document.getElementById('ghost')
-    element.scrollIntoViewIfNeeded() // scrollIntoView();//{ block: 'center', inline: 'center' });
-    element.scrollIntoView({ block: 'center', inline: 'center' })
-  }
-*/
-
   render () {
     return (
       <div>
-        <NavSelector />
+        <Router>
+          <NavSelector />
+        </Router>
       </div>
     )
   }

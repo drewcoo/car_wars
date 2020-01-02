@@ -2,8 +2,8 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { defaultStyle } from './timeStyle'
 
-const Turn = () => {
-  const turn = useSelector((state) => state.time.turn)
+const Turn = ({ matchId }) => {
+  const turn = useSelector((state) => state.matches[matchId].time.turn)
 
   return (
     <span id='turn' style={ defaultStyle }>Turn: { turn.number }</span>

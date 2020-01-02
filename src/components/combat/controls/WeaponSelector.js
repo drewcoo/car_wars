@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { weaponSet } from '../../../redux'
 
-const Weapon = (props) => {
+const Weapon = ({ matchId }) => {
   const thisId = 'weapon'
   const dispatch = useDispatch()
 
@@ -14,12 +14,19 @@ const Weapon = (props) => {
     fontVariant: 'small-caps'
   }
 
-  const players = useSelector((state) => state.time.moveMe.players)
-  const cars = useSelector((state) => state.cars)
+  const match = useSelector((state) => state.matches[matchId])
+  const players = match.time.moveMe.players
+  const cars = match.cars
+
+  const currentPlayer = players.all[players.currentIndex]
+  const currentCarId = currentPlayer.cars[currentPlayer.currentCarIndex].id
+
+  const getCar = (id) => {
+    return cars.find(function (elem) { return elem.id === id })
+  }
+
   const getCurrentCar = () => {
-    const playerColor = players.all[players.currentIndex].color
-    const carColor = playerColor
-    return cars.find(function (elem) { return elem.color === carColor })
+    return getCar(currentCarId)
   }
 
   const weapons = getCurrentCar().design.components.weapons
@@ -36,7 +43,7 @@ const Weapon = (props) => {
     console.log(`getting element: ${id}`)
     var element = document.getElementById(id)
     if (!element) { return }
-    element.scrollIntoViewIfNeeded() // scrollIntoView();//{ block: 'center', inline: 'center' });
+    element.scrollIntoView()
     element.scrollIntoView({ block: 'center', inline: 'center' })
   }
 
@@ -44,6 +51,7 @@ const Weapon = (props) => {
     var car = getCurrentCar()
     viewElement(car.id)
     dispatch(weaponSet({
+      matchId: matchId,
       id: car.id,
       weapon: event.target.value
     }))

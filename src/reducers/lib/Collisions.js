@@ -1,7 +1,7 @@
 // import Dice from '../../utils/Dice'
 // import Damage from './Damage'
 
-export class Collisions {
+class Collisions {
   static clear ({ cars }) {
     for (const car of cars) {
       // This is ugly.
@@ -170,6 +170,8 @@ export class Collisions {
     // shortcut - premature optimization?
     if (thisCar.phasing.collisionDetected) { return }
 
+    console.log(walls)
+
     for (const wall of walls) {
       // var skew = thisCar.phasing.rect.intersectRectangle(wall.rect);
       var skew = thisCar.phasing.rect.intersects(wall.rect)
@@ -195,15 +197,12 @@ export class Collisions {
     }
   }
 
-  static detect ({ cars, walls, thisCar }) {
+  static detect ({ cars, map, thisCar }) {
+    const walls = map.wallData
     // clear old collision data just in case
-    console.log('clear')
     Collisions.clear({ cars })
-    console.log('with cars')
     Collisions.detectWithCars({ cars, thisCar })
-    console.log('with walls')
     Collisions.detectWithWalls({ walls, thisCar })
-    console.log('done detecting')
   }
 
   static resolve ({ car, collision }) {
@@ -250,3 +249,5 @@ collisions"
   //
   //
 }
+
+export default Collisions

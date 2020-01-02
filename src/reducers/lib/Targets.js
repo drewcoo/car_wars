@@ -12,13 +12,16 @@ Target = {
 */
 
 class Targets {
-  constructor ({ car, cars, walls }) {
+  constructor ({ car, cars, map }) {
     this.car = car
     this.cars = cars
-    this.walls = walls
+    this.walls = map.wallData
   }
 
   refresh () {
+    console.log(this.car)
+    console.log(this.car.id)
+    console.log(this.car.design.name)
     const weapon = this.car.design.components.weapons[this.car.phasing.weaponIndex]
     const plantDisabled = this.car.design.components.power_plant.dp < 1
     const canFire = Weapon.canFire({ weapon, plantDisabled })
@@ -28,7 +31,7 @@ class Targets {
 
   /*
   console.log('fetch targets')
-  var targets = new Targets({ car, cars: state, walls: WallData })
+  var targets = new Targets({ car, cars: state, map: map })
   var data = targets.targetsInArc()
   console.log(`targets in arc: ${data[0]}`)
   car.phasing.targets = data || null

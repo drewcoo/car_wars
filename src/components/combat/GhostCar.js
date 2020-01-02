@@ -1,20 +1,23 @@
 import React from 'react'
-import Car from './Car'
 import { useSelector } from 'react-redux'
+import Car from './Car'
 import FiringArc from './FiringArc'
 
-const GhostCar = () => {
-  const players = useSelector((state) => state.time.moveMe.players)
-  const cars = useSelector((state) => state.cars)
-  const getCurrentCar = () => {
-    const playerColor = players.all[players.currentIndex].color
-    return cars.find(function (car) { return car.color === playerColor })
-  }
+const GhostCar = ({ matchId }) => {
+  const match = useSelector((state) => state.matches[matchId])
+  const players = match.time.moveMe.players
+  const currentPlayer = players.all[players.currentIndex]
+  const currentCarId = currentPlayer.cars[currentPlayer.currentCarIndex].id
 
   return (
     <g>
-      <FiringArc />
-      <Car id='ghost' key='ghost' state={ getCurrentCar() } ghost={ true } />
+      <FiringArc matchId={ matchId } />
+      <Car
+        matchId={ matchId }
+        id={ currentCarId }
+        key='ghost'
+        ghost={ true }
+      />
     </g>
   )
 }

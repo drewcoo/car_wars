@@ -12,7 +12,7 @@ describe('Point', () => {
     })
   })
 
-/*
+  /*
   describe('#toArray', () => {
     it('can return an array', () => {
       const point = Factory.Point()

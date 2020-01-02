@@ -17,12 +17,12 @@ import { FrontMG } from './carComponents/FrontMG'
 
 /*
 const CarInset = () => {
-  const players = useSelector((state) => state.players);
+  const players = useSelector((state) => state.matches[matchId].players);
 
   const currentPlayer = players.all[players.currentIndex];
 
  // BUGBUG: Should select current car.
-  const cars = useSelector((state) => state.cars);
+  const cars = useSelector((state) => state.matches[matchId].cars);
   var car = cars.find(function(element) {
     return element.color === currentPlayer.color;
   });
@@ -30,7 +30,7 @@ const CarInset = () => {
   // BUGBUG: I would rather pass height via CSS to the enclosing div.
   return (
     <svg id='CarInset' height={5*INCH} >
-      <Car state={ car } inset={ true } />
+      <Car id={ car.id } inset={ true } />
     </svg>
   );
 };
@@ -84,18 +84,16 @@ const InsetLayout = ({ width, length, car }) => {
   )
 }
 
-const CarInset = () => {
+const CarInset = ({ matchId }) => {
   const inset = true
   const id = 'inset'
   const scaling = 1 // inset ? 1 : 1;    ///5; //40/INCH : 1/10;
-
-  const players = useSelector((state) => state.time.moveMe.players)
+  const match = useSelector((state) => state.matches[matchId])
+  const players = match.time.moveMe.players
   const currentPlayer = players.all[players.currentIndex]
-  // BUGBUG: Should select current car.
-  const cars = useSelector((state) => state.cars)
-  var car = cars.find(function (element) {
-    return element.color === currentPlayer.color
-  })
+  const currentCarId = currentPlayer.cars[currentPlayer.currentCarIndex].id
+  const cars = match.cars
+  const car = cars.find(function (elem) { return elem.id === currentCarId })
 
   const ghost = false
   const tempRect = ghost ? car.rect : car.phasing.rect
@@ -159,7 +157,7 @@ const CarInset = () => {
 
   const showInset = () => {
     if (inset) {
-      return (<InsetLayout car={car} length={length} width={width} />)
+      return (<InsetLayout car={ car } length={ length } width={ width } />)
     }
   }
 
@@ -218,7 +216,7 @@ const CarInset = () => {
         />
         { /* front pip */ }
         <circle
-          visibility = {(!inset) ? 'visible' : 'hidden' }
+          visibility = { (!inset) ? 'visible' : 'hidden' }
           cx = { tempBrPoint.x - width / 2 }
           cy = { tempBrPoint.y - length + 2 + smidge }
           r = { width / 16 }
@@ -235,8 +233,10 @@ const CarInset = () => {
           fontWeight = 'bold'
           stroke = 'black'
         >
-          { `real: (${car.rect.brPoint().x / INCH}, ${car.rect.brPoint().y / INCH})\n` }
-          { `ghost: (${car.phasing.rect.brPoint().x / INCH}, ${car.phasing.rect.brPoint().y / INCH})` }
+          { `real: (${car.rect.brPoint().x / INCH},
+            ${car.rect.brPoint().y / INCH})\n` }
+          { `ghost: (${car.phasing.rect.brPoint().x / INCH},
+            ${car.phasing.rect.brPoint().y / INCH})` }
         </text>
       </g>
     </svg>

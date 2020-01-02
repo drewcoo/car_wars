@@ -1,24 +1,18 @@
 
 import { Maneuvers } from './Maneuvers'
 
-
-
 import Design from '../../vehicleDesigns/KillerKart'
 
-
 class CarStatus {
-  static addCar ({ id, design, color, player, startingPosition }) {
+  static addCar ({ id, design, color, name, player, startingPosition }) {
     if (!player) { player = { color: color } }
 
     design = Design
-
-
-
-
-  //  design = KillerKart
+    //  design = KillerKart
 
     var car = {
       id: id,
+      name: name,
       design: design, // change name to design?
       player: player,
       color: player.color,

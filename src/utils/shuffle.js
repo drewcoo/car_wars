@@ -1,4 +1,4 @@
-export const shuffle = (arrayIn) => {
+const shuffle = (arrayIn) => {
   var result = arrayIn.slice(0)
   var currentIndex = result.length
   var temporaryValue, randomIndex
@@ -17,6 +17,8 @@ export const shuffle = (arrayIn) => {
 
   return result
 }
+
+export default shuffle
 
 /*
 https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array#2450976

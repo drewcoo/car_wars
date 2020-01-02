@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 
 const InsetLayout = ({ width, length, car }) => {
   return (
@@ -25,23 +26,24 @@ const InsetLayout = ({ width, length, car }) => {
   )
 }
 
-const Car = ({ id, state, inset = false, ghost = false }) => {
-  const tempRect = ghost ? state.phasing.rect : state.rect
-  const collisionDetected = ghost ? state.phasing.collisionDetected : state.collisionDetected
+const Car = ({ matchId, id, inset = false, ghost = false }) => {
+  const car = useSelector((state) => state.matches[matchId].cars.find((car) => car.id === id))
+  const tempRect = ghost ? car.phasing.rect : car.rect
+  const collisionDetected = ghost ? car.phasing.collisionDetected : car.collisionDetected
   const opacity = ghost ? 1 / 2 : 1
 
   const bodyStyle = {
-    fill: state.color,
+    fill: car.color,
     stroke: 'black',
     strokeWidth: 3,
     opacity: opacity
   }
   const roofStyle = {
-    fill: state.color,
+    fill: car.color,
     opacity: opacity
   }
   const mainBodyStyle = {
-    fill: state.color,
+    fill: car.color,
     stroke: 'black',
     strokeWidth: 2,
     opacity: opacity
@@ -82,7 +84,13 @@ const Car = ({ id, state, inset = false, ghost = false }) => {
 
   const showInset = () => {
     if (inset) {
-      return (<InsetLayout car={state} length={tempRect.length} width={tempRect.width} />)
+      return (
+        <InsetLayout
+          car={ car }
+          length={ tempRect.length }
+          width={ tempRect.width }
+        />
+      )
     }
   }
 

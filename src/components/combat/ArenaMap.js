@@ -1,37 +1,32 @@
 import React from 'react'
-import Car from './Car'
-import MapBackground from './MapBackground'
-import GhostCar from './GhostCar'
-import Walls from './Walls'
-
-import Damage from './Damage'
-import Reticle from './Reticle'
-
 import { useSelector } from 'react-redux'
 
-import { MAP_SIZE } from '../../maps/arenaMap1'
+import Car from './Car'
+import Damage from './Damage'
+import GhostCar from './GhostCar'
+import MapBackground from './MapBackground'
+import Reticle from './Reticle'
+import Walls from './Walls'
 
-const ArenaMap = () => {
-  const cars = useSelector((state) => state.cars)
-  const players = useSelector((state) => state.time.moveMe.players)
-  const getCarById = (id) => {
-    return cars.find(function (elem) { return elem.id === id })
-  }
+const ArenaMap = ({ matchId }) => {
+  const match = useSelector((state) => state.matches[matchId])
+  const size = match.map.size
+  const players = match.time.moveMe.players
 
   return (
-    <svg id='ArenaMap' width={ MAP_SIZE.WIDTH } height={ MAP_SIZE.HEIGHT } >
-      <MapBackground />
-      <Walls />
+    <svg id='ArenaMap' width={ size.width } height={ size.height } >
+      <MapBackground matchId={ matchId } />
+      <Walls matchId={ matchId } />
       {
         players.all.map((player) => (
-          player.carIds.map((id) => (
-            <Car id={id} key={id} state={ getCarById(id) } />
+          player.cars.map((car) => (
+            <Car key={ car.id } matchId={ matchId } id={ car.id } />
           ))
         ))
       }
-      <GhostCar />
-      <Reticle />
-      <Damage />
+      <GhostCar matchId={ matchId } />
+      <Reticle matchId={ matchId } />
+      <Damage matchId={ matchId } />
     </svg>
   )
 }
