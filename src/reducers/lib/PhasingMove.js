@@ -1,6 +1,6 @@
 import { FACE, INCH } from '../../utils/constants'
 
-export class PhasingMove {
+class PhasingMove {
   static nothing ({ car }) {
     console.log('nothing here')
     console.log(car.id)
@@ -40,6 +40,8 @@ export class PhasingMove {
       difficulty: 0,
       // focus: true, do something with next player/next car instead.
       maneuverIndex: 0,
+      // Maybe - something in fire
+      // movedAndFired: false,
       speedChanges: possibles, // .phasing.speedChanges,
       speedChangeIndex: possibles.indexOf(car.status.speed),
       weaponIndex: car.phasing.weaponIndex,
@@ -170,3 +172,5 @@ export class PhasingMove {
     return result
   }
 }
+
+export default PhasingMove

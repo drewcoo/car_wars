@@ -1,7 +1,6 @@
 class Damage {
   static deal ({ damage, car, location }) {
     console.log(`${damage} dealt to car ${car.id} at ${location}`)
-    console.log(car.color)
     if (location.length === 1) {
       console.log(`side: ${location}`)
       console.log(`armor there: ${car.design.components.armor[location]}`)

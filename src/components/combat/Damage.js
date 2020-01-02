@@ -1,9 +1,9 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-const Damage = () => {
-  const players = useSelector((state) => state.time.moveMe.players)
-  const cars = useSelector((state) => state.cars)
+const Damage = ({ matchId }) => {
+  const players = useSelector((state) => state.matches[matchId].time.moveMe.players)
+  const cars = useSelector((state) => state.matches[matchId].cars)
   const getCurrentCar = () => {
     const playerColor = players.all[players.currentIndex].color
     return cars.find(function (car) { return car.color === playerColor })

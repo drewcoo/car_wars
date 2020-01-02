@@ -1,8 +1,8 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ghostTargetSet } from '../../redux'
+import { ghostTargetSet } from '../../../redux'
 
-const Target = (props) => {
+const Target = ({ matchId }) => {
   const thisId = 'target'
   const dispatch = useDispatch()
 
@@ -14,8 +14,11 @@ const Target = (props) => {
     fontVariant: 'small-caps'
   }
 
-  const players = useSelector((state) => state.time.moveMe.players)
-  const cars = useSelector((state) => state.cars)
+  const players = useSelector((state) => state.matches[matchId].time.moveMe.players)
+  const cars = useSelector((state) => state.matches[matchId].cars)
+  const getCarById = (id) => {
+    return cars.find(function (elem) { return elem.id === id })
+  }
   const getCurrentCar = () => {
     var playerColor = players.all[players.currentIndex].color
     var carColor = playerColor
@@ -28,8 +31,9 @@ const Target = (props) => {
     if (car.phasing.targets.length > 0) {
       for (var i = 0; i < car.phasing.targets.length; i++) {
         const locType = (car.phasing.targets[i].name.length === 1) ? 'side' : 'tire'
-        const locString = `${car.phasing.targets[i].carId} ${car.phasing.targets[i].name} ${locType}`
-        result.push(<option key={i} value={i}>{locString}</option>)
+        const shootThatCar = getCarById(car.phasing.targets[i].carId)
+        const locString = `${shootThatCar.name} ${car.phasing.targets[i].name} ${locType}`
+        result.push(<option key={i} value={i}>{ locString }</option>)
       }
     } else {
       console.assert(car.phasing.targetIndex === 0)
@@ -38,16 +42,20 @@ const Target = (props) => {
     return result
   }
 
+  const targetValue = () => {
+    return getCurrentCar().phasing.targetIndex || 0
+  }
+
   var viewElement = (id) => {
-    console.log(`getting element: ${id}`)
     var element = document.getElementById(id)
     if (!element) { return }
-    element.scrollIntoViewIfNeeded() // scrollIntoView();//{ block: 'center', inline: 'center' });
+    element.scrollIntoView()
     element.scrollIntoView({ block: 'center', inline: 'center' })
   }
 
   const onChange = (event) => {
     dispatch(ghostTargetSet({
+      matchId: matchId,
       id: getCurrentCar().id,
       targetIndex: event.target.value
     }))
@@ -60,7 +68,7 @@ const Target = (props) => {
     <select
       id={ thisId }
       style={ optionStyle }
-      value={ getCurrentCar().phasing.targetIndex }
+      value={ targetValue() }
       onChange={ onChange }>
       { listTargets() }
     </select>

@@ -1,12 +1,13 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import CrewMember from '../reducers/lib/CrewMember'
-import Weapon from '../reducers/lib/Weapon'
-import { FACE, INCH } from '../utils/constants'
+import CrewMember from '../../reducers/lib/CrewMember'
+import Weapon from '../../reducers/lib/Weapon'
+import { FACE, INCH } from '../../utils/constants'
 
-const FiringArc = () => {
-  const players = useSelector((state) => state.time.moveMe.players)
-  const cars = useSelector((state) => state.cars)
+const FiringArc = ({ matchId }) => {
+  const match = useSelector((state) => state.matches[matchId])
+  const players = match.time.moveMe.players
+  const cars = match.cars
   const getCurrentCar = () => {
     const playerColor = players.all[players.currentIndex].color
     return cars.find(function (car) { return car.color === playerColor })
@@ -14,9 +15,13 @@ const FiringArc = () => {
   const car = getCurrentCar()
   const currentWeapon = car.design.components.weapons[car.phasing.weaponIndex]
   const currentCrewMember = car.design.components.crew.driver
+  const plant = car.design.components.power_plant
 
   const drawArc = () => {
-    if (!(Weapon.canFire(currentWeapon) &&
+    if (!(Weapon.canFire({
+      weapon: currentWeapon,
+      plantDisabled: plant.damagePoints < 1
+    }) &&
            CrewMember.canFire(currentCrewMember))) { return }
     const arcFacing = currentWeapon.location
 
@@ -73,10 +78,16 @@ const FiringArc = () => {
       if (sides === null) { return }
       return (
         <path
-          d={`M${arcSides(arcRayLen).left.x},${arcSides(arcRayLen).left.y}
-              A${arcRayLen},${arcRayLen} 0 0,0 ${arcSides(arcRayLen).right.x},${arcSides(arcRayLen).right.y}
-              L${rect.center().x},${rect.center().y}
-              L${arcSides(arcRayLen).left.x},${arcSides(arcRayLen).left.y}`}
+          d={ `M${arcSides(arcRayLen).left.x},
+                ${arcSides(arcRayLen).left.y}
+               A${arcRayLen},
+                ${arcRayLen} 0 0,
+                0 ${arcSides(arcRayLen).right.x},
+                ${arcSides(arcRayLen).right.y}
+               L${rect.center().x},
+                ${rect.center().y}
+               L${arcSides(arcRayLen).left.x},
+                ${arcSides(arcRayLen).left.y}` }
           style={ filledArcStyle }
         />
       )
@@ -85,15 +96,19 @@ const FiringArc = () => {
     // Change this to show the +4 inside the 1" arc?
     const arcAtInches = ({ label, inches }) => {
       return (
-        <g key={`arc-${inches}-in`}>
+        <g key={ `arc-${inches}-in` }>
           <path
-            d={`M${arcSides(inches).left.x},${arcSides(inches).left.y}
-              A${inches * INCH},${inches * INCH} 0 0,0 ${arcSides(inches).right.x},${arcSides(inches).right.y}`}
+            d={ `M${arcSides(inches).left.x},
+                  ${arcSides(inches).left.y}
+                 A${inches * INCH},
+                  ${inches * INCH} 0 0,
+                  0 ${arcSides(inches).right.x},
+                  ${arcSides(inches).right.y}` }
             style={ arcStyle }
           />
           <text
-            x={textLoc(inches).x}
-            y={textLoc(inches).y}
+            x={ textLoc(inches).x }
+            y={ textLoc(inches).y }
             style= { arcTextStyle }
           >
             { label }
@@ -126,7 +141,7 @@ const FiringArc = () => {
     }
 
     return (
-      <g key={`${getCurrentCar().id}-arc`}>
+      <g key={ `${getCurrentCar().id}-arc` }>
         { arcFill() }
         { Object.keys(arcIncrements()).map(function (key) {
           return arcAtInches({ label: arcIncrements()[key], inches: key })

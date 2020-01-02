@@ -12,12 +12,14 @@ describe('Point', () => {
     })
   })
 
+  /*
   describe('#toArray', () => {
     it('can return an array', () => {
       const point = Factory.Point()
       expect(point.toArray()).toEqual([point.x, point.y])
     })
   })
+  */
 
   describe('#rotateAround', () => {
     it('can rotate 90 degrees clockwise around a point', () => {

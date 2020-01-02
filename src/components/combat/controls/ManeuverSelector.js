@@ -1,8 +1,8 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { maneuverSet } from '../../redux'
+import { maneuverSet, ghostForward, ghostReset, ghostShowCollisions } from '../../../redux'
 
-const Maneuver = (props) => {
+const Maneuver = ({ matchId }) => {
   const thisId = 'maneuver'
 
   const dispatch = useDispatch()
@@ -19,19 +19,39 @@ const Maneuver = (props) => {
     visibility: 'hidden'
   }
 
-  const players = useSelector((state) => state.time.moveMe.players)
-  const cars = useSelector((state) => state.cars)
+  const match = useSelector((state) => state.matches[matchId])
+  const players = match.time.moveMe.players
+  const cars = match.cars
+  const currentPlayer = players.all[players.currentIndex]
+  const currentCarId = currentPlayer.cars[currentPlayer.currentCarIndex].id
+
   const getCurrentCar = () => {
-    var playerColor = players.all[players.currentIndex].color
-    var carColor = playerColor
-    return cars.find(function (elem) { return elem.color === carColor })
+    return cars.find(function (elem) { return elem.id === currentCarId })
+  }
+
+  var viewElement = (id) => {
+    var element = document.getElementById(id)
+    if (!element) { return }
+    element.scrollIntoView()
+    element.scrollIntoView({ block: 'center', inline: 'center' })
   }
 
   const onChange = (event) => {
+    viewElement(currentCarId)
     dispatch(maneuverSet({
-      id: getCurrentCar().id,
+      matchId: matchId,
+      id: currentCarId,
       maneuverIndex: event.target.value
     }))
+
+    // argh - the index here is a stringified number
+    if (event.target.value === '0') {
+      console.log('RESET!!!!')
+      dispatch(ghostReset({ matchId: matchId, id: currentCarId }))
+    } else {
+      dispatch(ghostForward({ matchId: matchId, id: currentCarId }))
+    }
+    dispatch(ghostShowCollisions({ matchId: matchId, id: currentCarId }))
     document.getElementById(thisId).blur()
   }
 

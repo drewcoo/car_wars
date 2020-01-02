@@ -8,7 +8,8 @@ export const NULL_WEAPON = () => {
     damage: '0d',
     damagePoints: 0,
     effect: 'area',
-    firedThisTurn: false
+    firedThisTurn: false,
+    requiresPlant: false
   }
 }
 
@@ -22,7 +23,8 @@ export const MG = (location) => {
     damage: '1d',
     damagePoints: 3,
     effect: 'area',
-    firedThisTurn: false
+    firedThisTurn: false,
+    requiresPlant: false
   }
 }
 
@@ -36,7 +38,8 @@ export const HR = (location) => {
     damage: '3d',
     damagePoints: 2,
     effect: 'burst',
-    firedThisTurn: false
+    firedThisTurn: false,
+    requiresPlant: false
   }
 }
 
@@ -50,7 +53,8 @@ export const RL = (location) => {
     damage: '2d',
     damagePoints: 2,
     effect: 'burst',
-    firedThisTurn: false
+    firedThisTurn: false,
+    requiresPlant: false
   }
 }
 
@@ -64,6 +68,7 @@ export const L = (location) => {
     damage: '3d',
     damagePoints: 2,
     effect: 'area',
-    firedThisTurn: false
+    firedThisTurn: false,
+    requiresPlant: true
   }
 }

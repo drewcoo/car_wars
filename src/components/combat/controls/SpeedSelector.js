@@ -1,8 +1,8 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { speedSet } from '../../redux'
+import { speedSet } from '../../../redux'
 
-const Speed = (props) => {
+const Speed = ({ matchId }) => {
   const thisId = 'speed'
   const dispatch = useDispatch()
 
@@ -18,8 +18,8 @@ const Speed = (props) => {
   //  color: 'darkgray',
   // };
 
-  const players = useSelector((state) => state.time.moveMe.players)
-  const cars = useSelector((state) => state.cars)
+  const players = useSelector((state) => state.matches[matchId].time.moveMe.players)
+  const cars = useSelector((state) => state.matches[matchId].cars)
   const getCurrentCar = () => {
     var playerColor = players.all[players.currentIndex].color
     var carColor = playerColor
@@ -28,6 +28,7 @@ const Speed = (props) => {
 
   const onChange = (event) => {
     dispatch(speedSet({
+      matchId: matchId,
       id: getCurrentCar().id,
       speedChangeIndex: event.target.value
     }))
@@ -52,7 +53,6 @@ const Speed = (props) => {
       id={ thisId }
       style={ optionStyle }
       value={ getCurrentCar().phasing.speedChangeIndex }
-
       onChange={onChange}>
       { listSpeedChanges() }
     </select>
