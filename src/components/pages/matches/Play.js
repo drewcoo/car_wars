@@ -1,23 +1,23 @@
 import React from 'react'
 import { Provider } from 'react-redux'
-import { store } from '../../redux'
+import { store } from '../../../redux'
 import { useParams } from 'react-router-dom'
 
-import KeystrokeInput from '../combat/controls/KeystrokeInput'
-import Maneuver from '../combat/controls/ManeuverSelector'
-import Speed from '../combat/controls/SpeedSelector'
-import Target from '../combat/controls/TargetSelector'
-import Weapon from '../combat/controls/WeaponSelector'
-import ArenaMap from '../combat/ArenaMap'
-import CarInset from '../combat/CarInset'
-import CarStats from '../combat/CarStats'
-import Phase from '../combat/timing/Phase'
-import PlayerName from '../combat/PlayerName'
-import Turn from '../combat/timing/Turn'
+import KeystrokeInput from '../../combat/controls/KeystrokeInput'
+import Maneuver from '../../combat/controls/ManeuverSelector'
+import Speed from '../../combat/controls/SpeedSelector'
+import Target from '../../combat/controls/TargetSelector'
+import Weapon from '../../combat/controls/WeaponSelector'
+import ArenaMap from '../../combat/ArenaMap'
+import CarInset from '../../combat/CarInset'
+import CarStats from '../../combat/CarStats'
+import Phase from '../../combat/timing/Phase'
+import PlayerName from '../../combat/PlayerName'
+import Turn from '../../combat/timing/Turn'
 
-import '../../App.css'
+import '../../../App.css'
 
-const Arena = (props) => {
+const Match = (props) => {
   var passedParams = useParams()
 
   return (
@@ -59,4 +59,4 @@ const Arena = (props) => {
   )
 }
 
-export default Arena
+export default Match

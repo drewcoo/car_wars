@@ -9,10 +9,10 @@ import {
   withRouter
 } from 'react-router-dom'
 
-import Arena from './Arena'
 import Home from './Home'
-import MatchesNew from './MatchesNew'
-import MatchesList from './MatchesList'
+import Match from './matches/Play'
+import MatchNew from './matches/New'
+import Matches from './matches/List'
 
 class NavSelector extends React.Component {
   constructor (props) {
@@ -46,19 +46,19 @@ class NavSelector extends React.Component {
           >
             <option></option>
             <option value='/about'>About</option>
-            <option value='/new_match'>New Match</option>
-            <option value='/list_match'>List Matches</option>
+            <option value='/match/new'>New Match</option>
+            <option value='/matches'>List Matches</option>
           </select>
         </div>
         <Switch>
-          <Route path="/arena/:matchId">
-            <Arena />
+          <Route path="/match/new">
+            <MatchNew />
           </Route>
-          <Route path="/new_match">
-            <MatchesNew />
+          <Route path="/match/:matchId">
+            <Match />
           </Route>
-          <Route path="/list_match">
-            <MatchesList />
+          <Route path="/matches">
+            <Matches />
           </Route>
           <Route path="/about">
             <Home />

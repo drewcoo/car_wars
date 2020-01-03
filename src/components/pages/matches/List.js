@@ -1,9 +1,9 @@
 import React from 'react'
 import { Link, withRouter } from 'react-router-dom'
-import { store } from '../../redux'
-import '../../App.css'
+import { store } from '../../../redux'
+import '../../../App.css'
 
-class MatchesList extends React.Component {
+class Matches extends React.Component {
   constructor (props) {
     super(props)
     this.state = { value: '' }
@@ -14,7 +14,7 @@ class MatchesList extends React.Component {
     Object.keys(store.getState().matches).forEach(elem => {
       result.push(
         <li>
-          <Link to={`/arena/${elem}`} style={ this.colorStyle() }>
+          <Link to={`/match/${elem}`} style={ this.colorStyle() }>
             { elem }
           </Link>
         </li>
@@ -44,4 +44,4 @@ class MatchesList extends React.Component {
   }
 }
 
-export default withRouter(MatchesList)
+export default withRouter(Matches)

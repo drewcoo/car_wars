@@ -1,13 +1,13 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
-import { store, addMatch, addCarToMatch } from '../../redux'
-import '../../App.css'
+import { store, addMatch, addCarToMatch } from '../../../redux'
+import '../../../App.css'
 
 import uuid from 'uuid/v4'
 
-import { Map } from '../../maps/arenaMap1'
+import { Map } from '../../../maps/arenaMap1'
 
-class MatchesNew extends React.Component {
+class MatchNew extends React.Component {
   constructor (props) {
     super(props)
     this.state = { value: '' }
@@ -60,10 +60,12 @@ class MatchesNew extends React.Component {
   }
 
   handleCarNameChange (event) {
-    var car = this.players.find(player =>
+    const car = this.players.find(player =>
       player.cars.find(car => car.id === event.target.id)
     )
+    console.log(car.name)
     car.name = event.target.value
+    console.log(car.name)
   }
 
   handleSubmit (event) {
@@ -79,6 +81,7 @@ class MatchesNew extends React.Component {
     for (var i = 0; i < this.players.length; i++) {
       for (var j = 0; j < this.players[i].cars.length; j++) {
         var car = this.players[i].cars[j]
+        console.log(car.name)
         store.dispatch(addCarToMatch({
           matchId: this.matchId,
           id: car.id,
@@ -91,7 +94,7 @@ class MatchesNew extends React.Component {
       }
     }
 
-    this.props.history.push('/arena/' + this.matchId)
+    this.props.history.push('/match/' + this.matchId)
   }
 
   createPlayer ({ name, color = 'black' }) {
@@ -197,4 +200,4 @@ class MatchesNew extends React.Component {
   }
 }
 
-export default withRouter(MatchesNew)
+export default withRouter(MatchNew)

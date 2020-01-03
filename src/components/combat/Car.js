@@ -27,7 +27,8 @@ const InsetLayout = ({ width, length, car }) => {
 }
 
 const Car = ({ matchId, id, inset = false, ghost = false }) => {
-  const car = useSelector((state) => state.matches[matchId].cars.find((car) => car.id === id))
+  const match = useSelector((state) => state.matches[matchId])
+  const car = match.cars.find((car) => car.id === id)
   const tempRect = ghost ? car.phasing.rect : car.rect
   const collisionDetected = ghost ? car.phasing.collisionDetected : car.collisionDetected
   const opacity = ghost ? 1 / 2 : 1
