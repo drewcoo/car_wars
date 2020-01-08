@@ -47,13 +47,13 @@ const nextPlayer = (match) => {
   // const newPlayer = players.all[players.currentIndex]
   // cheat and first car only for now
 
-  var targets = new Targets({ car: currentCar, cars: match.cars, map: match.map })
+  const targets = new Targets({ car: currentCar, cars: match.cars, map: match.map })
   targets.refresh()
 }
 
 const phaseOrder = (players) => {
   return players.map(p => {
-    var result = p
+    let result = p
     result.currentCarIndex = 0
     result.currentSpeed = 20
     return result
@@ -65,7 +65,7 @@ export const matchesSlice = createSlice({
   initialState: { },
   reducers: {
     addMatch (state, action) {
-      var tmp = action.payload // id, map, players
+      let tmp = action.payload // id, map, players
       tmp.status = 'new' // new, started, finished
       tmp.time = {
         moveMe: {
@@ -88,7 +88,8 @@ export const matchesSlice = createSlice({
     addCarToMatch (state, action) {
       const match = state[action.payload.matchId]
       const StartingPositions = match.map.startingPositions
-      var car = CarStatus.addCar({
+      console.log(action.payload.name)
+      let car = CarStatus.addCar({
         id: action.payload.id,
         design: action.payload.design,
         name: action.payload.name,
@@ -124,7 +125,7 @@ export const matchesSlice = createSlice({
 
     playersReset (state, action) {
       const match = state[action.payload.matchId]
-      var temp = action.payload.players
+      let temp = action.payload.players
       temp.forEach(player => {
         player.carIds = player.cars.map(car => {
           return car.name
@@ -159,14 +160,14 @@ export const matchesSlice = createSlice({
 
       car.rect = car.phasing.rect.clone()
       PhasingMove.reset({ car })
-      //  var targets = new Targets({ car, cars: state, map: state[matchId].map })
+      //  const targets = new Targets({ car, cars: state, map: state[matchId].map })
       //  targets.refresh()
       /// ////
       // BUGBUG: once per turn at and of turn instead:
       for (const Car of match.cars) {
-        Car.design.components.crew.driver.fired_this_turn = false
+        Car.design.components.crew.driver.firedThisTurn = false
         for (const Weapon of Car.design.components.weapons) {
-          Weapon.fired_this_turn = false
+          Weapon.firedThisTurn = false
         }
       }
       /// ////
@@ -178,9 +179,8 @@ export const matchesSlice = createSlice({
     ghostForward (state, action) {
       const match = state[action.payload.matchId]
       const car = match.cars.find((carState) => carState.id === action.payload.id)
-      car.phasing.rect = car.rect.clone()
       car.phasing.rect = PhasingMove.forward({ car, distance: INCH })
-      var targets = new Targets({ car, cars: match.cars, map: match.map })
+      const targets = new Targets({ car, cars: match.cars, map: match.map })
       targets.refresh()
     },
 
@@ -189,7 +189,7 @@ export const matchesSlice = createSlice({
       const car = match.cars.find((carState) => carState.id === action.payload.id)
       PhasingMove.reset({ car })
       Collisions.clear({ cars: match.cars })
-      var targets = new Targets({ car, cars: match.cars, map: match.map })
+      const targets = new Targets({ car, cars: match.cars, map: match.map })
       targets.refresh()
     },
 
@@ -198,7 +198,7 @@ export const matchesSlice = createSlice({
       const car = match.cars.find((carState) => carState.id === action.payload.id)
       const degrees = action.payload.degrees
       car.phasing.rect = PhasingMove.bend({ car, degrees })
-      var targets = new Targets({ car, cars: match.cars, map: match.map })
+      const targets = new Targets({ car, cars: match.cars, map: match.map })
       targets.refresh()
     },
 
@@ -207,16 +207,16 @@ export const matchesSlice = createSlice({
       const car = match.cars.find((carState) => carState.id === action.payload.id)
       const degrees = action.payload.degrees
       car.phasing.rect = PhasingMove.swerve({ car, degrees })
-      var targets = new Targets({ car, cars: match.cars, map: match.map })
+      const targets = new Targets({ car, cars: match.cars, map: match.map })
       targets.refresh()
     },
 
     ghostMoveDrift (state, action) {
       const match = state[action.payload.matchId]
       const car = match.cars.find((carState) => carState.id === action.payload.id)
-      var distance = (action.payload.direction === 'right') ? INCH / 4 : -INCH / 4
+      const distance = (action.payload.direction === 'right') ? INCH / 4 : -INCH / 4
       car.phasing.rect = PhasingMove.drift({ car, distance })
-      var targets = new Targets({ car, cars: match.cars, map: match.map })
+      const targets = new Targets({ car, cars: match.cars, map: match.map })
       targets.refresh()
     },
 
@@ -268,7 +268,7 @@ export const matchesSlice = createSlice({
 
       if (car.phasing.targets === null) {
         console.log('fetch targets')
-        var targets = new Targets({ car, cars: match.cars, map: match.map })
+        const targets = new Targets({ car, cars: match.cars, map: match.map })
         targets.refresh()
       } else {
         car.phasing.targetIndex = (car.phasing.targetIndex + 1) % car.phasing.targets.length
@@ -298,7 +298,7 @@ export const matchesSlice = createSlice({
       if (!CrewMember.canFire(currentCrewMember)) { return }
 
       if (car.phasing.targets === null) {
-        var targets = new Targets({ car, cars: match.cars, map: match.map })
+        const targets = new Targets({ car, cars: match.cars, map: match.map })
         targets.refresh()
       } else {
         car.phasing.targetIndex = (car.phasing.targetIndex - 1 + car.phasing.targets.length) % car.phasing.targets.length
@@ -316,7 +316,7 @@ export const matchesSlice = createSlice({
       const weapon = car.design.components.weapons[car.phasing.weaponIndex]
       const crewMember = car.design.components.crew.driver
       const plant = car.design.components.power_plant
-      var canFire = Weapon.canFire({
+      let canFire = Weapon.canFire({
         weapon: weapon,
         plantDisabled: plant.damagePoints < 1
       }) &&
@@ -341,16 +341,16 @@ export const matchesSlice = createSlice({
 
       console.log(`fire my ${weapon.type}`)
       console.log(`I have ${weapon.ammo} ammo.`)
-      var damage = 'what?'
+      let damage = 'what?'
       console.log(`to hit: ${weapon.toHit} / damage: ${weapon.damage}`)
-      var toHit = Dice.roll('2d')
+      const toHit = Dice.roll('2d')
       console.log(`to hit roll: ${toHit} - ${(toHit >= weapon.toHit) ? 'hit' : 'miss'}`)
       damage = (toHit >= weapon.toHit) ? Dice.roll(weapon.damage) : 0
       console.log(`${damage} damage.`)
       weapon.ammo--
-      car.design.components.crew.driver.fired_this_turn = true
-      weapon.fired_this_turn = true
-      var target = car.phasing.targets[car.phasing.targetIndex]
+      car.design.components.crew.driver.firedThisTurn = true
+      weapon.firedThisTurn = true
+      const target = car.phasing.targets[car.phasing.targetIndex]
       const targetCar = match.cars.find((carState) => carState.id === target.carId)
       Damage.deal({ car: targetCar, damage: damage, location: target.name })
 
@@ -442,7 +442,7 @@ export const matchesSlice = createSlice({
       const match = state[action.payload.matchId]
       const car = match.cars.find((carState) => carState.id === action.payload.id)
       car.phasing.weaponIndex = (car.phasing.weaponIndex + 1) % car.design.components.weapons.length
-      var targets = new Targets({ car, cars: match.cars, map: match.map })
+      const targets = new Targets({ car, cars: match.cars, map: match.map })
       targets.refresh()
     },
 
@@ -450,7 +450,7 @@ export const matchesSlice = createSlice({
       const match = state[action.payload.matchId]
       const car = match.cars.find((carState) => carState.id === action.payload.id)
       car.phasing.weaponIndex = (car.phasing.weaponIndex - 1 + car.design.components.weapons.length) % car.design.components.weapons.length
-      var targets = new Targets({ car, cars: match.cars, map: match.map })
+      const targets = new Targets({ car, cars: match.cars, map: match.map })
       targets.refresh()
     },
 
@@ -458,17 +458,8 @@ export const matchesSlice = createSlice({
       const match = state[action.payload.matchId]
       const car = match.cars.find((carState) => carState.id === action.payload.id)
       car.phasing.weaponIndex = parseInt(action.payload.weapon)
-      var targets = new Targets({ car, cars: match.cars, map: match.map })
+      const targets = new Targets({ car, cars: match.cars, map: match.map })
       targets.refresh()
     }
-
   }
-
-/*
-  extraReducers: {
-    [matchesSlice.actions.acceptMove]: (state, action) => {
-      nextPlayer(state)
-    }
-  }
-*/
 })

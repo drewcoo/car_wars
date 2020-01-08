@@ -63,6 +63,8 @@ class Damage {
     var tire = car.design.components.tires.find(function (tire) { return tire.location === location })
     // deal w/ handling on hit?
     tire.damagePoints -= damage
+    // no blowthrough
+    if (tire.damagePoints < 0) { tire.damagePoints = 0 }
   }
 
   static damageArmor ({ car, damage, location }) {
@@ -112,7 +114,9 @@ class Damage {
       const keys = Array.from(Object.keys(car.design.components.crew))
       return keys[Math.floor(Math.random() * keys.length)]
     }
-    const crewMember = car.design.components.crew[randomCrewMember(car)]
+    const crewRole = randomCrewMember(car)
+    console.log(`${damage} damage to crew member: ${crewRole}`)
+    const crewMember = car.design.components.crew[crewRole]
     crewMember.damagePoints -= damage
 
     if (crewMember.damagePoints === 2) {
@@ -126,14 +130,20 @@ class Damage {
       // assume driver for now
       // - no turning
       // - D2 hazard
-      car.status.maneuvers = ['none', 'forward']
+      if (crewRole === 'driver') {
+        console.log('driver incapacitated - steering out')
+        car.status.maneuvers = ['none', 'forward']
+      }
     } else if (crewMember.damagePoints < 1) {
       // dead
       // - all skill and reflex bonuses gone
       // assume driver for now
       // - no turning
       // - D2 hazard
-      car.status.maneuvers = ['none', 'forward']
+      if (crewRole === 'driver') {
+        console.log('driver killed - steering out')
+        car.status.maneuvers = ['none', 'forward']
+      }
     }
 
     var remaining = 0

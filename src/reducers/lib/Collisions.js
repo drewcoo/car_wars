@@ -1,6 +1,3 @@
-// import Dice from '../../utils/Dice'
-// import Damage from './Damage'
-
 class Collisions {
   static clear ({ cars }) {
     for (const car of cars) {
@@ -169,8 +166,6 @@ class Collisions {
   static detectWithWalls ({ thisCar, walls }) {
     // shortcut - premature optimization?
     if (thisCar.phasing.collisionDetected) { return }
-
-    console.log(walls)
 
     for (const wall of walls) {
       // var skew = thisCar.phasing.rect.intersectRectangle(wall.rect);

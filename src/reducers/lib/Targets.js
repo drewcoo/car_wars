@@ -1,5 +1,5 @@
-import Segment from '../../utils/Segment'
-import Point from '../../utils/Point'
+import Segment from '../../utils/geometry/Segment'
+import Point from '../../utils/geometry/Point'
 import Weapon from './Weapon'
 /*
 Target = {
@@ -19,9 +19,7 @@ class Targets {
   }
 
   refresh () {
-    console.log(this.car)
-    console.log(this.car.id)
-    console.log(this.car.design.name)
+    console.log(this.car.design.components.crew.driver.damagePoints)
     const weapon = this.car.design.components.weapons[this.car.phasing.weaponIndex]
     const plantDisabled = this.car.design.components.power_plant.dp < 1
     const canFire = Weapon.canFire({ weapon, plantDisabled })
@@ -31,8 +29,8 @@ class Targets {
 
   /*
   console.log('fetch targets')
-  var targets = new Targets({ car, cars: state, map: map })
-  var data = targets.targetsInArc()
+  const targets = new Targets({ car, cars: state, map: map })
+  const data = targets.targetsInArc()
   console.log(`targets in arc: ${data[0]}`)
   car.phasing.targets = data || null
   car.phasing.targetIndex = 0
@@ -87,7 +85,7 @@ class Targets {
   }
 
   rectPointsInArc (rect) {
-    var firingArc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
+    const firingArc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
     return rect.points().filter(point => {
       // return this.car.phasing.rect.pointIsInArc({ point: point, arcName: firingArc })
       return (this.car.phasing.rect.arcForPoint(point) === firingArc)
@@ -173,8 +171,8 @@ targetPointsInArc() {
     console.log(allPoints)
 
     return allPoints.filter(point => {
-      console.log(`${point.location} in arc: ${this.car.phasing.rect.pointIsInArc({ point: point.location, arcName: weaponLoc })}`)
-      console.log(`blocked? ${this.shotBlocked({ sourcePoint: sourcePoint, targetPoint: point.location })}`)
+      // console.log(`${point.location} in arc: ${this.car.phasing.rect.pointIsInArc({ point: point.location, arcName: weaponLoc })}`)
+      // console.log(`blocked? ${this.shotBlocked({ sourcePoint: sourcePoint, targetPoint: point.location })}`)
       return (
         this.car.phasing.rect.pointIsInArc({ point: point.location, arcName: weaponLoc }) &&
         !this.shotBlocked({ sourcePoint: sourcePoint, targetPoint: point.location })

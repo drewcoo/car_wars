@@ -17,7 +17,7 @@ export const Design = {
     crew: {
       driver: {
         damagePoints: 3,
-        fired_this_turn: false
+        firedThisTurn: false
       }
     },
     power_plant: {

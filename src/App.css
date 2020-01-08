@@ -23,6 +23,7 @@ body {
   font-size: 50px;
   font-family: fantasy;
   font-variant: small-caps;
+  padding-left: 20%;
 }
 .StartGame {
   background-color: black;
@@ -91,6 +92,13 @@ body {
   font-size: 24px;
   position:absolute;
 }
+.Options {
+  background: black;
+  color: white;
+  font-size: 24px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
 .ActionControls {
   padding-top: 410px;
   padding-left: 35px;
@@ -101,4 +109,87 @@ body {
 
 /*bottom: -1;*/
   /*background-color: black;*/
+}
+.Reticle {
+  stroke: red;
+  stroke-width: 2;
+  fill: none;
+  font-size: 32px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.ReticleText {
+  stroke: lightYellow;
+  stroke-width: 1;
+  fill: red;
+  font-size: 32px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.FiringArcGraduation {
+  fill: none;
+  stroke: red;
+  /* strokeWidth: 5; */
+  opacity: 0.8;
+}
+.FiringArcGraduationText {
+  fill: red;
+  font-size: 16px;
+  font-family: fantasy;
+  font-variant: small-caps;
+  opacity: 1;
+}
+.FiringArcFill {
+  fill: yellow;
+  /* stroke: orange */
+  /* strokeWidth: 5 */
+  opacity: 0.20;
+}
+.Damage {
+  stroke: red;
+  stroke-width: 2;
+  fill: none;
+  font-size: 26px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.DamageText {
+  fill: black;
+  stroke: none;
+  font-size: 16px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.MissedShot {
+  fill: white;
+  stroke: red;
+  stroke-width: 1;
+}
+.MissedShotText {
+  font-size: 16px;
+  font-family: sans-serif;
+  stroke: red;
+  fill: orange;
+  stroke-width: 1;
+}
+.StopSign {
+  fill: red;
+  stroke: white;
+}
+.Wall {
+  fill: black;
+  stroke: black;
+}
+.Timekeeping {
+  /* color: red; */
+  font-size: 26px;
+  font-family: fantasy;
+  font-variant: small-caps;
+}
+.NavOptions {
+  background: black;
+  color: white;
+  font-size: 40px;
+  font-family: fantasy;
+  font-variant: small-caps;
 }

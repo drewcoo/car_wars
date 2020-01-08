@@ -18,14 +18,14 @@ class PhasingMove {
     const top = car.design.attributes.topSpeed
     const acc = car.design.attributes.acceleration
     const possibleMax = currentSpeed + acc
-    var max = (top >= possibleMax) ? possibleMax : top
+    const max = (top >= possibleMax) ? possibleMax : top
 
     const possibleMin = currentSpeed - 45
-    var min = possibleMin >= 0 ? possibleMin : 0
+    const min = possibleMin >= 0 ? possibleMin : 0
     console.log(`min: ${min}; max: ${max}`)
 
-    var resultArray = []
-    for (var i = min; i <= max; i += 5) { resultArray.push(i) }
+    let resultArray = []
+    for (let i = min; i <= max; i += 5) { resultArray.push(i) }
     return resultArray
   }
 
@@ -66,7 +66,7 @@ class PhasingMove {
     const facingLeft = currentFacingDelta < 0
     const turningRight = degrees > 0
 
-    var resultRect = PhasingMove.forward({ car })
+    let resultRect = PhasingMove.forward({ car })
 
     if (turningRight) {
       if (!facingLeft) {
@@ -99,7 +99,7 @@ class PhasingMove {
     const currentFacing = car.phasing.rect.facing - car.rect.facing
     const desiredFacing = currentFacing + degrees
 
-    var resultRect = car.phasing.rect.clone()
+    let resultRect = car.phasing.rect.clone()
 
     // Can't turn more than 90 deg.
     if (Math.abs(desiredFacing) > 90) { return resultRect }

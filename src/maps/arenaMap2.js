@@ -1,6 +1,6 @@
 import { COMPASS, INCH } from '../utils/constants'
-import Rectangle from '../utils/Rectangle'
-import Point from '../utils/Point'
+import Rectangle from '../utils/geometry/Rectangle'
+import Point from '../utils/geometry/Point'
 import uuid from 'uuid/v4'
 
 export const MAP_SIZE = {

@@ -1,6 +1,4 @@
-
 import { Maneuvers } from './Maneuvers'
-
 import Design from '../../vehicleDesigns/KillerKart'
 
 class CarStatus {
@@ -10,7 +8,7 @@ class CarStatus {
     design = Design
     //  design = KillerKart
 
-    var car = {
+    const car = {
       id: id,
       name: name,
       design: design, // change name to design?
