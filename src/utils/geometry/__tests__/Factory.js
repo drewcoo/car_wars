@@ -13,8 +13,8 @@ class Factory {
   }
 
   static Segment (orientation = null) {
-    let p1 = Factory.Point()
-    let p2 = Factory.Point()
+    const p1 = Factory.Point()
+    const p2 = Factory.Point()
     switch (orientation) {
       case 'vertical':
         p2.x = p1.x

@@ -14,7 +14,7 @@ class Plant extends React.Component {
   // props.length
 
   render() {
-    const car = new MatchWrapper(this.props.matches[this.props.matchId]).currentCar()
+    const car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
     const DP = car.design.components.power_plant.damagePoints
     const x = this.props.width * 24 / 64
     const y = this.props.length * 21 / 64

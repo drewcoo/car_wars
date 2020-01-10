@@ -18,7 +18,7 @@ class Maneuver extends React.Component {
   }
 
   onChange(event) {
-    const currentCarId = new MatchWrapper(this.props.matches[this.props.matchId]).currentCarId()
+    const currentCarId = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCarId()
     ViewElement(currentCarId)
     store.dispatch(maneuverSet({
       matchId: this.props.matchId,
@@ -50,9 +50,7 @@ class Maneuver extends React.Component {
   }
 
   render() {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
-
-    console.log(match)
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
 
     return (
       <span>

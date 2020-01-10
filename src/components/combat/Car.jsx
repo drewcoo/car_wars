@@ -23,9 +23,9 @@ class Car extends React.Component {
   }
 
   render() {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
 
-    const car = match.cars.find((car) => car.id === this.props.id)
+    const car = match.cars[this.props.id]
     const tempRect = this.state.ghost ? car.phasing.rect : car.rect
     this.collisionDetected = this.state.ghost ? car.phasing.collisionDetected : car.collisionDetected
     const opacity = this.state.ghost ? 1 / 2 : 1
@@ -76,11 +76,6 @@ class Car extends React.Component {
     var transform = `rotate(${tempRect.facing + 90},
                             ${rotatePoint.x},
                             ${rotatePoint.y})`
-
-    const oneOff = {
-      fill: this.manyColoredFill(),
-      opacity: this.collisionDetected ? 1 : opacity
-    }
 
     return (
       <g id={ this.props.id } >

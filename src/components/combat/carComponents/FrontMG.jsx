@@ -14,7 +14,7 @@ class FrontMG extends React.Component {
   // props.length
 
   render() {
-    const car = new MatchWrapper(this.props.matches[this.props.matchId]).currentCar()
+    const car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
 
     // BUGBUG: This is a kludge to just get Killer Karts going.
     const weaponIndex = 1

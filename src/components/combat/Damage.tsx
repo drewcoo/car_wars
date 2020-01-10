@@ -12,7 +12,7 @@ class Damage extends React.Component {
   // props.matchId
 
   getCurrentDamage () {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
     const car = match.currentCar()
     if (car.phasing.damageMarker != null && car.phasing.damageMessage != null) {
       return this.drawDamage({
@@ -72,7 +72,7 @@ class Damage extends React.Component {
   drawDamage({ point, message }: { point: Point, message: number | string }) {
     var offset = 2 * Math.PI / 10
     if (message === 'empty') {
-      const match = new MatchWrapper(this.props.matches[this.props.matchId])
+      const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
       point = match.currentCar().rect.center()
       return (
         this.stopSign({ x: point.x, y: point.y, radius: 25, text0: 'no', text1: 'ammo' })

@@ -56,7 +56,7 @@ class KeystrokeInput extends React.Component {
   }
 
   turnRight(fRight) {
-    var car = new MatchWrapper(this.props.matches[this.props.matchId]).currentCar()
+    var car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
 
     switch (this.currentManeuver(car)) {
       case 'forward':
@@ -85,7 +85,8 @@ class KeystrokeInput extends React.Component {
   }
 
   render() {
-    const car = new MatchWrapper(this.props.matches[this.props.matchId]).currentCar()
+    const car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
+
     ViewElement(car.id)
 
     const handlers = {

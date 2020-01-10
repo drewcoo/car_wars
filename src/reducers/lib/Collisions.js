@@ -1,12 +1,13 @@
 class Collisions {
   static clear ({ cars }) {
-    for (const car of cars) {
+    Object.keys(cars).forEach(carId => {
+      const car = cars[carId]
       // This is ugly.
       car.phasing.collisionDetected = false
       car.collisionDetected = false
       car.phasing.collisions = []
       car.collisions = []
-    }
+    })
   }
 
   static damageModifierFromWeight (weight) {
@@ -73,7 +74,8 @@ class Collisions {
   //
   // BUGBUG: Assumes forward movement; not reverse.
   static detectWithCars ({ cars, thisCar }) {
-    cars.forEach(function (car) {
+    Object.keys(cars).forEach(carId => {
+      const car = cars[carId]
       if (car.id === thisCar.id) { return }
 
       var rammer = { rammed: { id: car.id } }

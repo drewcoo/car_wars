@@ -26,7 +26,7 @@ class Reticle extends React.Component {
   }
 
   getCurrentTarget() {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
     const car = match.currentCar()
 
     if (car.phasing.damageMarker != null && car.phasing.damageMessage != null) {

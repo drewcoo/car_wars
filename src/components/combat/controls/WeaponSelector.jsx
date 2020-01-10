@@ -27,7 +27,7 @@ class Weapon extends React.Component {
   }
 
   onChange(event) {
-    const car = new MatchWrapper(this.props.matches[this.props.matchId]).currentCar()
+    const car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
     ViewElement(car.id)
     store.dispatch(weaponSet({
       matchId: this.props.matchId,
@@ -42,7 +42,7 @@ class Weapon extends React.Component {
   }
 
   render() {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
 
     return (
       <select

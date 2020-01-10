@@ -72,19 +72,17 @@ class CarInset extends React.Component {
   // props.matchId
 
   render() {
+    const  match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
+    const car = match.currentCar()
     const inset = true
     const id = 'inset'
     const scaling = 1 // inset ? 1 : 1;    ///5; //40/INCH : 1/10;
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
-    const car = match.currentCar()
     const ghost = false
     const tempRect = ghost ? car.rect : car.phasing.rect
-
-    var length = 400 // tempRect.length * 5/80 * INCH;
-    var width = 200 // tempRect.width * 5/80 * INCH;
+    const length = 400 // tempRect.length * 5/80 * INCH;
+    const width = 200 // tempRect.width * 5/80 * INCH;
     const tempBrPoint = (inset) ? { x: width, y: length } : tempRect.brPoint()
     const tempFacing = (inset) ? 0 : tempRect.facing
-
     const opacity = ghost ? 1 / 2 : 1
 
     const bodyStyle = {

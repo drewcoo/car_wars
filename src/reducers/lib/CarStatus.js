@@ -2,18 +2,16 @@ import { Maneuvers } from './Maneuvers'
 import Design from '../../vehicleDesigns/KillerKart'
 
 class CarStatus {
-  static addCar ({ id, design, color, name, player, startingPosition }) {
-    if (!player) { player = { color: color } }
-
+  static addCar ({ color, design, id, name, playerId, startingPosition }) {
+    // Currently, hard-coded to Killer Kart.
     design = Design
-    //  design = KillerKart
 
     const car = {
       id: id,
       name: name,
       design: design, // change name to design?
-      player: player,
-      color: player.color,
+      playerId: playerId,
+      color: color,
       collisionDetected: false,
       collisions: [],
       phasing: {

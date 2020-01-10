@@ -21,6 +21,6 @@ export const {
   fireWeapon,
   acceptMove,
   weaponNext, weaponPrevious, weaponSet,
-  currentPlayer, playerSet, playersReset,
+  currentPlayer,
   addMatch, addCarToMatch, startMatch, finishMatch
 } = matchesSlice.actions

@@ -13,7 +13,7 @@ class CarWrapper {
   id: string
   name: string
   phasing: any
-  player: any
+  playerId: string
   status: any
   rect: any
   constructor({ car, match }: { car: any, match: MatchWrapper }) {
@@ -25,7 +25,7 @@ class CarWrapper {
     this.id = this.data.id
     this.name = this.data.name
     this.phasing = this.data.phasing
-    this.player = this.data.player
+    this.playerId = this.data.playerId
     this.status = this.data.status
     this.rect = this.data.rect
   }

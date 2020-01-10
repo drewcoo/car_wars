@@ -33,7 +33,7 @@ class Tire extends React.Component {
 
   render() {
     const component = new Component({ width: this.props.width, length: this.props.length })
-    const car = new MatchWrapper(this.props.matches[this.props.matchId]).currentCar()
+    const car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
     const DP = car.design.components.tires.find(tire => tire.location === this.locationName()).damagePoints
 
     return (

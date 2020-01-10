@@ -11,7 +11,7 @@ class Phase extends React.Component {
   // props.matchId
 
   render() {
-    const phase = new MatchWrapper(this.props.matches[this.props.matchId]).time.phase
+    const phase = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).time.phase
 
     return (
       <span id='phase' className='Timekeeping'>Phase: { phase.number }</span>

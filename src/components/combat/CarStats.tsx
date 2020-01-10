@@ -11,7 +11,7 @@ class CarStats extends React.Component {
   // props.matchId
 
   render() {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
     const car = match.currentCar()
     const warnStyle: { color: string, visibility: 'hidden' | 'visible'} = {
       color: 'yellow',

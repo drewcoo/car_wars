@@ -17,20 +17,18 @@ class ArenaMap extends React.Component {
   // props.matchId
 
   render() {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
     const size = match.map.size
-    const players = match.time.moveMe.players
+    const cars = match.cars
 
     return (
       <svg id='ArenaMap' width={ size.width } height={ size.height } >
         <MapBackground matchId={ this.props.matchId } />
         <Walls matchId={ this.props.matchId } />
         {
-          players.all.map((player) => (
-            player.cars.map((car) => (
-              <Car key={ car.id } matchId={ this.props.matchId } id={ car.id } />
-            ))
-          ))
+          Object.keys(cars).map((carId) => {
+            return <Car key={ carId } matchId={ this.props.matchId } id={ carId } />
+          })
         }
         <GhostCar matchId={ this.props.matchId } />
         <Reticle matchId={ this.props.matchId } />

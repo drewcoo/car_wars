@@ -108,7 +108,7 @@ class MapBackground extends React.Component {
   }
 
   render() {
-    const mapSize = new MatchWrapper(this.props.matches[this.matchId]).map.size
+    const mapSize = new MatchWrapper({ match: this.props.matches[this.matchId] }).map.size
     return (
       <g id='grid'>
         <MapGrid width={ mapSize.width } height={ mapSize.height } />

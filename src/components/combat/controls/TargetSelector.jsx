@@ -39,7 +39,7 @@ class Target extends React.Component {
   }
 
   onChange(event) {
-    const match = new MatchWrapper(this.props.matches[this.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.matchId] })
     store.dispatch(ghostTargetSet({
       matchId: this.matchId,
       id: match.currentCar().id,
@@ -51,7 +51,7 @@ class Target extends React.Component {
   }
 
   render() {
-    const match = new MatchWrapper(this.props.matches[this.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.matchId] })
 
     return (
       <select

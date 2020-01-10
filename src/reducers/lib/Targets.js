@@ -1,15 +1,6 @@
 import Segment from '../../utils/geometry/Segment'
 import Point from '../../utils/geometry/Point'
 import Weapon from './Weapon'
-/*
-Target = {
-  carId: number,
-  locationName: string,
-  point: Point,
-  segment: Segment,
-  // ??? hitModifier(s):,
-}
-*/
 
 class Targets {
   constructor ({ car, cars, map }) {
@@ -26,15 +17,6 @@ class Targets {
     this.car.phasing.targets = canFire ? this.targetsInArc() : []
     this.car.phasing.targetIndex = 0
   }
-
-  /*
-  console.log('fetch targets')
-  const targets = new Targets({ car, cars: state, map: map })
-  const data = targets.targetsInArc()
-  console.log(`targets in arc: ${data[0]}`)
-  car.phasing.targets = data || null
-  car.phasing.targetIndex = 0
-  */
 
   targetablePoints (target) {
     // var turretLoc = new Segement([target.rect.brPoint(), target.rect.flPoint()]).middle();
@@ -57,7 +39,8 @@ class Targets {
   }
 
   allTargetableLocations () {
-    return this.cars.filter(element => {
+  //  return this.cars.filter(element => {
+    return Object.values(this.cars).filter(element => {
       return this.car.id !== element.id
     }).map(element => {
       return this.targetableLocations(element)
@@ -67,7 +50,8 @@ class Targets {
 
   // VVV
   allOtherCarRects () {
-    return this.cars.filter(element => {
+    return Object.values(this.cars).filter(element => {
+      //    return this.cars.filter(element => {
       return this.car.id !== element.id
     }).map(element => {
       return element.rect
@@ -160,7 +144,8 @@ targetPointsInArc() {
     var weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
     var sourcePoint = this.car.phasing.rect.side(weaponLoc).middle()
 
-    var otherCars = this.cars.filter(element => {
+    var otherCars = Object.values(this.cars).filter(element => {
+      //  var otherCars = this.cars.filter(element => {
       return this.car.id !== element.id
     })
 
@@ -197,7 +182,8 @@ targetPointsInArc() {
 
     console.log(`source point: ${sourcePoint}`)
 
-    var otherCars = this.cars.filter(element => {
+    var otherCars = Object.values(this.cars).filter(element => {
+    // var otherCars = this.cars.filter(element => {
       return this.car.id !== element.id
     })
 

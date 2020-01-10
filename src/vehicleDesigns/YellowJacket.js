@@ -46,7 +46,7 @@ export const Design = {
     }],
     weapons: [
       NULL_WEAPON(),
-      F('L')
+      L('F')
     ]
   }
 }

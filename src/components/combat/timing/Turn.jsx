@@ -11,7 +11,8 @@ class Turn extends React.Component {
   // props.matchId
 
   render() {
-    const turn = new MatchWrapper(this.props.matches[this.props.matchId]).time.turn
+    console.log(this.props.matches)
+    const turn = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).time.turn
 
     return (
       <span id='turn' className='Timekeeping'>Turn: { turn.number }</span>

@@ -24,7 +24,7 @@ class PhasingMove {
     const min = possibleMin >= 0 ? possibleMin : 0
     console.log(`min: ${min}; max: ${max}`)
 
-    let resultArray = []
+    const resultArray = []
     for (let i = min; i <= max; i += 5) { resultArray.push(i) }
     return resultArray
   }

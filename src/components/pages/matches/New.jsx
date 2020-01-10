@@ -1,6 +1,6 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
-import { store, addMatch, addCarToMatch } from '../../../redux'
+import { store, addMatch, addCarToMatch, startMatch } from '../../../redux'
 import '../../../App.css'
 
 import uuid from 'uuid/v4'
@@ -13,29 +13,66 @@ class MatchNew extends React.Component {
     this.state = { value: '' }
     this.map = Map
     this.matchId = uuid()
-    this.players = this.createPlayerList([
+    this.players = this.createPlayers([
       { name: 'Alice', color: 'red' },
       { name: 'Bob', color: 'blue' },
       { name: 'Carol', color: 'green' },
       { name: 'Donald', color: 'purple' }
     ])
-    this.startingPositions = [0, 1, 2, 3]
-    this.players.forEach((player, index) => player.cars.push(
-      this.createCar({
-        player: player,
-        name: `car${index}`,
-        design: 'KillerKart',
-        startingPosition: this.startingPositions[index]
-      })
-    ))
+    this.cars = this.createCars({ startingPositions: [ 0, 1, 2, 3] })
+    Object.keys(this.cars).forEach((carId) => {
+      let pid = this.cars[carId].playerId
+      this.players[pid].carIds.push(carId)
+    })
     this.palette = ['maroon', 'red', 'orange', 'yellow', 'olive', 'green',
       'purple', 'fuchsia', 'lime', 'teal', 'aqua', 'blue',
       'navy', 'black', 'gray', 'silver', 'white']
-
     this.handleCarNameChange = this.handleCarNameChange.bind(this)
     this.handleColorChange = this.handleColorChange.bind(this)
     this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+  }
+
+  createPlayers(namesAndColors) {
+    let result = {}
+    namesAndColors.forEach( ({ name, color = 'black'}) => {
+      let id = uuid()
+      result[id] = {
+        carIds: [],
+        color: color,
+        id: id,
+        name: name
+      }
+    })
+    return result
+  }
+
+  createCar ({ id, playerId, name, design, startingPosition }) {
+    return {
+      color: this.players[playerId].color,
+      name: name,
+      id: id,
+      playerId: playerId,
+      design: design,
+      startingPosition: startingPosition
+    }
+  }
+
+  createCars({ startingPositions }) {
+    let result = {}
+    let index = 0
+    Object.keys(this.players).forEach((playerId) => {
+      let car = this.createCar({
+        id: uuid(),
+        playerId: playerId,
+        name: `car${index}`,
+        design: 'KillerKart',
+        startingPosition: startingPositions[index]
+      })
+      result[car.id] = car
+      index++
+    })
+    return result
   }
 
   colorStyle (myColor = 'white') {
@@ -49,21 +86,17 @@ class MatchNew extends React.Component {
   }
 
   handlePlayerNameChange (event) {
-    var player = this.players.find(player => player.id === event.target.id)
-    player.name = event.target.value
+    this.players[event.target.id].name = event.target.value
   }
 
   handleColorChange (event) {
-    var player = this.players.find(player => player.id === event.target.id)
+    const player = this.players[event.target.id]
     player.color = event.target.value
     this.setState({ value: event.target.value })
   }
 
   handleCarNameChange (event) {
-    const player = this.players.find(player =>
-      player.cars.find(car => car.id === event.target.id)
-    )
-    const car = player.cars.find(car => car.id === event.target.id)
+    const car = this.cars[event.target.id]
     car.name = event.target.value
   }
 
@@ -73,51 +106,30 @@ class MatchNew extends React.Component {
     store.dispatch(addMatch({
       matchId: this.matchId,
       map: this.map,
-      cars: [],
+      cars: {},
       players: this.players
     }))
 
-    for (var i = 0; i < this.players.length; i++) {
-      for (var j = 0; j < this.players[i].cars.length; j++) {
-        var car = this.players[i].cars[j]
+    Object.keys(this.players).forEach((playerId) => {
+      let player = this.players[playerId]
+      this.players[playerId].carIds.forEach((carId) => {
+        let car = this.cars[carId]
         store.dispatch(addCarToMatch({
           matchId: this.matchId,
           id: car.id,
           design: car.design,
           name: car.name,
-          player: this.players[i],
-          color: this.players[i].color,
+          playerId: player.id,
+          // Ugly shortcut so that I can call car.color instead of players[car.playerId].color
+          color: player.color,
           startingPosition: car.startingPosition
         }))
-      }
-    }
+      })
+    })
+
+    store.dispatch(startMatch({ matchId: this.matchId }))
 
     this.props.history.push('/match/' + this.matchId)
-  }
-
-  createPlayer ({ name, color = 'black' }) {
-    return {
-      id: uuid(),
-      name: name,
-      color: color,
-      cars: [],
-      currentCarIndex: 0,
-      currentSpeed: 20
-    }
-  }
-
-  createPlayerList (playerArray) {
-    return playerArray.map(init => this.createPlayer(init))
-  }
-
-  createCar ({ player, name, design, startingPosition }) {
-    return {
-      color: player.color,
-      name: name,
-      id: uuid(),
-      design: design,
-      startingPosition: startingPosition
-    }
   }
 
   addPlayerColorSelector (player) {
@@ -147,7 +159,9 @@ class MatchNew extends React.Component {
 
   showCars (player) {
     var result = []
-    player.cars.forEach(car => {
+    // BUGBUG: hard-code to first car
+    player.carIds.forEach((carId) => {
+      let car = this.cars[carId]
       result.push(
         <span key={ car.id } style={ this.colorStyle() }>
           <input
@@ -158,7 +172,7 @@ class MatchNew extends React.Component {
             defaultValue={ car.name }
             onChange={ this.handleCarNameChange }
           />
-          {car.design}
+          { car.design }
         </span>
       )
     })
@@ -190,7 +204,7 @@ class MatchNew extends React.Component {
           <div key='mapName' style={ this.colorStyle() } >
             { this.map.name }
           </div>
-          { this.players.map(player => this.addPlayerToForm(player)) }
+          { Object.keys(this.players).map(playerId => this.addPlayerToForm(this.players[playerId])) }
           <input type="submit" value="Submit" style={ this.colorStyle() } />
         </form>
       </div>

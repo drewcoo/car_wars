@@ -17,7 +17,7 @@ class Speed extends React.Component {
   }
 
   onChange(event) {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
     store.dispatch(speedSet({
       matchId: this.props.matchId,
       id: match.currentCar().id,
@@ -40,7 +40,7 @@ class Speed extends React.Component {
   }
 
   render() {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
 
     return (
       <select

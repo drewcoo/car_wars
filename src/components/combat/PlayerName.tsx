@@ -11,7 +11,8 @@ class PlayerName extends React.Component {
   // props.matchId
 
   render() {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
+    console.log()
     const colorStyle = {
       color: match.currentPlayer().color,
       padding: '10px'

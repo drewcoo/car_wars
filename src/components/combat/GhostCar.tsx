@@ -13,7 +13,7 @@ class GhostCar extends React.Component {
   // props.matchId
 
   render() {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
     return (
       <g>
         <FiringArc matchId={ this.props.matchId } />

@@ -142,7 +142,7 @@ class FiringArc extends React.Component {
   }
 
   render() {
-    const match = new MatchWrapper(this.props.matches[this.props.matchId])
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
     return (
       <g>
         { this.draw({ match }) }

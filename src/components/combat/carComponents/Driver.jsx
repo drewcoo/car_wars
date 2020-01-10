@@ -13,7 +13,7 @@ class Driver extends React.Component {
   // props.length
 
   render() {
-    const car = new MatchWrapper(this.props.matches[this.props.matchId]).currentCar()
+    const car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
     const DP = car.design.components.crew.driver.damagePoints
     const x = this.props.width * 23 / 64
     const y = this.props.length * 34 / 64

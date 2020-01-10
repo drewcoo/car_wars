@@ -8,25 +8,27 @@ class MatchWrapper {
   data: any
   cars: any
   map: any
+  matchId: string
+  players: any
+  status: string
   time: any
 
-  constructor(match: any) {
+  constructor({match}: { match: any }) {
     this.data = match
     this.cars = this.data.cars
     this.map = this.data.map
+    this.matchId = this.data.matchId
+    this.players = this.data.players
+    this.status = this.data.status
     this.time = this.data.time
   }
 
-  players(): any {
-    return this.time.moveMe.players
-  }
-
   currentPlayerId(): string {
-    return this.players().currentIndex
+    return this.currentCar().playerId
   }
 
   player({ id }: { id: string }): PlayerWrapper {
-    return new PlayerWrapper({ match: new MatchWrapper(this.data), player: this.players().all[id] })
+    return new PlayerWrapper({ match: new MatchWrapper({match: this.data }), player: this.players[id] })
   }
 
   currentPlayer(): PlayerWrapper {
@@ -34,15 +36,16 @@ class MatchWrapper {
   }
 
   currentCarId(): string {
-    return this.currentPlayer().cars[this.currentPlayer().currentCarIndex].id
+    if (this.time.phase.moving === null) { throw new Error('No current car!')}
+    return this.time.phase.moving
   }
 
   car({ id }: { id: string }): CarWrapper {
-    let car_data = this.cars.find(function (elem: any) { return elem.id === id })
-    return new CarWrapper({ car: car_data, match: new MatchWrapper(this.data) })
+    return new CarWrapper({ car: this.cars[id], match: new MatchWrapper({ match: this.data }) })
   }
 
   currentCar(): CarWrapper {
+    console.log(this.currentCarId())
     return this.car({ id: this.currentCarId() })
   }
 }
