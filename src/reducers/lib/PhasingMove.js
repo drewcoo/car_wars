@@ -1,11 +1,6 @@
 import { FACE, INCH } from '../../utils/constants'
 
 class PhasingMove {
-  static nothing ({ car }) {
-    console.log('nothing here')
-    console.log(car.id)
-  }
-
   static hasMoved ({ car }) {
     return !car.rect.brPoint().equals(car.phasing.rect.brPoint()) ||
            car.rect.facing !== car.phasing.rect.facing
@@ -13,8 +8,6 @@ class PhasingMove {
 
   static possibleSpeeds ({ car }) {
     const currentSpeed = car.status.speed
-    console.log(car)
-    console.log(car.status.speed)
     const top = car.design.attributes.topSpeed
     const acc = car.design.attributes.acceleration
     const possibleMax = currentSpeed + acc
@@ -22,7 +15,6 @@ class PhasingMove {
 
     const possibleMin = currentSpeed - 45
     const min = possibleMin >= 0 ? possibleMin : 0
-    console.log(`min: ${min}; max: ${max}`)
 
     const resultArray = []
     for (let i = min; i <= max; i += 5) { resultArray.push(i) }

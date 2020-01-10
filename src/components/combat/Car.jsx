@@ -26,6 +26,7 @@ class Car extends React.Component {
     const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
 
     const car = match.cars[this.props.id]
+
     const tempRect = this.state.ghost ? car.phasing.rect : car.rect
     this.collisionDetected = this.state.ghost ? car.phasing.collisionDetected : car.collisionDetected
     const opacity = this.state.ghost ? 1 / 2 : 1

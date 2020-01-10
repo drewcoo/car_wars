@@ -24,6 +24,7 @@ class GhostCar extends React.Component {
           ghost={ true }
         />
       </g>
+
     )
   }
 }

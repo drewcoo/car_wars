@@ -45,7 +45,6 @@ class MatchWrapper {
   }
 
   currentCar(): CarWrapper {
-    console.log(this.currentCarId())
     return this.car({ id: this.currentCarId() })
   }
 }

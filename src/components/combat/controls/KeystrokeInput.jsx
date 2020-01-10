@@ -8,7 +8,7 @@ import { store,
   maneuverSet, maneuverNext, maneuverPrevious,
   speedNext, speedPrevious,
   weaponNext, weaponPrevious,
-  ghostForward, ghostReset, ghostTurnBend, ghostMoveDrift, ghostTurnSwerve,
+  ghostForward, ghostHalf, ghostReset, ghostTurnBend, ghostMoveDrift, ghostTurnSwerve,
   ghostShowCollisions,
   ghostTargetNext, ghostTargetPrevious,
   fireWeapon,
@@ -49,7 +49,9 @@ class KeystrokeInput extends React.Component {
                  car.status.maneuvers.length
     if (car.status.maneuvers[index] === 'none') {
       store.dispatch(ghostReset({ matchId: this.props.matchId, id: car.id }))
-    } else {
+    } else if (car.status.maneuvers[index] === 'half') {
+      store.dispatch(ghostHalf({ matchId: this.props.matchId, id: car.id }))
+    }else {
       store.dispatch(ghostForward({ matchId: this.props.matchId, id: car.id }))
     }
     store.dispatch(ghostShowCollisions({ matchId: this.props.matchId, id: car.id }))
@@ -92,12 +94,12 @@ class KeystrokeInput extends React.Component {
     const handlers = {
       nextManeuver: (event) => {
         store.dispatch(maneuverNext({ matchId: this.props.matchId, id: car.id }))
-        store.dispatch(ghostShowCollisions({ matchId: this.props.matchId, id: car.id }))
+    //    store.dispatch(ghostShowCollisions({ matchId: this.props.matchId, id: car.id }))
         this.showHideCar(car, 1)
       },
       previousManeuver: (event) => {
         store.dispatch(maneuverPrevious({ matchId: this.props.matchId, id: car.id }))
-        store.dispatch(ghostShowCollisions({ matchId: this.props.matchId, id: car.id }))
+      //  store.dispatch(ghostShowCollisions({ matchId: this.props.matchId, id: car.id }))
         this.showHideCar(car, -1)
       },
       nextSpeed: (event) => {

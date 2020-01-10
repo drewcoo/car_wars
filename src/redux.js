@@ -15,7 +15,7 @@ export const store = configureStore({
 export const {
   maneuverNext, maneuverPrevious, maneuverSet,
   speedNext, speedPrevious, speedSet,
-  ghostForward, ghostReset, ghostTurnBend, ghostMoveDrift, ghostTurnSwerve,
+  ghostForward, ghostHalf, ghostReset, ghostTurnBend, ghostMoveDrift, ghostTurnSwerve,
   ghostShowCollisions,
   ghostTargetNext, ghostTargetPrevious, ghostTargetSet,
   fireWeapon,

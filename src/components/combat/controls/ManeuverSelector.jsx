@@ -2,7 +2,7 @@ import * as React from 'react'
 import {connect} from "react-redux"
 import MatchWrapper from '../../../utils/wrappers/MatchWrapper'
 import ViewElement from '../../../utils/ViewElement'
-import { store, maneuverSet, ghostForward, ghostReset, ghostShowCollisions } from '../../../redux'
+import { store, maneuverSet, ghostForward, ghostHalf, ghostReset, ghostShowCollisions } from '../../../redux'
 import '../../../App.css'
 
 const mapStateToProps = (state) => {
@@ -26,9 +26,14 @@ class Maneuver extends React.Component {
       maneuverIndex: event.target.value
     }))
 
+    const match = this.props.matches[this.props.matchId]
+    const car = match.cars[match.time.phase.moving]
+
     // argh - the index here is a stringified number
     if (event.target.value === '0') {
       store.dispatch(ghostReset({ matchId: this.props.matchId, id: currentCarId }))
+    } else if (event.target.value === 'half') {
+      store.dispatch(ghostHalf({ matchId: this.props.matchId, id: car.id }))
     } else {
       store.dispatch(ghostForward({ matchId: this.props.matchId, id: currentCarId }))
     }

@@ -1,4 +1,8 @@
+import Collisions from './Collisions'
+import { Maneuvers } from './Maneuvers'
 import Movement from './Movement'
+import PhasingMove from './PhasingMove'
+import { INCH } from '../../utils/constants'
 import Targets from './Targets'
 
 class Time {
@@ -29,6 +33,16 @@ class Time {
         this.nextPhase({ match })
       }
     } while (match.time.phase.moving === null)
+
+    const car = match.cars[match.time.phase.moving]
+    if (Movement.distanceThisPhase({ speed: car.status.speed, phase: match.time.phase.number }) === 0.5) {
+      car.status.maneuvers = ['half']
+      car.phasing.rect = PhasingMove.forward({ car, distance: INCH / 2 })
+    } else {
+      car.status.maneuvers = Maneuvers()
+      car.phasing.rect = PhasingMove.forward({ car, distance: INCH })
+    }
+    Collisions.detect({ cars: match.cars, map: match.map, thisCar: car })
 
     // BUGBUG: Targeting here until I do it right - see above.
     const targets = new Targets({

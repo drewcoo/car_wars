@@ -116,6 +116,14 @@ export const matchesSlice = createSlice({
       targets.refresh()
     },
 
+    ghostHalf (state, action) {
+      const match = state[action.payload.matchId]
+      const car = match.cars[action.payload.id]
+      car.phasing.rect = PhasingMove.forward({ car, distance: INCH / 2 })
+      const targets = new Targets({ car, cars: match.cars, map: match.map })
+      targets.refresh()
+    },
+
     ghostReset (state, action) {
       const match = state[action.payload.matchId]
       const car = match.cars[action.payload.id]
@@ -307,7 +315,6 @@ export const matchesSlice = createSlice({
       const match = state[action.payload.matchId]
       const car = match.cars[action.payload.id]
       car.phasing.maneuverIndex = (car.phasing.maneuverIndex + 1) % car.status.maneuvers.length
-      console.log(Object.keys(match.cars))
       Collisions.detect({ cars: match.cars, map: match.map, thisCar: car })
     },
 
