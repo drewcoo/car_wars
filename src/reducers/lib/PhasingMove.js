@@ -1,4 +1,5 @@
 import { FACE, INCH } from '../../utils/constants'
+import { degreesDifference } from '../../utils/conversions'
 
 class PhasingMove {
   static hasMoved ({ car }) {
@@ -49,7 +50,10 @@ class PhasingMove {
   }
 
   static bend ({ car, degrees }) {
-    const currentFacingDelta = car.phasing.rect.facing - car.rect.facing
+    const currentFacingDelta = degreesDifference({
+      initial: car.rect.facing,
+      second: car.phasing.rect.facing
+    })
     const desiredFacing = currentFacingDelta + degrees
     // Can't turn more than 90 deg.
     if (Math.abs(desiredFacing) > 90) { return car.phasing.rect }
@@ -88,16 +92,24 @@ class PhasingMove {
     //  V
     // TODO: make this use first the new drift and then the new bend usage
     // Each possibility tries to make a complete move - that way we can ghost collisions
-    const currentFacing = car.phasing.rect.facing - car.rect.facing
-    const desiredFacing = currentFacing + degrees
 
+    // BUGBUG: I have absolutely no idea why this needs different special
+    // handling than bend. Changing facing should be the same, I'd think.
+    // Maybe I could solve this for everything by creating a degree class or
+    // degree comparison functions.
+
+    const currentFacingDelta = degreesDifference({
+      initial: car.rect.facing,
+      second: car.phasing.rect.facing
+    })
+    const desiredFacing = currentFacingDelta + degrees
     let resultRect = car.phasing.rect.clone()
 
     // Can't turn more than 90 deg.
     if (Math.abs(desiredFacing) > 90) { return resultRect }
 
-    const facingLeft = currentFacing < 0
-    const facingRight = currentFacing > 0
+    const facingLeft = currentFacingDelta < 0
+    const facingRight = currentFacingDelta > 0
     const turningToFront = desiredFacing === 0
     const turningLeft = degrees < 0
     const turningRight = degrees > 0
@@ -126,11 +138,15 @@ class PhasingMove {
         resultRect = resultRect.rightCornerTurn(degrees)
       }
     } else if (turningLeft) {
+      console.log('left')
       if (facingLeft) {
+        console.log('facing left')
         resultRect = resultRect.leftCornerTurn(degrees)
       } else if (facingRight) {
+        console.log('facing right')
         resultRect = resultRect.rightCornerTurn(degrees)
       } else /* facing forward */ {
+        console.log('facing forward')
         drift('right')
         resultRect = resultRect.leftCornerTurn(degrees)
       }

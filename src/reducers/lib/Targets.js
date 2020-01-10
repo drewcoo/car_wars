@@ -10,7 +10,6 @@ class Targets {
   }
 
   refresh () {
-    console.log(this.car.design.components.crew.driver.damagePoints)
     const weapon = this.car.design.components.weapons[this.car.phasing.weaponIndex]
     const plantDisabled = this.car.design.components.power_plant.dp < 1
     const canFire = Weapon.canFire({ weapon, plantDisabled })

@@ -19,3 +19,10 @@ export const degreesEqual = (d1 : number, d2 : number) : boolean => {
 export const degreesParallel = (d1 : number, d2 : number) : boolean => {
   return ((180 + d1) % 180).toFixed(2) === ((180 + d2) % 180).toFixed(2)
 }
+
+export const degreesDifference = ({ initial, second }: { initial: number, second: number }): number => {
+  let diff = (second % 360) - (initial % 360)
+  if (diff > 180) { diff -= 360 }
+  if (diff < -180) { diff += 360 }
+  return(diff)
+}
