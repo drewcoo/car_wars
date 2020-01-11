@@ -14,6 +14,11 @@ class MatchWrapper {
   time: any
 
   constructor({match}: { match: any }) {
+    // BUGBUG: This is a kludge because when I'm in a match then save a source
+    // change, I get an error here because match isn't defined.
+    // So for now, if that happens, redirect and move along.
+    if (match === undefined) { window.location.href = '/match/new' }
+    
     this.data = match
     this.cars = this.data.cars
     this.map = this.data.map

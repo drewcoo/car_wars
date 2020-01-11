@@ -7,6 +7,9 @@ import uuid from 'uuid/v4'
 
 import { Map } from '../../../maps/arenaMap1'
 
+// Here but don't know why? You may have been redirected by the kludge
+// in src/utils/wrappers/MatchWrapper.ts.
+
 class MatchNew extends React.Component {
   constructor (props) {
     super(props)
@@ -41,7 +44,10 @@ class MatchNew extends React.Component {
         carIds: [],
         color: color,
         id: id,
-        name: name
+        name: name,
+        modals: [
+          { text: "Example text shows use of modals." }
+        ]
       }
     })
     return result
