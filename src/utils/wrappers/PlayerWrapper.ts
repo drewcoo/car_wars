@@ -10,6 +10,7 @@ class PlayerWrapper {
   currentCarIndex: number
   color: string
   name: string
+  modals: any
   constructor({ player, match }: { player: any, match: MatchWrapper }) {
     this.match = match
     this.data = player
@@ -17,6 +18,7 @@ class PlayerWrapper {
     this.currentCarIndex = this.data.currentCarIndex
     this.color = this.data.color
     this.name = this.data.name
+    this.modals= this.data.modals
   }
 }
 

@@ -41,7 +41,10 @@ class MatchNew extends React.Component {
         carIds: [],
         color: color,
         id: id,
-        name: name
+        name: name,
+        modals: [
+          { text: "Example text shows use of modals." }
+        ]
       }
     })
     return result

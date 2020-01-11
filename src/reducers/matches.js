@@ -67,6 +67,13 @@ export const matchesSlice = createSlice({
       }
     },
 
+    shiftModal (state, action) {
+      console.log(action.payload)
+      const match = state[action.payload.matchId]
+      const player = match.players[action.payload.playerId]
+      player.modals.shift()
+    },
+
     acceptMove (state, action) {
       const match = state[action.payload.matchId]
       const car = match.cars[action.payload.id]

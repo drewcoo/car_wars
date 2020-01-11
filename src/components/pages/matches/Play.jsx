@@ -5,6 +5,7 @@ import { withRouter } from 'react-router'
 
 import KeystrokeInput from '../../combat/controls/KeystrokeInput'
 import Maneuver from '../../combat/controls/ManeuverSelector'
+import Modal from '../../combat/controls/Modal'
 import Speed from '../../combat/controls/SpeedSelector'
 import Target from '../../combat/controls/TargetSelector'
 import Weapon from '../../combat/controls/WeaponSelector'
@@ -56,6 +57,7 @@ class Match extends React.Component {
             </div>
           </div>
         </div>
+        <Modal matchId={ matchId } />
       </Provider>
     )
   }
