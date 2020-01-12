@@ -11,6 +11,7 @@ class CarWrapper {
   color: string
   design: any
   id: string
+  modals: any
   name: string
   phasing: any
   playerId: string
@@ -24,6 +25,7 @@ class CarWrapper {
     this.design = this.data.design
     this.id = this.data.id
     this.name = this.data.name
+    this.modals = this.data.modals
     this.phasing = this.data.phasing
     this.playerId = this.data.playerId
     this.status = this.data.status

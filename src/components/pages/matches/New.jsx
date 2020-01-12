@@ -44,10 +44,7 @@ class MatchNew extends React.Component {
         carIds: [],
         color: color,
         id: id,
-        name: name,
-        modals: [
-          { text: "Example text shows use of modals." }
-        ]
+        name: name
       }
     })
     return result
@@ -135,6 +132,7 @@ class MatchNew extends React.Component {
 
     store.dispatch(startMatch({ matchId: this.matchId }))
 
+    // Strange kludge. Not sure how to do this right.
     this.props.history.push('/match/' + this.matchId)
   }
 

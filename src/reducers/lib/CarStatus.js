@@ -8,6 +8,9 @@ class CarStatus {
 
     const car = {
       id: id,
+      modals: [
+        { text: "Example text shows use of modals." }
+      ],
       name: name,
       design: design, // change name to design?
       playerId: playerId,

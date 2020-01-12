@@ -9,20 +9,18 @@ const mapStateToProps = (state) => {
   return({ matches: state.matches })
 }
 
-class PlayerModal extends React.Component {
+class ModalHandler extends React.Component {
   // props.matchId
   constructor(props) {
     super(props)
-    this.state = { showModal: this.initialModalState() }
+    this.state = { showModal: this.modalToShow() }
     this.handleOpenModal = this.handleOpenModal.bind(this);
     this.handleCloseModal = this.handleCloseModal.bind(this);
   }
 
-  initialModalState() {
+  modalToShow() {
     const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
-    const result = (match.currentPlayer().modals.length > 0)
-    console.log(match.currentPlayer().modals.length)
-    console.log(`show modal? ${result}`)
+    const result = (match.currentCar().modals.length > 0)
     return(result)
   }
 
@@ -32,8 +30,8 @@ class PlayerModal extends React.Component {
 
   handleCloseModal () {
     const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
-    store.dispatch(shiftModal({ matchId: this.props.matchId, playerId: match.currentPlayerId() }))
-    this.setState({ showModal: false });
+    store.dispatch(shiftModal({ matchId: this.props.matchId, carId: match.currentCarId() }))
+    this.setState({ showModal: this.modalToShow() });
   }
 
   customStyles() {
@@ -85,15 +83,19 @@ class PlayerModal extends React.Component {
   }
 
   render() {
-    const currentPlayer = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentPlayer()
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
     return(
       <div>
-        { this.renderModal(currentPlayer.modals) }
+        { this.renderModal(match.currentCar().modals) }
       </div>
     )
   }
 }
 
-Modal.setAppElement('body')
 
-export default connect(mapStateToProps) (PlayerModal)
+
+//document.querySelector("#root")
+Modal.setAppElement('#root')
+//Modal.setAppElement('body')
+
+export default connect(mapStateToProps) (ModalHandler)

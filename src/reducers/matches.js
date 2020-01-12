@@ -23,7 +23,6 @@ export const matchesSlice = createSlice({
       tmp.time = {
         phase: {
           number: 1,
-
           unmoved: [],
           moving: null
         },
@@ -47,6 +46,8 @@ export const matchesSlice = createSlice({
         startingPosition: StartingPositions[parseInt(action.payload.startingPosition)]
       })
 
+      console.log(car)
+
       match.cars[car.id] = car
     },
     startMatch (state, action) {
@@ -68,10 +69,9 @@ export const matchesSlice = createSlice({
     },
 
     shiftModal (state, action) {
-      console.log(action.payload)
       const match = state[action.payload.matchId]
-      const player = match.players[action.payload.playerId]
-      player.modals.shift()
+      const car = match.cars[action.payload.carId]
+      car.modals.shift()
     },
 
     acceptMove (state, action) {
