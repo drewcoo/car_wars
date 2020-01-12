@@ -1,0 +1,35 @@
+sign up for match
+
+start match
+  reflex rolls
+  set HCs (handling class)
+  set initial starting HSes (handling status)
+
+turns
+  start turn
+    last turn's HC (permanent) changes take effect - like wheel loss
+
+  phases
+    begin phase
+      simul-speed change
+    movement - serial
+      with extra prompts for ties in speed
+      show what for auto-move? (dead, completing maneuver, etc.)
+      show possible targeting (w/ all the modifiers) even though can't shoot yet
+      every maneuver drops HS and causes a handling roll
+      collisions
+    end phase
+      simul-targeting
+      also handle auto-firing here (plus dropped weapons on auto)
+      simul-damage - show serialized?
+
+  end turn
+    Is this when automatic, non-dropped fire happens? Once a turn, but when?
+    Fire
+      - does the vehicle catch fire?
+      - extinguish?
+      - damage and possible explosion if on fire (p.30-1)
+    HS += (HC > 1) ? HC : 1; if (HS > HC) { HS = HC }
+
+
+end condition checks throughout?
