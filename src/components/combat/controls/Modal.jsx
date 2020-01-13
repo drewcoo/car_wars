@@ -14,8 +14,9 @@ class ModalHandler extends React.Component {
   constructor(props) {
     super(props)
     this.state = { showModal: this.modalToShow() }
-    this.handleOpenModal = this.handleOpenModal.bind(this);
-    this.handleCloseModal = this.handleCloseModal.bind(this);
+
+    this.handleOpen = this.handleOpen.bind(this)
+    this.handleClose = this.handleClose.bind(this)
   }
 
   modalToShow() {
@@ -24,14 +25,14 @@ class ModalHandler extends React.Component {
     return(result)
   }
 
-  handleOpenModal () {
-    this.setState({ showModal: true });
+  handleOpen () {
+    this.setState({ showModal: true })
   }
 
-  handleCloseModal () {
+  handleClose () {
     const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
     store.dispatch(shiftModal({ matchId: this.props.matchId, carId: match.currentCarId() }))
-    this.setState({ showModal: this.modalToShow() });
+    this.setState({ showModal: this.modalToShow() })
   }
 
   customStyles() {
@@ -45,6 +46,8 @@ class ModalHandler extends React.Component {
         transform             : 'translate(-50%, -50%)',
         backgroundColor: 'black',
         color: 'white',
+        border: '3px solid red',
+        borderRadius: '40px',
         fontFamily: 'fantasy',
         fontSize: '80px',
         fontVariant: 'smallCaps'
@@ -55,6 +58,7 @@ class ModalHandler extends React.Component {
   buttonStyle() {
     return ({
       backgroundColor: 'black',
+      border: '3px solid red',
       color: 'white',
       float: 'right',
       fontFamily: 'fantasy',
@@ -67,17 +71,22 @@ class ModalHandler extends React.Component {
     if (modals.length === 0) { return null }
 
     return(
+      /* onRequestClose={this.handleClose}  */
       <Modal
-        isOpen={this.state.showModal}
-        onRequestClose={this.handleCloseModal}
-        style={this.customStyles()}
+        isOpen={ this.state.showModal }
+        style={ this.customStyles() }
         contentLabel="Example Modal"
       >
         <span>
           { modals[0].text }
         </span>
         <br/><br/>
-        <button onClick={this.handleCloseModal} style={this.buttonStyle()}>Close</button>
+        <button
+          onClick={ this.handleClose }
+          style={ this.buttonStyle() }
+        >
+          Close
+        </button>
       </Modal>
     )
   }
@@ -92,10 +101,6 @@ class ModalHandler extends React.Component {
   }
 }
 
-
-
-//document.querySelector("#root")
 Modal.setAppElement('#root')
-//Modal.setAppElement('body')
 
 export default connect(mapStateToProps) (ModalHandler)
