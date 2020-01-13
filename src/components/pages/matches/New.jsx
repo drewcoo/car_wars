@@ -1,11 +1,9 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
-import { store, addMatch, addCarToMatch, startMatch } from '../../../redux'
+import { store, addMatch, addMap, addCarToMatch, startMatch } from '../../../redux'
 import '../../../App.css'
 
 import uuid from 'uuid/v4'
-
-import { Map } from '../../../maps/arenaMap1'
 
 // Here but don't know why? You may have been redirected by the kludge
 // in src/utils/wrappers/MatchWrapper.ts.
@@ -14,7 +12,7 @@ class MatchNew extends React.Component {
   constructor (props) {
     super(props)
     this.state = { value: '' }
-    this.map = Map
+    this.map = 'arenaMap1'
     this.matchId = uuid()
     this.players = this.createPlayers([
       { name: 'Alice', color: 'red' },
@@ -111,6 +109,11 @@ class MatchNew extends React.Component {
       map: this.map,
       cars: {},
       players: this.players
+    }))
+
+    store.dispatch(addMap({
+      matchId: this.matchId,
+      map: this.map
     }))
 
     Object.keys(this.players).forEach((playerId) => {

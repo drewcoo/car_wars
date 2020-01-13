@@ -12,6 +12,7 @@ import PhasingMove from './lib/PhasingMove'
 import Targets from './lib/Targets'
 import Time from './lib/Time'
 import Weapon from './lib/Weapon'
+import arenaMap1 from '../maps/arenaMap1'
 
 export const matchesSlice = createSlice({
   slice: 'matches',
@@ -30,8 +31,14 @@ export const matchesSlice = createSlice({
           number: 1
         }
       }
+      tmp.map = {}
       state[action.payload.matchId] = tmp
       state[action.payload.matchId].players = action.payload.players
+
+    },
+    addMap (state, action) {
+      // do actual map loading later
+      state[action.payload.matchId].map = arenaMap1
     },
     addCarToMatch (state, action) {
       const match = state[action.payload.matchId]
@@ -316,6 +323,8 @@ export const matchesSlice = createSlice({
 
       car.phasing.damageMarker = car.phasing.targets[car.phasing.targetIndex]
       car.phasing.damageMessage = damage // 'BANG!';
+      match.cars[action.payload.id] = car
+      console.log(car)
     },
 
     maneuverNext (state, action) {

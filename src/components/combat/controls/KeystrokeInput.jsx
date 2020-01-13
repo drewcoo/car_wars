@@ -86,6 +86,20 @@ class KeystrokeInput extends React.Component {
     store.dispatch(ghostShowCollisions({ matchId: this.props.matchId, id: car.id }))
   }
 
+  respondUnlessModalShowing(handlers) {
+    const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
+    if (match.currentCar().modals.length > 0) {
+      return null
+    }
+    return(
+      <HotKeys
+        attach={ document }
+        focused={ true }
+        handlers={ handlers }
+        keyMap={ this.keyMap } />
+    )
+  }
+
   render() {
     const car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
 
@@ -94,12 +108,10 @@ class KeystrokeInput extends React.Component {
     const handlers = {
       nextManeuver: (event) => {
         store.dispatch(maneuverNext({ matchId: this.props.matchId, id: car.id }))
-    //    store.dispatch(ghostShowCollisions({ matchId: this.props.matchId, id: car.id }))
         this.showHideCar(car, 1)
       },
       previousManeuver: (event) => {
         store.dispatch(maneuverPrevious({ matchId: this.props.matchId, id: car.id }))
-      //  store.dispatch(ghostShowCollisions({ matchId: this.props.matchId, id: car.id }))
         this.showHideCar(car, -1)
       },
       nextSpeed: (event) => {
@@ -148,12 +160,8 @@ class KeystrokeInput extends React.Component {
       }
     }
 
-    return (
-      <HotKeys
-        attach={ document }
-        focused={ true }
-        handlers={ handlers }
-        keyMap={ this.keyMap } />
+    return(
+      this.respondUnlessModalShowing(handlers)
     )
   }
 }

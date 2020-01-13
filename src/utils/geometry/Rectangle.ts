@@ -17,7 +17,7 @@ class Rectangle {
 
   // bugbug - not ANY
   constructor (rectData: any) {
-    this.__brPoint = rectData.__brPoint || rectData.brPoint
+    this.__brPoint = new Point(rectData.__brPoint || rectData.brPoint)
     this.facing = (rectData.facing + 360) % 360
     this.length = rectData.length || INCH
     this.width = rectData.width || INCH / 2

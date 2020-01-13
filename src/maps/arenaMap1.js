@@ -17,7 +17,7 @@ const MAP = {
   WIDTH: 24 * INCH
 }
 
-export const Map = {
+ const Map = {
   name: 'arenaMap1',
   size: {
     height: MAP.HEIGHT,
@@ -213,3 +213,5 @@ export const Map = {
     }
   ]
 }
+
+export default Map
