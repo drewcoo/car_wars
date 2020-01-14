@@ -86,6 +86,12 @@ class MatchNew extends React.Component {
     }
   }
 
+  submitStyle (color) {
+    let result = this.colorStyle(color)
+    result.float = 'right'
+    return result
+  }
+
   handlePlayerNameChange (event) {
     this.players[event.target.id].name = event.target.value
   }
@@ -212,7 +218,7 @@ class MatchNew extends React.Component {
             { this.map.name }
           </div>
           { Object.keys(this.players).map(playerId => this.addPlayerToForm(this.players[playerId])) }
-          <input type="submit" value="Submit" style={ this.colorStyle() } />
+          <input type="submit" value="Submit" style={ this.submitStyle() } />
         </form>
       </div>
     )

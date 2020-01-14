@@ -12,6 +12,10 @@ class Point {
     this.y = y
   }
 
+  toString(): string {
+    return `(${this.x}, ${this.y})`
+  }
+
   clone (): Point {
     return new Point({ x: this.x, y: this.y })
   }
