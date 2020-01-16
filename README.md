@@ -15,10 +15,10 @@ Though I tried to stick to the rules as written, that wasn't always possible. Of
 
 There are trade-offs here between similar things with potentially deep game implications:
 - perfect knowledge and hidden reveals
-- "playing chicken" and MAD strategy  
+- "playing chicken" and MAD strategy
 
-
-## Speed Change
+## Consider
+### Speed Change
 At the beginning of any phase any car that hasn't changed speed yet that turn can change speed.
 
 Choices:
@@ -27,13 +27,13 @@ Choices:
 - Simultaneously opt to change or not; if anyone changes speed, show the players who changed and "no change" players a chance to change.
 - Take turns opting to change.
 
-## Weapons Fire
+### Weapons Fire
 At the end of any phase any character who hasn't fired yet this turn can fire any weapon that hasn't fired yet this turn.
 
 Choices:
 Similar choices to speed ones.
 
-## Move Order
+### Move Order
 1. The fastest vehicle moves first.
 2. If there are multiple vehicles at the same speed, the better reflex (rolled at beginning of match) decides whether to go or let someone else go.
 3. If there are vehicles at the same speed with the same reflex roll, tie-breaking is undefined.
@@ -42,7 +42,20 @@ Choices:
 - Whenever this happens (max once per phase), have tie-breaking rolls until there's a clear winner. (default)
 - Make match tie-breakers at the beginning of the game and always show a definite, known order (and order of chooser).
 
-## Knowledge of Other Cars
+### Knowledge of Other Cars
 Choices:
 - total knowledge of all vehicles (default)
 - Knowledge only of what's visible as it becomes visible
+
+## Prefer Not To
+### Maneuver Granularity
+Currently I lock all maneuvers into the maximal amount for a given difficulty value. So a D1 bend is always 15 degrees.
+
+I would rather not change this, but *maybe* in the future I should consider these options:
+- snap to maximal maneuver for difficulty (current)
+- allow full range of angles
+
+### Maneuver: Evening Out
+Currently this is not implemented. I don't plan to implement it. But I could consider:
+- Allow Evening Out
+- No Evening Out

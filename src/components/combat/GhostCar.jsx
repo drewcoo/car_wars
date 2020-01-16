@@ -2,14 +2,10 @@ import * as React from 'react'
 import {connect} from "react-redux"
 import MatchWrapper from '../../utils/wrappers/MatchWrapper'
 import Car from './Car'
-import { store,
-         ghostTurnBend, ghostTurnSwerve, ghostMoveDrift,
-         ghostForward, ghostHalf, ghostReset, ghostShowCollisions,
-         maneuverNext, maneuverSet,
-         //maneuverPrevious,
-       } from '../../redux'
+import Maneuver from './controls/lib/Maneuver'
 import FiringArc from './FiringArc'
 import Point from '../../utils/geometry/Point'
+import Intersection from '../../utils/geometry/Intersection'
 import { degreesDifference } from '../../utils/conversions'
 
 const mapStateToProps = (state) => {
@@ -31,154 +27,112 @@ class GhostCar extends React.Component {
       lastPoint: null
     }
 
-    this.handleOnDragStart = this.handleOnDragStart.bind(this)
-    this.handleOnDrag = this.handleOnDrag.bind(this)
-    this.handleOnDragStop = this.handleOnDragStop.bind(this)
+    this.startHandler = this.startHandler.bind(this)
+    this.moveHandler = this.moveHandler.bind(this)
+    this.stopHandler = this.stopHandler.bind(this)
   }
 
-////////////////////////
-  showHideCar(car, manIdxDelta) {
-    var index = (car.phasing.maneuverIndex + manIdxDelta) %
-                 car.status.maneuvers.length
-    if (car.status.maneuvers[index] === 'none') {
-      store.dispatch(ghostReset({ matchId: this.props.matchId, id: car.id }))
-    } else if (car.status.maneuvers[index] === 'half') {
-      store.dispatch(ghostHalf({ matchId: this.props.matchId, id: car.id }))
-    }else {
-      store.dispatch(ghostForward({ matchId: this.props.matchId, id: car.id }))
-    }
-    store.dispatch(ghostShowCollisions({ matchId: this.props.matchId, id: car.id }))
-  }
-
-  currentManeuver(car) {
-    return car.status.maneuvers[car.phasing.maneuverIndex]
-  }
-
-  turnRight(fRight) {
-    var car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
-
-    switch (this.currentManeuver(car)) {
-      case 'forward':
-        store.dispatch(maneuverSet({
-          matchId: this.props.matchId,
-          id: car.id,
-          maneuverIndex: car.status.maneuvers.indexOf('bend')
-        }))
-        // Make it easy to maneuver (bend from forward position) as long as that's possible.
-        if (!car.status.maneuvers.includes('bend')) { break }
-        // fall through
-      case 'bend':
-        store.dispatch(ghostTurnBend({ matchId: this.props.matchId, id: car.id, degrees: (fRight ? 15 : -15) }))
-        break
-      case 'drift':
-        store.dispatch(ghostMoveDrift({ matchId: this.props.matchId, id: car.id, direction: (fRight ? 'right' : 'left') }))
-        break
-      case 'swerve':
-        store.dispatch(ghostTurnSwerve({ matchId: this.props.matchId, id: car.id, degrees: (fRight ? 15 : -15) }))
-        break
-      default:
-        console.log(`maneuver: ${this.currentManeuver(car)}`)
-        return
-    }
-    store.dispatch(ghostShowCollisions({ matchId: this.props.matchId, id: car.id }))
-  }
-
-
-//////////////////////////
-
-  initiallyDragging() {
-    return false
-  }
-
-  touchPointFromEvent(event) {
+  eventPoint(event) {
+    // First, get the page coordinates of the click or touch.
     let result
-    if(event.clientX) {
-      // Mouse
-      result = new Point({ x: event.screenX, y: event.screenY })
-      // Was that the right X/Y to use? Page? Client?
-    } else {
-      // Otherwise assume touch
-      result = new Point({ x: event.changedTouches[0].clientX,
-                         y: event.changedTouches[0].clientY })
+    if(event.clientX) { // Mouse - correct coords
+      //result = new Point({ x: event.screenX, y: event.screenY })
+      result = new Point({ x: event.pageX, y: event.pageY })
+    } else { // Otherwise assume touch - incorrect
+      result = new Point({ x: event.changedTouches[0].pageX,
+                           y: event.changedTouches[0].pageY })
     }
+    // Now convert to the relative coords of the ghost car on the ArenaMap.
+    const bodyBounding = document.body.getBoundingClientRect()
+    const elemBounding = document.getElementById('ArenaMap').getBoundingClientRect()
+    result.x -= elemBounding.left + bodyBounding.left
+    result.y -= elemBounding.top + bodyBounding.top
     return result.toFixed(0)
   }
 
-  handleOnDragStart(event) {
-    const point = this.touchPointFromEvent(event)
-    this.setState({ drag: false, firstPoint: point, lastPoint: point })
-    console.log('start drag')
-    console.log(`(${this.state.lastPoint}) --> (${point})`)
+  handleOnDrag(event) {
+    this.moveHandler(event)
   }
 
-  handleOnDrag(event) {
-    if (this.state.firstPoint === null) { return }
-    this.resolveSwipe(event)
-    const point = this.touchPointFromEvent(event)
-    console.log(`(${this.state.lastPoint}) --> (${point})`)
+  handleOnDragStop(event) {
+    console.log(event)
+    this.stopHandler(event)
+  }
+
+  startHandler(event) {
+    const point = this.eventPoint(event)
+    this.setState({ drag: false, firstPoint: point, lastPoint: point })
+  }
+
+  moveHandler(event) {
+    if (this.state.firstPoint === null) {
+      if (this.state.drag === false) {
+        this.stopHandler(event)
+      }
+      return
+    }
+    const point = this.eventPoint(event)
+
+    //
+    // This doesn't work yet but it's sort of the idea.
+    // I'll get back to it later.
+    //
+    // The point from eventPoint() is in the context of the car coorinates.
+    // Move left if what? If swiped in a direction starting left and currently
+    // left of the current position of the ghost car? Not sure.
+    // Should talk it out.
+    //
+    console.log(this.props.matchId)
+    const car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
+    console.log(car.phasing.rect)
+    console.log(`${car.phasing.rect.blPoint().toFixed(0)}  -  ${car.phasing.rect.flPoint().toFixed(0)}`)
+    console.log(point)
+    console.log(`${car.phasing.rect.brPoint().toFixed(0)}  -  ${car.phasing.rect.frPoint().toFixed(0)}`)
+    console.log('----')
+
+    const swipeMagnitude = this.state.firstPoint.distanceTo(point) //this.state.lastPoint)
+    console.log(swipeMagnitude)
+    if(swipeMagnitude < 1) {
+      console.log(event)
+      this.stopHandler(event)
+      return
+    }
+    const swipeDirection = this.state.firstPoint.degreesTo(this.state.lastPoint)
+    const deltaDirection = degreesDifference({ initial: car.phasing.rect.facing,
+                                               second: swipeDirection })
+    Maneuver.turnRight({ matchId: this.props.matchId,
+                         car: car,
+                         fRight: (deltaDirection > 0) })
     this.setState({ drag: true, lastPoint: point })
   }
 
-  resolveSwipe(event) {
-    const point = this.touchPointFromEvent(event)
-    console.log(`total move: (${this.state.lastPoint}) --> (${point})`)
-
-    const car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
-
-    const swipeMagnitude = this.state.firstPoint.distanceTo(this.state.lastPoint)
-    console.log(`stroke magnitude: ${swipeMagnitude}`)
-    if(swipeMagnitude < 5) { return }
-
-    console.log(`(${this.state.firstPoint}) --> (${this.state.lastPoint})`)
-    const swipeDirection = this.state.firstPoint.degreesTo(this.state.lastPoint)
-    console.log(`stroke direction: ${swipeDirection}`)
-    console.log(`(ghost) car facing: ${car.phasing.rect.facing}`)
-    const deltaDirection = degreesDifference({ initial: car.phasing.rect.facing,
-                                               second: swipeDirection })
-    console.log(`degrees difference: ${deltaDirection}`)
-    console.log(`swipe ${deltaDirection > 0 ? 'right' : 'left'}`)
-    console.log(`stroke magnitude: ${this.state.firstPoint.distanceTo(this.state.lastPoint)}`)
-
-    this.turnRight(deltaDirection > 0)
-    //this.setState({ drag: false, firstPoint: null, lastPoint: null })
-  }
-
-
-
-  handleOnDragStop(event) {
+  stopHandler(event) {
+    console.log(this.state)
     if (this.state.drag) {
-      //this.resolveSwipe(event)
-      console.log('stop drag?')
-      // starting drag sets drag to false; don't bother here
-
-
+      // stop dragging
     } else {
-      const point = this.touchPointFromEvent(event)
-      console.log(`total move: (${this.state.lastPoint}) --> (${point})`)
-
+      console.log('here')
+      // not a drag but a click
       const car = new MatchWrapper({ match: this.props.matches[this.props.matchId] }).currentCar()
-      console.log(`it was a click: (${point})`)
-      console.log('in move mode, select next maneuver')
-      const args = { matchId: this.props.matchId, id: car.id }
-      store.dispatch(maneuverNext(args))
-      this.showHideCar(car, 1)
+      Maneuver.next({ matchId: this.props.matchId, car: car })
     }
+    this.setState({ drag: false, firstPoint: null, lastPoint: null })
   }
 
   render() {
     const match = new MatchWrapper({ match: this.props.matches[this.props.matchId] })
     return (
       <g
-        //onClick={this.handleOnClick}
-        onPointerDown={this.handleOnDragStart}
-        onTouchStart={this.handleOnDragStart}
-
-        onDrag={this.handleOnDrag}
-        onMouseMove={this.handleOnDrag}
-        onTouchMove={this.handleOnDrag}
-
-        onMouseUp={this.handleOnDragStop}
-        onTouchEnd={this.handleOnDragStop}
+      //  onClick={this.startHandler}
+        onMouseDown={this.startHandler}
+        onTouchStart={this.startHandler}
+        onMouseMove={this.moveHandler}
+        onTouchMove={this.moveHandler}
+      //  onMouseEnter={this.handleOnMouseDragStop}
+      //  onMouseLeave={this.handleOnMouseDragStop}
+        onMouseUp={this.stopHandler}
+      //  onMouseOut={this.handleOnMouseDragStop}
+        onTouchEnd={this.stopHandler}
       >
         <FiringArc matchId={ this.props.matchId } />
         <Car

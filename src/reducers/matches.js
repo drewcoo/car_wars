@@ -34,7 +34,6 @@ export const matchesSlice = createSlice({
       tmp.map = {}
       state[action.payload.matchId] = tmp
       state[action.payload.matchId].players = action.payload.players
-
     },
     addMap (state, action) {
       // do actual map loading later

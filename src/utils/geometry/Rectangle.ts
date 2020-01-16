@@ -170,6 +170,7 @@ class Rectangle {
     } else if (this.angleIsBetween(direction, this.blAngle(), this.flAngle())) {
       return 'L'
     } else {
+      // Maybe the point is *in* the car!!!
       throw new Error(`Error: facing ${this.facing} cannot find arc for direction: ${direction}`)
     }
   }

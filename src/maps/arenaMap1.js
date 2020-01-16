@@ -17,7 +17,7 @@ const MAP = {
   WIDTH: 24 * INCH
 }
 
- const Map = {
+const Map = {
   name: 'arenaMap1',
   size: {
     height: MAP.HEIGHT,
