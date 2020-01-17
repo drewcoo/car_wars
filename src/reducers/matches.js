@@ -1,4 +1,4 @@
-import { createSlice } from 'redux-starter-kit'
+import { createSlice } from '@reduxjs/toolkit'
 
 import { INCH } from '../utils/constants'
 import Dice from '../utils/Dice'
@@ -15,7 +15,7 @@ import Weapon from './lib/Weapon'
 import arenaMap1 from '../maps/arenaMap1'
 
 export const matchesSlice = createSlice({
-  slice: 'matches',
+  name: 'matches',
   initialState: { },
   reducers: {
     addMatch (state, action) {
