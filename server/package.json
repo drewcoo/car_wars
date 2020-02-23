@@ -1,0 +1,39 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "babel-watch src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-watch": "^7.0.0"
+  },
+  "dependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/runtime": "^7.8.3",
+    "apollo-server": "^2.9.16",
+    "apollo-server-express": "^2.9.16",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "bluebird": "^3.7.2",
+    "express": "^4.17.1",
+    "graphql": "^14.5.8",
+    "graphql-tools": "^4.0.6",
+    "metro-react-native-babel-preset": "^0.58.0",
+    "qs-middleware": "^1.0.3",
+    "source-map-loader": "^0.2.4",
+    "typescript": "^3.7.5",
+    "uuid": "^3.4.0"
+  }
+}

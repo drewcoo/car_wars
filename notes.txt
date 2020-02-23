@@ -1,5 +1,11 @@
 TODO:
-  maneuvers limited to no turning if driver incapacitated
+  - maneuvers limited to no turning if driver incapacitated
+  - find car-car collision crash
+  - tests
+  - navigation - something like https://reactnavigation.org/en/
+  - grid - many options
+  - sass: https://github.com/sass/node-sass
+  
 
 
 Turn:

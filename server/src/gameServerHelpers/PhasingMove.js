@@ -1,0 +1,178 @@
+import { FACE, INCH } from '../utils/constants'
+import { degreesDifference } from '../utils/conversions'
+
+class PhasingMove {
+  static hasMoved ({ car }) {
+    return !car.rect.brPoint().equals(car.phasing.rect.brPoint()) ||
+           car.rect.facing !== car.phasing.rect.facing
+  }
+
+  static possibleSpeeds ({ car }) {
+    const currentSpeed = car.status.speed
+    const top = car.design.attributes.topSpeed
+    const acc = car.design.attributes.acceleration
+    const possibleMax = currentSpeed + acc
+    const max = (top >= possibleMax) ? possibleMax : top
+
+    const possibleMin = currentSpeed - 45
+    const min = possibleMin >= 0 ? possibleMin : 0
+
+    const resultArray = []
+    for (let i = min; i <= max; i += 5) { resultArray.push(i) }
+    return resultArray
+  }
+
+  static reset ({ car }) {
+    //car.status.speed = car.phasing.speedChanges[car.phasing.speedChangeIndex]
+    const possibles = this.possibleSpeeds({ car })
+
+    car.phasing = {
+      rect: car.rect.clone(),
+      damageMarkerLocation: null,
+      damageMessage: '',
+      difficulty: 0,
+      maneuverIndex: 0,
+      speedChanges: possibles,
+      speedChangeIndex: possibles.indexOf(car.status.speed),
+      weaponIndex: car.phasing.weaponIndex,
+      targets: [],
+      targetIndex: 0, // BUGBUG: keep old targets? We want sustained fire . . .
+      collisionDetected: false,
+      collisions: []
+    }
+  }
+
+  static forward ({ car, distance = INCH }) {
+    return car.rect.move({ distance, degrees: car.rect.facing })
+  }
+
+  static bend ({ car, degrees }) {
+    const currentFacingDelta = degreesDifference({
+      initial: car.rect.facing,
+      second: car.phasing.rect.facing
+    })
+    const desiredFacing = currentFacingDelta + degrees
+    // Can't turn more than 90 deg.
+    if (Math.abs(desiredFacing) > 90) { return car.phasing.rect }
+
+    const facingRight = currentFacingDelta > 0
+    const facingLeft = currentFacingDelta < 0
+    const turningRight = degrees > 0
+
+    let resultRect = PhasingMove.forward({ car })
+
+    if (turningRight) {
+      if (!facingLeft) {
+        resultRect = resultRect.rightCornerTurn(desiredFacing)
+      } else /* facing left */ {
+        resultRect = resultRect.leftCornerTurn(desiredFacing)
+      }
+    } else /* turning left */ {
+      if (!facingRight) {
+        resultRect = resultRect.leftCornerTurn(desiredFacing)
+      } else /* facing right */ {
+        resultRect = resultRect.rightCornerTurn(desiredFacing)
+      }
+    }
+
+    car.phasing.difficulty = Math.ceil(Math.abs(resultRect.facing - car.rect.facing) / 15)
+
+    return resultRect
+  }
+
+  static swerve ({ car, degrees }) {
+    //  |
+    //  |
+    //  |
+    //  |
+    // \|/
+    //  V
+    // TODO: make this use first the new drift and then the new bend usage
+    // Each possibility tries to make a complete move - that way we can ghost collisions
+
+    // BUGBUG: I have absolutely no idea why this needs different special
+    // handling than bend. Changing facing should be the same, I'd think.
+    // Maybe I could solve this for everything by creating a degree class or
+    // degree comparison functions.
+
+    const currentFacingDelta = degreesDifference({
+      initial: car.rect.facing,
+      second: car.phasing.rect.facing
+    })
+    const desiredFacing = currentFacingDelta + degrees
+    let resultRect = car.phasing.rect.clone()
+
+    // Can't turn more than 90 deg.
+    if (Math.abs(desiredFacing) > 90) { return resultRect }
+
+    const facingLeft = currentFacingDelta < 0
+    const facingRight = currentFacingDelta > 0
+    const turningToFront = desiredFacing === 0
+    const turningLeft = degrees < 0
+    const turningRight = degrees > 0
+
+    const drift = (direction = 'right') => {
+      resultRect = resultRect.move({
+        degrees: (resultRect.facing + FACE.RIGHT),
+        distance: ((direction === 'right') ? INCH / 4 : -INCH / 4)
+      })
+      resultRect.facing += FACE.LEFT
+    }
+
+    if (turningToFront) {
+      resultRect._brPoint = resultRect.brPoint().clone()
+      resultRect = car.rect.move({
+        degrees: car.rect.facing,
+        distance: INCH
+      })
+    } else if (turningRight) {
+      if (facingRight) {
+        resultRect = resultRect.rightCornerTurn(degrees)
+      } else if (facingLeft) {
+        resultRect = resultRect.leftCornerTurn(degrees)
+      } else /* facing forward */ {
+        drift('left')
+        resultRect = resultRect.rightCornerTurn(degrees)
+      }
+    } else if (turningLeft) {
+      if (facingLeft) {
+        resultRect = resultRect.leftCornerTurn(degrees)
+      } else if (facingRight) {
+        resultRect = resultRect.rightCornerTurn(degrees)
+      } else /* facing forward */ {
+        drift('right')
+        resultRect = resultRect.leftCornerTurn(degrees)
+      }
+    }
+
+    car.phasing.difficulty = Math.ceil(Math.abs(desiredFacing) / 15)
+    if (car.phasing.difficulty > 0) { car.phasing.difficulty++ }
+
+    return resultRect
+  }
+
+  static drift ({ car, distance }) {
+    const fwdNull = PhasingMove.forward({ car })
+    const result = car.phasing.rect.move({ degrees: car.rect.facing + FACE.RIGHT, distance })
+    result.facing = car.rect.facing
+    const currentDist = Math.floor(fwdNull.brPoint().distanceTo(result.brPoint()))
+
+    // Drifts are max 1/2".
+    if (currentDist > INCH / 2) {
+      console.log('YOU HAVE DRIFTED TOO FAR!!!')
+      return car.phasing.rect }
+
+    // Set maneuver difficulty. Resolve that when the move is accepted.
+    if (currentDist === 0) {
+      car.phasing.difficulty = 0
+    } else if (currentDist > INCH / 4) {
+      car.phasing.difficulty = 3
+    } else {
+      car.phasing.difficulty = 1
+    }
+
+    return result
+  }
+}
+
+export default PhasingMove
