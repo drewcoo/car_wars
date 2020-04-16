@@ -8,7 +8,7 @@ import { degreesDifference } from '../../utils/conversions'
 import LocalMatchState from './lib/LocalMatchState'
 import ViewElement from './lib/ViewElement'
 
-class GhostCar extends React.Component {
+class ActiveCar extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -36,7 +36,7 @@ class GhostCar extends React.Component {
       result = new Point({ x: event.changedTouches[0].pageX,
                            y: event.changedTouches[0].pageY })
     }
-    // Now convert to the relative coords of the ghost car on the ArenaMap.
+    // Now convert to the relative coords of the active car on the ArenaMap.
     const bodyBounding = document.body.getBoundingClientRect()
     const elemBounding = document.getElementById('ArenaMap').getBoundingClientRect()
     result.x -= elemBounding.left + bodyBounding.left
@@ -72,7 +72,7 @@ class GhostCar extends React.Component {
     //
     // The point from eventPoint() is in the context of the car coorinates.
     // Move left if what? If swiped in a direction starting left and currently
-    // left of the current position of the ghost car? Not sure.
+    // left of the current position of the active car? Not sure.
     // Should talk it out.
     //
     const lms = new LocalMatchState(this.props.matchData)
@@ -123,12 +123,12 @@ class GhostCar extends React.Component {
           client={this.props.client}
           matchData={ lms.data }
           id={ lms.currentCarId() }
-          key='ghost'
-          ghost={ true }
+          key='active'
+          active={ true }
         />
       </g>
     )
   }
 }
 
-export default GhostCar
+export default ActiveCar

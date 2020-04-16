@@ -7,16 +7,16 @@ import LocalMatchState from '../lib/LocalMatchState'
 import { graphql } from 'react-apollo'
 import doMove from '../../graphql/mutations/doMove'
 import fireWeapon from '../../graphql/mutations/fireWeapon'
-import ghostManeuverNext from '../../graphql/mutations/ghostManeuverNext'
-import ghostManeuverPrevious from '../../graphql/mutations/ghostManeuverPrevious'
-import ghostManeuverSet from '../../graphql/mutations/ghostManeuverSet'
-import ghostMoveBend from '../../graphql/mutations/ghostMoveBend'
-import ghostMoveDrift from '../../graphql/mutations/ghostMoveDrift'
-import ghostMoveForward from '../../graphql/mutations/ghostMoveForward'
-import ghostMoveHalfForward from '../../graphql/mutations/ghostMoveHalfForward'
-import ghostMoveReset from '../../graphql/mutations/ghostMoveReset'
-import ghostMoveSwerve from '../../graphql/mutations/ghostMoveSwerve'
-import ghostShowCollisions from '../../graphql/mutations/ghostShowCollisions'
+import activeManeuverNext from '../../graphql/mutations/activeManeuverNext'
+import activeManeuverPrevious from '../../graphql/mutations/activeManeuverPrevious'
+import activeManeuverSet from '../../graphql/mutations/activeManeuverSet'
+import activeMoveBend from '../../graphql/mutations/activeMoveBend'
+import activeMoveDrift from '../../graphql/mutations/activeMoveDrift'
+import activeMoveForward from '../../graphql/mutations/activeMoveForward'
+import activeMoveHalfForward from '../../graphql/mutations/activeMoveHalfForward'
+import activeMoveReset from '../../graphql/mutations/activeMoveReset'
+import activeMoveSwerve from '../../graphql/mutations/activeMoveSwerve'
+import activeShowCollisions from '../../graphql/mutations/activeShowCollisions'
 import setSpeed from '../../graphql/mutations/setSpeed'
 import setTarget from '../../graphql/mutations/setTarget'
 import setWeapon from '../../graphql/mutations/setWeapon'
@@ -24,8 +24,8 @@ import setWeapon from '../../graphql/mutations/setWeapon'
 //
 // TODO:
 //
-// ghostMoves w/ speeds > 50 mph, send *chain* of moves
-//   + for speeds >50 make the ghost UI work better
+// activeMoves w/ speeds > 50 mph, send *chain* of moves
+//   + for speeds >50 make the active UI work better
 //
 // add something to do collision resolution, too
 //
@@ -38,18 +38,18 @@ import setWeapon from '../../graphql/mutations/setWeapon'
 const DO_MOVE = graphql(doMove, { name: 'doMove' })
 const FIRE_WEAPON = graphql(fireWeapon, { name: 'fireWeapon' })
 
-const GHOST_MANEUVER_NEXT = graphql(ghostManeuverNext, { name: 'ghostManeuverNext' })
-const GHOST_MANEUVER_PREVIOUS = graphql(ghostManeuverPrevious, { name: 'ghostManeuverPrevious' })
-const GHOST_MANEUVER_SET = graphql(ghostManeuverSet, { name: 'ghostManeuverSet' })
+const ACTIVE_MANEUVER_NEXT = graphql(activeManeuverNext, { name: 'activeManeuverNext' })
+const ACTIVE_MANEUVER_PREVIOUS = graphql(activeManeuverPrevious, { name: 'activeManeuverPrevious' })
+const ACTIVE_MANEUVER_SET = graphql(activeManeuverSet, { name: 'activeManeuverSet' })
 
-const GHOST_MOVE_BEND = graphql(ghostMoveBend, { name: 'ghostMoveBend' })
-const GHOST_MOVE_DRIFT = graphql(ghostMoveDrift, { name: 'ghostMoveDrift' })
-const GHOST_MOVE_FORWARD = graphql(ghostMoveForward, { name: 'ghostMoveForward' })
-const GHOST_MOVE_HALF_FORWARD = graphql(ghostMoveHalfForward, { name: 'ghostMoveHalfForward' })
-const GHOST_MOVE_RESET = graphql(ghostMoveReset, { name: 'ghostMoveReset' })
-const GHOST_MOVE_SWERVE = graphql(ghostMoveSwerve, { name: 'ghostMoveSwerve' })
+const ACTIVE_MOVE_BEND = graphql(activeMoveBend, { name: 'activeMoveBend' })
+const ACTIVE_MOVE_DRIFT = graphql(activeMoveDrift, { name: 'activeMoveDrift' })
+const ACTIVE_MOVE_FORWARD = graphql(activeMoveForward, { name: 'activeMoveForward' })
+const ACTIVE_MOVE_HALF_FORWARD = graphql(activeMoveHalfForward, { name: 'activeMoveHalfForward' })
+const ACTIVE_MOVE_RESET = graphql(activeMoveReset, { name: 'activeMoveReset' })
+const ACTIVE_MOVE_SWERVE = graphql(activeMoveSwerve, { name: 'activeMoveSwerve' })
 
-const GHOST_SHOW_COLLISIONS = graphql(ghostShowCollisions, { name: 'ghostShowCollisions' })
+const ACTIVE_SHOW_COLLISIONS = graphql(activeShowCollisions, { name: 'activeShowCollisions' })
 
 const SET_SPEED = graphql(setSpeed, { name: 'setSpeed' })
 const SET_TARGET = graphql(setTarget, { name: 'setTarget' })
@@ -76,62 +76,62 @@ class KeystrokeInput extends React.Component {
     }
   }
 
-  async ghostMoveForward({ id }) {
-    return await this.props.ghostMoveForward({
+  async activeMoveForward({ id }) {
+    return await this.props.activeMoveForward({
       variables: { id: id }
     })
   }
 
-  async ghostMoveHalfForward({ id }) {
-    return await this.props.ghostMoveHalfForward({
+  async activeMoveHalfForward({ id }) {
+    return await this.props.activeMoveHalfForward({
       variables: { id: id }
     })
   }
 
-  async ghostMoveDrift({ id, direction }) {
-    return await this.props.ghostMoveDrift({
+  async activeMoveDrift({ id, direction }) {
+    return await this.props.activeMoveDrift({
       variables: { id: id, direction: direction }
     })
   }
 
-  async ghostManeuverNext({ id }) {
-    await this.props.ghostManeuverNext({
+  async activeManeuverNext({ id }) {
+    await this.props.activeManeuverNext({
       variables: { id: id }
     })
   }
 
-  async ghostManeuverPrevious({ id }) {
-    return await this.props.ghostManeuverPrevious({
+  async activeManeuverPrevious({ id }) {
+    return await this.props.activeManeuverPrevious({
       variables: { id: id }
     })
   }
 
-  async ghostManeuverSet({ id, maneuverIndex }) {
-    return await this.props.ghostManeuverSet({
+  async activeManeuverSet({ id, maneuverIndex }) {
+    return await this.props.activeManeuverSet({
       variables: { id: id, maneuverIndex: maneuverIndex }
     })
   }
 
-  async ghostMoveReset({ id }) {
-    return await this.props.ghostMoveReset({
+  async activeMoveReset({ id }) {
+    return await this.props.activeMoveReset({
       variables: { id: id }
     })
   }
 
-  async ghostShowCollisions({ id }) {
-    return await this.props.ghostShowCollisions({
+  async activeShowCollisions({ id }) {
+    return await this.props.activeShowCollisions({
       variables: { id: id }
     })
   }
 
-  async ghostMoveBend({ id, degrees }) {
-    return await this.props.ghostMoveBend({
+  async activeMoveBend({ id, degrees }) {
+    return await this.props.activeMoveBend({
       variables: { id: id, degrees: degrees }
     })
   }
 
-  async ghostMoveSwerve({ id, degrees }) {
-    return await this.props.ghostMoveSwerve({
+  async activeMoveSwerve({ id, degrees }) {
+    return await this.props.activeMoveSwerve({
       variables: { id: id, degrees: degrees }
     })
   }
@@ -186,35 +186,35 @@ class KeystrokeInput extends React.Component {
       case 'forward':
         // Make it easy to maneuver (bend from forward position) as long as that's possible.
         if (!car.status.maneuvers.includes('bend')) { break }
-        this.ghostManeuverSet({
+        this.activeManeuverSet({
           id: car.id,
           maneuverIndex: car.status.maneuvers.indexOf('bend')
         })
-        this.ghostMoveBend({
+        this.activeMoveBend({
           id: car.id,
           degrees: (fRight ? 15 : -15)
         })
         break
       case 'bend':
-        this.ghostMoveBend({
+        this.activeMoveBend({
           id: car.id,
           degrees: (fRight ? 15 : -15)
         })
         break
       case 'drift':
-        this.ghostMoveDrift({
+        this.activeMoveDrift({
           id: car.id,
           direction: (fRight ? 'right' : 'left')
         })
         break
       case 'swerve':
-        this.ghostMoveSwerve({ id: car.id, degrees: (fRight ? 15 : -15) })
+        this.activeMoveSwerve({ id: car.id, degrees: (fRight ? 15 : -15) })
         break
       default:
         console.log(`maneuver: ${lms.currentManeuver()}`)
         return
     }
-    this.ghostShowCollisions({ id: car.id })
+    this.activeShowCollisions({ id: car.id })
   }
 
   respondUnlessModalShowing(handlers) {
@@ -237,10 +237,10 @@ class KeystrokeInput extends React.Component {
 
     const handlers = {
       nextManeuver: (event) => {
-        this.ghostManeuverNext({ id: car.id })
+        this.activeManeuverNext({ id: car.id })
       },
       previousManeuver: (event) => {
-        this.ghostManeuverPrevious({ id: car.id })
+        this.activeManeuverPrevious({ id: car.id })
       },
       nextSpeed: (event) => {
         this.speedSetter({
@@ -307,7 +307,7 @@ class KeystrokeInput extends React.Component {
         this.turnRight(false)
       },
       home: (event) => {
-        this.ghostMoveReset({ id: car.id })
+        this.activeMoveReset({ id: car.id })
         this.weaponSetter({
           id: car.id,
           weaponIndex: 0
@@ -324,16 +324,16 @@ class KeystrokeInput extends React.Component {
 export default compose (
   DO_MOVE,
   FIRE_WEAPON,
-  GHOST_MOVE_FORWARD,
-  GHOST_MOVE_HALF_FORWARD,
-  GHOST_MOVE_DRIFT,
-  GHOST_MANEUVER_NEXT,
-  GHOST_MANEUVER_PREVIOUS,
-  GHOST_MOVE_RESET,
-  GHOST_SHOW_COLLISIONS,
-  GHOST_MOVE_BEND,
-  GHOST_MOVE_SWERVE,
-  GHOST_MANEUVER_SET,
+  ACTIVE_MOVE_FORWARD,
+  ACTIVE_MOVE_HALF_FORWARD,
+  ACTIVE_MOVE_DRIFT,
+  ACTIVE_MANEUVER_NEXT,
+  ACTIVE_MANEUVER_PREVIOUS,
+  ACTIVE_MOVE_RESET,
+  ACTIVE_SHOW_COLLISIONS,
+  ACTIVE_MOVE_BEND,
+  ACTIVE_MOVE_SWERVE,
+  ACTIVE_MANEUVER_SET,
   SET_SPEED,
   SET_TARGET,
   SET_WEAPON,

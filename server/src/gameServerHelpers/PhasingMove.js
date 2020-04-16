@@ -80,7 +80,7 @@ console.log('RESET!')
   // What if I have car.rect show the current car location,
   // center (renamed?) always show the fishtail/skid/etc.-effect next position?
   //
-  // Then I can use center to show ghosty-blur future skid locations
+  // Then I can use center to show activey-blur future skid locations
   // when other cars are moving.
   // Show only when center doesn't return the same value as car.rect.
   //
@@ -173,7 +173,7 @@ console.log('RESET!')
     // \|/
     //  V
     // TODO: make this use first the new drift and then the new bend usage
-    // Each possibility tries to make a complete move - that way we can ghost collisions
+    // Each possibility tries to make a complete move - that way we can active collisions
 
     // BUGBUG: I have absolutely no idea why this needs different special
     // handling than bend. Changing facing should be the same, I'd think.

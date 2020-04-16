@@ -19,7 +19,7 @@ class Car extends React.Component {
 
   manyColoredOpacity(opacity) {
     if (this.collisionDetected) { return 1 }
-    if (this.props.ghost) { return opacity }
+    if (this.props.active) { return opacity }
     if (this.props.shadow) {return opacity}
     return 0
   }
@@ -28,7 +28,7 @@ class Car extends React.Component {
     const lms = new LocalMatchState(this.props.matchData)
     const isMovingCar = car.id === lms.currentCarId()
     if (isMovingCar && (
-        this.props.shadow || !this.props.ghost)) {
+        this.props.shadow || !this.props.active)) {
       return (<g></g>)
     }
     if (!isMovingCar && !this.props.shadow) {
@@ -64,7 +64,7 @@ class Car extends React.Component {
   }
 
   strobeMoving() {
-    if (!this.props.ghost) { return }
+    if (!this.props.active) { return }
     return (
       <animate
         attributeType="XML"
@@ -77,7 +77,7 @@ class Car extends React.Component {
 
   opacity(vehicle) {
     const lms = new LocalMatchState(this.props.matchData)
-    let result = (lms.currentCarId() === this.props.id && !this.props.ghost) ? 1/2 : 1
+    let result = (lms.currentCarId() === this.props.id && !this.props.active) ? 1/2 : 1
     if (this.props.shadow) { result = 1/4 }
     return result
   }
@@ -190,7 +190,7 @@ class Car extends React.Component {
       if (car.status.nextMove.length === 0) { return(<g></g>) }
     }
 
-    let tempRect = this.props.ghost ? new Rectangle(car.phasing.rect) : new Rectangle(car.rect)
+    let tempRect = this.props.active ? new Rectangle(car.phasing.rect) : new Rectangle(car.rect)
     if (this.props.shadow) {
       let nextMove = car.status.nextMove[0]
 
@@ -213,7 +213,7 @@ class Car extends React.Component {
       }
     }
 
-    this.collisionDetected = this.props.ghost ? car.phasing.collisionDetected : car.collisionDetected
+    this.collisionDetected = this.props.active ? car.phasing.collisionDetected : car.collisionDetected
 
     var rotatePoint = {
       x: tempRect.brPoint().x,

@@ -1,4 +1,4 @@
-// only used by GhostCar???
+// only used by ActiveCar???
 
 class Maneuver {
   static currentManeuver (car) {
@@ -20,19 +20,19 @@ class Maneuver {
         if (!car.status.maneuvers.includes('bend')) { break }
         // fall through
       case 'bend':
-        store.dispatch(ghostTurnBend({ matchId: matchId, id: car.id, degrees: (fRight ? 15 : -15) }))
+        store.dispatch(activeTurnBend({ matchId: matchId, id: car.id, degrees: (fRight ? 15 : -15) }))
         break
       case 'drift':
-        store.dispatch(ghostMoveDrift({ matchId: matchId, id: car.id, direction: (fRight ? 'right' : 'left') }))
+        store.dispatch(activeMoveDrift({ matchId: matchId, id: car.id, direction: (fRight ? 'right' : 'left') }))
         break
       case 'swerve':
-        store.dispatch(ghostTurnSwerve({ matchId: matchId, id: car.id, degrees: (fRight ? 15 : -15) }))
+        store.dispatch(activeTurnSwerve({ matchId: matchId, id: car.id, degrees: (fRight ? 15 : -15) }))
         break
       default:
         //console.log(`maneuver: ${this.currentManeuver(car)}`)
         return
     }
-    store.dispatch(ghostShowCollisions({ matchId: matchId, id: car.id }))
+    store.dispatch(activeShowCollisions({ matchId: matchId, id: car.id }))
     */
   }
 
@@ -42,13 +42,13 @@ class Maneuver {
     var index = (car.phasing.maneuverIndex + indexDelta) %
                  car.status.maneuvers.length
     if (car.status.maneuvers[index] === 'none') {
-      store.dispatch(ghostReset({ matchId: matchId, id: car.id }))
+      store.dispatch(activeReset({ matchId: matchId, id: car.id }))
     } else if (car.status.maneuvers[index] === 'half') {
-      store.dispatch(ghostHalf({ matchId: matchId, id: car.id }))
+      store.dispatch(activeHalf({ matchId: matchId, id: car.id }))
     } else {
-      store.dispatch(ghostForward({ matchId: matchId, id: car.id }))
+      store.dispatch(activeForward({ matchId: matchId, id: car.id }))
     }
-    store.dispatch(ghostShowCollisions({ matchId: matchId, id: car.id }))
+    store.dispatch(activeShowCollisions({ matchId: matchId, id: car.id }))
     */
   }
 

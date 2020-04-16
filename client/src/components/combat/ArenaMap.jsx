@@ -3,7 +3,7 @@ import LocalMatchState from './lib/LocalMatchState'
 import Car from './Car'
 import MapBackground from './MapBackground'
 import Walls from './Walls'
-import GhostCar from './GhostCar'
+import ActiveCar from './ActiveCar'
 
 class ArenaMap extends React.Component {
   render() {
@@ -33,7 +33,7 @@ class ArenaMap extends React.Component {
             )
           })
         }
-        <GhostCar matchData={this.props.matchData} />
+        <ActiveCar matchData={this.props.matchData} />
       </svg>
     )
   }

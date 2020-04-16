@@ -4,8 +4,8 @@ import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
 
 import '../../../App.css'
-import ghostManeuverSet from '../../graphql/mutations/ghostManeuverSet'
-const GHOST_MANEUVER_SET = graphql(ghostManeuverSet, { name: 'ghostManeuverSet' })
+import activeManeuverSet from '../../graphql/mutations/activeManeuverSet'
+const ACTIVE_MANEUVER_SET = graphql(activeManeuverSet, { name: 'activeManeuverSet' })
 
 class Maneuver extends React.Component {
   constructor(props) {
@@ -14,8 +14,8 @@ class Maneuver extends React.Component {
     this.onChange = this.onChange.bind(this)
   }
 
-  async ghostManeuverSet({ id, maneuverIndex }) {
-    return await this.props.ghostManeuverSet({
+  async activeManeuverSet({ id, maneuverIndex }) {
+    return await this.props.activeManeuverSet({
       variables: { id: id, maneuverIndex: maneuverIndex }
     })
   }
@@ -23,7 +23,7 @@ class Maneuver extends React.Component {
   onChange(event) {
     const id = new LocalMatchState(this.props.matchData).currentCarId()
 
-    this.ghostManeuverSet({
+    this.activeManeuverSet({
       id: id,
       maneuverIndex: parseInt(event.target.value)
     })
@@ -68,6 +68,6 @@ class Maneuver extends React.Component {
 }
 
 export default compose (
-//  GHOST_SHOW_COLLISIONS,
-  GHOST_MANEUVER_SET
+//  ACTIVE_SHOW_COLLISIONS,
+  ACTIVE_MANEUVER_SET
 )(Maneuver)

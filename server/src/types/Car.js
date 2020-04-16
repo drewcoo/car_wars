@@ -50,16 +50,16 @@ export const typeDef = `
       targetX: Float!,
       targetY: Float!
     ): ID
-    ghostMoveForward(id: ID!): Int
-    ghostMoveHalfForward(id: ID!): Int
-    ghostMoveDrift(id: ID!, direction: String!): Int
-    ghostManeuverNext(id: ID!): Int
-    ghostManeuverPrevious(id: ID!): Int
-    ghostManeuverSet(id: ID!, maneuverIndex: Int!): Int
-    ghostMoveReset(id: ID!): Int
-    ghostShowCollisions(id: ID!): Int
-    ghostMoveBend(id: ID!, degrees: Int!): Int
-    ghostMoveSwerve(id: ID!, degrees: Int!): Int
+    activeMoveForward(id: ID!): Int
+    activeMoveHalfForward(id: ID!): Int
+    activeMoveDrift(id: ID!, direction: String!): Int
+    activeManeuverNext(id: ID!): Int
+    activeManeuverPrevious(id: ID!): Int
+    activeManeuverSet(id: ID!, maneuverIndex: Int!): Int
+    activeMoveReset(id: ID!): Int
+    activeShowCollisions(id: ID!): Int
+    activeMoveBend(id: ID!, degrees: Int!): Int
+    activeMoveSwerve(id: ID!, degrees: Int!): Int
     setCarPosition(id: ID!, rect: InputRectangle): Rectangle
     setSpeed(id: ID!, speed: Int!): Int!
     setTarget(id: ID!, targetIndex: Int!): Int!
@@ -190,12 +190,12 @@ const rehydrateCar = ({ id }) => {
   return result
 }
 
-const outerGhostReset = ({ id }) => {
+const outerActiveReset = ({ id }) => {
   let car = rehydrateCar({ id })
   PhasingMove.reset({ car })
 }
 
-const outerGhostHalfForward = ({ id }) => {
+const outerActiveHalfForward = ({ id }) => {
   let car = rehydrateCar({ id })
   let distance = INCH / 2
   // is this needed?
@@ -203,14 +203,14 @@ const outerGhostHalfForward = ({ id }) => {
   car.phasing.rect = PhasingMove.forward({ car, distance })
 }
 
-const outerGhostForward = ({ id }) => {
+const outerActiveForward = ({ id }) => {
   let car = DATA.cars.find(el => el.id === id)
   // is this needed?
   car = PhasingMove.center({ car })
   car.phasing.rect = PhasingMove.forward({ car })
 }
 
-const outerGhostShowCollisions = ({ id }) => {
+const outerActiveShowCollisions = ({ id }) => {
   const thisCar = DATA.cars.find(el => el.id === id)
   //
   // BUGBUG: Problems:
@@ -235,13 +235,13 @@ const showHideCar = (car, manIdxDelta) => {
   var index = (car.phasing.maneuverIndex + manIdxDelta) %
                car.status.maneuvers.length
   if (car.status.maneuvers[index] === 'none') {
-    outerGhostReset({ id: car.id })
+    outerActiveReset({ id: car.id })
   } else if (car.status.maneuvers[index] === 'half') {
-    outerGhostHalfForward({ id: car.id })
+    outerActiveHalfForward({ id: car.id })
   } else {
-    outerGhostForward({ id: car.id })
+    outerActiveForward({ id: car.id })
   }
-  outerGhostShowCollisions({ id: car.id })
+  outerActiveShowCollisions({ id: car.id })
 }
 
 export const resolvers = {
@@ -444,7 +444,7 @@ for (const Car of Object.values(match.cars)) {
 */
       return
     },
-    ghostManeuverNext: (parent, args, context) => {
+    activeManeuverNext: (parent, args, context) => {
       const thisCar = DATA.cars.find(el => el.id === args.id)
       const match = DATA.matches.find(match => match.id === thisCar.currentMatch)
       const cars = DATA.cars.filter(car => match.carIds.includes(car.id))
@@ -453,7 +453,7 @@ for (const Car of Object.values(match.cars)) {
       Collisions.detect({ cars, map: match.map, thisCar })
       return thisCar.phasing.maneuverIndex
     },
-    ghostManeuverPrevious: (parent, args, context) => {
+    activeManeuverPrevious: (parent, args, context) => {
       let thisCar = DATA.cars.find(el => el.id === args.id)
       const match = DATA.matches.find(match => match.id === thisCar.currentMatch)
       const cars = DATA.cars.filter(car => match.carIds.includes(car.id))
@@ -462,7 +462,7 @@ for (const Car of Object.values(match.cars)) {
       Collisions.detect({ cars, map: match.map, thisCar })
       return thisCar.phasing.maneuverIndex
     },
-    ghostManeuverSet: (parent, args, context) => {
+    activeManeuverSet: (parent, args, context) => {
       let thisCar = DATA.cars.find(el => el.id === args.id)
       const match = DATA.matches.find(match => match.id === thisCar.currentMatch)
       const cars = DATA.cars.filter(car => match.carIds.includes(car.id))
@@ -471,15 +471,15 @@ for (const Car of Object.values(match.cars)) {
       Collisions.detect({ cars, map: match.map, thisCar })
       return args.maneuverIndex
     },
-    ghostMoveForward: (parent, args, context) => {
-      outerGhostForward({ id: args.id })
+    activeMoveForward: (parent, args, context) => {
+      outerActiveForward({ id: args.id })
       return
     },
-    ghostMoveHalfForward: (parent, args, context) => {
-      outerGhostHalfForward({ id: args.id })
+    activeMoveHalfForward: (parent, args, context) => {
+      outerActiveHalfForward({ id: args.id })
       return
     },
-    ghostMoveDrift: (parent, args, context) => {
+    activeMoveDrift: (parent, args, context) => {
       let car = DATA.cars.find(el => el.id === args.id)
       const match = DATA.matches.find(match => match.id === car.currentMatch)
       const cars = DATA.cars.filter(car => match.carIds.includes(car.id))
@@ -488,16 +488,16 @@ for (const Car of Object.values(match.cars)) {
       const targets = new Targets({ car, cars, map: match.map })
       targets.refresh()
     },
-    ghostMoveReset: (parent, args, context) => {
+    activeMoveReset: (parent, args, context) => {
       let car = DATA.cars.find(el => el.id === args.id)
       showHideCar(car, 0)
       return
     },
-    ghostShowCollisions: (parent, args, context) => {
-      outerGhostShowCollisions({ id: args.id })
+    activeShowCollisions: (parent, args, context) => {
+      outerActiveShowCollisions({ id: args.id })
       return
     },
-    ghostMoveBend: (parent, args, context) => {
+    activeMoveBend: (parent, args, context) => {
       let car = DATA.cars.find(el => el.id === args.id)
       const match = DATA.matches.find(match => match.id === car.currentMatch)
       const cars = DATA.cars.filter(car => match.carIds.includes(car.id))
@@ -507,7 +507,7 @@ for (const Car of Object.values(match.cars)) {
       targets.refresh()
       return
     },
-    ghostMoveSwerve: (parent, args, context) => {
+    activeMoveSwerve: (parent, args, context) => {
       let car = DATA.cars.find(el => el.id === args.id)
       const match = DATA.matches.find(match => match.id === car.currentMatch)
       const cars = DATA.cars.filter(car => match.carIds.includes(car.id))

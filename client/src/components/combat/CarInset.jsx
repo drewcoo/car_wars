@@ -94,13 +94,13 @@ class CarInset extends React.Component {
     const inset = true
     const id = 'inset'
     const scaling = 1 // inset ? 1 : 1;    ///5; //40/INCH : 1/10;
-    const ghost = false
-    const tempRect = ghost ? car.rect : car.phasing.rect
+    const active = false
+    const tempRect = active ? car.rect : car.phasing.rect
     const length = 400 // tempRect.length * 5/80 * INCH;
     const width = 200 // tempRect.width * 5/80 * INCH;
     const tempBrPoint = (inset) ? { x: width, y: length } : tempRect.brPoint()
     const tempFacing = (inset) ? 0 : tempRect.facing
-    const opacity = ghost ? 1 / 2 : 1
+    const opacity = active ? 1 / 2 : 1
 
     const bodyStyle = {
       fill: car.color,
@@ -126,7 +126,7 @@ class CarInset extends React.Component {
     }
     const manyColoredFill = () => {
       if (car.phasing.collisionDetected) { return 'red' }
-      if (ghost) { return 'yellow' }
+      if (active) { return 'yellow' }
       return 'white'
     }
     const outlineStyle = {
@@ -238,7 +238,7 @@ class CarInset extends React.Component {
           >
             { `real: (${car.rect.brPoint().x / INCH},
               ${car.rect.brPoint().y / INCH})\n` }
-            { `ghost: (${car.phasing.rect.brPoint().x / INCH},
+            { `active: (${car.phasing.rect.brPoint().x / INCH},
               ${car.phasing.rect.brPoint().y / INCH})` }
           </text>
         </g>
