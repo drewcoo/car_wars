@@ -95,13 +95,57 @@ class Rectangle {
 
   // returns a new rectangle, moved direction and distance from here
   // can make this take direction of movement later
-  move ({ degrees, distance }: { degrees: number, distance: number}): Rectangle {
+  move ({ degrees, distance, slide=false }: { degrees: number, distance: number, slide: boolean }): Rectangle {
     return new Rectangle({
       brPoint: this._brPoint.move({ degrees, distance }),
-      facing: degrees, // || this.facing, //????
+      facing: slide ? this.facing : degrees,
       length: this.length,
       width: this.width
     })
+  }
+
+  slide ({ degrees, distance }: { degrees: number, distance: number}): Rectangle {
+    return new Rectangle({
+      brPoint: this._brPoint.move({ degrees, distance }),
+      facing: this.facing, // || this.facing, //????
+      length: this.length,
+      width: this.width
+    })
+  }
+
+  // can make this take direction of movement later
+  leftBackCornerPivot (degrees: number) {
+    console.log(`pivot ${degrees}`)
+    const result = this.clone()
+    const blp = result.blPoint()
+    result._brPoint = result.brPoint().rotateAround({ fixedPoint: blp, degrees: degrees })
+    result.facing += degrees
+    return result
+  }
+
+  // can make this take direction of movement later
+  leftFrontCornerPivot (degrees: number) {
+    const result = this.clone()
+    const flp = result.flPoint()
+    result._brPoint = result.brPoint().rotateAround({ fixedPoint: flp, degrees: degrees })
+    result.facing += degrees
+    return result
+  }
+
+  // can make this take direction of movement later
+  rightBackCornerPivot (degrees: number) {
+    let result = this.clone()
+    result._brPoint = result.brPoint().rotateAround({ fixedPoint: this.brPoint(), degrees })
+    result.facing += degrees
+    return result
+  }
+
+  // can make this take direction of movement later
+  rightFrontCornerPivot (degrees: number) {
+    let result = this.clone()
+    result._brPoint = result.brPoint().rotateAround({ fixedPoint: this.frPoint(), degrees })
+    result.facing += degrees
+    return result
   }
 
   // can make this take direction of movement later
@@ -109,7 +153,7 @@ class Rectangle {
     const result: Rectangle = this.clone()
     const brp: Point = result.brPoint()
     const blp: Point = result.blPoint()
-    result._brPoint = brp.rotateAround({ fulcrum: blp, degrees: degrees })
+    result._brPoint = brp.rotateAround({ fixedPoint: blp, degrees: degrees })
     result.facing += degrees
     return result
   }
@@ -117,7 +161,7 @@ class Rectangle {
   // can make this take direction of movement later
   rightCornerTurn (degrees: number): Rectangle {
     let result = this.clone()
-    result._brPoint = result.brPoint().rotateAround({ fulcrum: this.brPoint(), degrees })
+    result._brPoint = result.brPoint().rotateAround({ fixedPoint: this.brPoint(), degrees })
     result.facing += degrees
     return result
   }

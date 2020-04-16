@@ -18,30 +18,6 @@ class FrontMG extends React.Component {
 
     const component = new Component({ length: this.props.length, width: this.props.width })
 
-/*
-<rect
-  x = { x + 10 }
-  y = { y + (component.row1 + component.row2)/2 }
-  width = { 10 }
-  height = { 10 }
-  style = { component.style.default }
-/>
-<rect
-  x = { x + 20 }
-  y = { y + (component.row1 + component.row2)/2 }
-  width = { 10 }
-  height = { 10 }
-  style = { component.style.default }
-/>
-<rect
-  x = { x + 30 }
-  y = { y + (component.row1 + component.row2)/2 }
-  width = { 10 }
-  height = { 10 }
-  style = { component.style.default }
-/>
-*/
-
     return (
       <g>
         <rect

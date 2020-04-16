@@ -6,6 +6,7 @@ import Driver from './carComponents/Driver'
 import Plant from './carComponents/Plant'
 import Tire from './carComponents/Tire'
 import FrontMG from './carComponents/FrontMG'
+import Component from './carComponents/GenericComponent'
 
 class InsetLayout extends React.Component {
   tire(front, left) {
@@ -36,27 +37,44 @@ class InsetLayout extends React.Component {
     />)
   }
 
+  armor(location) {
+    const dimensions = {
+      'F': { x: this.props.width * 16 / 64, y: this.props.length * 9 / 64 },
+      'T': { x: this.props.width * 38 / 64, y: this.props.length * 9 / 64 },
+      'L': { x: this.props.width * 1 / 64,  y: this.props.length * 36 / 64 },
+      'R': { x: this.props.width * 63 / 64, y: this.props.length * 36 / 64 }, // textAnchor={'end'}
+      'B': { x: this.props.width * 16 / 64, y: this.props.length * 63 / 64 },
+      'U': { x: this.props.width * 38 / 64, y: this.props.length * 63 / 64 }
+    }
+    const style = {
+      red: { fill: 'red' },
+      black: { fill: 'black' }
+    }
+    const component = new Component({ width: 0, length: 0})
+    let DP = this.props.car.design.components.armor[location]
+    if (location === 'R') {
+      return(
+        <text x = {dimensions[location].x} y = {dimensions[location].y} textAnchor={'end'} style = { DP < 1 ? style.red : style.black }>
+          {location}:{DP}
+        </text>
+      )
+    }
+    return (
+      <text x = {dimensions[location].x} y = {dimensions[location].y} style = { DP < 1 ? style.red : style.black } >
+        {location}:{DP}
+      </text>
+    )
+  }
+
   render() {
     return (
       <g>
-        <text x = { this.props.width * 16 / 64 } y = { this.props.length * 9 / 64 } >
-          F:{ this.props.car.design.components.armor.F }
-        </text>
-        <text x = { this.props.width * 38 / 64 } y = { this.props.length * 9 / 64 } >
-          T:{ this.props.car.design.components.armor.T }
-        </text>
-        <text x = { this.props.width * 1 / 64 } y = { this.props.length * 36 / 64 } >
-          L:{ this.props.car.design.components.armor.L }
-        </text>
-        <text x = { this.props.width * 63 / 64 } y = { this.props.length * 36 / 64 } textAnchor={'end'} >
-          R:{ this.props.car.design.components.armor.R }
-        </text>
-        <text x = { this.props.width * 16 / 64 } y = { this.props.length * 63 / 64 } >
-          B:{ this.props.car.design.components.armor.B }
-        </text>
-        <text x = { this.props.width * 38 / 64 } y = { this.props.length * 63 / 64 } >
-          U:{ this.props.car.design.components.armor.U }
-        </text>
+        { this.armor('F') }
+        { this.armor('T') }
+        { this.armor('L') }
+        { this.armor('R') }
+        { this.armor('B') }
+        { this.armor('U') }
         { this.tire(true, true) }
         { this.tire(true, false) }
         { this.tire(false, true) }

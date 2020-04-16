@@ -12,7 +12,7 @@ class Dice {
     modifier = modifier || 0
     let total = 0
     for (let i = 0; i < dice; i++) {
-      total = total + Math.floor(Math.random() * 6) + 1
+      total = total + Math.ceil(Math.random() * 6)
     }
     // p.5: Some weapons do “1/2d” of damage, or a “half-die.” This means to
     // roll one die and divide the result by 2, rounding up.

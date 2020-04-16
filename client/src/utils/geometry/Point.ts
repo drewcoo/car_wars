@@ -66,12 +66,12 @@ class Point {
     })
   }
 
-  rotateAround ({ fulcrum, degrees } : { fulcrum: Point, degrees: number }): Point {
+  rotateAround ({ fixedPoint, degrees } : { fixedPoint: Point, degrees: number }): Point {
     const radians = degreesToRadians(degrees) +
-                      Math.atan2((this.y - fulcrum.y), (this.x - fulcrum.x))
-    const dist = fulcrum.distanceTo(this)
-    const newX = Math.cos(radians) * dist + fulcrum.x
-    const newY = Math.sin(radians) * dist + fulcrum.y
+                      Math.atan2((this.y - fixedPoint.y), (this.x - fixedPoint.x))
+    const dist = fixedPoint.distanceTo(this)
+    const newX = Math.cos(radians) * dist + fixedPoint.x
+    const newY = Math.sin(radians) * dist + fixedPoint.y
     return new Point({ x: newX, y: newY })
   }
 }

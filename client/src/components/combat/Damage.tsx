@@ -8,12 +8,12 @@ class Damage extends React.Component {
 
   getCurrentDamage () {
     const car = new LocalMatchState(this.props.matchData).currentCar()
-    if (car.phasing.damageMarkerLocation != null && car.phasing.damageMessage != null) {
-      return this.drawDamage({
-        point: car.phasing.damageMarkerLocation,
-        message: car.phasing.damageMessage
-      })
-    }
+    return car.phasing.damage
+              .filter((damage: any) => damage.display != null && damage.message != null)
+              .map((damage: any) => this.drawDamage({
+                point: damage.display,
+                message: damage.message
+              }))
   }
 
   polylineStar({ x, y, pointCount, offset = 0, radiusMultiplier = 1 }:

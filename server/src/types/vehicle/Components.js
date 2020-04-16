@@ -36,6 +36,7 @@ export const typeDef = `
     damagePoints: Int!
     location: String!
     type: String!
+    wheelExists: Boolean!
   }
 
   type Weapon {

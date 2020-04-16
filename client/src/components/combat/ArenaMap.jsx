@@ -3,6 +3,7 @@ import LocalMatchState from './lib/LocalMatchState'
 import Car from './Car'
 import MapBackground from './MapBackground'
 import Walls from './Walls'
+import GhostCar from './GhostCar'
 
 class ArenaMap extends React.Component {
   render() {
@@ -22,6 +23,17 @@ class ArenaMap extends React.Component {
             )
           })
         }
+        {
+          Object.values(lms.cars()).map((car) => {
+            return(
+              <Car key= { `shadow-${car.id}` } matchData={ this.props.matchData }
+                id={ car.id }
+                shadow={ true }
+              />
+            )
+          })
+        }
+        <GhostCar matchData={this.props.matchData} />
       </svg>
     )
   }

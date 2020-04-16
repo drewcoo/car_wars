@@ -68,12 +68,10 @@ class LocalMatchState {
          this.currentCar().design.components.powerPlant.damagePoints >0)
       )
     )
-
     const driverCanFire = (
       !this.driver().firedThisTurn &&
       this.driver().damagePoints > 1
     )
-
     return(weaponCanFire && driverCanFire)
   }
 
@@ -108,20 +106,18 @@ class LocalMatchState {
 
   nextSpeed({ id }) {
     let phasing = this.car({ id }).phasing
-    phasing.speedChangeIndex++
-    if (phasing.speedChangeIndex > phasing.speedChanges.length - 1) {
-      phasing.speedChangeIndex = phasing.speedChanges.length - 1
+    let newIndex = phasing.speedChangeIndex + 1
+    if (newIndex > phasing.speedChanges.length - 1) {
+      newIndex = phasing.speedChanges.length - 1
     }
-    return phasing.speedChanges[phasing.speedChangeIndex]
+    return phasing.speedChanges[newIndex]
   }
 
   previousSpeed({ id }) {
     let phasing = this.car({ id }).phasing
-    phasing.speedChangeIndex--
-    if (phasing.speedChangeIndex < 0) {
-      phasing.speedChangeIndex = 0
-    }
-    return phasing.speedChanges[phasing.speedChangeIndex]
+    let newIndex = phasing.speedChangeIndex - 1
+    if (newIndex < 0) { newIndex = 0 }
+    return phasing.speedChanges[newIndex]
   }
 
   setSpeedIndex({ id, speedIndex }) {

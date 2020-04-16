@@ -5,23 +5,18 @@ import { HotKeys } from 'react-hotkeys'
 import LocalMatchState from '../lib/LocalMatchState'
 
 import { graphql } from 'react-apollo'
-
 import doMove from '../../graphql/mutations/doMove'
 import fireWeapon from '../../graphql/mutations/fireWeapon'
-
 import ghostManeuverNext from '../../graphql/mutations/ghostManeuverNext'
 import ghostManeuverPrevious from '../../graphql/mutations/ghostManeuverPrevious'
 import ghostManeuverSet from '../../graphql/mutations/ghostManeuverSet'
-
 import ghostMoveBend from '../../graphql/mutations/ghostMoveBend'
 import ghostMoveDrift from '../../graphql/mutations/ghostMoveDrift'
 import ghostMoveForward from '../../graphql/mutations/ghostMoveForward'
 import ghostMoveHalfForward from '../../graphql/mutations/ghostMoveHalfForward'
 import ghostMoveReset from '../../graphql/mutations/ghostMoveReset'
 import ghostMoveSwerve from '../../graphql/mutations/ghostMoveSwerve'
-
 import ghostShowCollisions from '../../graphql/mutations/ghostShowCollisions'
-
 import setSpeed from '../../graphql/mutations/setSpeed'
 import setTarget from '../../graphql/mutations/setTarget'
 import setWeapon from '../../graphql/mutations/setWeapon'
@@ -143,7 +138,7 @@ class KeystrokeInput extends React.Component {
 
   async speedSetter({ id, speed }) {
     return await this.props.setSpeed({
-      variables: { id: id, speed: speed }
+      variables: { id: id, speed: parseInt(speed) }
     })
   }
 
@@ -162,6 +157,7 @@ class KeystrokeInput extends React.Component {
   async fire({ id }) {
     const car = new LocalMatchState(this.props.matchData).car({ id })
     const target = car.phasing.targets[car.phasing.targetIndex]
+    if (!target) { return }
     await this.props.fireWeapon({
       variables: {
         id: id,
@@ -234,6 +230,7 @@ class KeystrokeInput extends React.Component {
     )
   }
 
+
   render() {
     let lms = new LocalMatchState(this.props.matchData)
     let car = lms.currentCar()
@@ -246,17 +243,15 @@ class KeystrokeInput extends React.Component {
         this.ghostManeuverPrevious({ id: car.id })
       },
       nextSpeed: (event) => {
-        lms.nextSpeed({ id: car.id })
         this.speedSetter({
           id: car.id,
-          speed: lms.speed({ id: car.id })
+          speed: lms.nextSpeed({ id: car.id })
         })
       },
       previousSpeed: (event) => {
-        lms.previousSpeed({ id: car.id })
         this.speedSetter({
           id: car.id,
-          speed: lms.speed({ id: car.id })
+          speed: lms.previousSpeed({ id: car.id })
         })
       },
       nextWeapon: (event) => {
@@ -313,6 +308,10 @@ class KeystrokeInput extends React.Component {
       },
       home: (event) => {
         this.ghostMoveReset({ id: car.id })
+        this.weaponSetter({
+          id: car.id,
+          weaponIndex: 0
+        })
       }
     }
 

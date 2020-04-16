@@ -16,6 +16,11 @@ class GenericComponent {
         stroke: 'black',
         strokeWidth: 2
       },
+      yellow: {
+        fill: 'yellow',
+        stroke: 'black',
+        strokeWidth: 2
+      },
       name: {
         fontSize: '18px', // default is 24
         fontFamily: 'fantasy',

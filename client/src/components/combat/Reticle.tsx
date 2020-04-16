@@ -22,7 +22,7 @@ class Reticle extends React.Component {
 
   draw() {
     const car = new LocalMatchState(this.props.matchData).currentCar()
-    if (car.phasing.damageMarkerLocation != null && car.phasing.damageMessage != null) {
+    if (car.phasing.damage[0].display != null && car.phasing.damage[0].message != null) {
       return
     }
 
@@ -56,7 +56,7 @@ class Reticle extends React.Component {
 
   render() {
     const car = new LocalMatchState(this.props.matchData).currentCar()
-    if (car.phasing.damageMarkerLocation != null && car.phasing.damageMessage != null) {
+    if (car.phasing.damage[0].target != null && car.phasing.damage[0].message != null) {
       return (<Damage matchData={ this.props.matchData } />)
     }
 

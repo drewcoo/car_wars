@@ -7,7 +7,6 @@ import Speed from '../../combat/controls/SpeedSelector'
 import Target from '../../combat/controls/TargetSelector'
 import Weapon from '../../combat/controls/WeaponSelector'
 import ArenaMap from '../../combat/ArenaMap'
-import GhostCar from '../../combat/GhostCar'
 import CarInset from '../../combat/CarInset'
 import CarStats from '../../combat/CarStats'
 import Phase from '../../combat/timing/Phase'
@@ -26,6 +25,7 @@ class Match extends React.Component {
 
   render() {
     const matchId = this.props.match.params.matchId
+    console.log(`match id: ${matchId}`)
     return(
       <Query
         pollInterval={ 250 }
@@ -44,18 +44,15 @@ class Match extends React.Component {
           }
 
           const matchData = data.completeMatchData
-          console.log(matchData)
 
           return (
             <div>
-              <p>hello</p>
               <KeystrokeInput client={this.props.client} matchData={ matchData } />
               <div>
                 <div className='LeftColumn'>
                   <div className='TitleRow'>
                     <span>
                       <Turn client={this.props.client} matchData={ matchData } />
-                      <br/>
                       <Phase client={this.props.client} matchData={ matchData } />
                     </span>
                   </div>
@@ -63,10 +60,8 @@ class Match extends React.Component {
                     <div className='ArenaMap'>
                       <svg
                         width={ matchData.match.map.size.width }
-                        height={ matchData.match.map.size.height }
-                      >
+                        height={ matchData.match.map.size.height }>
                         <ArenaMap client={this.props.client} matchData={ matchData } />
-                        <GhostCar client={this.props.client} matchData={ matchData } />
                       </svg>
                     </div>
                   </div>

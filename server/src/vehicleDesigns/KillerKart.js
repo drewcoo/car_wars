@@ -24,24 +24,28 @@ export const Design = {
       damagePoints: 8
     },
     tires: [{
+      damagePoints: 6,
       location: 'FL',
       type: 'HD',
-      damagePoints: 6
+      wheelExists: true
     },
     {
+      damagePoints: 6,
       location: 'FR',
       type: 'HD',
-      damagePoints: 6
+      wheelExists: true
     },
     {
+      damagePoints: 6,
       location: 'BL',
       type: 'HD',
-      damagePoints: 6
+      wheelExists: true
     },
     {
+      damagePoints: 6,
       location: 'BR',
       type: 'HD',
-      damagePoints: 6
+      wheelExists: true
     }],
     weapons: [
       NULL_WEAPON(),

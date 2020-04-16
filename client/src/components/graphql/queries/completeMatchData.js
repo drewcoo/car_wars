@@ -46,9 +46,7 @@ const completeMatchData = gql`
           damageModifier
           handlingStatus
           newSpeed
-          rammed {
-            id
-          }
+          rammed
           type
         }
         color
@@ -87,6 +85,7 @@ const completeMatchData = gql`
               damagePoints
               location
               type
+              wheelExists
             }
             weapons {
               abbreviation
@@ -102,6 +101,7 @@ const completeMatchData = gql`
             }
           }
         }
+        log
         modals {
           text
         }
@@ -113,16 +113,16 @@ const completeMatchData = gql`
             damageModifier
             handlingStatus
             newSpeed
-            rammed {
-              id
-            }
+            rammed
             type
           }
-          damageMarkerLocation {
-            x
-            y
+          damage {
+            display {
+              x
+              y
+            }
+            message
           }
-          damageMessage
           difficulty
           maneuverIndex
           rect {
@@ -136,6 +136,10 @@ const completeMatchData = gql`
           }
           speedChangeIndex
           speedChanges
+          controlChecksForSpeedChanges {
+            speed
+            checks
+          }
           targetIndex
           targets {
             carId
@@ -158,10 +162,19 @@ const completeMatchData = gql`
           }
         }
         status {
-          changedSpeed
           handling
+          killed
+          lastDamageBy
           maneuvers
+          nextMove {
+            fishtailDistance
+            maneuver
+            maneuverDistance
+            maneuverDirection
+            spinDirection
+          }
           speed
+          speedChangedThisTurn
         }
       }
       players {

@@ -1,5 +1,4 @@
 import uuid from 'uuid/v4'
-
 import { DATA,  matchCars } from '../DATA'
 
 DATA.players = []
@@ -9,12 +8,10 @@ export const typeDef = `
     addCar(carId: ID!, playerId: ID!): Player
     createPlayer(name: String!, color: String!): Player
   }
-
   extend type Query {
     players: [Player]
     player(id: ID!): Player
   }
-
   type Player {
     id: ID!
     name: String!

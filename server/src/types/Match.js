@@ -1,18 +1,13 @@
 import _ from 'lodash'
 import uuid from 'uuid/v4'
-
-
 import { PubSub } from 'apollo-server-express'
-
 import { withFilter } from 'graphql-subscriptions'
-
 import Movement from '../gameServerHelpers/Movement'
 import Time from '../gameServerHelpers/Time'
-
 import Car from './Car'
 import Player from './Player'
-
 import { DATA,  matchCars } from '../DATA'
+
 DATA.matches = []
 
 const pubsub = new PubSub()
@@ -195,7 +190,7 @@ export const resolvers = {
         }
       }
       match.status = 'started'
-      Time.nextPlayer({ match })
+      Time.nextMover({ match })
       return match
     },
     finishMatch: (parent, args, context) => {

@@ -2,9 +2,11 @@ import uuid from 'uuid/v4'
 import _ from 'lodash'
 import Dice from '../utils/Dice'
 import { INCH } from '../utils/constants'
+import Log from '../utils/Log'
 import Point from '../utils/geometry/Point'
 import Rectangle from '../utils/geometry/Rectangle'
 
+import Control from '../gameServerHelpers/Control'
 import Collisions from '../gameServerHelpers/Collisions'
 import PhasingMove from '../gameServerHelpers/PhasingMove'
 import Targets from '../gameServerHelpers/Targets'
@@ -28,14 +30,14 @@ const fillDesign = (designName) => {
 // MAneuvers is an enum
 // attribute strings are enums
 
-/* BUGBUG
-
-  non-required fields in Collison should be req'd
-  need to define damage from walls
-
-  related: both cars and walls should be "game objects" in the same pool,
-  so that rammed can be rammedId instead of holding an optional rect
-*/
+// BUGBUG
+//
+// non-required fields in Collison should be req'd
+// need to define damage from walls
+//
+// related: both cars and walls should be "game objects" in the same pool,
+// so that rammed can be rammedId instead of holding an optional rect
+//
 
 export const typeDef = `
   extend type Mutation {
@@ -58,7 +60,6 @@ export const typeDef = `
     ghostShowCollisions(id: ID!): Int
     ghostMoveBend(id: ID!, degrees: Int!): Int
     ghostMoveSwerve(id: ID!, degrees: Int!): Int
-
     setCarPosition(id: ID!, rect: InputRectangle): Rectangle
     setSpeed(id: ID!, speed: Int!): Int!
     setTarget(id: ID!, targetIndex: Int!): Int!
@@ -81,6 +82,7 @@ export const typeDef = `
     collisions: [Collision]
     color: String
     design: Design!
+    log: [String]
     modals: [Modal]
     name: String!
     phasing: Phasing!
@@ -94,8 +96,8 @@ export const typeDef = `
     damageModifier: Float
     handlingStatus: Int
     newSpeed: Int
-    rammed: RammedObject
-    rammedBy: RammedObject
+    rammed: ID
+    rammedBy: ID
     type: String!
   }
 
@@ -105,31 +107,47 @@ export const typeDef = `
     text: String
   }
 
+  type NextMove {
+    fishtailDistance: Int!
+    maneuver: String
+    maneuverDirection: Float
+    maneuverDistance: Int!
+    spinDirection: String
+  }
+
   type Phasing {
     collisionDetected: Boolean!
     collisions: [Collision]
-    damageMarkerLocation: Point
-    damageMessage: String
+    damage: [Damage]
     difficulty: Int
     maneuverIndex: Int
     rect: Rectangle
     speedChangeIndex: Int
-    speedChanges: [Int]
+    speedChanges: [String]
+    controlChecksForSpeedChanges: [ControlChecks]
     targetIndex: Int!
     targets: [Target]
     weaponIndex: Int
   }
 
-  type RammedObject {
-    id: ID!
-    rect: Rectangle
+  type ControlChecks {
+    speed: Int
+    checks: [String]
+  }
+
+  type Damage {
+    display: Point
+    message: String
   }
 
   type Status {
-    changedSpeed: Boolean!
+    killed: Boolean
     handling: Int!
+    lastDamageBy: [ID!]
     maneuvers: [String!]
+    nextMove: [NextMove]
     speed: Int!
+    speedChangedThisTurn: Boolean
   }
 
   union PointOrSegment = Point | Segment
@@ -150,6 +168,19 @@ export const typeDef = `
   }
 `
 
+const damageAllTires = ({ car, damage }) => {
+  car.design.components.tires.forEach(tire => {
+    if (tire.damagePoints <= 0) { return }
+    tire.damagePoints -= damage
+    if (tire.damagePoints <= 0) {
+      tire.damagePoints = 0
+      // Still have wheels!
+      car.design.handlingClass -= 2
+      // BUGBUG: Handlng roll if lose tire(s)
+    }
+  })
+}
+
 const rehydrateCar = ({ id }) => {
   let result = DATA.cars.find(el => el.id === id)
   if (result.phasing.rect) {
@@ -167,11 +198,15 @@ const outerGhostReset = ({ id }) => {
 const outerGhostHalfForward = ({ id }) => {
   let car = rehydrateCar({ id })
   let distance = INCH / 2
+  // is this needed?
+  car = PhasingMove.center({ car })
   car.phasing.rect = PhasingMove.forward({ car, distance })
 }
 
 const outerGhostForward = ({ id }) => {
   let car = DATA.cars.find(el => el.id === id)
+  // is this needed?
+  car = PhasingMove.center({ car })
   car.phasing.rect = PhasingMove.forward({ car })
 }
 
@@ -237,55 +272,149 @@ export const resolvers = {
         collisions: [],
         color: player.color,
         design: design,
-        name: args.name,
+        log: [],
         modals: [],
+        name: args.name,
         playerId: player.id,
         phasing: {
           collisionDetected: false,
           collisions: [],
-          damageMarkerLocation: null,
-          damageMessage: null,
+          controlChecksForSpeedChanges: [],
+          damage: [{
+              display: null,
+              message: ''
+          }],
           difficulty: 0,
           maneuverIndex: 0,
           rect: null,
-          speedChangeIndex: 2,
-          speedChanges: [0, 5, 10, 15, 20],
-          targetIndex: 0,
+          speedChangeIndex: 0,
+          speedChanges: [],
+          targetIndex: 0, // don't hard-code here
           targets: [],
           weaponIndex: 0, // needed for targets (refresh)
         },
         status: {
-          changedSpeed: false,
           handling: design.attributes.handlingClass,
+          killed: false,
+          lastDamageBy: [],
           maneuvers: ['forward', 'bend', 'drift', 'swerve'],
-          speed: 10,
+          nextMove: [],
+          speed: 0,
+          speedChangedThisTurn: false,
         }
       }
+
+      let speed = 40
+      newCar.status.speed = speed
+      newCar.phasing.speedChanges = PhasingMove.possibleSpeedsWithoutUsingACar({
+        currentSpeed: speed,
+        topSpeed: design.attributes.topSpeed,
+        acceleration: design.attributes.acceleration,
+        canAccelerate: true,
+        canBrake: true
+      })
+      newCar.phasing.speedChangeIndex = newCar.phasing.speedChanges.indexOf(speed)
+      newCar.phasing.controlChecksForSpeedChanges = newCar.phasing.speedChanges.map(spd => {
+        return { speed: spd, checks: Control.row({ speed: spd })}
+      })
+
       DATA.cars.push(newCar)
       return newCar
     },
     doMove: (parent, args, context) => {
       let car = DATA.cars.find(el => el.id === args.id)
-      // haven't moved
+      Log.info('', car)
+      Log.info(car.status.maneuvers[car.phasing.maneuverIndex], car)
+      let newSpeed = car.phasing.speedChanges[car.phasing.speedChangeIndex]
+      Log.info(`${car.status.speed} -> ${newSpeed}`, car)
+      if (newSpeed != car.status.speed) {
+        Log.info(`speed change: ${car.status.speed}MPH -> ${newSpeed}MPH`)
+        car.status.speedChangedThisTurn = true
+        car.status.speed = newSpeed
+      }
+      Log.info('did it move?', car)
       if (!PhasingMove.hasMoved({ car })) { return }
-
+      Log.info('collisions?', car)
       for (let coll of car.phasing.collisions) {
         Collisions.resolve({ car, collision: coll })
       }
-
+      if (car.status.nextMove.length > 0) {
+        forcedManeuver = car.status.nextMove.shift()
+        if (forcedManeuver.maneuver === 'skid' ||
+            forcedManeuver.maneuver === 'controlledSkid') {
+          Log.info(`I AM SKIDDING ${forcedManeuver.maneuverDistance / INCH} INCHES!!!`, car)
+          car.rect = car.phasing.rect
+          // deal with the damage, handling rolls, etc.
+          if (forcedManeuver.maneuverDistance > INCH) {
+            throw new Error(`We don't do a ${forcedManeuver.maneuverDistance}" skid!`)
+          }
+          if (forcedManeuver.maneuverDistance > INCH * 3 /4) { // 1" skid
+            damageAllTires({ car, damage: 2 })
+            if (forcedManeuver.maneuver = 'controlledSkid') {
+              // aimed weapons fire prohibited for the rest of the turn,
+              car.status.speed -= 10
+              forcedManeuver.maneuver = null
+              forcedManeuver.maneuverDirection = null
+              forcedManeuver.maneuverDistance = 0
+            } else {
+              // No further aimed weapon fire permitted from this vehicle this turn
+              car.status.speed -= 20
+              forcedManeuver.maneuver = 'skid'
+              forcedManeuver.maneuverDirection = car.rect.facing
+              forcedManeuver.maneuverDistance = INCH / 2
+            }
+          } else if (forcedManeuver.maneuverDistance > INCH / 2) { // 3/4" skid
+            damageAllTires({ car, damage: 1 })
+            car.status.speed -= 5
+            if (forcedManeuver.maneuver = 'controlledSkid') {
+              // -6 to aimed weapons fire
+              forcedManeuver.maneuver = null
+              forcedManeuver.maneuverDirection = null
+              forcedManeuver.maneuverDistance = 0
+            } else {
+              // -6 to aimed weapons fire
+              forcedManeuver.maneuver = 'skid'
+              forcedManeuver.maneuverDirection = car.rect.facing
+              forcedManeuver.maneuverDistance = INCH / 4
+            }
+          } else if (forcedManeuver.maneuverDistance > INCH / 4) { // 1/2" skid
+            forcedManeuver.maneuver = null
+            forcedManeuver.maneuverDirection = null
+            forcedManeuver.maneuverDistance = 0
+            car.status.speed -= 5
+            if (forcedManeuver.maneuver = 'controlledSkid') {
+              // −3 to aimed weapons fire
+            } else {
+              // -6 to aimed weapons fire
+            }
+          } else if (forcedManeuver.maneuverDistance > 0) { // 1/4" skid
+            forcedManeuver.maneuver = null
+            forcedManeuver.maneuverDirection = null
+            forcedManeuver.maneuverDistance = 0
+            if (forcedManeuver.maneuver = 'controlledSkid') {
+              // -1 to aimed weapons fire
+            } else {
+              // -3 to aimed weapons fire
+            }
+          } else {
+            throw new Error(`We don't do a ${forcedManeuver.maneuverDistance}" skid!`)
+          }
+        }
+      }
+      Log.info(`base HC: ${car.design.attributes.handlingClass}`, car)
+      Log.info(`initial HC: ${car.status.handling}`, car)
+      Log.info(`difficulty: D${car.phasing.difficulty}`, car)
       car.status.handling -= car.phasing.difficulty
+      if (car.status.handling < -6) { car.status.handling = -6 }
+      Log.info(`maneuver check: ${Control.maneuverCheck({ car })}`, car)
       // BUGBUG: HANDLING ROLL NOW IF CHANGED!
-      console.log('handling roll may go here')
-
+      Log.info(`current HC: ${car.status.handling}`, car)
       car.rect = car.phasing.rect.clone()
-
       PhasingMove.reset({ car })
       let match = DATA.matches.find(match => match.id === car.currentMatch)
       let cars = DATA.cars.filter(car => match.carIds.includes(car.id))
-
       Collisions.clear({ cars })
-
-      Time.nextPlayer({ match })
+      Time.nextMover({ match })
       let oldCar = DATA.cars.find(oldCar => oldCar.id === car.id)
       /*
 const match = state[action.payload.matchId]
@@ -376,6 +505,7 @@ for (const Car of Object.values(match.cars)) {
       car.phasing.rect = PhasingMove.bend({ car, degrees })
       const targets = new Targets({ car, cars, map: match.map })
       targets.refresh()
+      return
     },
     ghostMoveSwerve: (parent, args, context) => {
       let car = DATA.cars.find(el => el.id === args.id)
@@ -385,6 +515,7 @@ for (const Car of Object.values(match.cars)) {
       car.phasing.rect = PhasingMove.swerve({ car, degrees })
       const targets = new Targets({ car, cars, map: match.map })
       targets.refresh()
+      return
     },
 
     setCarPosition: (parent, args, context) => {
@@ -393,25 +524,32 @@ for (const Car of Object.values(match.cars)) {
       return car.rect
     },
     setSpeed: (parent, args, context) => {
+      console.log('set speed')
       let car = DATA.cars.find(el => el.id === args.id)
       let driver = car.design.components.crew.find(member => member.role === 'driver')
-      if(driver.damagePoints < 2) {
+
+      if(driver.damagePoints < 2 ||
+         car.status.speedChangedThisTurn ||
+         (car.design.components.powerPlant.damagePoints < 1 &&
+          Math.abs(args.speed) > Math.abs(car.status.speed) )) {
         // driver unconscious or dead
         return car.status.speed
       }
       let topSpeed = car.design.attributes.topSpeed
       if (args.speed < -topSpeed/5 ||
           args.speed > topSpeed) {
-            throw new Error(`Excessive speed: ${args.speed}`)
-          }
+        throw new Error(`Excessive speed: ${args.speed}`)
+      }
 
       // BUGBUG: Check for Excessive speed change.
       // BUGBUG: Check for "going through 0" without stopping.
-      if (car.status.speed === args.speed) return args.speed
 
-      car.status.speed = args.speed
-      car.status.changedSpeed = true
-      return car.status.speed
+      car.phasing.speedChangeIndex = car.phasing.speedChanges.indexOf(args.speed)
+      if (-1 === car.phasing.speedChangeIndex) {
+        throw new Error(`Speed ${args.speed} not in array ${car.phasing.speedChanges}`)
+      }
+      car.status.controlChecks = Control.row({ speed: args.speed })
+      return args.speed
     },
     setTarget: (parent, args, content) => {
       let car = DATA.cars.find(el => el.id === args.id)
@@ -440,13 +578,11 @@ for (const Car of Object.values(match.cars)) {
       let weaponCanFire = weapon.damagePoints > 0 &&
                           (weapon.ammo > 0 || (weapon.requiresPlant && car.design.components.powerPlant.damagePoints > 0)) &&
                           !weapon.firedThisTurn
-
       if (crewMemberCanFire && weaponCanFire) {
         let match = DATA.matches.find(el => el.id === car.currentMatch)
         let cars  = matchCars({ match })
         let map = match.map
         let targets = new Targets({ car, cars, map })
-
         car.phasing.targets = targets.targetsInArc()
         car.phasing.targetIndex = 0 // BUGBUG: set to last target fired at?
       }
@@ -455,15 +591,21 @@ for (const Car of Object.values(match.cars)) {
     },
     fireWeapon: (parent, args, content) => {
       let car = DATA.cars.find(el => el.id === args.id)
+      Log.info('fire!', car)
       if (!Weapon.passFiringChecks({ car })) {
-        car.phasing.damageMarkerLocation = null
-        car.phasing.damageMessage = null
-        console.log('cannot fire')
+        car.phasing.damage[0].display = null
+        car.phasing.damage[0].message = ''
+        Log.info('cannot fire', car)
         return
       }
 
       let weapon = Weapon.itself({ car })
       const toHit = Dice.roll('2d')
+
+      // BUGBUG - where are the modifiers???
+      // Calculate server side for here and also for Reticle.jsx
+
+      Log.info(`toHit: ${weapon.toHit} - roll is ${toHit}; damage: ${weapon.damage}`, car)
       let damage = (toHit >= weapon.toHit) ? Dice.roll(weapon.damage) : 0
       weapon.ammo--
       car.design.components.crew.find(member => member.role === 'driver').firedThisTurn = true
@@ -471,17 +613,19 @@ for (const Car of Object.values(match.cars)) {
 
       const targetCar = DATA.cars.find(car => args.targetId === car.id)
 
+      Log.info(`shot ${targetCar.color}'s ${args.targetName} with ${weapon.abbreviation}:${weapon.location} for ${damage} damage`, car)
       Weapon.dealDamage({
+        by: car,
         car: targetCar,
         damage: damage,
         location: args.targetName
       })
 
-      car.phasing.damageMarkerLocation = new Point({
+      car.phasing.damage[0].display = new Point({
         x: args.targetX,
         y: args.targetY
       })
-      car.phasing.damageMessage = damage
+      car.phasing.damage[0].message = damage
       return
     },
     addModal: (parent, args, context) => {

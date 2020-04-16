@@ -67,7 +67,6 @@ class Target extends React.Component {
     if (car.phasing.targets.length > 0) {
       color = lms.car({ id: car.phasing.targets[parseInt(index)].carId }).color
     }
-
     return {
       color: color
     }

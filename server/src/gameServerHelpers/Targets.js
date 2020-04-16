@@ -87,26 +87,6 @@ class Targets {
     })
   }
 
-  /*
-targetPointsInArc() {
-  //var car = getCurrentCar();
-  var weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location;
-  var sourcePoint = this.car.phasing.rect.side(weaponLoc).middle();
-
-  // .flatMap instead??  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flatMap
-  var possible_targets = this.allOtherCarRects().map(rect => {
-    return rect.points().filter(point => {
-      return (
-        //this.car.phasing.rect.pointIsInArc({ point: point, arcName: weaponLoc }) &&
-        this.car.phasing.rect.arcForPoint(point) === weaponLoc &&
-        !this.shotBlocked({sourcePoint: sourcePoint, targetPoint: point})
-      )
-    });
-  }).flat(); //.reverse();
-  return possible_targets;
-}
-*/
-
   targetPointsInArc () {
     const weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
     const sourcePoint = this.car.phasing.rect.side(weaponLoc).middle()
@@ -161,14 +141,3 @@ targetPointsInArc() {
   }
 }
 export default Targets
-
-/// ////////////////////////////////////
-/*
-
-TargetLocation:
-carId
-name
-isSide // point if false
-nearestPoint
-displayPoint
-*/

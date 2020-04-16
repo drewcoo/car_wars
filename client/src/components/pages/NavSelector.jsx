@@ -19,7 +19,6 @@ class NavSelector extends React.Component {
   constructor (props) {
     super(props)
     this.client = props.client
-    this.state = { value: '' }
     this.handleChange = this.handleChange.bind(this)
   }
 
@@ -38,8 +37,7 @@ class NavSelector extends React.Component {
             autoFocus
             id={ 'mainNav' }
             onChange={ this.handleChange }
-            value=''
-          >
+            value=''>
             <option value=''>Car Wars</option>
             <option value='/'>About</option>
             <option value='/match/new'>New Match</option>

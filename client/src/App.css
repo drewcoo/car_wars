@@ -16,7 +16,6 @@ body {
 }
 .TitleRow {
   color: white;
-  padding: 5px;
 }
 .Title {
   color: white;
@@ -181,10 +180,11 @@ body {
   stroke: black;
 }
 .Timekeeping {
-  /* color: red; */
   font-size: 26px;
   font-family: fantasy;
   font-variant: small-caps;
+  display: inline;
+  margin: 10px;
 }
 .NavOptions {
   background: black;

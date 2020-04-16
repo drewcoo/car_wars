@@ -90,32 +90,49 @@ class Rectangle {
 
   // returns a new rectangle, moved direction and distance from here
   // can make this take direction of movement later
-  move ({ degrees, distance }) {
+  move ({ degrees, distance, slide=false }) {
     return new Rectangle({
       brPoint: this._brPoint.move({ degrees, distance }),
-      facing: degrees, // || this.facing, //????
+      facing: slide ? this.facing : degrees,
       length: this.length,
       width: this.width
     })
   }
 
   // can make this take direction of movement later
-  leftCornerTurn (degrees) {
+  leftBackCornerPivot (degrees) {
     const result = this.clone()
-    const brp = result.brPoint()
     const blp = result.blPoint()
-    result._brPoint = brp.rotateAround({ fixedPoint: blp, degrees: degrees })
+    result._brPoint = result.brPoint().rotateAround({ fixedPoint: blp, degrees: degrees })
     result.facing += degrees
     return result
   }
 
   // can make this take direction of movement later
-  rightCornerTurn (degrees) {
+  leftFrontCornerPivot (degrees) {
+    const result = this.clone()
+    const flp = result.flPoint()
+    result._brPoint = result.brPoint().rotateAround({ fixedPoint: flp, degrees: degrees })
+    result.facing += degrees
+    return result
+  }
+
+  // can make this take direction of movement later
+  rightBackCornerPivot (degrees) {
     let result = this.clone()
     result._brPoint = result.brPoint().rotateAround({ fixedPoint: this.brPoint(), degrees })
     result.facing += degrees
     return result
   }
+
+  // can make this take direction of movement later
+  rightFrontCornerPivot (degrees) {
+    let result = this.clone()
+    result._brPoint = result.brPoint().rotateAround({ fixedPoint: this.frPoint(), degrees })
+    result.facing += degrees
+    return result
+  }
+
 
   // TODO: Should I aslo have some kind of drifty, sidling move here? One that
   // can take into account direction of movement?
