@@ -1,5 +1,6 @@
 import * as React from 'react'
 import LocalMatchState from '../lib/LocalMatchState'
+import Session from '../lib/Session'
 import '../../../App.css'
 
 import { compose } from 'recompose'
@@ -26,6 +27,7 @@ class Speed extends React.Component {
   }
 
   onChange(event) {
+    if (!Session.currentPlayer(this.props.matchData)) { return }
     const lms = new LocalMatchState(this.props.matchData)
     const id = lms.currentCarId()
     lms.setSpeedIndex({ id: id, speedIndex: event.target.value })

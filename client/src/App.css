@@ -13,6 +13,9 @@ body {
 }
 .LeftColumn {
   float: left;
+  width: 40%;
+  padding: 20px;
+  overflow: hidden;
 }
 .TitleRow {
   color: white;
@@ -52,8 +55,8 @@ body {
 .ArenaMap {
   border: 3px solid black;
   position: absolute;
-  height: 85%;
-  width: 75%;
+  height: 80%;
+  width: 70%;
   overflow: scroll;
   background-color: lightgray;
   font-family: fantasy;
@@ -61,20 +64,21 @@ body {
 }
 .MapBorder {
   overflow: hidden;
-  margin: 0 auto;
+  margin: 10 auto;
 }
 .RightColumn {
   float: right;
   color: white;
-  width: 24%;
-  padding-top: 10px;
+  width: 25%;
+  overflow: hidden;
+  /*padding-top: 10px;*/
   font-family: fantasy;
   font-variant: small-caps;
 }
-.CurrentPlayer {
+.CurrentVehicle {
   color: white;
-  padding-left: 50px;
-  font-size: 50px;
+  padding-left: 30px;
+  font-size: 32px;
   font-family: fantasy;
   font-variant: small-caps;
 }

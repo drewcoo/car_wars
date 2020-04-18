@@ -1,7 +1,7 @@
 import * as React from 'react'
 import LocalMatchState from '../lib/LocalMatchState'
+import Session from '../lib/Session'
 import '../../../App.css'
-
 import { compose } from 'recompose'
 import setWeapon from '../../graphql/mutations/setWeapon'
 import { graphql } from 'react-apollo'
@@ -31,6 +31,7 @@ class Weapon extends React.Component {
   }
 
   onChange(event) {
+    if (!Session.currentPlayer(this.props.matchData)) { return }
     const id = new LocalMatchState(this.props.matchData).currentCarId()
     this.weaponSetter({
       id: id,

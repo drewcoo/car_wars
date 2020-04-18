@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Modal from 'react-modal'
 import LocalMatchState from '../lib/LocalMatchState'
-
+import Session from '../lib/Session'
 import '../../../App.css'
 
 class ModalHandler extends React.Component {
@@ -17,10 +17,12 @@ class ModalHandler extends React.Component {
   }
 
   handleOpen () {
+    if (!Session.currentPlayer(this.props.matchData)) { return }
     this.setState({ showModal: true })
   }
 
   handleClose () {
+    if (!Session.currentPlayer(this.props.matchData)) { return }
     this.setState({ showModal: this.modalToShow() })
   }
 

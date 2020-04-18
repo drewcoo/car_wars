@@ -40,6 +40,9 @@ class LocalMatchState {
   }
 
   currentPlayer() {
+    console.log(this.data)
+    //
+
     return this.data.players.find(player => player.id === this.currentPlayerId())
   }
 
@@ -49,6 +52,10 @@ class LocalMatchState {
 
   player (id) {
     return this.data.players.find(player => player.id === id)
+  }
+
+  players() {
+    return this.data.players
   }
 
   currentWeapon() {

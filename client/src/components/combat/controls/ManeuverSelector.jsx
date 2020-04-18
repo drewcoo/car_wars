@@ -1,8 +1,8 @@
 import * as React from 'react'
 import LocalMatchState from '../lib/LocalMatchState'
+import Session from '../lib/Session'
 import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
-
 import '../../../App.css'
 import activeManeuverSet from '../../graphql/mutations/activeManeuverSet'
 const ACTIVE_MANEUVER_SET = graphql(activeManeuverSet, { name: 'activeManeuverSet' })
@@ -21,6 +21,7 @@ class Maneuver extends React.Component {
   }
 
   onChange(event) {
+    if (!Session.currentPlayer(this.props.matchData)) { return }
     const id = new LocalMatchState(this.props.matchData).currentCarId()
 
     this.activeManeuverSet({

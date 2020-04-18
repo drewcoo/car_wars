@@ -4,13 +4,15 @@ import { Query } from 'react-apollo'
 import KeystrokeInput from '../../combat/controls/KeystrokeInput'
 import Maneuver from '../../combat/controls/ManeuverSelector'
 import Speed from '../../combat/controls/SpeedSelector'
+import SwitchUser from '../../combat/controls/SwitchUser'
 import Target from '../../combat/controls/TargetSelector'
 import Weapon from '../../combat/controls/WeaponSelector'
+import LocalMatchState from '../../combat/lib/LocalMatchState'
 import ArenaMap from '../../combat/ArenaMap'
 import CarInset from '../../combat/CarInset'
 import CarStats from '../../combat/CarStats'
 import Phase from '../../combat/timing/Phase'
-import PlayerName from '../../combat/PlayerName'
+import VehicleName from '../../combat/VehicleName'
 import Turn from '../../combat/timing/Turn'
 import completeMatchData from '../../graphql/queries/completeMatchData'
 import '../../../App.css'
@@ -20,12 +22,16 @@ const MATCH_DATA = completeMatchData
 class Match extends React.Component {
   constructor (props) {
     super(props)
-    this.state = { value: '' }
+    this.state = { userId: null }
+    this.onUserIdChange = this.onUserIdChange.bind(this)
+  }
+
+  onUserIdChange(userId) {
+    this.setState({ userId: userId })
   }
 
   render() {
     const matchId = this.props.match.params.matchId
-    console.log(`match id: ${matchId}`)
     return(
       <Query
         pollInterval={ 250 }
@@ -44,6 +50,12 @@ class Match extends React.Component {
           }
 
           const matchData = data.completeMatchData
+          if (this.state.userId) {
+            matchData.playerSession = this.state.userId
+          } else {
+            matchData.playerSession = new LocalMatchState(matchData).currentPlayerId()
+          }
+          matchData.location = this.props.location
 
           return (
             <div>
@@ -52,6 +64,7 @@ class Match extends React.Component {
                 <div className='LeftColumn'>
                   <div className='TitleRow'>
                     <span>
+                      <SwitchUser matchData={ matchData } onUserIdChange={ this.onUserIdChange } />
                       <Turn client={this.props.client} matchData={ matchData } />
                       <Phase client={this.props.client} matchData={ matchData } />
                     </span>
@@ -67,8 +80,8 @@ class Match extends React.Component {
                   </div>
                 </div>
                 <div className="RightColumn">
-                  <span className='CurrentPlayer'>
-                    <PlayerName matchData={ matchData } />
+                  <span className='CurrentVehicle'>
+                    <VehicleName matchData={ matchData } />
                   </span>
                   <div className='CarInset'>
                     <CarInset matchData={ matchData } />

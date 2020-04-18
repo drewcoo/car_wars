@@ -12,7 +12,6 @@ class PlayerName extends React.Component {
       })
     })
     this.currentPlayer = this.players[0]
-
     this.handlePlayerChange = this.handlePlayerChange.bind(this)
   }
 

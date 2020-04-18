@@ -3,7 +3,7 @@ import { compose } from 'recompose'
 
 import { HotKeys } from 'react-hotkeys'
 import LocalMatchState from '../lib/LocalMatchState'
-
+import Session from '../lib/Session'
 import { graphql } from 'react-apollo'
 import doMove from '../../graphql/mutations/doMove'
 import fireWeapon from '../../graphql/mutations/fireWeapon'
@@ -232,6 +232,7 @@ class KeystrokeInput extends React.Component {
 
 
   render() {
+    if (!Session.currentPlayer(this.props.matchData)) { return(<></>) }
     let lms = new LocalMatchState(this.props.matchData)
     let car = lms.currentCar()
 

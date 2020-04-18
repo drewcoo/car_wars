@@ -39,12 +39,10 @@ class CarStats extends React.Component {
   handlingDifficultyColorizer(car: any): any {
     let color = this.handlingColor(car, car.status.handling - car.phasing.difficulty)
     let isVisible = (car.phasing.difficulty === 0) ? 'hidden' : 'visible'
-    console.log(`HS: ${this.handlingColor(car, car.status.handling - car.phasing.difficulty)}`)
     return({ color: color, visibility: isVisible })
   }
 
   handlingStatusColorizer(car: any): any {
-    console.log(`HC: ${this.handlingColor(car, car.status.handling)}`)
     return({ color: this.handlingColor(car, car.status.handling) })
   }
 
