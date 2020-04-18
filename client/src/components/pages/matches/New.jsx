@@ -225,7 +225,7 @@ class MatchNew extends React.Component {
           </div>
           { Object.keys(this.players).map(playerId => this.addPlayerToForm(this.players[playerId])) }
           <br/><br/>
-          <input type="submit" value="Submit" style={ this.submitStyle() } />
+          <input autoFocus="true" type="submit" value="Submit" style={ this.submitStyle() } />
         </form>
       </div>
     )
