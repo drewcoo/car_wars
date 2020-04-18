@@ -11,33 +11,18 @@ class PhasingMove {
   }
 
   static possibleSpeedsWithoutUsingACar({ currentSpeed, topSpeed, acceleration, canAccelerate, canBrake }) {
-    console.log('in possibleSpeedsWithoutUsingACar')
-    console.log(`currentSpeed: ${currentSpeed}`)
-    console.log(`topSpeed: ${topSpeed}`)
-    console.log(`acceleration: ${acceleration}`)
-    console.log(`canAccelerate: ${canAccelerate}`)
-    console.log(`canBrake: ${canBrake}`)
     const acc = canAccelerate ? acceleration : 0
     // BUGBUG: Only does forward
-
     const possibleMax = currentSpeed + acc
     const max = (topSpeed >= possibleMax) ? possibleMax : topSpeed
-
     const possibleMin = canBrake ? currentSpeed - 45 : currentSpeed
     const min = possibleMin >= 0 ? possibleMin : 0
-
     const resultArray = []
     for (let i = min; i <= max; i += 5) { resultArray.push(i) }
     return resultArray
   }
 
   static possibleSpeeds ({ car }) {
-    console.log('in possibleSpeeds')
-    console.log(`currentSpeed: ${car.status.speed}`)
-    console.log(`topSpeed: ${car.design.attributes.topSpeed}`)
-    console.log(`acceleration: ${car.design.attributes.acceleration}`)
-    console.log(`canAccelerate: ${VehicleStatusHelper.canAccelerate(car)}`)
-    console.log(`canBrake: ${VehicleStatusHelper.canBrake(car)}`)
     return PhasingMove.possibleSpeedsWithoutUsingACar({
       currentSpeed: car.status.speed,
       topSpeed: car.design.attributes.topSpeed,
@@ -49,9 +34,6 @@ class PhasingMove {
 
   static reset ({ car }) {
     const possibles = this.possibleSpeeds({ car })
-
-console.log('RESET!')
-
     car.phasing = {
       rect: car.rect.clone(),
       damage: [{
@@ -68,12 +50,9 @@ console.log('RESET!')
       collisionDetected: false,
       collisions: []
     }
-    console.log( car.phasing.speedChanges)
     car.phasing.controlChecksForSpeedChanges = car.phasing.speedChanges.map(spd => {
-      console.log(Control.row({ speed: spd }))
       return { speed: spd, checks: Control.row({ speed: spd })}
     })
-    console.log(car.phasing.controlChecksForSpeedChanges)
   }
 
   //

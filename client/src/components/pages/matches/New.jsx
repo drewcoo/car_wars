@@ -138,6 +138,10 @@ class MatchNew extends React.Component {
 
     let match = response.data.createCompleteMatch
 
+    // Another kludge - make the nav select go away on map page
+    if (document.getElementById('navOptions')) {
+      document.getElementById('navOptions').style.display = 'none'
+    }
     // Strange kludge. Not sure how to do this right.
     // use some kind of navigate package?
     this.props.history.push('/match/' + match.id)
@@ -209,6 +213,9 @@ class MatchNew extends React.Component {
   }
 
   render () {
+    if (document.getElementById('navOptions')) {
+      document.getElementById('navOptions').style.display = ''
+    }
     return (
       <div>
         <form onSubmit={ this.handleSubmit }>

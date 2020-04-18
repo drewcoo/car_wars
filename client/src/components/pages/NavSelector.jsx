@@ -24,7 +24,6 @@ class NavSelector extends React.Component {
 
   handleChange (event) {
     this.props.history.push(event.target.value)
-    console.log(event.target.value)
     document.getElementById('navOptions').blur()
   }
 

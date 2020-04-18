@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { DATA,  matchCars } from '../DATA'
 import Log from '../utils/Log'
+import VehicleStatusHelper from './VehicleStatusHelper'
 
 class Movement {
   static distanceThisPhase({ speed, phase }) {
@@ -79,10 +80,13 @@ class Movement {
     // longer fire lasers or accelerate, but all other
     // systems still work. The vehicle decelerates 5
     // mph per turn (more if you put on the brakes).
+
     let cars = match.carIds.map(id => DATA.cars.find(car => car.id === id))
     cars.forEach(car => {
       Log.info(car.color)
-      if (Movement.driverOut({car}) || Movement.plantOut({car})) {
+      if (Movement.driverOut({car}) ||
+          Movement.plantOut({car}) ||
+          !VehicleStatusHelper.enoughWheels(car)) {
         Log.info(`slowing car ${car.id} by 5 MPH`)
         if (car.status.speed > 0) { car.status.speed -= 5 }
         if (car.status.speed < 0) { car.status.speed += 5 }

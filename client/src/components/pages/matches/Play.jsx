@@ -31,6 +31,9 @@ class Match extends React.Component {
   }
 
   render() {
+    if (document.getElementById('navOptions')) {
+      document.getElementById('navOptions').style.display = 'none'
+    }
     const matchId = this.props.match.params.matchId
     return(
       <Query

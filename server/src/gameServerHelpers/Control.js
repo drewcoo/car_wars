@@ -45,7 +45,7 @@ class Control {
   static row({ speed }) {
     let absSpeed = Math.abs(speed)
     if (absSpeed <= 5) {
-      return null
+      return ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe']
     }
     let tableRow = Math.ceil(absSpeed / 10) - 1
     return Control.table[tableRow]

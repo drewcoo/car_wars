@@ -49,6 +49,9 @@ class List extends React.Component {
   }
 
   render () {
+    if (document.getElementById('navOptions')) {
+      document.getElementById('navOptions').style.display = ''
+    }
     return (
       <div style={ this.colorStyle() }>
         { this.listList() }

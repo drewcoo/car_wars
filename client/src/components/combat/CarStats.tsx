@@ -17,6 +17,7 @@ class CarStats extends React.Component {
   handlingColor(car: any, handling: number) {
     let effectiveHandling = (handling < -6) ? -6 : handling
     const speed = parseInt(car.phasing.speedChanges[car.phasing.speedChangeIndex])
+    if (Math.abs(car.status.speed) <= 5) { return 'white' }
     const checks = car.phasing.controlChecksForSpeedChanges.find((entry : any) => entry.speed === speed).checks
     const checkIndex = [7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
 
