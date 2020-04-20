@@ -3,12 +3,19 @@ import Rectangle from '../utils/geometry/Rectangle'
 import Point from '../utils/geometry/Point'
 import uuid from 'uuid/v4'
 
-const wallRect = ({ x, y, facing, length, width }) => {
+const wallRect = ({ x, y, facing, length, width = INCH/4 }) => {
   return new Rectangle({
     brPoint: new Point({ x: x, y: y }),
     facing: facing,
     length: length,
     width: width
+  })
+}
+
+const startingPosition = ({ x, y, facing}) => {
+  return new Rectangle({
+    brPoint: new Point({ x: x, y: y }),
+    facing: facing,
   })
 }
 
@@ -26,59 +33,57 @@ const Map = {
   startingPositions: [
     /* NW corner */
     /*
-    wallRect({
+    startingPosition({
       x: 0,
-      y: 1.75 * INCH,
+      y: 1 * INCH,
       facing: COMPASS.EAST
     }),
     */
-    wallRect({
+    startingPosition({
       x: 8 * INCH,
       y: 8 * INCH,
       facing: COMPASS.EAST
     }),
-
     /* NE corner */
     /*
-    wallRect({
-      x: MAP.WIDTH - 1.75 * INCH,
+    startingPosition({
+      x: MAP.WIDTH - 1 * INCH,
       y: 0,
       facing: COMPASS.SOUTH
     }),
     */
-    wallRect({
+    startingPosition({
       x: 16 * INCH,
       y: 8 * INCH,
       facing: COMPASS.SOUTH
     }),
-
     /* SE corner */
     /*
-    wallRect({
+    startingPosition({
       x: MAP.WIDTH,
-      y: MAP.HEIGHT - 1.75 * INCH,
+      y: MAP.HEIGHT - 1 * INCH,
       facing: COMPASS.WEST
     }),
     */
-    wallRect({
+    startingPosition({
       x: 16 * INCH,
       y: 16 * INCH,
       facing: COMPASS.WEST
     }),
-
     /* SW corner */
-    /*
-    wallRect({
-      x: 1.75 * INCH,
+
+    startingPosition({
+      x: 1 * INCH,
       y: MAP.HEIGHT,
       facing: COMPASS.NORTH
     }),
-    */
-    wallRect({
+    /*
+    startingPosition({
       x: 8 * INCH,
       y: 16 * INCH,
       facing: COMPASS.NORTH
     })
+    */
   ],
   wallData: [
     { /* TV tower */
@@ -96,7 +101,6 @@ const Map = {
       rect: wallRect({
         facing: COMPASS.EAST,
         length: 6 * INCH,
-        width: 1 * INCH,
         x: 8 * INCH,
         y: 6 * INCH
       })
@@ -106,7 +110,6 @@ const Map = {
       rect: wallRect({
         facing: COMPASS.EAST,
         length: 6 * INCH,
-        width: 1 * INCH,
         x: 10 * INCH,
         y: 19 * INCH
       })
@@ -116,7 +119,6 @@ const Map = {
       rect: wallRect({
         facing: COMPASS.SOUTH,
         length: 6 * INCH,
-        width: 1 * INCH,
         x: 5 * INCH,
         y: 10 * INCH
       })
@@ -126,7 +128,6 @@ const Map = {
       rect: wallRect({
         facing: COMPASS.SOUTH,
         length: 6 * INCH,
-        width: 1 * INCH,
         x: 18 * INCH,
         y: 8 * INCH
       })
@@ -135,69 +136,62 @@ const Map = {
       id: `wall-${uuid()}`,
       rect: wallRect({
         facing: COMPASS.NORTH,
-        length: 4 * INCH,
-        width: 1 * INCH,
-        x: 4 * INCH,
-        y: 23 * INCH
+        length: 5.75 * INCH,
+        x: 3 * INCH,
+        y: 23.75 * INCH
       })
     },
     { /* NW jut */
       id: `wall-${uuid()}`,
       rect: wallRect({
         facing: COMPASS.EAST,
-        length: 4 * INCH,
-        width: 1 * INCH,
-        x: 1 * INCH,
-        y: 4 * INCH
+        length: 5.75 * INCH,
+        x: 1/4 * INCH,
+        y: 3 * INCH
       })
     },
     { /* NE jut */
       id: `wall-${uuid()}`,
       rect: wallRect({
         facing: COMPASS.SOUTH,
-        length: 4 * INCH,
-        width: 1 * INCH,
-        x: 20 * INCH,
-        y: 1 * INCH
+        length: 5.75 * INCH,
+        x: 21 * INCH,
+        y: 1/4 * INCH
       })
     },
     { /* SE jut */
       id: `wall-${uuid()}`,
       rect: wallRect({
         facing: COMPASS.WEST,
-        length: 4 * INCH,
-        width: 1 * INCH,
-        x: 23 * INCH,
-        y: 20 * INCH
+        length: 5.75 * INCH,
+        x: 23.75 * INCH,
+        y: 21 * INCH
       })
     },
     { /* N side */
       id: `wall-${uuid()}`,
       rect: wallRect({
         facing: COMPASS.EAST,
-        length: MAP.WIDTH - 2 * INCH,
-        width: 1 * INCH,
+        length: MAP.WIDTH - 1.25 * INCH,
         x: 0,
-        y: 1 * INCH
+        y: 1/4 * INCH
       })
     },
     { /* S side */
       id: `wall-${uuid()}`,
       rect: wallRect({
         facing: COMPASS.WEST,
-        length: MAP.WIDTH - 2 * INCH,
-        width: 1 * INCH,
+        length: MAP.WIDTH - 1.25 * INCH,
         x: MAP.WIDTH,
-        y: MAP.HEIGHT - 1 * INCH
+        y: MAP.HEIGHT - 1/4 * INCH
       })
     },
     { /* W side */
       id: `wall-${uuid()}`,
       rect: wallRect({
         facing: COMPASS.NORTH,
-        length: MAP.HEIGHT - 2 * INCH,
-        width: 1 * INCH,
-        x: 1 * INCH,
+        length: MAP.HEIGHT - 1.25 * INCH,
+        x: 1/4 * INCH,
         y: MAP.HEIGHT
       })
     },
@@ -205,9 +199,8 @@ const Map = {
       id: `wall-${uuid()}`,
       rect: wallRect({
         facing: COMPASS.SOUTH,
-        length: MAP.HEIGHT - 2 * INCH,
-        width: 1 * INCH,
-        x: MAP.WIDTH - 1 * INCH,
+        length: MAP.HEIGHT - 1.25 * INCH,
+        x: MAP.WIDTH - 1/4 * INCH,
         y: 0
       })
     }
