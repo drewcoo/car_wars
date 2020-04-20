@@ -2,7 +2,6 @@ import * as React from 'react'
 import { INCH } from '../../utils/constants'
 import '../../App.css'
 import LocalMatchState from './lib/LocalMatchState'
-import Damage from './Damage'
 
 class Reticle extends React.Component {
   lms: any
@@ -20,9 +19,30 @@ class Reticle extends React.Component {
     )
   }
 
+  weaponCanFire({ car }: {car: any}) {
+    const weapon = car.design.components.weapons[car.phasing.weaponIndex]
+    const crewMember = car.design.components.crew.find((member: any) => member.role === 'driver')
+    const plantDisabled = car.design.components.powerPlant.damagePoints < 1
+
+    let result =  !(
+      weapon.location === 'none' ||
+      weapon.ammo === 0 ||
+      weapon.damagePoints === 0 ||
+      weapon.firedThisTurn ||
+      (weapon.requiresPlant && plantDisabled)
+    )
+
+    result = result && !(
+      crewMember.firedThisTurn ||
+      crewMember.damagePoints < 1
+    )
+    return result
+  }
+
   draw() {
+    console.log('DRAW')
     const car = new LocalMatchState(this.props.matchData).currentCar()
-    if (car.phasing.damage[0].display != null && car.phasing.damage[0].message != null) {
+    if (!this.weaponCanFire({ car })) {
       return
     }
 
@@ -46,6 +66,7 @@ class Reticle extends React.Component {
       // two-letter loc is a tire - doesn't take into account facing - FR always R
       if (target.name.length === 2) { mod -= 3 }
 
+console.log(`draw ${target.displayPoint.x}, ${target.displayPoint.y}`)
       return this.drawReticle({
         x: target.displayPoint.x,
         y: target.displayPoint.y,
@@ -56,9 +77,7 @@ class Reticle extends React.Component {
 
   render() {
     const car = new LocalMatchState(this.props.matchData).currentCar()
-    if (car.phasing.damage[0].target != null && car.phasing.damage[0].message != null) {
-      return (<Damage matchData={ this.props.matchData } />)
-    }
+    console.log(car.phasing)
 
     return (
       <g>

@@ -139,6 +139,7 @@ class FiringArc extends React.Component {
   }
 
   render() {
+      console.log('firing arc')
     return (
       <g>
         { this.draw() }

@@ -50,7 +50,7 @@ class KillMessage extends React.Component {
         <image x= {x -16} y = {y - 30} width = "45" height = "45" href="/img/skull_and_bones.svg" />
         <text x = {x} y = {y} style = {this.msgStyle()} dy="0">
           {/*<tspan text-anchor="middle" >killed by</tspan>*/}
-          <tspan text-anchor="middle" x={x} dy="1em" style={this.nameStyle(killerPlayer.color)}>{killerPlayer.name}</tspan>
+          <tspan textAnchor="middle" x={x} dy="1em" style={this.nameStyle(killerPlayer.color)}>{killerPlayer.name}</tspan>
         </text>
       </g>
     )

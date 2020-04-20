@@ -136,8 +136,19 @@ export const typeDef = `
   }
 
   type Damage {
-    display: Point
+    source: DamageSource
+    target: DamageTarget
     message: String
+  }
+
+  type DamageSource {
+    point: Point
+    weapon: String
+  }
+
+  type DamageTarget {
+    point: Point
+    damage: Int
   }
 
   type Status {
@@ -280,10 +291,7 @@ export const resolvers = {
           collisionDetected: false,
           collisions: [],
           controlChecksForSpeedChanges: [],
-          damage: [{
-              display: null,
-              message: ''
-          }],
+          damage: [],
           difficulty: 0,
           maneuverIndex: 0,
           rect: null,
@@ -593,8 +601,6 @@ for (const Car of Object.values(match.cars)) {
       let car = DATA.cars.find(el => el.id === args.id)
       Log.info('fire!', car)
       if (!Weapon.passFiringChecks({ car })) {
-        car.phasing.damage[0].display = null
-        car.phasing.damage[0].message = ''
         Log.info('cannot fire', car)
         return
       }
@@ -621,11 +627,29 @@ for (const Car of Object.values(match.cars)) {
         location: args.targetName
       })
 
-      car.phasing.damage[0].display = new Point({
-        x: args.targetX,
-        y: args.targetY
+
+console.log('=============')
+console.log(car.phasing.rect)
+console.log(car.phasing.rect.side(weapon.location).middle())
+console.log('=============')
+      targetCar.phasing.damage.push( {
+        source: {
+          point: car.phasing.rect.side(weapon.location).middle(),
+          weapon: weapon.type,
+        },
+        target: {
+          point: new Point({
+            x: args.targetX,
+            y: args.targetY
+          }),
+          damage: damage
+        },
+        message: ''
       })
-      car.phasing.damage[0].message = damage
+
+console.log('--------')
+console.log(car.phasing.damage)
+
       return
     },
     addModal: (parent, args, context) => {

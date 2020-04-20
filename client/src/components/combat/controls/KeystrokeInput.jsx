@@ -160,7 +160,7 @@ class KeystrokeInput extends React.Component {
     if (!target) { return }
     await this.props.fireWeapon({
       variables: {
-        id: id,
+        id: id, // car id, so we can tell weapon fired from that (aimed fire)
         targetId: target.carId,
         targetName: target.name,
         targetX: target.displayPoint.x,

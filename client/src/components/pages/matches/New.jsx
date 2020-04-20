@@ -31,6 +31,7 @@ class MatchNew extends React.Component {
     this.handleColorChange = this.handleColorChange.bind(this)
     this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.listStarted = false
   }
 
   createPlayers(namesAndColors) {
@@ -194,10 +195,17 @@ class MatchNew extends React.Component {
     return result
   }
 
+  startList() {
+    if (this.listStarted) { return false }
+    this.listStarted = true
+    return true
+  }
+
   addPlayerToForm (player) {
     return (
       <label key={ player.id }>
         <input
+          autoFocus={ this.startList() }
           id={ player.id }
           key={ player.id }
           style={ this.colorStyle() }
@@ -213,19 +221,22 @@ class MatchNew extends React.Component {
   }
 
   render () {
+    this.listStarted = false
     if (document.getElementById('navOptions')) {
       document.getElementById('navOptions').style.display = ''
     }
     return (
       <div>
         <form onSubmit={ this.handleSubmit }>
-          <br/><br/>
+          <br/>
           <div key='mapName' style={ this.colorStyle() } >
-            { this.map.name }
+            <span style={ { paddingRight: '1em' } }>map:</span>
+            { this.map }
           </div>
+          <br/>
           { Object.keys(this.players).map(playerId => this.addPlayerToForm(this.players[playerId])) }
           <br/><br/>
-          <input autoFocus="true" type="submit" value="Submit" style={ this.submitStyle() } />
+          <input type="submit" value="Submit" style={ this.submitStyle() } />
         </form>
       </div>
     )

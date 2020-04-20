@@ -224,6 +224,8 @@ class Car extends React.Component {
                             ${rotatePoint.x},
                             ${rotatePoint.y})`
 
+                            console.log(car.id)
+
     return (
       <g id={ this.props.id } >
         <g className="vehicle">
@@ -239,7 +241,7 @@ class Car extends React.Component {
           { this.strobeMoving() }
         </g>
 
-        <Damage client={this.props.client} matchData={ new LocalMatchState(this.props.matchData).data } />
+        <Damage key={`damCar-${car.id}`} client={this.props.client} matchData={ new LocalMatchState(this.props.matchData).data } carId={ car.id } />
         <KillMessage matchData={ new LocalMatchState(this.props.matchData).data} carId={car.id} />
         { this.wipeoutLabel(car, tempRect.center().x - 30, tempRect.center().y) }
       </g>

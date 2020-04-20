@@ -117,9 +117,19 @@ const completeMatchData = gql`
             type
           }
           damage {
-            display {
-              x
-              y
+            source {
+              point {
+                x
+                y
+              }
+              weapon
+            }
+            target {
+              point {
+                x
+                y
+              }
+              damage
             }
             message
           }

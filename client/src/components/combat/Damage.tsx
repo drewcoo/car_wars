@@ -1,19 +1,53 @@
 import * as React from 'react'
 import Point from '../../utils/geometry/Point'
 import LocalMatchState from './lib/LocalMatchState'
+import Reticle from './Reticle'
+
+import MachineGun from './weaponsFire/MachineGun'
+import HeavyRocket from './weaponsFire/HeavyRocket'
+import RocketLauncher from './weaponsFire/RocketLauncher'
+import Laser from './weaponsFire/Laser'
 
 class Damage extends React.Component {
   props: any
   lms: any
 
   getCurrentDamage () {
-    const car = new LocalMatchState(this.props.matchData).currentCar()
+    const car = new LocalMatchState(this.props.matchData).car({ id: this.props.carId })
     return car.phasing.damage
-              .filter((damage: any) => damage.display != null && damage.message != null)
-              .map((damage: any) => this.drawDamage({
-                point: damage.display,
-                message: damage.message
-              }))
+              .filter((damage: any) => damage.target != null)
+              .map((damage: any) => this.drawWeaponFireAndDamage(damage))
+  }
+
+  drawWeaponFireAndDamage(damage: any) {
+    // Maybe generate an UUID to pass to both of these so that drawDamage() will
+    // know the id of the weaponsFire() animation and can cue itself to
+    // show up after the weapon fires (once - not repeating, striking target)
+    return (
+      <>
+        { this.weaponFire({ duration: .8, damage })}
+        { this.drawDamage({
+          point: damage.target.point,
+          damage: damage.target.damage
+        }) }
+      </>
+    )
+  }
+
+  weaponFire({ duration=1, damage }: { duration: number, damage: any}) {
+    switch(damage.source.weapon) {
+      case 'machineGun':
+        return <MachineGun duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
+      case 'heavyRocket':
+        return <HeavyRocket duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
+      case 'rocketLauncher':
+        return <RocketLauncher duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
+      case 'laser':
+        return <Laser duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
+      default:
+        console.log(`Weapon not supported: \"${damage.source.weapon}\"; defaulting to MG`)
+        return <MachineGun duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
+    }
   }
 
   polylineStar({ x, y, pointCount, offset = 0, radiusMultiplier = 1 }:
@@ -63,19 +97,13 @@ class Damage extends React.Component {
     )
   }
 
-  drawDamage({ point, message }: { point: Point, message: number | string }) {
-    var offset = 2 * Math.PI / 10
-    if (message === 'empty') {
-      point = new LocalMatchState(this.props.matchData).currentCar().rect.center()
-      return (
-        this.stopSign({ x: point.x, y: point.y, radius: 25, text0: 'no', text1: 'ammo' })
-      )
-    } else if (message === '0') {
-      // Damage
+  drawDamage({ point, damage }: { point: Point, damage: number | string }) {
+    const offset = 2 * Math.PI / 10
+    if (damage === 0) {
       return (
         <g key={ `damage-${point.x}-${point.y}` } className={ 'MissedShot' } id='shotResult'>
-          <circle cx={ point.x } cy={ point.y } strokeDasharray='2' r={ 18 } />
-          <text x ={ point.x } y={ point.y + 6 } textAnchor={ 'middle' } className={ 'MissedShotText' }>miss</text>
+          <circle key='aaaarqqqqq' cx={ point.x } cy={ point.y } strokeDasharray='2' r={ 18 } />
+          <text key='aggggweeaa' x ={ point.x } y={ point.y + 6 } textAnchor={ 'middle' } className={ 'MissedShotText' }>miss</text>
         </g>
       )
     } else {
@@ -85,15 +113,17 @@ class Damage extends React.Component {
           <polyline points={ `${this.polylineStar({ x: point.x, y: point.y, pointCount: 8, offset: offset })}`} fill={'red'} />
           <polyline points={ `${this.polylineStar({ x: point.x, y: point.y, pointCount: 8, radiusMultiplier: 0.8 })}`} fill={'orange'} />
           <circle cx={ point.x } cy={ point.y } r={ 18 } fill={'white'} />
-          <text x ={ point.x } y={ point.y + 8 } textAnchor={ 'middle' } className={ 'DamageText' }>{message}</text>
+          <text x ={ point.x } y={ point.y + 8 } textAnchor={ 'middle' } className={ 'DamageText' }>{damage}</text>
         </g>
       )
     }
   }
 
   render() {
+    const car = new LocalMatchState(this.props.matchData).car({ id: this.props.carId })
     return (
       <g>
+      <Reticle client={this.props.client} matchData={ this.props.matchData } />
         { this.getCurrentDamage() }
       </g>
     )
