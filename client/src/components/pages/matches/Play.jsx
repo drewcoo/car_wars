@@ -1,13 +1,12 @@
 import React from 'react'
 import { withRouter } from 'react-router'
 import { Query } from 'react-apollo'
-import KeystrokeInput from '../../combat/controls/KeystrokeInput'
-import Maneuver from '../../combat/controls/ManeuverSelector'
-import Speed from '../../combat/controls/SpeedSelector'
+// import Maneuver from '../../combat/controls/ManeuverSelector'
 import SwitchUser from '../../combat/controls/SwitchUser'
-import Target from '../../combat/controls/TargetSelector'
-import Weapon from '../../combat/controls/WeaponSelector'
+// import Target from '../../combat/controls/TargetSelector'
+// import Weapon from '../../combat/controls/WeaponSelector'
 import LocalMatchState from '../../combat/lib/LocalMatchState'
+import Session from '../../combat/lib/Session'
 import ArenaMap from '../../combat/ArenaMap'
 import CarInset from '../../combat/CarInset'
 import CarStats from '../../combat/CarStats'
@@ -22,47 +21,62 @@ const MATCH_DATA = completeMatchData
 class Match extends React.Component {
   constructor (props) {
     super(props)
-    this.state = { userId: null }
+    this.state = { playerId: localStorage.getItem('playerId') }
     this.onUserIdChange = this.onUserIdChange.bind(this)
   }
 
-  onUserIdChange(userId) {
-    this.setState({ userId: userId })
+  onUserIdChange (playerId) {
+    localStorage.setItem('playerId', playerId)
+    this.setState({ playerId: playerId })
   }
 
-  render() {
-    if (document.getElementById('navOptions')) {
-      document.getElementById('navOptions').style.display = 'none'
-    }
+  render () {
+    console.log(this.state.playerId)
+
     const matchId = this.props.match.params.matchId
-    return(
+
+    return (
       <Query
         pollInterval={ 250 }
         query={ MATCH_DATA }
-
         variables={{ matchId }}>
         {({ loading, error, data }) => {
           if (loading) {
             console.log('loading')
-            return "Loading..."
+            return 'Loading...'
           }
-          if (error){
+          if (error) {
             console.log('error')
             console.log(error)
             return `Error! ${error.message}`
           }
 
-          const matchData = data.completeMatchData
-          if (this.state.userId) {
-            matchData.playerSession = this.state.userId
-          } else {
-            matchData.playerSession = new LocalMatchState(matchData).currentPlayerId()
+          if (document.getElementById('navOptions')) {
+            document.getElementById('navOptions').style.display = 'none'
           }
+
+          const matchData = data.completeMatchData
           matchData.location = this.props.location
+
+          if (Session.godMode(matchData)) {
+            if (!localStorage.getItem('playerId') ||
+                !matchData.players.find(obj => obj.id === localStorage.getItem('playerId'))) {
+              console.log(`RESETTING TO ${matchData.players[0].color} PLAYER: ${matchData.players[0].id}`)
+              localStorage.setItem('playerId', matchData.players[0].id)
+            }
+          }
+
+          if (this.state.playerId) {
+            matchData.playerSession = this.state.playerId
+          } else if (matchData.match.time.phase.moving) {
+            matchData.playerSession = new LocalMatchState(matchData).activePlayerId()
+          } else {
+            throw new Error('how did i get here?')
+          }
 
           return (
             <div>
-              <KeystrokeInput client={this.props.client} matchData={ matchData } />
+
               <div>
                 <div className='LeftColumn'>
                   <div className='TitleRow'>
@@ -82,25 +96,20 @@ class Match extends React.Component {
                     </div>
                   </div>
                 </div>
-                <div className="RightColumn">
-                  <span className='CurrentVehicle'>
-                    <VehicleName matchData={ matchData } />
-                  </span>
-                  <div className='CarInset'>
-                    <CarInset matchData={ matchData } />
+                {
+                  <div className="RightColumn">
+                    <span className='CurrentVehicle'>
+                      <VehicleName matchData={ matchData } />
+                    </span>
+                    <div className='CarInset'>
+                      <CarInset matchData={ matchData } />
+                    </div>
+                    <div className='CarStats'>
+                      <CarStats matchData={ matchData } />
+                    </div>
                   </div>
-                  <div className='CarStats'>
-                    <CarStats matchData={ matchData } />
-                  </div>
-                  <div className='ActionControls'>
-                    <span className='Speed'><u>S</u>peed:&nbsp;&nbsp;<Speed matchData={ matchData } /></span><br/>
-                    <span className='Maneuver'><u>M</u>aneuver:&nbsp;&nbsp;<Maneuver matchData={ matchData } /></span><br/>
-                    <span className='Weapon'><u>W</u>eapon:&nbsp;&nbsp;<Weapon matchData={ matchData } /></span><br/>
-                    <span className='Target'><u>T</u>arget:&nbsp;&nbsp;<Target matchData={ matchData } /></span>
-                  </div>
-                </div>
+                }
               </div>
-              { /* <Modal matchData={ matchData } /> */ }
             </div>
           )
         }}

@@ -30,7 +30,10 @@ const completeMatchData = gql`
           phase {
             number
             moving
+            subphase
             unmoved
+            canTarget
+            playersToAckDamage
           }
           turn {
             number
@@ -144,6 +147,7 @@ const completeMatchData = gql`
               y
             }
           }
+          showSpeedChangeModal
           speedChangeIndex
           speedChanges
           controlChecksForSpeedChanges {

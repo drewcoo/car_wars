@@ -71,29 +71,68 @@ const Map = {
       facing: COMPASS.WEST
     }),
     /* SW corner */
-
+    /*
     startingPosition({
       x: 1 * INCH,
       y: MAP.HEIGHT,
       facing: COMPASS.NORTH
     }),
-    /*
+    */
     startingPosition({
       x: 8 * INCH,
       y: 16 * INCH,
       facing: COMPASS.NORTH
     })
-    */
   ],
   wallData: [
-    { /* TV tower */
+    { /* W inner wall */
       id: `wall-${uuid()}`,
       rect: wallRect({
         facing: COMPASS.SOUTH,
         length: 3 * INCH,
-        width: 3 * INCH,
-        x: 10.5 * INCH,
+        width: 1/4 * INCH,
+        x: 10.25 * INCH,
         y: 10.5 * INCH
+      })
+    },
+    { /* N inner wall */
+      id: `wall-${uuid()}`,
+      rect: wallRect({
+        facing: COMPASS.EAST,
+        length: 3.5 * INCH,
+        width: 1/4 * INCH,
+        x: 10.25 * INCH,
+        y: 10.5 * INCH
+      })
+    },
+    { /* E inner wall */
+      id: `wall-${uuid()}`,
+      rect: wallRect({
+        facing: COMPASS.SOUTH,
+        length: 3 * INCH,
+        width: 1/4 * INCH,
+        x: 13.5 * INCH,
+        y: 10.5 * INCH
+      })
+    },
+    { /* S inner wall */
+      id: `wall-${uuid()}`,
+      rect: wallRect({
+        facing: COMPASS.EAST,
+        length: 3.5 * INCH,
+        width: 1/4 * INCH,
+        x: 10.25 * INCH,
+        y: 13.75 * INCH
+      })
+    },
+    { /* TV tower */
+      id: `wall-${uuid()}`,
+      rect: wallRect({
+        facing: COMPASS.SOUTH,
+        length: 2 * INCH,
+        width: 2 * INCH,
+        x: 11 * INCH,
+        y: 11 * INCH
       })
     },
     { /* N side free wall */

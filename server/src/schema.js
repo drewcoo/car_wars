@@ -3,7 +3,7 @@ import { makeExecutableSchema } from 'graphql-tools'
 import resolvers from './resolvers'
 
 import { typeDef as Car } from './types/Car'
-import { typeDef as Geometry } from './types/geometry'
+import { typeDef as Geometry } from './types/Geometry'
 import { typeDef as Map } from './types/Map'
 import { typeDef as Match } from './types/Match'
 import { typeDef as Player } from './types/Player'

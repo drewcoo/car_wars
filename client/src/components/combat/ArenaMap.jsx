@@ -6,7 +6,7 @@ import Walls from './Walls'
 import ActiveCar from './ActiveCar'
 
 class ArenaMap extends React.Component {
-  render() {
+  render () {
     const lms = new LocalMatchState(this.props.matchData)
     return (
       <svg
@@ -19,13 +19,13 @@ class ArenaMap extends React.Component {
         {
           Object.values(lms.cars()).map((car) => {
             return (
-              <Car key={ car.id } matchData={ this.props.matchData } id={ car.id } />
+              <Car key={ car.id } matchData={ this.props.matchData } id={ car.id } client={this.props.client} />
             )
           })
         }
         {
           Object.values(lms.cars()).map((car) => {
-            return(
+            return (
               <Car key= { `shadow-${car.id}` } matchData={ this.props.matchData }
                 id={ car.id }
                 shadow={ true }

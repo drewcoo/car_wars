@@ -64,6 +64,7 @@ class Control {
   static checkNeeded({ speed, handlingStatus }) {
     Log.info('in checkNeeded', )
     let row = Control.row({ speed })
+
     if (row === null) {
       Log.info('too slow - no crash roll')
       return 'safe'
@@ -72,6 +73,7 @@ class Control {
       Log.info('speed 0 - SAFE', car)
       return 'safe'
     }
+
     Log.info(`checkneeded - handling status: ${handlingStatus} at speed ${speed}:`)
     Log.info(Control.statusIndex)
     Log.info(`column = ${Control.statusIndex.indexOf(handlingStatus)}`)

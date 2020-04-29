@@ -4,8 +4,8 @@ import '../../../App.css'
 import LocalMatchState from '../lib/LocalMatchState'
 
 class FrontMG extends React.Component {
-  render() {
-    const car = new LocalMatchState(this.props.matchData).currentCar()
+  render () {
+    const car = new LocalMatchState(this.props.matchData).activeCar()
 
     // BUGBUG: This is a kludge to just get Killer Karts going.
     const weaponIndex = 1

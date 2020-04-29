@@ -1,5 +1,5 @@
 import { DATA,  matchCars } from '../DATA'
-import Log from '../utils/log'
+import Log from '../utils/Log'
 
 // Good grief.
 // I think we're checking all cars and not just the ones in the match

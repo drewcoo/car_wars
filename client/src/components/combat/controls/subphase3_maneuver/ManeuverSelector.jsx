@@ -1,28 +1,29 @@
 import * as React from 'react'
-import LocalMatchState from '../lib/LocalMatchState'
-import Session from '../lib/Session'
+import LocalMatchState from '../../lib/LocalMatchState'
+import Session from '../../lib/Session'
 import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
-import '../../../App.css'
-import activeManeuverSet from '../../graphql/mutations/activeManeuverSet'
+import '../../../../App.css'
+import activeManeuverSet from '../../../graphql/mutations/activeManeuverSet'
+
 const ACTIVE_MANEUVER_SET = graphql(activeManeuverSet, { name: 'activeManeuverSet' })
 
 class Maneuver extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.thisId = 'maneuver'
     this.onChange = this.onChange.bind(this)
   }
 
-  async activeManeuverSet({ id, maneuverIndex }) {
-    return await this.props.activeManeuverSet({
+  async activeManeuverSet ({ id, maneuverIndex }) {
+    return this.props.activeManeuverSet({
       variables: { id: id, maneuverIndex: maneuverIndex }
     })
   }
 
-  onChange(event) {
-    if (!Session.currentPlayer(this.props.matchData)) { return }
-    const id = new LocalMatchState(this.props.matchData).currentCarId()
+  onChange (event) {
+    if (!Session.loggedInAsActivePlayer(this.props.matchData)) { return }
+    const id = new LocalMatchState(this.props.matchData).activeCarId()
 
     this.activeManeuverSet({
       id: id,
@@ -33,8 +34,8 @@ class Maneuver extends React.Component {
     document.getElementById(this.thisId).blur()
   }
 
-  listManeuvers() {
-    const car = new LocalMatchState(this.props.matchData).currentCar()
+  listManeuvers () {
+    const car = new LocalMatchState(this.props.matchData).activeCar()
     var result = []
     for (var i = 0; i < car.status.maneuvers.length; i++) {
       result.push(
@@ -46,13 +47,16 @@ class Maneuver extends React.Component {
     return result
   }
 
-  render() {
+  render () {
+    const activeCar = new LocalMatchState(this.props.matchData).activeCar()
+    if (!activeCar) { return (<></>) }
+
     return (
       <span>
         <select
           className='Options'
           id={ this.thisId }
-          value={ new LocalMatchState(this.props.matchData).currentCar().phasing.maneuverIndex }
+          value={ activeCar.phasing.maneuverIndex }
           onChange={ this.onChange }
         >
           { this.listManeuvers() }
@@ -68,7 +72,6 @@ class Maneuver extends React.Component {
   }
 }
 
-export default compose (
-//  ACTIVE_SHOW_COLLISIONS,
+export default compose(
   ACTIVE_MANEUVER_SET
 )(Maneuver)

@@ -1,8 +1,7 @@
 import uuid from 'uuid/v4'
-
 import * as Promise from 'bluebird'
 
-import { resolvers as Geometry } from './types/geometry'
+import { resolvers as Geometry } from './types/Geometry'
 import { resolvers as Player } from './types/Player'
 import { resolvers as Car } from './types/Car'
 import { resolvers as Map } from './types/Map'
@@ -35,13 +34,13 @@ resolvers.Mutation.createCompleteMatch = async (parent, args, context) => {
   await resolvers.Mutation.matchSetMap(null, {matchId: match.id, mapName: args.mapName})
   let index = 0
   for (elem of args.playerAndDesign) {
-    let player = await resolvers.Mutation.createPlayer(null, {name: elem.playerName, color: elem.playerColor})
+    let player = await resolvers.Mutation.createPlayer(null, {name: elem.playerName, color: elem.playerColor, id: elem.playerId})
     let car = await resolvers.Mutation.createCar(null, { name: elem.name, playerId: player.id, designName: elem.designName})
     await resolvers.Mutation.addCar(null, { carId: car.id, playerId: player.id })
     await resolvers.Mutation.setCarPosition(null, { id: car.id, rect: map.startingPositions[index++] })
     let garbage = await resolvers.Mutation.matchAddCar(null, {matchId: match.id, carId: car.id})
   }
-  let newMatch = await resolvers.Query.match(null, {matchId: match.id})
+  let newMatch = await resolvers.Query.match(null, {matchId: match.id})    
   let started = await resolvers.Mutation.startMatch(null, { matchId: match.id })
   return started
 }

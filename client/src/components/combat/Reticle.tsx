@@ -40,11 +40,11 @@ class Reticle extends React.Component {
   }
 
   draw() {
-    console.log('DRAW')
-    const car = new LocalMatchState(this.props.matchData).currentCar()
-    if (!this.weaponCanFire({ car })) {
-      return
-    }
+    console.log(this.props.carId )
+    console.log(this.props.matchData)
+    const lms = new LocalMatchState(this.props.matchData)
+    const car = lms.car({ id: this.props.carId })
+    if (!car || !this.weaponCanFire({ car })) { return }
 
     if (car.phasing.targets && car.phasing.targets[car.phasing.targetIndex]) {
       var target = car.phasing.targets[car.phasing.targetIndex]
@@ -66,7 +66,6 @@ class Reticle extends React.Component {
       // two-letter loc is a tire - doesn't take into account facing - FR always R
       if (target.name.length === 2) { mod -= 3 }
 
-console.log(`draw ${target.displayPoint.x}, ${target.displayPoint.y}`)
       return this.drawReticle({
         x: target.displayPoint.x,
         y: target.displayPoint.y,
@@ -76,13 +75,19 @@ console.log(`draw ${target.displayPoint.x}, ${target.displayPoint.y}`)
   }
 
   render() {
-    const car = new LocalMatchState(this.props.matchData).currentCar()
-    console.log(car.phasing)
+    console.log('reticle')
+
+    if (this.props.matchData.match.time.phase.subphase !== '4_fire_weapons') {
+      return (<></>)
+    }
+
+
+    //const car = new LocalMatchState(this.props.matchData).activeCar()
 
     return (
-      <g>
+      <>
         { this.draw() }
-      </g>
+      </>
     )
   }
 }

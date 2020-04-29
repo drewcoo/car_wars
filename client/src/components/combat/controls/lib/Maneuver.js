@@ -6,7 +6,6 @@ class Maneuver {
   }
 
   static turnRight ({ matchId, car, fRight }) {
-    return
 
     /*
     switch (this.currentManeuver(car)) {
@@ -37,7 +36,7 @@ class Maneuver {
   }
 
   static showHideCar ({ matchId, car, indexDelta }) {
-    return
+
     /*
     var index = (car.phasing.maneuverIndex + indexDelta) %
                  car.status.maneuvers.length
@@ -53,7 +52,7 @@ class Maneuver {
   }
 
   static next ({ matchId, car }) {
-    return
+
     /*
     store.dispatch(maneuverNext({ matchId: matchId, id: car.id }))
     this.showHideCar({ matchId: matchId, car: car, indexDelta: 1 })

@@ -5,36 +5,36 @@ import Session from '../lib/Session'
 import '../../../App.css'
 
 class ModalHandler extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = { showModal: this.modalToShow() }
     this.handleOpen = this.handleOpen.bind(this)
     this.handleClose = this.handleClose.bind(this)
   }
 
-  modalToShow() {
-    return (new LocalMatchState(this.props.matchData).currentCar().modals.length > 0)
+  modalToShow () {
+    return (new LocalMatchState(this.props.matchData).activeCar().modals.length > 0)
   }
 
   handleOpen () {
-    if (!Session.currentPlayer(this.props.matchData)) { return }
+    if (!Session.loggedInAsActivePlayer(this.props.matchData)) { return }
     this.setState({ showModal: true })
   }
 
   handleClose () {
-    if (!Session.currentPlayer(this.props.matchData)) { return }
+    if (!Session.loggedInAsActivePlayer(this.props.matchData)) { return }
     this.setState({ showModal: this.modalToShow() })
   }
 
-  customStyles() {
+  customStyles () {
     return ({
-      content : {
-        top                   : '50%',
-        left                  : '50%',
-        right                 : 'auto',
-        bottom                : 'auto',
-        marginRight           : '-50%',
-        transform             : 'translate(-50%, -50%)',
+      content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
         backgroundColor: 'black',
         color: 'white',
         border: '3px solid red',
@@ -46,7 +46,7 @@ class ModalHandler extends React.Component {
     })
   }
 
-  buttonStyle() {
+  buttonStyle () {
     return ({
       backgroundColor: 'black',
       border: '3px solid red',
@@ -58,10 +58,10 @@ class ModalHandler extends React.Component {
     })
   }
 
-  renderModal(modals) {
+  renderModal (modals) {
     if (modals.length === 0) { return null }
 
-    return(
+    return (
       /* onRequestClose={this.handleClose}  */
       <Modal
         isOpen={ this.state.showModal }
@@ -82,10 +82,10 @@ class ModalHandler extends React.Component {
     )
   }
 
-  render() {
-    return(
+  render () {
+    return (
       <div>
-        { this.renderModal(new LocalMatchState(this.props.matchData).currentCar().modals) }
+        { this.renderModal(new LocalMatchState(this.props.matchData).activeCar().modals) }
       </div>
     )
   }

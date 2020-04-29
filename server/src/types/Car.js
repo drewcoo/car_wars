@@ -1,26 +1,22 @@
 import uuid from 'uuid/v4'
 import _ from 'lodash'
+import { DATA,  matchCars } from '../DATA'
+import { typeDef as DesignTypes } from './vehicle/Design'
+import Collisions from '../gameServerHelpers/Collisions'
+import Control from '../gameServerHelpers/Control'
+import Phase from '../gameServerHelpers/Phase'
+import PhasingMove from '../gameServerHelpers/PhasingMove'
+import Targets from '../gameServerHelpers/Targets'
+import Weapon from '../gameServerHelpers/Weapon'
 import Dice from '../utils/Dice'
 import { INCH } from '../utils/constants'
 import Log from '../utils/Log'
 import Point from '../utils/geometry/Point'
 import Rectangle from '../utils/geometry/Rectangle'
-
-import Control from '../gameServerHelpers/Control'
-import Collisions from '../gameServerHelpers/Collisions'
-import PhasingMove from '../gameServerHelpers/PhasingMove'
-import Targets from '../gameServerHelpers/Targets'
-import Time from '../gameServerHelpers/Time'
-import Weapon from '../gameServerHelpers/Weapon'
-
-import { typeDef as DesignTypes } from './vehicle/Design'
-import { DATA,  matchCars } from '../DATA'
+import { Design as DesignData } from '../vehicleDesigns/KillerKart'
 
 DATA.cars = []
 
-import { players } from './Player'
-
-import { Design as DesignData } from '../vehicleDesigns/KillerKart'
 const fillDesign = (designName) => {
   return _.cloneDeep(DesignData)
 }
@@ -50,6 +46,7 @@ export const typeDef = `
       targetX: Float!,
       targetY: Float!
     ): ID
+    finishFiring( id: ID!): Int
     activeMoveForward(id: ID!): Int
     activeMoveHalfForward(id: ID!): Int
     activeMoveDrift(id: ID!, direction: String!): Int
@@ -62,6 +59,7 @@ export const typeDef = `
     activeMoveSwerve(id: ID!, degrees: Int!): Int
     setCarPosition(id: ID!, rect: InputRectangle): Rectangle
     setSpeed(id: ID!, speed: Int!): Int!
+    acceptSpeed(id: ID!, bugMeNot: Boolean): Int
     setTarget(id: ID!, targetIndex: Int!): Int!
     setWeapon(id: ID!, weaponIndex: Int!): Int!
     addModal(id: ID!, text: String!): Modal
@@ -122,6 +120,7 @@ export const typeDef = `
     difficulty: Int
     maneuverIndex: Int
     rect: Rectangle
+    showSpeedChangeModal: Boolean
     speedChangeIndex: Int
     speedChanges: [String]
     controlChecksForSpeedChanges: [ControlChecks]
@@ -295,6 +294,7 @@ export const resolvers = {
           difficulty: 0,
           maneuverIndex: 0,
           rect: null,
+          showSpeedChangeModal: true,
           speedChangeIndex: 0,
           speedChanges: [],
           targetIndex: 0, // don't hard-code here
@@ -325,21 +325,19 @@ export const resolvers = {
       newCar.phasing.controlChecksForSpeedChanges = newCar.phasing.speedChanges.map(spd => {
         return { speed: spd, checks: Control.row({ speed: spd })}
       })
-
       DATA.cars.push(newCar)
       return newCar
     },
     doMove: (parent, args, context) => {
+      console.log('doMove')
       let car = DATA.cars.find(el => el.id === args.id)
+      console.log('xxxxxxxxxxxxxxx')
+      console.log('xxxxxxxxxxxxxxx')
+      console.log(car.phasing.rect)
+      console.log('xxxxxxxxxxxxxxx')
+      console.log('xxxxxxxxxxxxxxx')
       Log.info('', car)
       Log.info(car.status.maneuvers[car.phasing.maneuverIndex], car)
-      let newSpeed = car.phasing.speedChanges[car.phasing.speedChangeIndex]
-      Log.info(`${car.status.speed} -> ${newSpeed}`, car)
-      if (newSpeed != car.status.speed) {
-        Log.info(`speed change: ${car.status.speed}MPH -> ${newSpeed}MPH`)
-        car.status.speedChangedThisTurn = true
-        car.status.speed = newSpeed
-      }
       Log.info('did it move?', car)
       if (!PhasingMove.hasMoved({ car })) { return }
       Log.info('collisions?', car)
@@ -417,40 +415,14 @@ export const resolvers = {
       Log.info(`maneuver check: ${Control.maneuverCheck({ car })}`, car)
       // BUGBUG: HANDLING ROLL NOW IF CHANGED!
       Log.info(`current HC: ${car.status.handling}`, car)
+
+      /// Post-move
       car.rect = car.phasing.rect.clone()
       PhasingMove.reset({ car })
       let match = DATA.matches.find(match => match.id === car.currentMatch)
       let cars = DATA.cars.filter(car => match.carIds.includes(car.id))
       Collisions.clear({ cars })
-      Time.nextMover({ match })
-      let oldCar = DATA.cars.find(oldCar => oldCar.id === car.id)
-      /*
-const match = state[action.payload.matchId]
-const car = match.cars[action.payload.id]
-
-// BUGBUG: We shouldn't allow other actions (firing) from the
-// nom-final position.
-/// /////////////////////////////////////
-
-//  Speeds.setSpeed({ car })
-// Speeds.setPossibleAndIndex({ car })
-
-/// /////////////////////////////////////
-
-
-//  const targets = new Targets({ car, cars: state, map: state[matchId].map })
-//  targets.refresh()
-/// ////
-// BUGBUG: once per turn at and of turn instead:
-for (const Car of Object.values(match.cars)) {
-  Car.design.components.crew.driver.firedThisTurn = false
-  for (const Weapon of Car.design.components.weapons) {
-    Weapon.firedThisTurn = false
-  }
-}
-/// ////
-*/
-      return
+      car = Phase.subphase3_maneuver({ match })
     },
     activeManeuverNext: (parent, args, context) => {
       const thisCar = DATA.cars.find(el => el.id === args.id)
@@ -534,6 +506,9 @@ for (const Car of Object.values(match.cars)) {
     setSpeed: (parent, args, context) => {
       console.log('set speed')
       let car = DATA.cars.find(el => el.id === args.id)
+
+      if (car.status.speedChangedThisTurn) { return }
+
       let driver = car.design.components.crew.find(member => member.role === 'driver')
 
       if(driver.damagePoints < 2 ||
@@ -558,6 +533,28 @@ for (const Car of Object.values(match.cars)) {
       }
       car.status.controlChecks = Control.row({ speed: args.speed })
       return args.speed
+    },
+    acceptSpeed: (parent, args, content) => {
+      if(false || args.bugMeNot) {
+        console.log('ah!')
+      }
+      let car = DATA.cars.find(el => el.id === args.id)
+      if (car.status.speedChangedThisTurn || !car.phasing.showSpeedChangeModal) {
+        return
+      }
+      let newSpeed = car.phasing.speedChanges[car.phasing.speedChangeIndex]
+      Log.info(`${car.status.speed} -> ${newSpeed}`, car)
+      if ((newSpeed != car.status.speed) || args.bugMeNot) {
+        Log.info(`speed change: ${car.status.speed}MPH -> ${newSpeed}MPH`)
+        car.status.speedChangedThisTurn = true
+        car.status.speed = newSpeed
+      }
+      // already changed speed this phase:
+      car.phasing.showSpeedChangeModal = false
+
+      let match = DATA.matches.find(obj => obj.id === car.currentMatch)
+
+      Phase.subphase2_setSpeeds({ match })
     },
     setTarget: (parent, args, content) => {
       let car = DATA.cars.find(el => el.id === args.id)
@@ -597,6 +594,15 @@ for (const Car of Object.values(match.cars)) {
 
       return args.weaponIndex
     },
+    finishFiring: (parent, args, content) => {
+      const car = DATA.cars.find(el => el.id === args.id)
+      const match = DATA.matches.find(obj => obj.id === car.currentMatch)
+      const carIdIndex = match.time.phase.canTarget.indexOf(args.id)
+      if (carIdIndex === -1) { throw new Error(`car not able to fire: ${args.id} ${args.color}`)}
+      match.time.phase.canTarget.splice(carIdIndex, 1)
+    
+      Phase.subphase4_fireWeapons({ match })
+    },
     fireWeapon: (parent, args, content) => {
       let car = DATA.cars.find(el => el.id === args.id)
       Log.info('fire!', car)
@@ -604,6 +610,12 @@ for (const Car of Object.values(match.cars)) {
         Log.info('cannot fire', car)
         return
       }
+
+      // assumes one character per car
+      const match = DATA.matches.find(obj => obj.id === car.currentMatch)
+      const carIdIndex = match.time.phase.canTarget.indexOf(args.id)
+      if (carIdIndex === -1) { throw new Error(`car not able to fire: ${args.id} ${args.color}`)}
+      match.time.phase.canTarget.splice(carIdIndex, 1)
 
       let weapon = Weapon.itself({ car })
       const toHit = Dice.roll('2d')
@@ -650,7 +662,7 @@ console.log('=============')
 console.log('--------')
 console.log(car.phasing.damage)
 
-      return
+      Phase.subphase4_fireWeapons({ match })
     },
     addModal: (parent, args, context) => {
       let car = DATA.cars.find(el => el.id === args.id)

@@ -10,7 +10,7 @@
     [
       "module-resolver",
       {
-        extensions: [
+        "extensions": [
           ".js",
           ".jsx",
           ".ts",
@@ -20,7 +20,7 @@
           ".ios.js",
           ".ios.tsx"
         ],
-        root: ["."]
+        "root": ["."]
       }
     ]
   ]

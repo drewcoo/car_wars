@@ -4,7 +4,6 @@ import { graphql } from 'react-apollo'
 import '../../../App.css'
 import matches from '../../graphql/queries/matches'
 
-
 const MATCH_QUERY = graphql(matches)
 
 class List extends React.Component {
@@ -23,17 +22,19 @@ class List extends React.Component {
 
     return (
       <ul>
-        { matches.map(m => { return (
-          <span key={ m.id }>
-            { m.status }{': '}
-            <Link
-              style={ this.colorStyle() }
-              to={`/match/${m.id}`}
-            >
-              { m.id }
-            </Link><br/>
-          </span>
-        ) }) }
+        { matches.map(m => {
+          return (
+            <span key={ m.id }>
+              { m.status }{': '}
+              <Link
+                style={ this.colorStyle() }
+                to={`/match/${m.id}`}
+              >
+                { m.id }
+              </Link><br/>
+            </span>
+          )
+        }) }
       </ul>
     )
   }

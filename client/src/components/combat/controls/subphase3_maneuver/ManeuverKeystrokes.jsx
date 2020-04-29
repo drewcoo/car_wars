@@ -2,24 +2,23 @@ import * as React from 'react'
 import { compose } from 'recompose'
 
 import { HotKeys } from 'react-hotkeys'
-import LocalMatchState from '../lib/LocalMatchState'
-import Session from '../lib/Session'
+import LocalMatchState from '../../lib/LocalMatchState'
+import Session from '../../lib/Session'
 import { graphql } from 'react-apollo'
-import doMove from '../../graphql/mutations/doMove'
-import fireWeapon from '../../graphql/mutations/fireWeapon'
-import activeManeuverNext from '../../graphql/mutations/activeManeuverNext'
-import activeManeuverPrevious from '../../graphql/mutations/activeManeuverPrevious'
-import activeManeuverSet from '../../graphql/mutations/activeManeuverSet'
-import activeMoveBend from '../../graphql/mutations/activeMoveBend'
-import activeMoveDrift from '../../graphql/mutations/activeMoveDrift'
-import activeMoveForward from '../../graphql/mutations/activeMoveForward'
-import activeMoveHalfForward from '../../graphql/mutations/activeMoveHalfForward'
-import activeMoveReset from '../../graphql/mutations/activeMoveReset'
-import activeMoveSwerve from '../../graphql/mutations/activeMoveSwerve'
-import activeShowCollisions from '../../graphql/mutations/activeShowCollisions'
-import setSpeed from '../../graphql/mutations/setSpeed'
-import setTarget from '../../graphql/mutations/setTarget'
-import setWeapon from '../../graphql/mutations/setWeapon'
+import doMove from '../../../graphql/mutations/doMove'
+import fireWeapon from '../../../graphql/mutations/fireWeapon'
+import activeManeuverNext from '../../../graphql/mutations/activeManeuverNext'
+import activeManeuverPrevious from '../../../graphql/mutations/activeManeuverPrevious'
+import activeManeuverSet from '../../../graphql/mutations/activeManeuverSet'
+import activeMoveBend from '../../../graphql/mutations/activeMoveBend'
+import activeMoveDrift from '../../../graphql/mutations/activeMoveDrift'
+import activeMoveForward from '../../../graphql/mutations/activeMoveForward'
+import activeMoveHalfForward from '../../../graphql/mutations/activeMoveHalfForward'
+import activeMoveReset from '../../../graphql/mutations/activeMoveReset'
+import activeMoveSwerve from '../../../graphql/mutations/activeMoveSwerve'
+import activeShowCollisions from '../../../graphql/mutations/activeShowCollisions'
+import setTarget from '../../../graphql/mutations/setTarget'
+import setWeapon from '../../../graphql/mutations/setWeapon'
 
 //
 // TODO:
@@ -51,12 +50,11 @@ const ACTIVE_MOVE_SWERVE = graphql(activeMoveSwerve, { name: 'activeMoveSwerve' 
 
 const ACTIVE_SHOW_COLLISIONS = graphql(activeShowCollisions, { name: 'activeShowCollisions' })
 
-const SET_SPEED = graphql(setSpeed, { name: 'setSpeed' })
 const SET_TARGET = graphql(setTarget, { name: 'setTarget' })
 const SET_WEAPON = graphql(setWeapon, { name: 'setWeapon' })
 
-class KeystrokeInput extends React.Component {
-  constructor(props) {
+class ManeuverKeystrokes extends React.Component {
+  constructor (props) {
     super(props)
     this.state = { value: '' }
     this.keyMap = {
@@ -65,96 +63,90 @@ class KeystrokeInput extends React.Component {
       previousManeuver: 'shift+m',
       nextWeapon: 'w',
       previousWeapon: 'shift+w',
-      nextSpeed: 's',
-      previousSpeed: 'shift+s',
+
       nextTarget: 't',
       previousTarget: 'shift+t',
       acceptMove: 'enter',
       turnLeft: ['z', 'shift+x'],
       turnRight: ['x', 'shift+z'],
+
       home: '.'
     }
   }
 
-  async activeMoveForward({ id }) {
-    return await this.props.activeMoveForward({
+  async activeMoveForward ({ id }) {
+    return this.props.activeMoveForward({
       variables: { id: id }
     })
   }
 
-  async activeMoveHalfForward({ id }) {
-    return await this.props.activeMoveHalfForward({
+  async activeMoveHalfForward ({ id }) {
+    return this.props.activeMoveHalfForward({
       variables: { id: id }
     })
   }
 
-  async activeMoveDrift({ id, direction }) {
-    return await this.props.activeMoveDrift({
+  async activeMoveDrift ({ id, direction }) {
+    return this.props.activeMoveDrift({
       variables: { id: id, direction: direction }
     })
   }
 
-  async activeManeuverNext({ id }) {
+  async activeManeuverNext ({ id }) {
     await this.props.activeManeuverNext({
       variables: { id: id }
     })
   }
 
-  async activeManeuverPrevious({ id }) {
-    return await this.props.activeManeuverPrevious({
+  async activeManeuverPrevious ({ id }) {
+    await this.props.activeManeuverPrevious({
       variables: { id: id }
     })
   }
 
-  async activeManeuverSet({ id, maneuverIndex }) {
-    return await this.props.activeManeuverSet({
+  async activeManeuverSet ({ id, maneuverIndex }) {
+    await this.props.activeManeuverSet({
       variables: { id: id, maneuverIndex: maneuverIndex }
     })
   }
 
-  async activeMoveReset({ id }) {
-    return await this.props.activeMoveReset({
+  async activeMoveReset ({ id }) {
+    return this.props.activeMoveReset({
       variables: { id: id }
     })
   }
 
-  async activeShowCollisions({ id }) {
-    return await this.props.activeShowCollisions({
+  async activeShowCollisions ({ id }) {
+    return this.props.activeShowCollisions({
       variables: { id: id }
     })
   }
 
-  async activeMoveBend({ id, degrees }) {
-    return await this.props.activeMoveBend({
+  async activeMoveBend ({ id, degrees }) {
+    return this.props.activeMoveBend({
       variables: { id: id, degrees: degrees }
     })
   }
 
-  async activeMoveSwerve({ id, degrees }) {
-    return await this.props.activeMoveSwerve({
+  async activeMoveSwerve ({ id, degrees }) {
+    return this.props.activeMoveSwerve({
       variables: { id: id, degrees: degrees }
     })
   }
 
-  async speedSetter({ id, speed }) {
-    return await this.props.setSpeed({
-      variables: { id: id, speed: parseInt(speed) }
-    })
-  }
-
-  async weaponSetter({ id, weaponIndex }) {
+  async weaponSetter ({ id, weaponIndex }) {
     await this.props.setWeapon({
       variables: { id: id, weaponIndex: weaponIndex }
     })
   }
 
-  async targetSetter({ id, targetIndex }) {
-    return await this.props.setTarget({
+  async targetSetter ({ id, targetIndex }) {
+    return this.props.setTarget({
       variables: { id: id, targetIndex: targetIndex }
     })
   }
 
-  async fire({ id }) {
+  async fire ({ id }) {
     const car = new LocalMatchState(this.props.matchData).car({ id })
     const target = car.phasing.targets[car.phasing.targetIndex]
     if (!target) { return }
@@ -169,19 +161,19 @@ class KeystrokeInput extends React.Component {
     })
   }
 
-  async doMove({ id }) {
+  async doMove ({ id }) {
     await this.props.doMove({
       variables: {
         id: id,
         maneuver: 'forward?',
-        howFar: 77  // currently bogus
+        howFar: 77 // currently bogus
       }
     })
   }
 
-  turnRight(fRight) {
+  turnRight (fRight) {
     const lms = new LocalMatchState(this.props.matchData)
-    const car = lms.currentCar()
+    const car = lms.activeCar()
     switch (lms.currentManeuver()) {
       case 'forward':
         // Make it easy to maneuver (bend from forward position) as long as that's possible.
@@ -217,11 +209,12 @@ class KeystrokeInput extends React.Component {
     this.activeShowCollisions({ id: car.id })
   }
 
-  respondUnlessModalShowing(handlers) {
-    if (new LocalMatchState(this.props.matchData).currentCar().modals.length > 0) {
+  respondUnlessModalShowing (handlers) {
+    const lms = new LocalMatchState(this.props.matchData)
+    if (lms.activeCar().modals.length > 0) {
       return null
     }
-    return(
+    return (
       <HotKeys
         attach={ document }
         focused={ true }
@@ -230,11 +223,18 @@ class KeystrokeInput extends React.Component {
     )
   }
 
+  render () {
+    const lms = new LocalMatchState(this.props.matchData)
+    // this.props.carId passed in from speed change Modal
+    // will I also do that for targeting/firing?
+    if (!Session.loggedInAsActivePlayer(this.props.matchData) &&
+        !this.props.carId) {
+      return (<></>)
+    }
 
-  render() {
-    if (!Session.currentPlayer(this.props.matchData)) { return(<></>) }
-    let lms = new LocalMatchState(this.props.matchData)
-    let car = lms.currentCar()
+    const car = this.props.carId ? lms.car({ id: this.props.carId }) : lms.activeCar()
+
+    console.log(car)
 
     const handlers = {
       nextManeuver: (event) => {
@@ -242,18 +242,6 @@ class KeystrokeInput extends React.Component {
       },
       previousManeuver: (event) => {
         this.activeManeuverPrevious({ id: car.id })
-      },
-      nextSpeed: (event) => {
-        this.speedSetter({
-          id: car.id,
-          speed: lms.nextSpeed({ id: car.id })
-        })
-      },
-      previousSpeed: (event) => {
-        this.speedSetter({
-          id: car.id,
-          speed: lms.previousSpeed({ id: car.id })
-        })
       },
       nextWeapon: (event) => {
         lms.nextWeapon({ id: car.id })
@@ -270,7 +258,7 @@ class KeystrokeInput extends React.Component {
         })
       },
       nextTarget: (event) => {
-        if (lms.currentCar().phasing.targets && lms.currentCar().phasing.targets.length > 0) {
+        if (lms.activeCar().phasing.targets && lms.activeCar().phasing.targets.length > 0) {
           lms.nextTarget({ id: car.id })
           this.targetSetter({
             id: car.id,
@@ -279,7 +267,7 @@ class KeystrokeInput extends React.Component {
         }
       },
       previousTarget: (event) => {
-        if (lms.currentCar().phasing.targets && lms.currentCar().phasing.targets.length > 0) {
+        if (lms.activeCar().phasing.targets && lms.activeCar().phasing.targets.length > 0) {
           lms.previousTarget({ id: car.id })
           this.targetSetter({
             id: car.id,
@@ -292,7 +280,7 @@ class KeystrokeInput extends React.Component {
       },
       acceptMove: (event) => {
         var moved = (car.rect.brPoint().x !== car.phasing.rect.brPoint().x) ||
-                    (car.rect.brPoint().y !== car.phasing.rect.brPoint().y)
+                     (car.rect.brPoint().y !== car.phasing.rect.brPoint().y)
         if (moved) {
           this.doMove({
             id: car.id,
@@ -322,7 +310,7 @@ class KeystrokeInput extends React.Component {
   }
 }
 
-export default compose (
+export default compose(
   DO_MOVE,
   FIRE_WEAPON,
   ACTIVE_MOVE_FORWARD,
@@ -335,7 +323,6 @@ export default compose (
   ACTIVE_MOVE_BEND,
   ACTIVE_MOVE_SWERVE,
   ACTIVE_MANEUVER_SET,
-  SET_SPEED,
   SET_TARGET,
-  SET_WEAPON,
-)(KeystrokeInput)
+  SET_WEAPON
+)(ManeuverKeystrokes)

@@ -4,18 +4,18 @@ import '../../../App.css'
 import LocalMatchState from '../lib/LocalMatchState'
 
 class Tire extends React.Component {
-  locationName() {
+  locationName () {
     var result = this.props.front ? 'F' : 'B'
     result += this.props.left ? 'L' : 'R'
     return result
   }
 
-  textX(left) {
+  textX (left) {
     // left : right
     return left ? this.props.width * 9 / 64 : this.props.width * 50 / 64
   }
 
-  textY(front) {
+  textY (front) {
     // front : back
     return front ? this.props.length * 25 / 64 : this.props.length * 49 / 64
   }
@@ -27,8 +27,8 @@ class Tire extends React.Component {
     return component.style.red
   }
 
-  render() {
-    const car = new LocalMatchState(this.props.matchData).currentCar()
+  render () {
+    const car = new LocalMatchState(this.props.matchData).activeCar()
     const tire = car.design.components.tires.find(thisTire => thisTire.location === this.locationName())
 
     return (

@@ -23,20 +23,21 @@ class Movement {
   }
 
   static canMoveThisPhase({ match }) {
+    console.log("can move . . .")
+    console.log(match.carIds)
     function checkMove(car) {
       return Movement.distanceThisPhase({
         speed: car.status.speed,
         phase: match.time.phase.number
       }) !== 0
     }
-
     return match.carIds.map(id => DATA.cars.find(car => car.id === id)) // too much data
                        .filter((car) => checkMove(car) > 0)
                        .map((car)=> car.id)
   }
 
   static checkIfKilled({ car }) {
-    // A “kill” is scored when an enemy vehicle can no longer move or fire, either
+    // A "kill" is scored when an enemy vehicle can no longer move or fire, either
     // because of a direct attack, a crash during combat, surrender of the occupants,
     // or other circumstance
     if (car.status.kiled === true) { return }

@@ -6,7 +6,7 @@ DATA.players = []
 export const typeDef = `
   extend type Mutation {
     addCar(carId: ID!, playerId: ID!): Player
-    createPlayer(name: String!, color: String!): Player
+    createPlayer(name: String!, color: String!, id: ID): Player
   }
   extend type Query {
     players: [Player]
@@ -37,7 +37,7 @@ export const resolvers = {
     },
     createPlayer: (parent, args, context) => {
       let newPlayer = {
-        id: uuid(),
+        id: args.id || uuid(),
         name: args.name,
         carIds: [],
         color: args.color

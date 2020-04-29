@@ -5,10 +5,11 @@ import LocalMatchState from './lib/LocalMatchState'
 import Reticle from './Reticle'
 
 class FiringArc extends React.Component {
-  sides({ inches = 0 }) {
+  sides ({ inches = 0 }) {
     const lms = new LocalMatchState(this.props.matchData)
-    const arcFacing = lms.currentWeapon().location
-    const rect = lms.currentCar().phasing.rect
+    const car = lms.car({ id: this.props.carId })
+    const arcFacing = lms.currentWeapon(car).location
+    const rect = car.phasing.rect
 
     let left = null
     let right = null
@@ -41,21 +42,27 @@ class FiringArc extends React.Component {
       default:
         throw Error(`ERROR: UNKNOWN ${arcFacing}`)
     }
-    return ({
+    return {
       facing: rect.facing + FACE[arcFacing],
       left: left,
       right: right
-    })
+    }
   }
 
-  fill() {
+  fill () {
+    const lms = new LocalMatchState(this.props.matchData)
+    const car = lms.car({ id: this.props.carId })
+
     const arcRayLen = 50 * INCH
-    const rect = new LocalMatchState(this.props.matchData).currentCar().phasing.rect
+    const rect = car.phasing.rect
     const computedSides = this.sides({ inches: arcRayLen })
-    if (computedSides === null) { return }
+    if (computedSides === null) {
+      return
+    }
     return (
-      <path className='FiringArcFill'
-        d={ `M${computedSides.left.x},
+      <path
+        className="FiringArcFill"
+        d={`M${computedSides.left.x},
               ${computedSides.left.y}
              A${arcRayLen},
               ${arcRayLen} 0 0,
@@ -64,41 +71,51 @@ class FiringArc extends React.Component {
              L${rect.center().x},
               ${rect.center().y}
              L${computedSides.left.x},
-              ${computedSides.left.y}` }
+              ${computedSides.left.y}`}
       />
     )
   }
 
-  graduationTextLoc({ inches }) {
-    const rect = new LocalMatchState(this.props.matchData).currentCar().phasing.rect
-    return rect.center().move({ degrees: this.sides({}).facing, distance: inches * INCH })
+  graduationTextLoc ({ inches }) {
+    const lms = new LocalMatchState(this.props.matchData)
+    const car = lms.car({ id: this.props.carId })
+
+    const rect = car.phasing.rect
+    return rect
+      .center()
+      .move({ degrees: this.sides({}).facing, distance: inches * INCH })
   }
 
   // Change this to show the +4 inside the 1" arc?
-  graduation({ label, inches }) {
+  graduation ({ label, inches }) {
     const computedSides = this.sides({ inches })
     return (
-      <g key={ `arc-${inches}-in` }>
-        <path className='FiringArcGraduation'
-          d={ `M${computedSides.left.x},
+      <g key={`arc-${inches}-in`}>
+        <path
+          className="FiringArcGraduation"
+          d={`M${computedSides.left.x},
                 ${computedSides.left.y}
                A${inches * INCH},
                 ${inches * INCH} 0 0,
                 0 ${computedSides.right.x},
-                ${computedSides.right.y}` }
+                ${computedSides.right.y}`}
         />
-      <text className='FiringArcGraduationText'
-          x={ this.graduationTextLoc({ inches }).x }
-          y={ this.graduationTextLoc({ inches }).y }
+        <text
+          className="FiringArcGraduationText"
+          x={this.graduationTextLoc({ inches }).x}
+          y={this.graduationTextLoc({ inches }).y}
         >
-          { label }
+          {label}
         </text>
       </g>
     )
   }
 
-  graduationIncrements() {
-    function arcFacingDistanceMod(arcFacing) {
+  graduationIncrements () {
+    const lms = new LocalMatchState(this.props.matchData)
+    const car = lms.car({ id: this.props.carId })
+
+    function arcFacingDistanceMod (arcFacing) {
       switch (arcFacing) {
         case 'F':
         case 'B':
@@ -110,7 +127,7 @@ class FiringArc extends React.Component {
           return 0
       }
     }
-    const weapon = new LocalMatchState(this.props.matchData).currentWeapon()
+    const weapon = new LocalMatchState(this.props.matchData).currentWeapon(car)
     var result = {}
     for (var i = 1; i < 12; i++) {
       result[arcFacingDistanceMod(weapon.location) + 4 * i] = -i
@@ -119,32 +136,39 @@ class FiringArc extends React.Component {
     return result
   }
 
-  draw() {
+  draw () {
     const lms = new LocalMatchState(this.props.matchData)
-    if (!lms.canFire()) { return }
+    const car = lms.car({ id: this.props.carId })
 
-    if (this.sides({}) === null) { return }
+    if (!lms.canFire(car)) {
+      return
+    }
+    if (this.sides({}) === null) {
+      return
+    }
 
     const increments = this.graduationIncrements()
 
     return (
-      <g key={ `${lms.currentCarId()}-arc` }>
-        { this.fill() }
-        { Object.keys(increments).map(key => {
-            return this.graduation({ label: increments[key], inches: key })
-          })
-        }
-      </g>
+      <>
+        {this.fill()}
+        {Object.keys(increments).map((key) => {
+          return this.graduation({ label: increments[key], inches: key })
+        })}
+      </>
     )
   }
 
-  render() {
-      console.log('firing arc')
+  render () {
     return (
-      <g>
-        { this.draw() }
-        <Reticle client={this.props.client} matchData={ this.props.matchData } />
-      </g>
+      <>
+        {this.draw()}
+        <Reticle
+          client={this.props.client}
+          carId={this.props.carId}
+          matchData={this.props.matchData}
+        />
+      </>
     )
   }
 }

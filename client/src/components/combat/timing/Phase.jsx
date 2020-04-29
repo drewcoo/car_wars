@@ -4,7 +4,7 @@ import '../../../App.css'
 import LocalMatchState from '../lib/LocalMatchState'
 
 class Phase extends React.Component {
-  render() {
+  render () {
     return (
       <span id='phase' className='Timekeeping'>
         Phase: {new LocalMatchState(this.props.matchData).time().phase.number }

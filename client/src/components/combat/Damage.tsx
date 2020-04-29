@@ -45,7 +45,7 @@ class Damage extends React.Component {
       case 'laser':
         return <Laser duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
       default:
-        console.log(`Weapon not supported: \"${damage.source.weapon}\"; defaulting to MG`)
+        console.log(`Weapon not supported: "${damage.source.weapon}"; defaulting to MG`)
         return <MachineGun duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
     }
   }
@@ -120,7 +120,6 @@ class Damage extends React.Component {
   }
 
   render() {
-    const car = new LocalMatchState(this.props.matchData).car({ id: this.props.carId })
     return (
       <g>
       <Reticle client={this.props.client} matchData={ this.props.matchData } />

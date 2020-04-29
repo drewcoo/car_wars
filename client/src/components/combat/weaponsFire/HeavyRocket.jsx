@@ -1,8 +1,8 @@
 import * as React from 'react'
 
 class HeavyRocket extends React.Component {
-  fire({ source, target, duration=5 }) {
-    let rotation = (Math.atan2((target.y - source.y), (target.x - source.x)) * 180 / Math.PI) - 90
+  fire ({ source, target, duration = 5 }) {
+    const rotation = (Math.atan2((target.y - source.y), (target.x - source.x)) * 180 / Math.PI) - 90
     return (
       <g>
         <g id='heavyRocket' transform={`rotate(${rotation})`}>
@@ -39,14 +39,14 @@ class HeavyRocket extends React.Component {
     )
   }
 
-  render() {
-    let duration = this.props.duration || 1
-    let source = this.props.sourcePoint
-    let target = this.props.targetPoint
+  render () {
+    const duration = this.props.duration || 1
+    const source = this.props.sourcePoint
+    const target = this.props.targetPoint
 
     return (
       <g key={`heavyRocket-${source.x}-${source.y}-${target.x}-${target.y}`}>
-        { this.fire({ duration, source, target}) }
+        { this.fire({ duration, source, target }) }
       </g>
     )
   }

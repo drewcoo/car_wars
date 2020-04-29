@@ -6,8 +6,10 @@ class VehicleName extends React.Component {
   lms: any
   render() {
     const lms = new LocalMatchState(this.props.matchData)
-    const player = lms.currentPlayer()
-    const vehicle = lms.currentCar()
+    const vehicle = lms.activeCar()
+    if (!vehicle) { return (<></>) }
+    const player = lms.activePlayer()
+
     const colorStyle = {
       color: player.color,
       paddingRight: '1em'

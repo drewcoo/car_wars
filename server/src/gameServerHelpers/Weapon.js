@@ -4,6 +4,7 @@ import VehicleStatusHelper from './VehicleStatusHelper'
 
 class Weapon {
   static canFire({ weapon, plantDisabled }) {
+    
     return !(
       weapon.location === 'none' ||
       weapon.ammo === 0 ||

@@ -3,8 +3,8 @@ import Component from './GenericComponent'
 import LocalMatchState from '../lib/LocalMatchState'
 
 class Driver extends React.Component {
-  render() {
-    const car = new LocalMatchState(this.props.matchData).currentCar()
+  render () {
+    const car = new LocalMatchState(this.props.matchData).activeCar()
     const DP = car.design.components.crew.find(member => member.role === 'driver').damagePoints
     const x = this.props.width * 23 / 64
     const y = this.props.length * 34 / 64

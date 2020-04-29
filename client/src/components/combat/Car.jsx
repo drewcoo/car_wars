@@ -2,44 +2,48 @@ import * as React from 'react'
 import '../../App.css'
 import Rectangle from '../../utils/geometry/Rectangle'
 import LocalMatchState from './lib/LocalMatchState'
-import Damage from './Damage'
 import KillMessage from './KillMessage'
 import { INCH } from '../../utils/constants'
+import SpeedModal from './controls/subphase2_setSpeeds/SpeedModal'
+import ManeuverModal from './controls/subphase3_maneuver/ManeuverModal'
+import FireModal from './controls/subphase4_fireWeapons/FireModal'
+import DamageModal from './controls/subphase5_damage/DamageModal'
+import uuid from 'uuid/v4'
 
 class Car extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
-    let collisionDetected = false
+    this.collisionDetected = false
   }
 
-  manyColoredFill() {
+  manyColoredFill () {
     if (this.collisionDetected) { return 'red' }
     return 'white'
   }
 
-  manyColoredOpacity(opacity) {
+  manyColoredOpacity (opacity) {
     if (this.collisionDetected) { return 1 }
     if (this.props.active) { return opacity }
-    if (this.props.shadow) {return opacity}
+    if (this.props.shadow) { return opacity }
     return 0
   }
 
-  wipeoutLabel(car, x, y) {
+  wipeoutLabel (car, x, y) {
     const lms = new LocalMatchState(this.props.matchData)
-    const isMovingCar = car.id === lms.currentCarId()
+    const isMovingCar = car.id === lms.activeCarId()
     if (isMovingCar && (
-        this.props.shadow || !this.props.active)) {
+      this.props.shadow || !this.props.active)) {
       return (<g></g>)
     }
     if (!isMovingCar && !this.props.shadow) {
       return (<g></g>)
     }
-    if(car.status.nextMove.length === 0) {
+    if (car.status.nextMove.length === 0) {
       return (<g></g>)
     }
-    let nextMove = car.status.nextMove[0]
+    const nextMove = car.status.nextMove[0]
     if (nextMove) {
-      let style = {
+      const style = {
         fill: 'black',
         stroke: 'white',
         strokeWidth: 1,
@@ -47,8 +51,8 @@ class Car extends React.Component {
         fontFamily: 'fantasy',
         fontVariant: 'small-caps'
       }
-      let msgs = []
-      if (nextMove.fishtailDistance != 0) { msgs.push(`fishtail ${nextMove.spinDirection} ${nextMove.fishtailDistance / INCH}\"`) }
+      const msgs = []
+      if (nextMove.fishtailDistance !== 0) { msgs.push(`fishtail ${nextMove.spinDirection} ${nextMove.fishtailDistance / INCH}"`) }
       if (nextMove.maneuver) {
         if (nextMove.maneuver.match(/skid/i)) {
           msgs.push(`${nextMove.maneuver} ${nextMove.maneuverDistance / INCH}"`)
@@ -63,7 +67,7 @@ class Car extends React.Component {
     return (<g></g>)
   }
 
-  strobeMoving() {
+  strobeMoving () {
     if (!this.props.active) { return }
     return (
       <animate
@@ -75,15 +79,20 @@ class Car extends React.Component {
     )
   }
 
-  opacity(vehicle) {
+  opacity (vehicle) {
     const lms = new LocalMatchState(this.props.matchData)
-    let result = (lms.currentCarId() === this.props.id && !this.props.active) ? 1/2 : 1
-    if (this.props.shadow) { result = 1/4 }
+    let result = 1
+    if (lms.isActiveCar({ id: this.props.id }) &&
+        !this.props.active &&
+        !lms.awaitAllSpeedsSet()) {
+      result = 0.5
+    }
+    if (this.props.shadow) { result = 1 / 4 }
     return result
   }
 
-  style(car) {
-    let opacity = this.opacity(car)
+  style (car) {
+    const opacity = this.opacity(car)
 
     return {
       Body: {
@@ -112,13 +121,13 @@ class Car extends React.Component {
         fill: this.manyColoredFill(),
         stroke: 'black',
         strokeWidth: 2,
-        opacity : this.collisionDetected ? 1 : opacity,
+        opacity: this.collisionDetected ? 1 : opacity,
         fillOpacity: this.manyColoredOpacity(opacity)
       }
     }
   }
 
-  vehicleVisualDesign({ car, tempRect, transform }) {
+  vehicleVisualDesign ({ car, tempRect, transform }) {
     const margin = tempRect.width / 6
     const smidge = tempRect.width / 15 // bug?
     const hoodLength = 6 * margin
@@ -178,23 +187,79 @@ class Car extends React.Component {
         />
       </>
     )
-
   }
 
-  render() {
+  renderModal (car) {
+    const subphase = this.props.matchData.match.time.phase.subphase
+    console.log(subphase)
+    switch (subphase) {
+      case '1_start':
+        break
+      case '2_set_speeds':
+        // after this, show new speeds/changes?
+        return (
+          <SpeedModal
+            key={uuid()}
+            client={this.props.client}
+            matchData={ new LocalMatchState(this.props.matchData).data }
+            carId={ car.id }/>
+        )
+      case '3_maneuver':
+        return (
+          <ManeuverModal
+            key={uuid()}
+            client={this.props.client}
+            matchData={ new LocalMatchState(this.props.matchData).data }
+            carId={ car.id }/>
+        )
+      case '4_fire_weapons':
+        return (
+          <FireModal
+            key={uuid()}
+            client={this.props.client}
+            matchData={ new LocalMatchState(this.props.matchData).data }
+            carId={ car.id }/>
+        )
+      case '5_damage':
+        if (!car) { return (<></>) }
+        // either make this a timeout or modals all around if there were shots fired
+        // show weapons fire animations plus damage/miss stickers
+        return (
+          <DamageModal
+            key={uuid()}
+            client={this.props.client}
+            matchData={ new LocalMatchState(this.props.matchData).data }
+            carId={ car.id }/>
+        )
+      case '6_end':
+        break
+      default:
+        throw new Error(`unknown subphase: ${subphase}`)
+    }
+  }
+
+  render () {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.id })
 
-    if (this.props.shadow) {
-      if (lms.currentCarId() === this.props.id) { return(<g></g>) }
-      if (car.status.nextMove.length === 0) { return(<g></g>) }
+    if (this.props.shadow &&
+      (this.props.matchData.match.time.phase.subphase !== '5_damage')) {
+      if (lms.isActiveCar({ id: this.props.id })) { return (<g></g>) }
+      if (car.status.nextMove.length === 0) { return (<g></g>) }
+    }
+
+    if (car) {
+      console.log(car.color)
+    } else {
+      console.log(this.props)
+      console.log(car)
+      return (<></>)
     }
 
     let tempRect = this.props.active ? new Rectangle(car.phasing.rect) : new Rectangle(car.rect)
-    if (this.props.shadow) {
-      let nextMove = car.status.nextMove[0]
-
-      if (nextMove.fishtailDistance != 0) {
+    const nextMove = car.status.nextMove[0]
+    if (this.props.shadow && nextMove) {
+      if (nextMove.fishtailDistance !== 0) {
         if (nextMove.spinDirection === 'left') {
           tempRect = tempRect.leftFrontCornerPivot(nextMove.fishtailDistance)
         } else if (nextMove.spinDirection === 'right') {
@@ -209,7 +274,7 @@ class Car extends React.Component {
         tempRect = tempRect.move({ degrees: tempRect.facing, distance: INCH - nextMove.maneuverDistance, slide: true })
       } else {
         // other moves not implemented yet
-        //return(<g></g>)
+        // return(<g></g>)
       }
     }
 
@@ -224,8 +289,6 @@ class Car extends React.Component {
                             ${rotatePoint.x},
                             ${rotatePoint.y})`
 
-                            console.log(car.id)
-
     return (
       <g id={ this.props.id } >
         <g className="vehicle">
@@ -236,12 +299,12 @@ class Car extends React.Component {
             width = { tempRect.width }
             height = { tempRect.length }
             style = { this.style(car).Outline }
-            transform = { transform } />
+            transform = { transform }
+          />
           { this.vehicleVisualDesign({ car, tempRect, transform }) }
           { this.strobeMoving() }
         </g>
-
-        <Damage key={`damCar-${car.id}`} client={this.props.client} matchData={ new LocalMatchState(this.props.matchData).data } carId={ car.id } />
+        { this.renderModal(car) }
         <KillMessage matchData={ new LocalMatchState(this.props.matchData).data} carId={car.id} />
         { this.wipeoutLabel(car, tempRect.center().x - 30, tempRect.center().y) }
       </g>

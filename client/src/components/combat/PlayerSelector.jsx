@@ -2,7 +2,7 @@ import * as React from 'react'
 import LocalMatchState from './lib/LocalMatchState'
 
 class PlayerName extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.players = this.props.matchData.players.map(player => {
       return ({
@@ -11,16 +11,16 @@ class PlayerName extends React.Component {
         name: player.name
       })
     })
-    this.currentPlayer = this.players[0]
+    this.activePlayer = this.players[0]
     this.handlePlayerChange = this.handlePlayerChange.bind(this)
   }
 
   handlePlayerChange (event) {
-    this.currentPlayer = this.players.find(player => player.name === event.target.value)
+    this.activePlayer = this.players.find(player => player.name === event.target.value)
     this.setState({ value: event.target.value })
   }
 
-  playerSelector() {
+  playerSelector () {
     var result = []
     this.players.forEach(player =>
       result.push(
@@ -28,7 +28,7 @@ class PlayerName extends React.Component {
           key={ player.id }
           id={ player.id }
           value={ player.name }
-           >
+        >
           { player.name }
         </option>
       )
@@ -37,16 +37,16 @@ class PlayerName extends React.Component {
       <select
         id={ 'playerSelector' }
         onChange={ this.handlePlayerChange }
-        value={ this.currentPlayer.name }
+        value={ this.activePlayer.name }
       >
         { result }
       </select>
     )
   }
 
-  render() {
+  render () {
     const colorStyle = {
-      color: new LocalMatchState(this.props.matchData).currentPlayer().color,
+      color: new LocalMatchState(this.props.matchData).activePlayer().color,
       padding: '10px'
     }
 

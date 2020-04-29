@@ -103,10 +103,11 @@ body {
   font-variant: small-caps;
 }
 .ActionControls {
-  padding-top: 410px;
-  padding-left: 35px;
+  /*padding-top: 410px;*/
+  /*padding-left: 35px;*/
   color: white;
   font-size: 32px;
+  display: inline;
   /*position:absolute;*/
   /*position:absolute;bottom:0;*/
 

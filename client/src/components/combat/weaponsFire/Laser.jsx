@@ -1,8 +1,8 @@
 import * as React from 'react'
 
 class Laser extends React.Component {
-  fire({ source, target, duration=5 }) {
-    let color = 'orange'
+  fire ({ source, target, duration = 5 }) {
+    const color = 'orange'
     return (
       <g id='laser'>
         <g id='laser-beam'>
@@ -13,7 +13,7 @@ class Laser extends React.Component {
           attributeType='XML'
           attributeName='stroke-opacity'
           values='-1;0;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1;-1'
-          dur={`${duration/2}s`}
+          dur={`${duration / 2}s`}
           repeatCount='indefinite'/>
         <animate
           attributeType='XML'
@@ -25,14 +25,14 @@ class Laser extends React.Component {
     )
   }
 
-  render() {
-    let duration = this.props.duration || 1
-    let source = this.props.sourcePoint
-    let target = this.props.targetPoint
+  render () {
+    const duration = this.props.duration || 1
+    const source = this.props.sourcePoint
+    const target = this.props.targetPoint
 
     return (
       <g key={`laser-${source.x}-${source.y}-${target.x}-${target.y}`}>
-        { this.fire({ duration, source, target}) }
+        { this.fire({ duration, source, target }) }
       </g>
     )
   }

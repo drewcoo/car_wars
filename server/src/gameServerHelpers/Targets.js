@@ -10,11 +10,13 @@ class Targets {
   }
 
   refresh () {
+    console.log(this.car)
     const weapon = this.car.design.components.weapons[this.car.phasing.weaponIndex]
     const plantDisabled = this.car.design.components.powerPlant.dp < 1
     const canFire = Weapon.canFire({ weapon, plantDisabled })
     this.car.phasing.targets = canFire ? this.targetsInArc() : []
     this.car.phasing.targetIndex = 0
+    console.log("ahhhhh")
   }
 
   targetablePoints (target) {

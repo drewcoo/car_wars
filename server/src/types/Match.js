@@ -3,10 +3,11 @@ import uuid from 'uuid/v4'
 import { PubSub } from 'apollo-server-express'
 import { withFilter } from 'graphql-subscriptions'
 import Movement from '../gameServerHelpers/Movement'
-import Time from '../gameServerHelpers/Time'
+import Phase from '../gameServerHelpers/Phase'
 import Car from './Car'
 import Player from './Player'
 import { DATA,  matchCars } from '../DATA'
+import {INCH} from '../utils/constants'
 
 DATA.matches = []
 
@@ -20,12 +21,14 @@ export const typeDef = `
     matchSetMap(matchId: ID! mapName: String!): Match
     startMatch(matchId: ID!): Match
     finishMatch(matchId: ID!): Match
+    ackDamage(matchId: ID!, playerId: ID!): Int
     sayNothing(matchId: ID!, msg: String!): String!
   }
 
   input CarInput{
     name: String!
     playerName: String!
+    playerId: String
     playerColor: String!
     designName: String!
   }
@@ -69,8 +72,11 @@ export const typeDef = `
   }
   type Phase {
     number: Int!
+    subphase: String
     moving: ID
     unmoved: [ID]
+    canTarget: [ID]
+    playersToAckDamage: [ID]
   }
   type Turn {
     number: Int!
@@ -127,9 +133,12 @@ export const resolvers = {
         status: 'new',
         time: {
           phase: {
-            number: 1, // startMatch relies on that??? :-(
+            number: 0,
             moving: null,
-            unmoved: []
+            subphase: '1_start',
+            unmoved: [],
+            canTarget: [],
+            playersToAckDamage: [],
           },
           turn: {
             number: 0
@@ -179,18 +188,8 @@ export const resolvers = {
       let match = DATA.matches.find(el => el.id === args.matchId)
       if (!match) { throw new Error(`Match does not exist: ${args.matchId}`) }
       if (match.status !== 'new') { throw new Error('Restart match?') }
-      match.time = {
-        phase: {
-          number: 1,
-          unmoved: Movement.canMoveThisPhase({ match }),
-          moving: null
-        },
-        turn: {
-          number: 1
-        }
-      }
       match.status = 'started'
-      Time.nextMover({ match })
+      Phase.subphase1_start({ match })
       return match
     },
     finishMatch: (parent, args, context) => {
@@ -209,6 +208,13 @@ export const resolvers = {
       })
       match.status = 'finished'
       return match
+    },
+    ackDamage: (parent, args, context) => {
+      const match = DATA.matches.find(el => el.id === args.matchId)
+      const ptadIndex = match.time.phase.playersToAckDamage.indexOf(args.playerId)
+      if (ptadIndex === -1) { throw new Error(`player not waiting to ack damage: ${args.playerId}`)}
+      match.time.phase.playersToAckDamage.splice(ptadIndex, 1)
+      Phase.subphase5_damage({ match})
     }
   }
 }
