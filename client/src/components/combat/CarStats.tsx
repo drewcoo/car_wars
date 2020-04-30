@@ -57,7 +57,9 @@ class CarStats extends React.Component {
   }
 
   render() {
-    const car = new LocalMatchState(this.props.matchData).activeCar();
+    const lms = new LocalMatchState(this.props.matchData)
+    const car = this.props.carId ? lms.car({ id: this.props.carId }) : lms.activeCar()
+    //const car = new LocalMatchState(this.props.matchData).activeCar();
     if (!car) {
       return null;
     }

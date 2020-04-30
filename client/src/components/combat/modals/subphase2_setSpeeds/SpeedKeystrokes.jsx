@@ -14,9 +14,10 @@ class SpeedKeystrokes extends React.Component {
     super(props)
     this.state = { value: '' }
     this.keyMap = {
+      acceptSpeed: 'enter',
+      bugMeNot: ['n'],
       nextSpeed: ['s', 'up', 'shift+down', '+', '='],
-      previousSpeed: ['shift+s', 'down', 'shift+up', '-', '_'],
-      acceptSpeed: 'enter'
+      previousSpeed: ['shift+s', 'down', 'shift+up', '-', '_']
     }
   }
 
@@ -35,6 +36,12 @@ class SpeedKeystrokes extends React.Component {
     const car = lms.car({ id: this.props.carId })
 
     const handlers = {
+      acceptSpeed: (event) => {
+        this.speedAccepter({ id: car.id })
+      },
+      bugMeNot: (event) => {
+        this.speedAccepter({ id: car.id, bugMeNot: true })
+      },
       nextSpeed: (event) => {
         if (car.status.speedChangedThisTurn) { return (<></>) }
         this.speedSetter({
@@ -48,9 +55,6 @@ class SpeedKeystrokes extends React.Component {
           id: car.id,
           speed: lms.previousSpeed({ id: car.id })
         })
-      },
-      acceptSpeed: (event) => {
-        this.speedAccepter({ id: car.id })
       }
     }
 

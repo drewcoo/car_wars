@@ -36,6 +36,7 @@ class ActiveCar extends React.Component {
         y: event.changedTouches[0].pageY
       })
     }
+
     // Now convert to the relative coords of the active car on the ArenaMap.
     const bodyBounding = document.body.getBoundingClientRect()
     const elemBounding = document.getElementById('ArenaMap').getBoundingClientRect()
@@ -108,13 +109,10 @@ class ActiveCar extends React.Component {
   }
 
   render () {
-    console.log('ACTIVE???')
     const lms = new LocalMatchState(this.props.matchData)
     if (lms.awaitAllSpeedsSet()) {
-      console.log('waiting')
       return (<></>)
     }
-    console.log('I HOPE SO!')
     return (
       <g
       //  onClick={this.startHandler}
@@ -128,7 +126,6 @@ class ActiveCar extends React.Component {
         //  onMouseOut={this.handleOnMouseDragStop}
         onTouchEnd={this.stopHandler}
       >
-
         <Car
           client={this.props.client}
           matchData={ lms.data }

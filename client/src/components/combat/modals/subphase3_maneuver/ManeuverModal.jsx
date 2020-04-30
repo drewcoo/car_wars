@@ -2,13 +2,14 @@ import * as React from 'react'
 import Modal from 'react-modal'
 import { compose } from 'recompose'
 import { graphql } from 'react-apollo'
-import LocalMatchState from '../../lib/LocalMatchState'
 import ManeuverKeystrokes from './ManeuverKeystrokes'
+import ManeuverSelector from './ManeuverSelector'
+import LocalMatchState from '../../lib/LocalMatchState'
+import ViewElement from '../../lib/ViewElement'
 import '../../../../App.css'
 
-import ManeuverSelector from './ManeuverSelector'
-
 import doMove from '../../../graphql/mutations/doMove'
+
 const DO_MOVE = graphql(doMove, { name: 'doMove' })
 
 class ManeuverModal extends React.Component {
@@ -28,9 +29,7 @@ class ManeuverModal extends React.Component {
   }
 
   handleClose () {
-    this.doMove({
-      id: this.props.carId
-    })
+    this.doMove({ id: this.props.carId })
   }
 
   borderColor () {
@@ -87,6 +86,10 @@ class ManeuverModal extends React.Component {
 
     const showCar = (this.props.matchData.match.time.phase.moving === this.props.carId)
     if (showCar && !this.props.client) { return (<></>) }
+
+    // BUGBUG: I think this is faliing because the active car and its shadowy self
+    // have the same id.
+    ViewElement(this.props.carId)
 
     const color = lms.car({ id: this.props.matchData.match.time.phase.moving }).color
     return (

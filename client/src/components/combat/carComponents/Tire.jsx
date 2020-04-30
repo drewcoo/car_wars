@@ -28,7 +28,7 @@ class Tire extends React.Component {
   }
 
   render () {
-    const car = new LocalMatchState(this.props.matchData).activeCar()
+    const car = new LocalMatchState(this.props.matchData).car({ id: this.props.carId }) //  .activeCar()
     const tire = car.design.components.tires.find(thisTire => thisTire.location === this.locationName())
 
     return (

@@ -5,7 +5,8 @@ import LocalMatchState from '../lib/LocalMatchState'
 
 class Plant extends React.Component {
   render () {
-    const car = new LocalMatchState(this.props.matchData).activeCar()
+    // const car = new LocalMatchState(this.props.matchData).activeCar()
+    const car = new LocalMatchState(this.props.matchData).car({ id: this.props.carId })
     const DP = car.design.components.powerPlant.damagePoints
     const x = this.props.width * 24 / 64
     const y = this.props.length * 21 / 64

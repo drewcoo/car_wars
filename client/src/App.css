@@ -11,12 +11,6 @@ body {
 .form-div input {
   width: 250px;
 }
-.LeftColumn {
-  float: left;
-  width: 40%;
-  padding: 20px;
-  overflow: hidden;
-}
 .TitleRow {
   color: white;
 }
@@ -55,8 +49,10 @@ body {
 .ArenaMap {
   border: 3px solid black;
   position: absolute;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
   height: 90%;
-  width: 70%;
+  width: 95%;
   overflow: scroll;
   background-color: lightgray;
   font-family: fantasy;
@@ -65,15 +61,6 @@ body {
 .MapBorder {
   overflow: hidden;
   margin: 10 auto;
-}
-.RightColumn {
-  float: right;
-  color: white;
-  width: 25%;
-  overflow: hidden;
-  /*padding-top: 10px;*/
-  font-family: fantasy;
-  font-variant: small-caps;
 }
 .CurrentVehicle {
   color: white;

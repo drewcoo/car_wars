@@ -2,6 +2,7 @@ import * as React from 'react'
 import LocalMatchState from '../lib/LocalMatchState'
 import Session from '../lib/Session'
 import '../../../App.css'
+import ViewElement from '../lib/ViewElement'
 
 //
 // if 'godmode' is in the URL search string, show this

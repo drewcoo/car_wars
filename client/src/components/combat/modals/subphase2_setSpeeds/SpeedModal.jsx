@@ -13,20 +13,26 @@ const ACCEPT_SPEED = graphql(acceptSpeed, { name: 'acceptSpeed' })
 class SpeedModal extends React.Component {
   constructor (props) {
     super(props)
-    this.handleClose = this.handleClose.bind(this)
+    this.eatIt = this.handleEatIt.bind(this)
     this.handleBugMeNot = this.handleBugMeNot.bind(this)
+    this.handleClose = this.handleClose.bind(this)
   }
 
   async speedAccepter ({ id, bugMeNot = false }) {
     this.props.acceptSpeed({ variables: { id, bugMeNot } })
   }
 
-  handleBugMeNot () {
+  handleBugMeNot (e) {
     this.speedAccepter({ id: this.props.carId, bugMeNot: true })
   }
 
-  handleClose () {
+  handleClose (e) {
     this.speedAccepter({ id: this.props.carId })
+  }
+
+  handleEatIt (e) {
+    // in case a car is under the UI
+    e.stopPropagation()
   }
 
   borderColor () {
@@ -85,20 +91,22 @@ class SpeedModal extends React.Component {
         <Modal isOpen={ !car.phasing.showSpeedChangeModal } style={ this.customStyles() }>
           <br/>setting speeds . . .<br/>&nbsp;
         </Modal>
-        <Modal isOpen={ car.phasing.showSpeedChangeModal } style={ this.customStyles() }>
-          <span>
+        <Modal
+          isOpen={ car.phasing.showSpeedChangeModal }
+          style={ this.customStyles() }>
+          <div onClick={ this.eatIt }>
             <span style={ { color: car.color } }>{car.color}</span> change speed
-          </span>
-          <br/>
-          <div className='ActionControls'>
-            <SpeedKeystrokes carId={this.props.carId} matchData={ this.props.matchData } />
-            <SpeedSelector matchData={ this.props.matchData } carId={this.props.carId} />
             <br/>
+            <div className='ActionControls'>
+              <SpeedKeystrokes carId={this.props.carId} matchData={ this.props.matchData } />
+              <SpeedSelector matchData={ this.props.matchData } carId={this.props.carId} />
+              <br/>
+            </div>
             <button onClick={ this.handleClose } style={ this.buttonStyle() } >
               Ok
             </button>
             <button onClick={ this.handleBugMeNot } style={ this.buttonStyle() } >
-              Next Turn
+              <u>N</u>ext Turn
             </button>
           </div>
         </Modal>

@@ -1,24 +1,40 @@
 import * as React from 'react'
+import uuid from 'uuid/v4'
+import KillMessage from './KillMessage'
+import ClickToPoint from './lib/ClickToPoint'
+import LocalMatchState from './lib/LocalMatchState'
+import CarModal from './modals/car/CarModal'
+import SpeedModal from './modals/subphase2_setSpeeds/SpeedModal'
+import ManeuverModal from './modals/subphase3_maneuver/ManeuverModal'
+import FireModal from './modals/subphase4_fireWeapons/FireModal'
+import DamageModal from './modals/subphase5_damage/DamageModal'
 import '../../App.css'
 import Rectangle from '../../utils/geometry/Rectangle'
-import LocalMatchState from './lib/LocalMatchState'
-import KillMessage from './KillMessage'
 import { INCH } from '../../utils/constants'
-import SpeedModal from './controls/subphase2_setSpeeds/SpeedModal'
-import ManeuverModal from './controls/subphase3_maneuver/ManeuverModal'
-import FireModal from './controls/subphase4_fireWeapons/FireModal'
-import DamageModal from './controls/subphase5_damage/DamageModal'
-import uuid from 'uuid/v4'
 
 class Car extends React.Component {
   constructor (props) {
     super(props)
     this.collisionDetected = false
+    this.state = { showModal: false }
+    this.handleClick = this.handleClick.bind(this)
+    this.handleClose = this.handleClose.bind(this)
+  }
+
+  handleClose () {
+    this.setState({ showModal: false })
+  }
+
+  handleClick (e) {
+    const lms = new LocalMatchState(this.props.matchData)
+    const car = lms.car({ id: this.props.id })
+    if (car.rect.intersects(ClickToPoint({ clickEvent: e }))) {
+      this.setState({ showModal: !this.state.showModal })
+    }
   }
 
   manyColoredFill () {
-    if (this.collisionDetected) { return 'red' }
-    return 'white'
+    return this.collisionDetected ? 'red' : 'white'
   }
 
   manyColoredOpacity (opacity) {
@@ -192,6 +208,7 @@ class Car extends React.Component {
   renderModal (car) {
     const subphase = this.props.matchData.match.time.phase.subphase
     console.log(subphase)
+
     switch (subphase) {
       case '1_start':
         break
@@ -290,7 +307,8 @@ class Car extends React.Component {
                             ${rotatePoint.y})`
 
     return (
-      <g id={ this.props.id } >
+      <svg id={ this.props.id }
+        onClick={ this.handleClick } >
         <g className="vehicle">
           { /* outline */ }
           <rect
@@ -305,9 +323,15 @@ class Car extends React.Component {
           { this.strobeMoving() }
         </g>
         { this.renderModal(car) }
+        <CarModal
+          modalClose={this.handleClose}
+          showModal={this.state.showModal}
+          matchData={ this.props.matchData }
+          carId={ car.id }
+          client={this.props.client}/>
         <KillMessage matchData={ new LocalMatchState(this.props.matchData).data} carId={car.id} />
         { this.wipeoutLabel(car, tempRect.center().x - 30, tempRect.center().y) }
-      </g>
+      </svg>
     )
   }
 }

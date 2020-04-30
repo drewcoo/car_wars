@@ -37,7 +37,7 @@ class DamageModal extends React.Component {
   }
 
   customStyles () {
-    return ({
+    return {
       content: {
         top: '50%',
         left: '80%',
@@ -60,11 +60,11 @@ class DamageModal extends React.Component {
         top: '50%',
         bottom: '50%'
       }
-    })
+    }
   }
 
   buttonStyle () {
-    return ({
+    return {
       backgroundColor: 'black',
       border: this.borderColor(),
       borderRadius: '20px',
@@ -73,42 +73,56 @@ class DamageModal extends React.Component {
       fontFamily: 'fantasy',
       fontSize: '40px',
       fontVariant: 'smallCaps'
-    })
+    }
   }
 
   render () {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
-    const theCar = (car.playerId === localStorage.getItem('playerId'))
+    const theCar = car.playerId === localStorage.getItem('playerId')
     if (!theCar) {
       return (
         <>
-        <Damage
-          key={`damCar-${car.id}`}
-          client={this.props.client}
-          matchData={ new LocalMatchState(this.props.matchData).data }
-          carId={ car.id } />
+          <Damage
+            key={`damCar-${car.id}`}
+            client={this.props.client}
+            matchData={new LocalMatchState(this.props.matchData).data}
+            carId={car.id}
+          />
         </>
-      ) }
- 
-    const showModal = this.props.matchData.match.time.phase.playersToAckDamage.includes(car.playerId)
+      )
+    }
+
+    const showModal = this.props.matchData.match.time.phase.playersToAckDamage.includes(
+      car.playerId
+    )
 
     return (
       <>
         <Damage
           key={`damCar-${car.id}`}
           client={this.props.client}
-          matchData={ new LocalMatchState(this.props.matchData).data }
-          carId={ car.id } />
-        <Modal key={ uuid() } isOpen={ showModal } style={ this.customStyles() }>
-          <DamageKeystrokes matchData={ this.props.matchData } carId={this.props.carId} />
-          review<br/>damage<br/>&nbsp;
-          <button onClick={ this.handleClose } style={ this.buttonStyle() } >
+          matchData={new LocalMatchState(this.props.matchData).data}
+          carId={car.id}
+        />
+        <Modal key={uuid()} isOpen={showModal} style={this.customStyles()}>
+          <DamageKeystrokes
+            matchData={this.props.matchData}
+            carId={this.props.carId}
+          />
+          review
+          <br />
+          damage
+          <br />
+          &nbsp;
+          <button onClick={this.handleClose} style={this.buttonStyle()}>
             Done
           </button>
         </Modal>
-        <Modal key={ uuid() } isOpen={ !showModal } style={ this.customStyles() }>
-          <br/>waiting . . .<br/>&nbsp;
+        <Modal key={uuid()} isOpen={!showModal} style={this.customStyles()}>
+          <br />
+          waiting . . .<br />
+          &nbsp;
         </Modal>
       </>
     )
@@ -117,6 +131,4 @@ class DamageModal extends React.Component {
 
 Modal.setAppElement('#root')
 
-export default compose(
-  ACK_DAMAGE
-)(DamageModal)
+export default compose(ACK_DAMAGE)(DamageModal)
