@@ -1,0 +1,47 @@
+<svg id="heavyRocket-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y" className="heavyRocket">
+  <g className="heavyRocket" transform="ROTATION scale(0.4)" opacity='0'>
+    <g className="rocket-flame">
+      <polygon points="-15,-4,-40,-2,-60,0,-40,2,-15,4"/>
+      <polygon points="-10,-7,-30,-5,-20,0,-30,5,-10,7"/>
+      <animate
+        attributeType="XML"
+        attributeName="fill"
+        values="orange;red;orange;red;orangered;orange;orange;yellow"
+        dur="0.31s"
+        repeatCount="indefinite"/>
+      <animate
+        attributeType="XML"
+        attributeName="stroke"
+        values="yellow;orange;orange;yellow;lightyellow"
+        dur=".37s"
+        repeatCount="indefinite"/>
+      <animate
+        attributeType="XML"
+        attributeName="opacity"
+        values=".8;1;1;1;0;0;1;.8;.8;1"
+        dur=".83s"
+        repeatCount="indefinite"/>
+    </g>
+    <g id="HRcylinder">
+      <rect height="10" x="0" y="-5" width="50" fill="green"/>
+    </g>
+    <g id="HRfins">
+      <polygon points="20,-5,-7,-10,0,-5" fill="blue"/>
+      <polygon points="20,5,-7,10,0,5" fill="blue"/>
+    </g>
+    <g id="HRnose">
+      <polygon points="50,-5,65,-2,65,2,50,5" fill="blue"/>
+    </g> 
+    <animateMotion
+      begin="0.00s"
+      dur="DURATIONs"
+      repeatCount="indefinite"
+      path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y "/>
+    <animate
+      attributeType="XML"
+      attributeName="opacity"
+      values="1"
+      dur=".03s"
+      repeatCount="indefinite"/>
+  </g>
+</svg>

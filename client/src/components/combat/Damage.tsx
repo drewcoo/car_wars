@@ -3,10 +3,9 @@ import Point from '../../utils/geometry/Point'
 import LocalMatchState from './lib/LocalMatchState'
 import Reticle from './Reticle'
 
-import MachineGun from './weaponsFire/MachineGun'
-import HeavyRocket from './weaponsFire/HeavyRocket'
-import RocketLauncher from './weaponsFire/RocketLauncher'
-import Laser from './weaponsFire/Laser'
+import WeaponsFire from './WeaponsFire'
+
+import uuid from 'uuid/v4'
 
 class Damage extends React.Component {
   props: any
@@ -24,29 +23,29 @@ class Damage extends React.Component {
     // know the id of the weaponsFire() animation and can cue itself to
     // show up after the weapon fires (once - not repeating, striking target)
     return (
-      <>
-        { this.weaponFire({ duration: .8, damage })}
+      <svg key={uuid()}>
+        { this.weaponFire({ duration: 0.8, damage })}
         { this.drawDamage({
           point: damage.target.point,
           damage: damage.target.damage
         }) }
-      </>
+      </svg>
     )
   }
 
   weaponFire({ duration=1, damage }: { duration: number, damage: any}) {
     switch(damage.source.weapon) {
       case 'machineGun':
-        return <MachineGun duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
+        return <WeaponsFire duration={duration} damage={damage} svgFile={'/img/weaponsFire/MG.svg'}/>
       case 'heavyRocket':
-        return <HeavyRocket duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
+        return <WeaponsFire duration={duration * 2} damage={damage} svgFile={'/img/weaponsFire/HR.svg'}/>
       case 'rocketLauncher':
-        return <RocketLauncher duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
+       return <WeaponsFire duration={duration * 1.5} damage={damage} svgFile={'/img/weaponsFire/RL.svg'}/>
       case 'laser':
-        return <Laser duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
+        return <WeaponsFire duration={duration} damage={damage} svgFile={'/img/weaponsFire/L.svg'}/>
       default:
-        console.log(`Weapon not supported: "${damage.source.weapon}"; defaulting to MG`)
-        return <MachineGun duration={duration} sourcePoint={damage.source.point} targetPoint={damage.target.point} />
+        console.log(`Weapon not supported: "${damage.source.weapon}"; defaulting to slow MG`)
+        return <WeaponsFire duration={duration*10} damage={damage} svgFile={'/img/weaponsFire/MG.svg'}/>
     }
   }
 
@@ -112,7 +111,16 @@ class Damage extends React.Component {
           <polyline points={ `${this.polylineStar({ x: point.x, y: point.y, pointCount: 10, offset: 0.3 * offset, radiusMultiplier: 1.4 })}`} fill={'yellow'} />
           <polyline points={ `${this.polylineStar({ x: point.x, y: point.y, pointCount: 8, offset: offset })}`} fill={'red'} />
           <polyline points={ `${this.polylineStar({ x: point.x, y: point.y, pointCount: 8, radiusMultiplier: 0.8 })}`} fill={'orange'} />
-          <circle cx={ point.x } cy={ point.y } r={ 18 } fill={'white'} />
+          <circle cx={ point.x } cy={ point.y } r={ 18 } fill={'white'}>
+        
+          <animate
+        attributeType="XML"
+        attributeName="fill"
+        values="red;orange;yellow;green;blue;indigo;violet"
+        dur=".03s"
+        repeatCount="indefinite"/>
+
+        </circle>
           <text x ={ point.x } y={ point.y + 8 } textAnchor={ 'middle' } className={ 'DamageText' }>{damage}</text>
         </g>
       )
@@ -121,10 +129,10 @@ class Damage extends React.Component {
 
   render() {
     return (
-      <g>
+      <svg >
       <Reticle client={this.props.client} matchData={ this.props.matchData } />
         { this.getCurrentDamage() }
-      </g>
+      </svg>
     )
   }
 }

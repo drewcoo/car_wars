@@ -89,7 +89,7 @@ class Match extends React.Component {
                 </span>
               </div>
               <div className="MapBorder">
-                <div className="ArenaMap">
+                <div id="ArenaMap" className="ArenaMap">
                   <svg
                     width={matchData.match.map.size.width}
                     height={matchData.match.map.size.height}

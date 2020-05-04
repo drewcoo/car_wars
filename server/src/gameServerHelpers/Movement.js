@@ -26,10 +26,14 @@ class Movement {
     console.log("can move . . .")
     console.log(match.carIds)
     function checkMove(car) {
-      return Movement.distanceThisPhase({
+      if (Movement.distanceThisPhase({
         speed: car.status.speed,
         phase: match.time.phase.number
-      }) !== 0
+      }) === 0) {
+        car.phasing.rect = car.rect
+      } else {
+        return true
+      }
     }
     return match.carIds.map(id => DATA.cars.find(car => car.id === id)) // too much data
                        .filter((car) => checkMove(car) > 0)

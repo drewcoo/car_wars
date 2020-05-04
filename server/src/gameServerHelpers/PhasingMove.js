@@ -36,10 +36,7 @@ class PhasingMove {
     const possibles = this.possibleSpeeds({ car })
     car.phasing = {
       rect: car.rect.clone(),
-      damage: [{
-          target: null,
-          message: ''
-      }],
+      damage: [],
       difficulty: 0,
       maneuverIndex: 0,
       speedChanges: possibles,

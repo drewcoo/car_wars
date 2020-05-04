@@ -125,6 +125,7 @@ const completeMatchData = gql`
                 x
                 y
               }
+              character
               weapon
             }
             target {
@@ -132,6 +133,7 @@ const completeMatchData = gql`
                 x
                 y
               }
+              location
               damage
             }
             message

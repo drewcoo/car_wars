@@ -77,6 +77,7 @@ class Phase {
     console.log(`finished setting speeds? ${finishedSettingSpeed}`)
     
     if (finishedSettingSpeed) {
+      match.time.phase.unmoved = Movement.canMoveThisPhase({ match })
       match.time.phase.subphase = '3_maneuver'
       Phase.subphase3_maneuver({ match })
     }
@@ -110,9 +111,32 @@ class Phase {
 
   static subphase4_fireWeapons({ match }) {
     Phase.subphaseCheck('4_fire_weapons', match)
+    console.log(' ')
+    console.log('can target:')
+    console.log(match.time.phase.canTarget)
+    console.log(' ')
     if (match.time.phase.canTarget.length > 0) { return }
 
-    match.time.phase.playersToAckDamage = matchCars({ match }).map(car => car.playerId)
+    // prep for next phase
+    let someoneTookDamage = false
+    matchCars({ match }).forEach(targetCar => {
+      targetCar.phasing.damage.forEach(damageRecord => {
+        someoneTookDamage = true
+        Weapon.dealDamage({
+          by: damageRecord.source.car,
+          car: damageRecord.target.car,
+          damage: damageRecord.target.damage,
+          location: damageRecord.target.location
+        })
+      })
+    })
+
+    if(someoneTookDamage) {
+      match.time.phase.playersToAckDamage = matchCars({ match }).map(car => car.playerId)
+    } else {
+      match.time.phase.playersToAckDamage = []
+    }
+    
     match.time.phase.subphase = '5_damage'
     Phase.subphase5_damage({ match })
   }
@@ -130,6 +154,10 @@ class Phase {
     // end of turn refresh?
     // check for match over
 
+    matchCars({ match }).forEach(car => {
+      car.phasing.damage = []
+    })
+      
     match.time.phase.subphase = '1_start'
     Phase.subphase1_start({ match })
   }

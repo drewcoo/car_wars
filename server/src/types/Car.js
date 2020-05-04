@@ -141,6 +141,7 @@ export const typeDef = `
   }
 
   type DamageSource {
+    character: String
     point: Point
     weapon: String
   }
@@ -148,6 +149,7 @@ export const typeDef = `
   type DamageTarget {
     point: Point
     damage: Int
+    location: String
   }
 
   type Status {
@@ -618,12 +620,14 @@ export const resolvers = {
       match.time.phase.canTarget.splice(carIdIndex, 1)
 
       let weapon = Weapon.itself({ car })
+
       const toHit = Dice.roll('2d')
 
       // BUGBUG - where are the modifiers???
       // Calculate server side for here and also for Reticle.jsx
 
       Log.info(`toHit: ${weapon.toHit} - roll is ${toHit}; damage: ${weapon.damage}`, car)
+
       let damage = (toHit >= weapon.toHit) ? Dice.roll(weapon.damage) : 0
       weapon.ammo--
       car.design.components.crew.find(member => member.role === 'driver').firedThisTurn = true
@@ -631,30 +635,25 @@ export const resolvers = {
 
       const targetCar = DATA.cars.find(car => args.targetId === car.id)
 
-      Log.info(`shot ${targetCar.color}'s ${args.targetName} with ${weapon.abbreviation}:${weapon.location} for ${damage} damage`, car)
-      Weapon.dealDamage({
-        by: car,
-        car: targetCar,
-        damage: damage,
-        location: args.targetName
-      })
-
-
 console.log('=============')
 console.log(car.phasing.rect)
 console.log(car.phasing.rect.side(weapon.location).middle())
 console.log('=============')
       targetCar.phasing.damage.push( {
         source: {
+          character: 'TODO - character ID',
+          car: car,
           point: car.phasing.rect.side(weapon.location).middle(),
           weapon: weapon.type,
         },
         target: {
+          car: targetCar,
+          damage: damage,
+          location: args.targetName,
           point: new Point({
             x: args.targetX,
             y: args.targetY
-          }),
-          damage: damage
+          })          
         },
         message: ''
       })
