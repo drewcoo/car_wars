@@ -4,28 +4,33 @@ import Modal from 'react-modal'
 import { compose } from 'recompose'
 import uuid from 'uuid/v4'
 import '../../../../App.css'
-import ackDamage from '../../../graphql/mutations/ackDamage'
+import ackSpeedChange from '../../../graphql/mutations/ackSpeedChange'
 import Damage from '../../Damage'
 import LocalMatchState from '../../lib/LocalMatchState'
-import DamageKeystrokes from './DamageKeystrokes'
+import RevealSpeedChangeKeystrokes from './RevealSpeedChangeKeystrokes'
 
-const ACK_DAMAGE = graphql(ackDamage, { name: 'ackDamage' })
+const ACK_SPEED_CHANGE = graphql(ackSpeedChange, { name: 'ackSpeedChange' })
 
-class DamageModal extends React.Component {
+class RevealSpeedChangeModal extends React.Component {
   constructor (props) {
     super(props) // matchData and carId
     this.handleClose = this.handleClose.bind(this)
     this.handleEatIt = this.handleEatIt.bind(this)
   }
 
-  async ackDamage ({ matchId, playerId }) {
-    this.props.ackDamage({ variables: { matchId, playerId } })
+  async ackSpeedChange ({ matchId, playerId }) {
+    this.props.ackSpeedChange({ variables: { matchId, playerId } })
   }
 
   handleClose () {
     const lms = new LocalMatchState(this.props.matchData)
+
+    const car = lms.car({ id: this.props.carId })
+    console.log(`${car.color} here!!!!!!!!!!!!!!!!`)
+
+
     const playerId = lms.car({ id: this.props.carId }).playerId
-    this.ackDamage({
+    this.ackSpeedChange({
       matchId: this.props.matchData.match.id,
       playerId: playerId
     })
@@ -38,22 +43,14 @@ class DamageModal extends React.Component {
   render () {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
-    const theCar = car.playerId === localStorage.getItem('playerId')
+    const theCar = (car.playerId === localStorage.getItem('playerId'))
 
-    if (!theCar) {
-      return (
-        <div onClick={ this.handleEatIt }>
-          <Damage
-            key={`damCar-${car.id}`}
-            client={this.props.client}
-            matchData={new LocalMatchState(this.props.matchData).data}
-            carId={car.id}
-          />
-        </div>
-      )
-    }
+    
 
-    const showModal = this.props.matchData.match.time.phase.playersToAckDamage.includes(
+
+    // if (!theCar) { return (<></>) }
+
+    const showModal = this.props.matchData.match.time.phase.playersToAckSpeedChange.includes(
       car.playerId
     )
 
@@ -66,22 +63,27 @@ class DamageModal extends React.Component {
       />)
     })
 
+    if (!theCar) {
+      return (allDamage)
+    }
+
     return (
       <>
+        <RevealSpeedChangeKeystrokes
+          matchData={this.props.matchData}
+          carId={this.props.carId}
+        />
         { allDamage }
         <div onClick={ this.handleEatIt }>
           <Modal
+           
             className={'Modal.Content'}
             overlayClassName={'Modal.Overlay'}
             key={uuid()}
             isOpen={showModal}
           >
-            <DamageKeystrokes
-              matchData={this.props.matchData}
-              carId={this.props.carId}
-            />
-            <span className='flexCentered'>review</span>
-            <span className='flexCentered'>damage</span>
+            <span className='flexCentered' style={ { color: car.color }} >review</span>
+            <span className='flexCentered'>speed changes</span>
             <br />
             <span className='flexCentered'>
               <button onClick={this.handleClose} className={'ReactModal__Buttons'}>
@@ -108,4 +110,4 @@ class DamageModal extends React.Component {
 
 Modal.setAppElement('#root')
 
-export default compose(ACK_DAMAGE)(DamageModal)
+export default compose(ACK_SPEED_CHANGE)(RevealSpeedChangeModal)

@@ -6,26 +6,6 @@ import Factory from './Factory'
 import { COMPASS } from '../../constants'
 
 describe('Rectangle', () => {
-  describe('#constructor', () => {
-    it('throws if pointless', () => {
-      expect(function () {
-        return new Rectangle({ brPoint: null })
-      }).toThrow(Error)
-    })
-
-    it('throws if no point', () => {
-      expect(function () {
-        return new Rectangle({ facing: COMPASS.NORTH })
-      }).toThrow(Error)
-    })
-
-    it('throws if no facing', () => {
-      expect(function () {
-        return new Rectangle({ brPoint: Factory.Point() })
-      }).toThrow(Error)
-    })
-  })
-
   describe('points', () => {
     it('#brPoint thows on _brPoint not point', () => {
       const rectangle = Factory.Rectangle()

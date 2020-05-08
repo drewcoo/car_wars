@@ -8,7 +8,8 @@ class Log {
     if (target != null) {
       target.log.push(message)
     }
-    console.log(message)
+    color = target ? target.color : ''
+    console.log(`${color}: ${message}`)
   }
 }
 export default Log

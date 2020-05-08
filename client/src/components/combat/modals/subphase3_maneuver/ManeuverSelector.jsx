@@ -47,6 +47,15 @@ class Maneuver extends React.Component {
     return result
   }
 
+  /*
+          <span>&nbsp;&nbsp;</span>
+        <select id='degrees' style={{ visibility: 'hidden' }} defaultValue='0'>
+          <option>-1</option>
+          <option>0</option>
+          <option>1</option>
+        </select>
+  */
+
   render () {
     const activeCar = new LocalMatchState(this.props.matchData).activeCar()
     if (!activeCar) { return (<></>) }
@@ -60,12 +69,6 @@ class Maneuver extends React.Component {
           onChange={ this.onChange }
         >
           { this.listManeuvers() }
-        </select>
-        <span>&nbsp;&nbsp;</span>
-        <select id='degrees' style={{ visibility: 'hidden' }} defaultValue='0'>
-          <option>-1</option>
-          <option>0</option>
-          <option>1</option>
         </select>
       </span>
     )

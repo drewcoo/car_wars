@@ -197,7 +197,7 @@ class CarInset extends React.Component {
     }
 
     return (
-      <svg id={`${car.id}-inset`} x='0' y='0' width='200' height='400'>
+      <svg className='flexCentered' id={`${car.id}-inset`} x='0' y='0' width='200' height='400'>
         {/* outline */}
         <rect
           x={tempBrPoint.x - width}

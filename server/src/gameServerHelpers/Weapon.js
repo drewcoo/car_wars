@@ -1,10 +1,11 @@
 import Control from './Control'
 import Log from '../utils/Log'
 import VehicleStatusHelper from './VehicleStatusHelper'
+import Dice from '../utils/Dice'
 
 class Weapon {
-  static canFire({ weapon, plantDisabled }) {
-    
+  static canFire({ weapon, plant }) {
+    const plantDisabled = plant.damagePoints < 1
     return !(
       weapon.location === 'none' ||
       weapon.ammo === 0 ||
@@ -21,9 +22,7 @@ class Weapon {
   static passFiringChecks({ car }) {
     const weapon = car.design.components.weapons[car.phasing.weaponIndex]
     const crewMember = car.design.components.crew.find(member => member.role === 'driver')
-    const plantDisabled = car.design.components.powerPlant.damagePoints < 1
-
-    let result = Weapon.canFire({ weapon, plantDisabled })
+    let result = Weapon.canFire({ weapon, plant: car.design.components.powerPlant })
 
     result = result && !(
       crewMember.firedThisTurn ||
@@ -49,10 +48,14 @@ class Weapon {
   //
   //
 
-  static dealDamage ({ damage, by, car, location }) {
-    Log.info(`${damage} dealt to car ${car.color} at ${location}`, car)
+  static dealDamage ({ damageRecord }) {
+    let car = damageRecord.target.car
+    let damage = damageRecord.target.damage = Dice.roll(damageRecord.target.damageDice)
+    let location = damageRecord.target.location
+
+    Log.info(`${damageRecord.target.damageDice} dealt to car ${car.color} at ${location}`, car)
     if (damage < 1) { return }
-    car.status.lastDamageBy.push(by.id) // CAR ID - later get character, too
+    car.status.lastDamageBy.push(damageRecord.source.car.id) // CAR ID - later get character, too
     let hazard = 1
     if (damage >= 6) { hazard = 2 }
     if (damage >= 10) { hazard = 3 }
@@ -117,6 +120,7 @@ class Weapon {
     Log.info(`hazard: ${hazard}`, car)
     Control.hazardCheck({ car, hazard })
     Log.info(`${damageToDeal} points of damage blow through!`, car)
+    return damageRecord
   }
 
   // If the final damage that destroys the tire

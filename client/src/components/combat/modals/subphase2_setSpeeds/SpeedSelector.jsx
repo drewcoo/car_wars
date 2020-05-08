@@ -4,6 +4,7 @@ import { graphql } from 'react-apollo'
 import LocalMatchState from '../../lib/LocalMatchState'
 import '../../../../App.css'
 import setSpeed from '../../../graphql/mutations/setSpeed'
+import DangerColorizer from '../../lib/DangerColorizer'
 
 const SET_SPEED = graphql(setSpeed, { name: 'setSpeed' })
 
@@ -32,16 +33,35 @@ class SpeedSelector extends React.Component {
     })
   }
 
+  speedColor (car, index) {
+    if (car.phasing.speedChanges[index].damageDice !== '') {
+      return 'red'
+    }
+    if (car.phasing.speedChanges[index].difficulty > 0) {
+      return DangerColorizer.handlingDifficultyColorizer(car).color
+    }
+    return 'floralwhite'
+  }
+
   listSpeedChanges (car) {
     var result = []
     for (var i = 0; i < car.phasing.speedChanges.length; i++) {
       result.push(
-        <option key={i} value={i}>
-          { car.phasing.speedChanges[i] }
+        <option
+          key={i}
+          value={i}
+          style={{ backgroundColor: this.speedColor(car, i), fontSize: '50px', color: 'black' }}>
+          { car.phasing.speedChanges[i].speed }
         </option>
       )
     }
     return result
+  }
+
+  label () {
+    if (!this.props.noLabel) {
+      return (<><u>S</u>peed:&nbsp;&nbsp;</>)
+    }
   }
 
   render () {
@@ -49,10 +69,18 @@ class SpeedSelector extends React.Component {
     const car = lms.car({ id: this.props.carId })
     return (
       <>
-        <u>S</u>peed:&nbsp;&nbsp;
+        { this.label() }
         <select
           className='Options'
           id={ this.thisId }
+          style={{
+            fontSize: '90px',
+            backgroundColor: this.speedColor(car, car.phasing.speedChangeIndex),
+            color: 'black',
+            height: '100px',
+            width: '130px',
+            borderColor: 'floralwhite'
+          }}
           value={ car.phasing.speedChangeIndex }
           onChange={ this.onChange }>
           { this.listSpeedChanges(car) }

@@ -97,7 +97,7 @@ class Movement {
         if (car.status.speed < 0) { car.status.speed += 5 }
         Movement.checkIfKilled({ car })
         car.phasing.speedChangeIndex = 0
-        car.phasing.speedChanges = [car.status.speed]
+        car.phasing.speedChanges = [{ speed: car.status.speed }]
       }
       Log.info(car.status.speed)
     })

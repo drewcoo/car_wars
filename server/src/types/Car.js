@@ -122,11 +122,17 @@ export const typeDef = `
     rect: Rectangle
     showSpeedChangeModal: Boolean
     speedChangeIndex: Int
-    speedChanges: [String]
+    speedChanges: [SpeedChange]
     controlChecksForSpeedChanges: [ControlChecks]
     targetIndex: Int!
     targets: [Target]
     weaponIndex: Int
+  }
+
+  type SpeedChange {
+    speed: Int!
+    difficulty: Int!
+    damageDice: String
   }
 
   type ControlChecks {
@@ -149,6 +155,7 @@ export const typeDef = `
   type DamageTarget {
     point: Point
     damage: Int
+    damageDice: String
     location: String
   }
 
@@ -181,6 +188,24 @@ export const typeDef = `
 `
 
 const damageAllTires = ({ car, damage }) => {
+  const points = {
+    FL: car.rect.flPoint(),
+    FR: car.rect.frPoint(),
+    BL: car.rect.blPoint(),
+    BR: car.rect.brPoint()
+  }
+  car.design.components.tires.forEach(tire => {
+    car.phasing.damage.push({
+      target: {
+        location: tire.location,
+        point: points[tire.location],
+        damageDice: newSpeed.damageDice
+      },
+      message: 'tire damage'
+    })
+  })
+
+  /*
   car.design.components.tires.forEach(tire => {
     if (tire.damagePoints <= 0) { return }
     tire.damagePoints -= damage
@@ -191,6 +216,7 @@ const damageAllTires = ({ car, damage }) => {
       // BUGBUG: Handlng roll if lose tire(s)
     }
   })
+  */
 }
 
 const rehydrateCar = ({ id }) => {
@@ -314,34 +340,23 @@ export const resolvers = {
         }
       }
 
-      let speed = 40
-      newCar.status.speed = speed
-      newCar.phasing.speedChanges = PhasingMove.possibleSpeedsWithoutUsingACar({
-        currentSpeed: speed,
-        topSpeed: design.attributes.topSpeed,
-        acceleration: design.attributes.acceleration,
-        canAccelerate: true,
-        canBrake: true
-      })
-      newCar.phasing.speedChangeIndex = newCar.phasing.speedChanges.indexOf(speed)
-      newCar.phasing.controlChecksForSpeedChanges = newCar.phasing.speedChanges.map(spd => {
-        return { speed: spd, checks: Control.row({ speed: spd })}
+      newCar.status.speed = 80
+      newCar.status.handling = -6
+      newCar.phasing.speedChanges =  PhasingMove.possibleSpeeds({ car: newCar })
+      newCar.phasing.speedChangeIndex = newCar.phasing.speedChanges.findIndex(change => change.speed === newCar.status.speed)
+      newCar.phasing.controlChecksForSpeedChanges = newCar.phasing.speedChanges.map(change => {
+        return { speed: change.speed, checks: Control.row({ speed: change.speed })}
       })
       DATA.cars.push(newCar)
       return newCar
     },
     doMove: (parent, args, context) => {
-      console.log('doMove')
       let car = DATA.cars.find(el => el.id === args.id)
-      console.log('xxxxxxxxxxxxxxx')
-      console.log('xxxxxxxxxxxxxxx')
-      console.log(car.phasing.rect)
-      console.log('xxxxxxxxxxxxxxx')
-      console.log('xxxxxxxxxxxxxxx')
-      Log.info('', car)
       Log.info(car.status.maneuvers[car.phasing.maneuverIndex], car)
-      Log.info('did it move?', car)
-      if (!PhasingMove.hasMoved({ car })) { return }
+      if (!PhasingMove.hasMoved({ car })) {
+        Log.info('car hasn not moved yet. return', car)
+        return
+      }
       Log.info('collisions?', car)
       for (let coll of car.phasing.collisions) {
         Collisions.resolve({ car, collision: coll })
@@ -409,7 +424,8 @@ export const resolvers = {
           }
         }
       }
-      Log.info(`base HC: ${car.design.attributes.handlingClass}`, car)
+
+        Log.info(`base HC: ${car.design.attributes.handlingClass}`, car)
       Log.info(`initial HC: ${car.status.handling}`, car)
       Log.info(`difficulty: D${car.phasing.difficulty}`, car)
       car.status.handling -= car.phasing.difficulty
@@ -417,6 +433,7 @@ export const resolvers = {
       Log.info(`maneuver check: ${Control.maneuverCheck({ car })}`, car)
       // BUGBUG: HANDLING ROLL NOW IF CHANGED!
       Log.info(`current HC: ${car.status.handling}`, car)
+      
 
       /// Post-move
       car.rect = car.phasing.rect.clone()
@@ -506,13 +523,10 @@ export const resolvers = {
       return car.rect
     },
     setSpeed: (parent, args, context) => {
-      console.log('set speed')
       let car = DATA.cars.find(el => el.id === args.id)
-
       if (car.status.speedChangedThisTurn) { return }
 
       let driver = car.design.components.crew.find(member => member.role === 'driver')
-
       if(driver.damagePoints < 2 ||
          car.status.speedChangedThisTurn ||
          (car.design.components.powerPlant.damagePoints < 1 &&
@@ -520,6 +534,7 @@ export const resolvers = {
         // driver unconscious or dead
         return car.status.speed
       }
+      
       let topSpeed = car.design.attributes.topSpeed
       if (args.speed < -topSpeed/5 ||
           args.speed > topSpeed) {
@@ -529,29 +544,77 @@ export const resolvers = {
       // BUGBUG: Check for Excessive speed change.
       // BUGBUG: Check for "going through 0" without stopping.
 
-      car.phasing.speedChangeIndex = car.phasing.speedChanges.indexOf(args.speed)
+      car.phasing.speedChangeIndex = car.phasing.speedChanges.findIndex(change => change.speed === args.speed)
       if (-1 === car.phasing.speedChangeIndex) {
         throw new Error(`Speed ${args.speed} not in array ${car.phasing.speedChanges}`)
       }
       car.status.controlChecks = Control.row({ speed: args.speed })
+      car.phasing.difficulty = car.phasing.speedChanges[car.phasing.speedChangeIndex].difficulty
+      car.phasing.damage = []
+      const corners  = {
+        FL: car.rect.flPoint(),
+        FR: car.rect.frPoint(),
+        BL: car.rect.blPoint(),
+        BR: car.rect.brPoint()
+      }
+      if (car.phasing.speedChanges[car.phasing.speedChangeIndex].damageDice !== '') {
+        car.design.components.tires.forEach(tire => {
+          car.phasing.damage.push({
+            target: {
+              point: corners[tire.location],
+              location: tire.location,
+              damageDice: car.phasing.speedChanges[car.phasing.speedChangeIndex].damageDice
+            },
+            message: 'tire damage'
+          })
+        })
+      }
+      
+  
       return args.speed
     },
     acceptSpeed: (parent, args, content) => {
-      if(false || args.bugMeNot) {
-        console.log('ah!')
-      }
       let car = DATA.cars.find(el => el.id === args.id)
       if (car.status.speedChangedThisTurn || !car.phasing.showSpeedChangeModal) {
+        console.log('go away - no speed change')
         return
       }
+
+      console.log()
+      console.log(car.phasing.speedChanges)
+      console.log(car.phasing.speedChangeIndex)
+      console.log()
       let newSpeed = car.phasing.speedChanges[car.phasing.speedChangeIndex]
-      Log.info(`${car.status.speed} -> ${newSpeed}`, car)
-      if ((newSpeed != car.status.speed) || args.bugMeNot) {
-        Log.info(`speed change: ${car.status.speed}MPH -> ${newSpeed}MPH`)
+      console.log(newSpeed)
+      Log.info(`${car.status.speed} -> ${newSpeed.speed}`, car)
+      let speedChanged = (newSpeed.speed === car.status.speed)
+      console.log(`speed changed? ${speedChanged}`)
+
+      if (speedChanged || args.bugMeNot) {
+        Log.info(`speed change: ${car.status.speed}MPH -> ${newSpeed.speed}MPH`, car)
         car.status.speedChangedThisTurn = true
-        car.status.speed = newSpeed
       }
-      // already changed speed this phase:
+      
+      if (speedChanged && newSpeed.damageDice !== '') {
+        // deal with the damage and handling roll after everyone moves
+        const points = {
+          FL: car.rect.flPoint(),
+          FR: car.rect.frPoint(),
+          BL: car.rect.blPoint(),
+          BR: car.rect.brPoint()
+        }
+        car.design.components.tires.forEach(tire => {
+          car.phasing.damage.push({
+            target: {
+              location: tire.location,
+              point: points[tire.location],
+              damageDice: newSpeed.damageDice
+            },
+            message: 'tire damage'
+          })
+        })
+      }
+
       car.phasing.showSpeedChangeModal = false
 
       let match = DATA.matches.find(obj => obj.id === car.currentMatch)
@@ -582,9 +645,7 @@ export const resolvers = {
         return crewMember.damagePoints > 1 && !crewMember.firedThisTurn
       })
       let weapon = car.design.components.weapons[car.phasing.weaponIndex]
-      let weaponCanFire = weapon.damagePoints > 0 &&
-                          (weapon.ammo > 0 || (weapon.requiresPlant && car.design.components.powerPlant.damagePoints > 0)) &&
-                          !weapon.firedThisTurn
+      let weaponCanFire = Weapon.canFire({ weapon, plant: car.design.components.powerPlant })
       if (crewMemberCanFire && weaponCanFire) {
         let match = DATA.matches.find(el => el.id === car.currentMatch)
         let cars  = matchCars({ match })
@@ -593,7 +654,6 @@ export const resolvers = {
         car.phasing.targets = targets.targetsInArc()
         car.phasing.targetIndex = 0 // BUGBUG: set to last target fired at?
       }
-
       return args.weaponIndex
     },
     finishFiring: (parent, args, content) => {
@@ -628,17 +688,12 @@ export const resolvers = {
 
       Log.info(`toHit: ${weapon.toHit} - roll is ${toHit}; damage: ${weapon.damage}`, car)
 
-      let damage = (toHit >= weapon.toHit) ? Dice.roll(weapon.damage) : 0
+      let damageDice = (toHit >= weapon.toHit) ? weapon.damage : '0d'
       weapon.ammo--
       car.design.components.crew.find(member => member.role === 'driver').firedThisTurn = true
       weapon.firedThisTurn = true
 
       const targetCar = DATA.cars.find(car => args.targetId === car.id)
-
-console.log('=============')
-console.log(car.phasing.rect)
-console.log(car.phasing.rect.side(weapon.location).middle())
-console.log('=============')
       targetCar.phasing.damage.push( {
         source: {
           character: 'TODO - character ID',
@@ -648,7 +703,7 @@ console.log('=============')
         },
         target: {
           car: targetCar,
-          damage: damage,
+          damageDice: damageDice,
           location: args.targetName,
           point: new Point({
             x: args.targetX,
@@ -657,9 +712,6 @@ console.log('=============')
         },
         message: ''
       })
-
-console.log('--------')
-console.log(car.phasing.damage)
 
       Phase.subphase4_fireWeapons({ match })
     },

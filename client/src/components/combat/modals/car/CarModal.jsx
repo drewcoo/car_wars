@@ -5,9 +5,11 @@ import CarInset from '../../CarInset'
 import CarStats from '../../CarStats'
 import LocalMatchState from '../../lib/LocalMatchState'
 import '../../../../App.css'
+import CarKeystrokes from './CarKeystrokes'
 
 class CarModal extends React.Component {
   constructor (props) {
+    console.log('pop   car modal')
     super(props)
     this.state = {
       count: 0,
@@ -18,12 +20,9 @@ class CarModal extends React.Component {
     this.handleSwitch = this.handleSwitch.bind(this)
   }
 
-  async speedAccepter ({ id, bugMeNot = false }) {
-    this.props.acceptSpeed({ variables: { id, bugMeNot } })
-  }
-
   handleClose (e) {
     this.props.modalClose(e)
+    e.stopPropagation()
   }
 
   customStyles () {
@@ -60,19 +59,6 @@ class CarModal extends React.Component {
     })
   }
 
-  buttonStyle () {
-    return ({
-      backgroundColor: 'black',
-      border: '3px solid white',
-      borderRadius: '20px',
-      color: 'white',
-      float: 'right',
-      fontFamily: 'fantasy',
-      fontSize: '40px',
-      fontVariant: 'smallCaps'
-    })
-  }
-
   view () {
     switch (this.state.views[this.state.viewIndex]) {
       case 'inset':
@@ -87,9 +73,10 @@ class CarModal extends React.Component {
     }
   }
 
-  handleSwitch () {
+  handleSwitch (e) {
     const newIndex = ((this.state.viewIndex + 1) % this.state.views.length)
     this.setState({ viewIndex: newIndex })
+    e.stopPropagation()
   }
 
   render () {
@@ -97,26 +84,38 @@ class CarModal extends React.Component {
     const car = lms.car({ id: this.props.carId })
     const player = lms.player(car.playerId)
 
+    const handlers = {
+      close: this.props.modalClose,
+      switchUp: this.handleSwitch,
+      switchDown: this.handleSwitch
+    }
+
+    let keystrokes = <></>
+    if (this.props.showModal) {
+      keystrokes = <CarKeystrokes handlers={handlers} carId={this.props.carId} matchData={ this.props.matchData } />
+    }
+
     return (
-        <>
-          <Modal
-            id={`${this.props.carId}-modal`}
-            isOpen={ this.props.showModal }
-            style={ this.customStyles() }
-          >
-            <span onClick={ this.handleSwitch }>
-              <span style={ { color: car.color, fontSize: '40px' } }>{player.name}&nbsp;&nbsp;{ car.name }</span>
-              <div style={ { float: 'center' } }>
-                { this.view() }
-              </div>
-              <div style={ { float: 'right' } }>
-                <button onClick={ this.handleClose } style={ this.buttonStyle() } >
+      <div onClick={ this.handleSwitch }>
+        { keystrokes }
+        <Modal
+          id={`${this.props.carId}-modal`}
+          isOpen={ this.props.showModal }
+          style={ this.customStyles() }
+        >
+          <span>
+            <span style={ { color: car.color, fontSize: '40px' } }>{player.name}&nbsp;&nbsp;{ car.name }</span>
+            <div style={ { float: 'center' } }>
+              { this.view() }
+            </div>
+            <div style={ { float: 'right' } }>
+              <button className={'ReactModal__Buttons'} onClick={ this.handleClose }>
                   Ok
-                </button>
-              </div>
-            </span>
-          </Modal>
-        </>
+              </button>
+            </div>
+          </span>
+        </Modal>
+      </div>
     )
   }
 }

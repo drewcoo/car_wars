@@ -1,8 +1,8 @@
 import { FACE, INCH } from '../utils/constants'
 import { degreesDifference } from '../utils/conversions'
 import Log from '../utils/Log'
-import VehicleStatusHelper from './VehicleStatusHelper'
 import Control from './Control'
+import VehicleStatusHelper from './VehicleStatusHelper'
 
 class PhasingMove {
   static hasMoved ({ car }) {
@@ -10,26 +10,49 @@ class PhasingMove {
            car.rect.facing !== car.phasing.rect.facing
   }
 
-  static possibleSpeedsWithoutUsingACar({ currentSpeed, topSpeed, acceleration, canAccelerate, canBrake }) {
-    const acc = canAccelerate ? acceleration : 0
-    // BUGBUG: Only does forward
-    const possibleMax = currentSpeed + acc
-    const max = (topSpeed >= possibleMax) ? possibleMax : topSpeed
-    const possibleMin = canBrake ? currentSpeed - 45 : currentSpeed
-    const min = possibleMin >= 0 ? possibleMin : 0
-    const resultArray = []
-    for (let i = min; i <= max; i += 5) { resultArray.push(i) }
-    return resultArray
-  }
-
   static possibleSpeeds ({ car }) {
-    return PhasingMove.possibleSpeedsWithoutUsingACar({
+    const setSpeeds = ({ currentSpeed, topSpeed, acceleration, canAccelerate, canBrake  }) => {
+      const acc = canAccelerate ? acceleration : 0
+      // BUGBUG: Only does forward
+      const possibleMax = currentSpeed + acc
+      const max = (topSpeed >= possibleMax) ? possibleMax : topSpeed
+      // no more than 45 slower without special equipment
+      const possibleMin = canBrake ? currentSpeed - 45 : currentSpeed
+      const min = possibleMin >= 0 ? possibleMin : 0
+      const result = []
+      for (let i = min; i <= max; i += 5) { result.push({ speed: i, difficulty: 0, damageDice: '' }) }
+      return result
+    }
+
+    const result = setSpeeds({
       currentSpeed: car.status.speed,
       topSpeed: car.design.attributes.topSpeed,
       acceleration: car.design.attributes.acceleration,
       canAccelerate: VehicleStatusHelper.canAccelerate(car),
       canBrake: VehicleStatusHelper.canBrake(car)
     })
+
+    let index = result.findIndex(change => change.speed === car.status.speed) -3
+
+    // unclear how to handle > 45mph deceleration - see p.9
+    let difficulties = [
+      { dIndex: -3, difficulty: 1, damageDice: '' },
+      { dIndex: -4, difficulty: 2, damageDice: '' },
+      { dIndex: -5, difficulty: 3, damageDice: '' },
+      { dIndex: -6, difficulty: 5, damageDice: '' },
+      { dIndex: -7, difficulty: 7, damageDice: '0d+2' },
+      { dIndex: -8, difficulty: 9, damageDice: '1d' },
+      { dIndex: -9, difficulty: 11, damageDice: '1d+3' }
+    ]
+
+    while (index >= 0) {
+      let change = difficulties.shift()
+      result[index].difficulty = change.difficulty
+      result[index].damageDice = change.damageDice
+      index--
+    }
+
+    return result
   }
 
   static reset ({ car }) {
@@ -40,15 +63,20 @@ class PhasingMove {
       difficulty: 0,
       maneuverIndex: 0,
       speedChanges: possibles,
-      speedChangeIndex: possibles.indexOf(car.status.speed),
+      speedChangeIndex: possibles.findIndex(possible => possible.speed === car.status.speed),
       weaponIndex: car.phasing.weaponIndex,
       targets: [],
       targetIndex: 0, // BUGBUG: keep old targets? We want sustained fire . . .
       collisionDetected: false,
       collisions: []
     }
-    car.phasing.controlChecksForSpeedChanges = car.phasing.speedChanges.map(spd => {
-      return { speed: spd, checks: Control.row({ speed: spd })}
+
+    if (car.phasing.speedChangeIndex === -1) {
+      throw new Error('wat happened?')
+    } 
+
+    car.phasing.controlChecksForSpeedChanges = car.phasing.speedChanges.map(setting => {
+      return { speed: setting.speed, checks: Control.row({ speed: setting.speed })}
     })
   }
 

@@ -10,6 +10,17 @@ import uuid from 'uuid/v4'
 class Damage extends React.Component {
   props: any
   lms: any
+  
+  constructor (props: any) {
+    super(props) // matchData and carId
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  handleClick (e: any) {
+    e.stopPropagation()
+  }
+
+
 
   getCurrentDamage () {
     const car = new LocalMatchState(this.props.matchData).car({ id: this.props.carId })
@@ -23,7 +34,7 @@ class Damage extends React.Component {
     // know the id of the weaponsFire() animation and can cue itself to
     // show up after the weapon fires (once - not repeating, striking target)
     return (
-      <svg key={uuid()}>
+      <svg key={uuid()} onClick={this.handleClick} >
         { this.weaponFire({ duration: 0.8, damage })}
         { this.drawDamage({
           point: damage.target.point,
@@ -34,6 +45,7 @@ class Damage extends React.Component {
   }
 
   weaponFire({ duration=1, damage }: { duration: number, damage: any}) {
+    if (damage.message === 'tire damage') { return }
     switch(damage.source.weapon) {
       case 'machineGun':
         return <WeaponsFire duration={duration} damage={damage} svgFile={'/img/weaponsFire/MG.svg'}/>
@@ -97,6 +109,8 @@ class Damage extends React.Component {
   }
 
   drawDamage({ point, damage }: { point: Point, damage: number | string }) {
+    console.log(point)
+    console.log(damage)
     const offset = 2 * Math.PI / 10
     if (damage === 0) {
       return (
@@ -129,7 +143,7 @@ class Damage extends React.Component {
 
   render() {
     return (
-      <svg >
+      <svg>
       <Reticle client={this.props.client} matchData={ this.props.matchData } />
         { this.getCurrentDamage() }
       </svg>

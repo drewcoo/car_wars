@@ -88,6 +88,10 @@ body {
   font-size: 24px;
   font-family: fantasy;
   font-variant: small-caps;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
 }
 .ActionControls {
   /*padding-top: 410px;*/
@@ -184,4 +188,46 @@ body {
   font-size: 40px;
   font-family: fantasy;
   font-variant: small-caps;
+}
+.flexCentered {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+}
+.ReactModal__Content {
+  position: fixed;
+  -webkit-transform: scale(0.5) rotateX(-30deg);
+  transform: scale(0.5) rotateX(-30deg);
+    top: 50%;
+    left: 80%;
+    /*right: 10%;*/
+    /*bottom: auto;*/
+   /* margin-right: -50%;*/
+    transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    border: 3px solid lightgray;
+    border-radius: 5px;
+    font-family: fantasy;
+    font-size: 50px;
+    font-variant: small-caps;
+    opacity: 0.8;
+  }
+.ReactModal__Overlay {
+    background-color: rgba(0,0,0, 0.5);
+    top: 50%;
+    bottom: 50%;
+}
+.ReactModal__Buttons {
+  background-color: black;
+  border: 1px solid white;
+  border-radius: 5px;
+  color: white;
+  float: right;
+  font-family: fantasy;
+  font-size: 32px;
+  font-variant: small-caps;
+}
+.ReactModal__Buttons:hover {
+  background-color: gray;
 }

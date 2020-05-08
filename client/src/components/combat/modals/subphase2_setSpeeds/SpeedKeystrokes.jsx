@@ -3,6 +3,7 @@ import { compose } from 'recompose'
 import { HotKeys } from 'react-hotkeys'
 import { graphql } from 'react-apollo'
 import LocalMatchState from '../../lib/LocalMatchState'
+import ViewElement from '../../lib/ViewElement'
 import setSpeed from '../../../graphql/mutations/setSpeed'
 import acceptSpeed from '../../../graphql/mutations/acceptSpeed'
 
@@ -14,10 +15,12 @@ class SpeedKeystrokes extends React.Component {
     super(props)
     this.state = { value: '' }
     this.keyMap = {
-      acceptSpeed: 'enter',
-      bugMeNot: ['n'],
+      acceptSpeed: ['enter'],
+      bugMeNot: ['t'],
+      home: '.',
       nextSpeed: ['s', 'up', 'shift+down', '+', '='],
-      previousSpeed: ['shift+s', 'down', 'shift+up', '-', '_']
+      previousSpeed: ['shift+s', 'down', 'shift+up', '-', '_'],
+      reset: ['esc', 'w']
     }
   }
 
@@ -37,10 +40,13 @@ class SpeedKeystrokes extends React.Component {
 
     const handlers = {
       acceptSpeed: (event) => {
-        this.speedAccepter({ id: car.id })
+        this.props.handlers.accept(event)
       },
       bugMeNot: (event) => {
-        this.speedAccepter({ id: car.id, bugMeNot: true })
+        this.props.handlers.bugMeNot(event)
+      },
+      home: (event) => {
+        ViewElement(car.id)
       },
       nextSpeed: (event) => {
         if (car.status.speedChangedThisTurn) { return (<></>) }
@@ -54,6 +60,12 @@ class SpeedKeystrokes extends React.Component {
         this.speedSetter({
           id: car.id,
           speed: lms.previousSpeed({ id: car.id })
+        })
+      },
+      reset: (event) => {
+        this.speedSetter({
+          id: car.id,
+          speed: car.status.speed
         })
       }
     }

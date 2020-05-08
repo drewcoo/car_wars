@@ -1,70 +1,47 @@
-import * as React from "react";
-import LocalMatchState from "./lib/LocalMatchState";
+import * as React from 'react'
+import LocalMatchState from './lib/LocalMatchState'
+import DangerColorizer from './lib/DangerColorizer'
 
 class CarStats extends React.Component {
-  props: any;
-  lms: any;
+  props: any
+  lms: any
 
   collisionMessage(car: any) {
     if (!car.phasing.collisionDetected) {
-      return;
+      return
     }
-    const damStyle = { color: "red" };
-    let colls = car.phasing.collisions.map((elem: any) => elem.type).join(", ");
-    return <span style={damStyle}>{`Collision: ${colls}`}</span>;
+    const damStyle = { color: 'red' }
+    let colls = car.phasing.collisions.map((elem: any) => elem.type).join(', ')
+    return <span style={damStyle}>{`Collision: ${colls}`}</span>
   }
 
-  handlingColor(car: any, handling: number) {
-    let effectiveHandling = handling < -6 ? -6 : handling;
-    const speed = parseInt(
-      car.phasing.speedChanges[car.phasing.speedChangeIndex]
-    );
-    if (Math.abs(car.status.speed) <= 5) {
-      return "white";
+  damageDice(car: any): any {
+    if (car.phasing.damage[0] && car.phasing.damage[0].target.damageDice) {
+      if (car.phasing.damage[0].message !== 'tire damage') return <></>
+      return (
+        <>
+          <br />
+          <span style={{ color: 'red' }}>
+            {car.phasing.damage[0].target.damageDice}{' '}
+            {car.phasing.damage[0].message}
+          </span>
+        </>
+      )
     }
-    const checks = car.phasing.controlChecksForSpeedChanges.find(
-      (entry: any) => entry.speed === speed
-    ).checks;
-    const checkIndex = [7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6];
-
-    let color: string;
-    let checkValue =
-      checks[checkIndex.findIndex((e) => e === effectiveHandling)];
-    switch (checkValue) {
-      case "safe":
-        color = "white";
-        break;
-      case "XX":
-        color = "red";
-        break;
-      default:
-        color = `rgb(255, ${255 - 42 * (checkValue - 1)}, 0)`;
-    }
-    return color;
-  }
-
-  handlingDifficultyColorizer(car: any): any {
-    let color = this.handlingColor(
-      car,
-      car.status.handling - car.phasing.difficulty
-    );
-    let isVisible = car.phasing.difficulty === 0 ? "hidden" : "visible";
-    return { color: color, visibility: isVisible };
-  }
-
-  handlingStatusColorizer(car: any): any {
-    return { color: this.handlingColor(car, car.status.handling) };
+    return <></>
   }
 
   render() {
     const lms = new LocalMatchState(this.props.matchData)
-    const car = this.props.carId ? lms.car({ id: this.props.carId }) : lms.activeCar()
-    //const car = new LocalMatchState(this.props.matchData).activeCar();
+    const car = this.props.carId
+      ? lms.car({ id: this.props.carId })
+      : lms.activeCar()
+    //const car = new LocalMatchState(this.props.matchData).activeCar()
     if (!car) {
-      return null;
+      return null
     }
     return (
-      <div>
+      <div style={{ fontSize: '24px' }}>
         <span>{car.design.attributes.size}</span>
         <br />
         <span>{car.design.attributes.chassis} chassis</span>
@@ -85,19 +62,20 @@ class CarStats extends React.Component {
         <br />
         <span>speed: {car.status.speed}</span>
         <br />
-        <span style={this.handlingStatusColorizer(car)}>
+        <span style={DangerColorizer.handlingStatusColorizer(car)}>
           handling: {car.status.handling}
         </span>
         <br />
-        <span style={this.handlingDifficultyColorizer(car)}>
+        <span style={DangerColorizer.handlingDifficultyColorizer(car)}>
           D{car.phasing.difficulty} maneuver
         </span>
+        {this.damageDice(car)}
         <br />
         {this.collisionMessage(car)}
         <br />
       </div>
-    );
+    )
   }
 }
 
-export default CarStats;
+export default CarStats

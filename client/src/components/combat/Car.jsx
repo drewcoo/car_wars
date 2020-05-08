@@ -1,22 +1,24 @@
 import * as React from 'react'
 import uuid from 'uuid/v4'
+import '../../App.css'
+import { INCH } from '../../utils/constants'
+import Rectangle from '../../utils/geometry/Rectangle'
 import KillMessage from './KillMessage'
-import ClickToPoint from './lib/ClickToPoint'
 import LocalMatchState from './lib/LocalMatchState'
 import CarModal from './modals/car/CarModal'
 import SpeedModal from './modals/subphase2_setSpeeds/SpeedModal'
 import ManeuverModal from './modals/subphase3_maneuver/ManeuverModal'
 import FireModal from './modals/subphase4_fireWeapons/FireModal'
 import DamageModal from './modals/subphase5_damage/DamageModal'
-import '../../App.css'
-import Rectangle from '../../utils/geometry/Rectangle'
-import { INCH } from '../../utils/constants'
+import RevealSpeedChangeModal from './modals/subphase2.1_revealSpeedChange/RevealSpeedChangeModal'
 
 class Car extends React.Component {
   constructor (props) {
     super(props)
     this.collisionDetected = false
-    this.state = { showModal: false }
+    this.state = {
+      showModal: false
+    }
     this.handleClick = this.handleClick.bind(this)
     this.handleClose = this.handleClose.bind(this)
   }
@@ -26,11 +28,8 @@ class Car extends React.Component {
   }
 
   handleClick (e) {
-    const lms = new LocalMatchState(this.props.matchData)
-    const car = lms.car({ id: this.props.id })
-    if (car.rect.intersects(ClickToPoint({ clickEvent: e }))) {
-      this.setState({ showModal: !this.state.showModal })
-    }
+    this.setState({ showModal: !this.state.showModal })
+    // e.stopPropagation()
   }
 
   manyColoredFill () {
@@ -221,6 +220,14 @@ class Car extends React.Component {
             matchData={ new LocalMatchState(this.props.matchData).data }
             carId={ car.id }/>
         )
+      case '2_1_reveal_speed_change':
+        return (
+          <RevealSpeedChangeModal
+            key={uuid()}
+            client={this.props.client}
+            matchData={ new LocalMatchState(this.props.matchData).data }
+            carId={ car.id }/>
+        )
       case '3_maneuver':
         return (
           <ManeuverModal
@@ -307,8 +314,7 @@ class Car extends React.Component {
                             ${rotatePoint.y})`
 
     return (
-      <svg id={ this.props.id }
-        onClick={ this.handleClick } >
+      <svg id={ this.props.id } onClick={ this.handleClick } >
         <g className="vehicle">
           { /* outline */ }
           <rect

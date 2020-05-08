@@ -1,7 +1,21 @@
 import * as React from 'react'
 import SVG from 'react-inlinesvg'
 
+// import Sound from 'react-sound'
+
 class WeaponsFire extends React.Component {
+  sounds () {
+    return (<></>)
+    /*
+    return(
+      <Sound
+      url="/audio/MG.mp3"
+      playStatus={Sound.status.PLAYING}
+      loop={true}/>
+    )
+    */
+  }
+
   render () {
     const duration = this.props.duration || 1
     const source = this.props.damage.source.point
@@ -18,7 +32,12 @@ class WeaponsFire extends React.Component {
       return result
     }
 
-    return (<SVG src={this.props.svgFile} preProcessor={ code => preProcess(code) }/>)
+    return (
+      <>
+      { this.sounds() }
+      <SVG src={this.props.svgFile} preProcessor={ code => preProcess(code) }/>
+      </>
+    )
   }
 }
 

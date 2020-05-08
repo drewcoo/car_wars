@@ -34,6 +34,7 @@ const completeMatchData = gql`
             unmoved
             canTarget
             playersToAckDamage
+            playersToAckSpeedChange
           }
           turn {
             number
@@ -135,6 +136,7 @@ const completeMatchData = gql`
               }
               location
               damage
+              damageDice
             }
             message
           }
@@ -151,7 +153,11 @@ const completeMatchData = gql`
           }
           showSpeedChangeModal
           speedChangeIndex
-          speedChanges
+          speedChanges {
+            speed
+            difficulty
+            damageDice
+          }
           controlChecksForSpeedChanges {
             speed
             checks

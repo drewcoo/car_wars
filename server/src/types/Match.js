@@ -22,6 +22,7 @@ export const typeDef = `
     startMatch(matchId: ID!): Match
     finishMatch(matchId: ID!): Match
     ackDamage(matchId: ID!, playerId: ID!): Int
+    ackSpeedChange(matchId: ID!, playerId: ID!): Int
     sayNothing(matchId: ID!, msg: String!): String!
   }
 
@@ -77,6 +78,7 @@ export const typeDef = `
     unmoved: [ID]
     canTarget: [ID]
     playersToAckDamage: [ID]
+    playersToAckSpeedChange: [ID]
   }
   type Turn {
     number: Int!
@@ -139,6 +141,7 @@ export const resolvers = {
             unmoved: [],
             canTarget: [],
             playersToAckDamage: [],
+            playersToAckSpeedChange: []
           },
           turn: {
             number: 0
@@ -215,6 +218,13 @@ export const resolvers = {
       if (ptadIndex === -1) { throw new Error(`player not waiting to ack damage: ${args.playerId}`)}
       match.time.phase.playersToAckDamage.splice(ptadIndex, 1)
       Phase.subphase5_damage({ match})
+    },
+    ackSpeedChange: (parent, args, context) => {
+      const match = DATA.matches.find(el => el.id === args.matchId)
+      const index = match.time.phase.playersToAckSpeedChange.indexOf(args.playerId)
+      if (index === -1) { throw new Error(`player not waiting to ack speed change: ${args.playerId}`)}
+      match.time.phase.playersToAckSpeedChange.splice(index, 1)
+      Phase.subphase_2_1_revealSpeedChange({ match})
     }
   }
 }

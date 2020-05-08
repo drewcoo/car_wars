@@ -4,20 +4,13 @@ import { degreesEqual } from '../../conversions'
 import Factory from './Factory'
 
 describe('Point', () => {
-  describe('#constuctor', () => {
-    it('throws on undefined inputs', () => {
-      expect(function () {
-        return new Point({})
-      }).toThrow(Error)
-    })
-  })
-
   describe('#rotateAround', () => {
     it('can rotate 90 degrees clockwise around a point', () => {
       const init = new Point({ x: 2, y: 1 })
       const fixedPoint = new Point({ x: 1, y: 1 })
       const result = init.rotateAround({ fixedPoint: fixedPoint, degrees: 90 })
-      expect(result.toArray()).toEqual([1, 2])
+      expect(result.x === 1)
+      expect(result.y === 2)
     })
 
     it('can rotate 90 degrees counterclockwise around a point', () => {
@@ -40,8 +33,8 @@ describe('Point', () => {
     const initial = Factory.Point()
     const digits = 2
     const fixed = initial.toFixed(digits)
-    expect(initial.x.toFixed(digits)).toEqual(fixed.x)
-    expect(initial.y.toFixed(digits)).toEqual(fixed.y)
+    expect(initial.x.toFixed(digits) === fixed.x)
+    expect(initial.y.toFixed(digits) === fixed.y)
   })
 
   describe('#degreesTo', () => {
@@ -60,10 +53,6 @@ describe('Point', () => {
 
   describe('#move', () => {
     const initial = new Point({ x: 3, y: 3 })
-
-    it('cannot take both degrees and radians', () => {
-      expect(function () { initial.move({ degrees: 0, radians: 0 }) }).toThrow(Error)
-    })
 
     it('can move point NORTH 3', () => {
       const moved = initial.move({ degrees: COMPASS.NORTH, distance: 3 })

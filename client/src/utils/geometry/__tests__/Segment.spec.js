@@ -3,26 +3,6 @@ import Segment from '../Segment'
 import Factory from './Factory'
 
 describe('Segment', () => {
-  describe('#constuctor', () => {
-    it('throws on constructor not called with two elements', () => {
-      expect(function () {
-        return new Segment([1, 2, 3])
-      }).toThrow(Error)
-    })
-
-    it('throws on element 0 not Point', () => {
-      expect(function () {
-        return new Segment(['notAPoint', Factory.Point()])
-      }).toThrow(Error)
-    })
-
-    it('throws on element 1 not Point', () => {
-      expect(function () {
-        return new Segment([Factory.Point(), []])
-      }).toThrow(Error)
-    })
-  })
-
   describe('#length', () => {
     it('is distance between points', () => {
       const segment = Factory.Segment()

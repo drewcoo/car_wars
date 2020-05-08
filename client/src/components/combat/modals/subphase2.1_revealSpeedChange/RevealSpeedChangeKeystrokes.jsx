@@ -4,30 +4,30 @@ import { graphql } from 'react-apollo'
 import { HotKeys } from 'react-hotkeys'
 import LocalMatchState from '../../lib/LocalMatchState'
 import ViewElement from '../../lib/ViewElement'
-import ackDamage from '../../../graphql/mutations/ackDamage'
+import ackSpeedChange from '../../../graphql/mutations/ackSpeedChange'
 
-const ACK_DAMAGE = graphql(ackDamage, { name: 'ackDamage' })
+const ACK_SPEED_CHANGE = graphql(ackSpeedChange, { name: 'ackSpeedChange' })
 
 class DamageKeystrokes extends React.Component {
   constructor (props) {
     super(props)
     this.state = { value: '' }
     this.keyMap = {
-      ackDamage: ['enter', 'esc'],
+      ack: ['enter', 'esc'],
       home: '.'
     }
   }
 
-  async ackDamage ({ matchId, playerId }) {
-    this.props.ackDamage({ variables: { matchId, playerId } })
+  async ack ({ matchId, playerId }) {
+    this.props.ackSpeedChange({ variables: { matchId, playerId } })
   }
 
   render () {
     const lms = new LocalMatchState(this.props.matchData)
     const playerId = lms.car({ id: this.props.carId }).playerId
     const handlers = {
-      ackDamage: (event) => {
-        this.ackDamage({
+      ack: (event) => {
+        this.ack({
           matchId: this.props.matchData.match.id,
           playerId: playerId
         })
@@ -49,5 +49,5 @@ class DamageKeystrokes extends React.Component {
 }
 
 export default compose(
-  ACK_DAMAGE
+  ACK_SPEED_CHANGE
 )(DamageKeystrokes)

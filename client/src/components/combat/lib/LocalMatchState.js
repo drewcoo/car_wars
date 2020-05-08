@@ -120,7 +120,7 @@ class LocalMatchState {
 
   speed ({ id }) {
     const phasing = this.car({ id }).phasing
-    return phasing.speedChanges[phasing.speedChangeIndex]
+    return phasing.speedChanges[phasing.speedChangeIndex].speed
   }
 
   nextSpeed ({ id }) {
@@ -129,21 +129,21 @@ class LocalMatchState {
     if (newIndex > phasing.speedChanges.length - 1) {
       newIndex = phasing.speedChanges.length - 1
     }
-    return phasing.speedChanges[newIndex]
+    return phasing.speedChanges[newIndex].speed
   }
 
   previousSpeed ({ id }) {
     const phasing = this.car({ id }).phasing
     let newIndex = phasing.speedChangeIndex - 1
     if (newIndex < 0) { newIndex = 0 }
-    return phasing.speedChanges[newIndex]
+    return phasing.speedChanges[newIndex].speed
   }
 
   setSpeedIndex ({ id, speedIndex }) {
     const phasing = this.car({ id }).phasing
     phasing.speedChangeIndex = speedIndex
 
-    return phasing.speedChanges[phasing.speedChangeIndex]
+    return phasing.speedChanges[phasing.speedChangeIndex].speed
   }
 
   target ({ id, targetId }) {

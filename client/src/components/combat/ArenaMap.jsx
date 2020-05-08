@@ -4,8 +4,21 @@ import Car from './Car'
 import MapBackground from './MapBackground'
 import Walls from './Walls'
 import ActiveCar from './ActiveCar'
+import ViewElement from './lib/ViewElement'
 
 class ArenaMap extends React.Component {
+  componentDidMount () {
+    const lms = new LocalMatchState(this.props.matchData)
+    if (lms.activeCar()) {
+      ViewElement(lms.activeCar().id)
+    } else {
+      const pid = localStorage.getItem('playerId')
+      if (pid && lms.cars().map(elem => elem.playerId).includes(pid)) {
+        ViewElement(lms.player(localStorage.getItem('playerId')).carIds[0])
+      }
+    }
+  }
+
   render () {
     const lms = new LocalMatchState(this.props.matchData)
     return (

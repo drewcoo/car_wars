@@ -7,6 +7,7 @@ import finishFiring from '../../../graphql/mutations/finishFiring'
 import fireWeapon from '../../../graphql/mutations/fireWeapon'
 import setTarget from '../../../graphql/mutations/setTarget'
 import setWeapon from '../../../graphql/mutations/setWeapon'
+import ViewElement from '../../lib/ViewElement'
 
 const FINISH_FIRING = graphql(finishFiring, { name: 'finishFiring' })
 const FIRE_WEAPON = graphql(fireWeapon, { name: 'fireWeapon' })
@@ -22,8 +23,9 @@ class FireKeystrokes extends React.Component {
       previousWeapon: 'shift+w',
       nextTarget: 't',
       previousTarget: 'shift+t',
-      fireWeapon: 'f',
-      finishFiring: 'enter',
+      fireWeapon: ['f'],
+      finishFiring: 'esc',
+      enter: 'enter',
       home: '.'
     }
   }
@@ -63,6 +65,11 @@ class FireKeystrokes extends React.Component {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
     const handlers = {
+      enter: (event) => {
+        // Fire if target, otherwise finish
+        this.fire({ id: car.id })
+        this.finishFiring({ id: car.id })
+      },
       nextWeapon: (event) => {
         lms.nextWeapon({ id: car.id })
         this.weaponSetter({
@@ -102,11 +109,11 @@ class FireKeystrokes extends React.Component {
         this.finishFiring({ id: car.id })
       },
       home: (event) => {
-        this.activeMoveReset({ id: car.id })
         this.weaponSetter({
           id: car.id,
           weaponIndex: 0
         })
+        ViewElement(car.id)
       }
     }
     return (

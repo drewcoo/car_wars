@@ -18,6 +18,7 @@ class FireModal extends React.Component {
   constructor (props) {
     super(props)
     this.handleClose = this.handleClose.bind(this)
+    this.handleEatIt = this.handleEatIt.bind(this)
     this.handleFire = this.handleFire.bind(this)
   }
 
@@ -44,54 +45,46 @@ class FireModal extends React.Component {
     this.finishFiring({ id: this.props.carId })
   }
 
+  handleEatIt (e) {
+    e.stopPropagation()
+  }
+
   handleFire () {
     this.fireWeapon({ id: this.props.carId })
   }
 
-  borderColor () {
-    const lms = new LocalMatchState(this.props.matchData)
-    const color = lms.player(localStorage.getItem('playerId')).color
-    return `3px solid ${color}`
-  }
+  buttons (car) {
+    const weapon = car.design.components.weapons[car.phasing.weaponIndex]
+    if (weapon.type === 'none') {
+      return (
+        <div>
+          <button
+            onClick={ this.handleClose }
+            className={'ReactModal__Buttons'}
+          >
+            Done
+          </button>
+        </div>
+      )
+    }
 
-  customStyles () {
-    return ({
-      content: {
-        top: '50%',
-        left: '80%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        backgroundColor: 'black',
-        color: 'white',
-        border: this.borderColor(),
-        borderRadius: '20px',
-        fontFamily: 'fantasy',
-        fontSize: '40px',
-        fontVariant: 'smallCaps',
-        opacity: 0.8
-      },
-      // no overlay
-      overlay: {
-        backgroundColor: 'rgba(0,0,0, .5)',
-        top: '50%',
-        bottom: '50%'
-      }
-    })
-  }
-
-  buttonStyle () {
-    return ({
-      backgroundColor: 'black',
-      border: this.borderColor(),
-      borderRadius: '20px',
-      color: 'white',
-      float: 'right',
-      fontFamily: 'fantasy',
-      fontSize: '40px',
-      fontVariant: 'smallCaps'
-    })
+    return (
+      <div>
+        <button
+          onClick={ this.handleFire }
+          className={'ReactModal__Buttons'}
+          style={{ float: 'left' }}
+        >
+            Fire
+        </button>
+        <button
+          onClick={ this.handleClose }
+          className={'ReactModal__Buttons'}
+        >
+            Done
+        </button>
+      </div>
+    )
   }
 
   render () {
@@ -101,37 +94,42 @@ class FireModal extends React.Component {
     if (!theCar) { return (<></>) }
     if (!lms.data.match.time.phase.canTarget.includes(car.id)) {
       return (
-        <Modal isOpen={ true } style={ this.customStyles() }>
-          <br/>firing . . .<br/>&nbsp;
-        </Modal>
+        <div onClick={ this.handleEatIt }>
+          <Modal
+            isOpen={ true }
+            className={'Modal.Content'}
+            overlayClassName={'Modal.Overlay'}
+          >
+            <br/>firing<br/>&nbsp;
+          </Modal>
+        </div>
       )
     }
+
+    console.log(this.props)
     return (
       <>
-      <Modal isOpen={ true } style={ this.customStyles() }>
-        <span>
-          <span style={ { color: car.color } }>{car.color}</span> fire
-        </span>
-        <br/>
-        <div className='ActionControls'>
-          <FireKeystrokes matchData={ this.props.matchData } carId={this.props.carId} />
-          <br/>
-          <WeaponSelector matchData={ this.props.matchData } carId={this.props.carId} />
-          <br/>
-          <TargetSelector matchData={ this.props.matchData } carId={this.props.carId} />
-          <br/>
-          <button onClick={ this.handleFire } style={ this.buttonStyle() }>
-            Fire
-          </button>
-          <button onClick={ this.handleClose } style={ this.buttonStyle() } >
-            Done
-          </button>
+        <div onClick={ this.handleEatIt }>
+          <Modal
+            isOpen={ true }
+            className={'Modal.Content'}
+            overlayClassName={'Modal.Overlay'}
+          >
+            <FireKeystrokes matchData={ this.props.matchData } carId={this.props.carId} />
+            <span className='flexCentered'>fire!</span>
+            <div className='ActionControls'>
+              <WeaponSelector matchData={ this.props.matchData } carId={this.props.carId} />
+              <br/>
+              <TargetSelector matchData={ this.props.matchData } carId={this.props.carId} />
+              <br/><br/>
+              { this.buttons(car) }
+            </div>
+          </Modal>
         </div>
-      </Modal>
-      <FiringArc
-        client={this.props.client}
-        matchData={ new LocalMatchState(this.props.matchData).data }
-        carId={ this.props.carId } />
+        <FiringArc
+          client={this.props.client}
+          matchData={ new LocalMatchState(this.props.matchData).data }
+          carId={ this.props.carId } />
       </>
     )
   }

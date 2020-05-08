@@ -6,7 +6,6 @@ import LocalMatchState from '../../lib/LocalMatchState'
 import Session from '../../lib/Session'
 import { graphql } from 'react-apollo'
 import doMove from '../../../graphql/mutations/doMove'
-import fireWeapon from '../../../graphql/mutations/fireWeapon'
 import activeManeuverNext from '../../../graphql/mutations/activeManeuverNext'
 import activeManeuverPrevious from '../../../graphql/mutations/activeManeuverPrevious'
 import activeManeuverSet from '../../../graphql/mutations/activeManeuverSet'
@@ -17,7 +16,6 @@ import activeMoveHalfForward from '../../../graphql/mutations/activeMoveHalfForw
 import activeMoveReset from '../../../graphql/mutations/activeMoveReset'
 import activeMoveSwerve from '../../../graphql/mutations/activeMoveSwerve'
 import activeShowCollisions from '../../../graphql/mutations/activeShowCollisions'
-import setTarget from '../../../graphql/mutations/setTarget'
 import setWeapon from '../../../graphql/mutations/setWeapon'
 
 //
@@ -35,22 +33,16 @@ import setWeapon from '../../../graphql/mutations/setWeapon'
 //
 
 const DO_MOVE = graphql(doMove, { name: 'doMove' })
-const FIRE_WEAPON = graphql(fireWeapon, { name: 'fireWeapon' })
-
 const ACTIVE_MANEUVER_NEXT = graphql(activeManeuverNext, { name: 'activeManeuverNext' })
 const ACTIVE_MANEUVER_PREVIOUS = graphql(activeManeuverPrevious, { name: 'activeManeuverPrevious' })
 const ACTIVE_MANEUVER_SET = graphql(activeManeuverSet, { name: 'activeManeuverSet' })
-
 const ACTIVE_MOVE_BEND = graphql(activeMoveBend, { name: 'activeMoveBend' })
 const ACTIVE_MOVE_DRIFT = graphql(activeMoveDrift, { name: 'activeMoveDrift' })
 const ACTIVE_MOVE_FORWARD = graphql(activeMoveForward, { name: 'activeMoveForward' })
 const ACTIVE_MOVE_HALF_FORWARD = graphql(activeMoveHalfForward, { name: 'activeMoveHalfForward' })
 const ACTIVE_MOVE_RESET = graphql(activeMoveReset, { name: 'activeMoveReset' })
 const ACTIVE_MOVE_SWERVE = graphql(activeMoveSwerve, { name: 'activeMoveSwerve' })
-
 const ACTIVE_SHOW_COLLISIONS = graphql(activeShowCollisions, { name: 'activeShowCollisions' })
-
-const SET_TARGET = graphql(setTarget, { name: 'setTarget' })
 const SET_WEAPON = graphql(setWeapon, { name: 'setWeapon' })
 
 class ManeuverKeystrokes extends React.Component {
@@ -58,18 +50,13 @@ class ManeuverKeystrokes extends React.Component {
     super(props)
     this.state = { value: '' }
     this.keyMap = {
-      fireWeapon: 'f',
-      nextManeuver: 'm',
-      previousManeuver: 'shift+m',
+      nextManeuver: ['m', 'down'],
+      previousManeuver: ['shift+m', 'up'],
+      acceptMove: ['a', 'enter'],
+      turnLeft: ['z', 'shift+x', 'left'],
+      turnRight: ['x', 'shift+z', 'right'],
       nextWeapon: 'w',
       previousWeapon: 'shift+w',
-
-      nextTarget: 't',
-      previousTarget: 'shift+t',
-      acceptMove: 'enter',
-      turnLeft: ['z', 'shift+x'],
-      turnRight: ['x', 'shift+z'],
-
       home: '.'
     }
   }
@@ -140,27 +127,6 @@ class ManeuverKeystrokes extends React.Component {
     })
   }
 
-  async targetSetter ({ id, targetIndex }) {
-    return this.props.setTarget({
-      variables: { id: id, targetIndex: targetIndex }
-    })
-  }
-
-  async fire ({ id }) {
-    const car = new LocalMatchState(this.props.matchData).car({ id })
-    const target = car.phasing.targets[car.phasing.targetIndex]
-    if (!target) { return }
-    await this.props.fireWeapon({
-      variables: {
-        id: id, // car id, so we can tell weapon fired from that (aimed fire)
-        targetId: target.carId,
-        targetName: target.name,
-        targetX: target.displayPoint.x,
-        targetY: target.displayPoint.y
-      }
-    })
-  }
-
   async doMove ({ id }) {
     await this.props.doMove({
       variables: {
@@ -210,10 +176,6 @@ class ManeuverKeystrokes extends React.Component {
   }
 
   respondUnlessModalShowing (handlers) {
-    const lms = new LocalMatchState(this.props.matchData)
-    if (lms.activeCar().modals.length > 0) {
-      return null
-    }
     return (
       <HotKeys
         attach={ document }
@@ -257,28 +219,10 @@ class ManeuverKeystrokes extends React.Component {
           weaponIndex: lms.weaponIndex({ id: car.id })
         })
       },
-      nextTarget: (event) => {
-        if (lms.activeCar().phasing.targets && lms.activeCar().phasing.targets.length > 0) {
-          lms.nextTarget({ id: car.id })
-          this.targetSetter({
-            id: car.id,
-            targetIndex: lms.currentTargetIndex({ id: car.id })
-          })
-        }
-      },
-      previousTarget: (event) => {
-        if (lms.activeCar().phasing.targets && lms.activeCar().phasing.targets.length > 0) {
-          lms.previousTarget({ id: car.id })
-          this.targetSetter({
-            id: car.id,
-            targetIndex: lms.currentTargetIndex({ id: car.id })
-          })
-        }
-      },
-      fireWeapon: (event) => {
-        this.fire({ id: car.id })
-      },
       acceptMove: (event) => {
+        console.log('herereeee!!!')
+        this.props.handlers.accept(event)
+        /*
         var moved = (car.rect.brPoint().x !== car.phasing.rect.brPoint().x) ||
                      (car.rect.brPoint().y !== car.phasing.rect.brPoint().y)
         if (moved) {
@@ -288,6 +232,7 @@ class ManeuverKeystrokes extends React.Component {
             howFar: 0
           })
         }
+        */
       },
       turnRight: (event) => {
         this.turnRight(true)
@@ -312,7 +257,6 @@ class ManeuverKeystrokes extends React.Component {
 
 export default compose(
   DO_MOVE,
-  FIRE_WEAPON,
   ACTIVE_MOVE_FORWARD,
   ACTIVE_MOVE_HALF_FORWARD,
   ACTIVE_MOVE_DRIFT,
@@ -323,6 +267,5 @@ export default compose(
   ACTIVE_MOVE_BEND,
   ACTIVE_MOVE_SWERVE,
   ACTIVE_MANEUVER_SET,
-  SET_TARGET,
   SET_WEAPON
 )(ManeuverKeystrokes)
