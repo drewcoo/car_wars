@@ -1,12 +1,10 @@
-import { DATA,  matchCars } from '../DATA'
+import { DATA, matchCars } from '../DATA'
 import Log from '../utils/Log'
-
-// Good grief.
-// I think we're checking all cars and not just the ones in the match
+import Control from './Control'
 
 class Collisions {
-  static clear ({ cars }) {
-    cars.forEach(car => {
+  static clear({ match, _data }) {
+    matchCars({ match, _data }).forEach((car) => {
       // This is ugly.
       car.phasing.collisionDetected = false
       car.collisionDetected = false
@@ -15,85 +13,33 @@ class Collisions {
     })
   }
 
-  static damageModifierFromWeight (weight) {
+  static damageModifierFromWeight(weight) {
     // p.17
     // pedestrians have DM of 1/5
-    if (weight <= 2000) { return 1 / 3 }
-    if (weight <= 4000) { return 2 / 3 }
-    return Math.ceiling(weight / 4000) + 1
-  }
-
-  static temporarySpeed ({ thisDM, otherDM, speed }) {
-    // p. 21
-    const table = [
-      [1 / 2, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0],
-      [1, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-      [1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-      [1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-      [1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-      [1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-      [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-      [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-      [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-      [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4],
-      [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4],
-      [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-      [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-      [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-      [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-      [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-      [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-      [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-      [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2]
-    ]
-    const row = (thisDM >= 1) ? (thisDM + 1) : (thisDM * 3 - 1)
-    const column = (otherDM >= 1) ? (otherDM + 1) : (otherDM * 3 - 1)
-    let unroundedResult = table[row][column] * speed
-    return Math.ceil(unroundedResult / 5) * 5 // round up to nearest 5MPH
-  }
-
-  static ramDamageBySpeed (speed) {
-    if (speed < 0) { throw new Error(`speed < 0! "${speed}"`) }
-    if (speed % 5 !== 0) { throw new Error(`speed not multiple of 5: "${speed}"`) }
-    switch (speed) {
-      case 0:
-        return '0d'
-      case 5:
-        return '1d-4'
-      case 10:
-        return '1d−2'
-      case 15:
-        return '1d−1'
-      case 20:
-      case 25:
-        return '1d'
-      default:
-        return `${speed / 5 - 5}d`
+    if (weight <= 2000) {
+      return 1 / 3
     }
+    if (weight <= 4000) {
+      return 2 / 3
+    }
+    return Math.ceil(weight / 4000) - 1
   }
 
-  static handlingChange(speed) {
-    let result = Math.floor(speed / 10)
-    if (result === 0) { result = 1 }
-    return result
+  static detect({ cars, map, thisCar }) {
+    const walls = map.wallData
+    const match = DATA.matches.find((elem) => elem.id === thisCar.currentMatch)
+    // clear old collision data just in case
+    Collisions.clear({ match })
+    Collisions.detectWithCars({ cars, thisCar })
+    Collisions.detectWithWalls({ walls, thisCar })
   }
 
-  static normalizeHandlingStatus(status) {
-    if (status < -6) { return -6 }
-    if (status > 7) { return 7 }
-    return status
-  }
-
-  //
-  // START HERE!!
-  //
   // BUGBUG: Assumes forward movement; not reverse.
-  static detectWithCars ({ cars, thisCar }) {
-    cars.forEach(car => {
-      if (car.id === thisCar.id) { return }
+  static detectWithCars({ cars, thisCar }) {
+    cars.forEach((car) => {
+      if (car.id === thisCar.id) {
+        return
+      }
 
       const rammer = { rammed: car.id }
       const rammed = { rammedBy: thisCar.id }
@@ -105,19 +51,30 @@ class Collisions {
         let collisionSpeed = 'NOT SET'
         let damageToEach = 'NOT SET'
 
-        const arcOfRammedVehicle = car.rect.arcForPoint(thisCar.rect.fSide().middle())
+        const arcOfRammedVehicle = car.rect.arcForPoint(
+          thisCar.rect.fSide().middle(),
+        )
 
-        if ((arcOfRammedVehicle === 'F' && car.status.speed >= 0) ||
-            (arcOfRammedVehicle === 'R' && car.status.speed < 0)) {
+        if (
+          (arcOfRammedVehicle === 'F' && car.status.speed >= 0) ||
+          (arcOfRammedVehicle === 'R' && car.status.speed < 0)
+        ) {
           // BUGBUG: handle reverse speeds
 
           rammer.type = rammed.type = 'head-on'
           collisionSpeed = thisCar.status.speed + car.status.speed
           damageToEach = Collisions.ramDamageBySpeed(collisionSpeed)
           rammer.damage = rammed.damage = damageToEach
-          rammer.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
-          rammed.damageModifier = Collisions.damageModifierFromWeight(car.design.attributes.weight)
-          rammer.handlingStatus = this.normalizeHandlingStatus(car.status.handling - this.handlingChange(car.status.speed))
+          rammer.damageModifier = Collisions.damageModifierFromWeight(
+            thisCar.design.attributes.weight,
+          )
+          rammed.damageModifier = Collisions.damageModifierFromWeight(
+            car.design.attributes.weight,
+          )
+          rammer.handlingStatus = Control.normalizeHandlingStatus(
+            car.status.handling -
+              this.handlingChange({ speed: car.status.speed }),
+          )
           rammed.newSpeed = 0
           if (thisCar.status.speed <= car.status.speed) {
             rammed.newSpeed = car.status.speed - thisCar.status.speed
@@ -125,36 +82,63 @@ class Collisions {
             rammer.newSpeed = thisCar.status.speed - car.status.speed
           }
           Log.info('head-on collision', thisCar)
-          Log.info(`handling: ${thisCar.status.handling}; change: ${this.handlingChange(rammer.newSpeed)}`, thisCar)
-        } else if ((arcOfRammedVehicle === 'B' && car.status.speed >= 0) ||
-                   (arcOfRammedVehicle === 'F' && car.status.speed < 0)) {
+          Log.info(
+            `handling: ${
+              thisCar.status.handling
+            }; change: ${this.handlingChange({ speed: rammer.newSpeed })}`,
+            thisCar,
+          )
+        } else if (
+          (arcOfRammedVehicle === 'B' && car.status.speed >= 0) ||
+          (arcOfRammedVehicle === 'F' && car.status.speed < 0)
+        ) {
           // BUGBUG: handle reverse speeds
           rammer.type = rammed.type = 'rear-end'
 
           collisionSpeed = thisCar.status.speed - car.status.speed
           damageToEach = Collisions.ramDamageBySpeed(collisionSpeed)
           rammer.damage = rammed.damage = damageToEach
-          rammer.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
-          rammed.damageModifier = Collisions.damageModifierFromWeight(car.design.attributes.weight)
+          rammer.damageModifier = Collisions.damageModifierFromWeight(
+            thisCar.design.attributes.weight,
+          )
+          rammed.damageModifier = Collisions.damageModifierFromWeight(
+            car.design.attributes.weight,
+          )
 
-          let tmp = this.temporarySpeed ({
-            thisDM: rammer.damageModifier,
-            otherDM: rammed.damageModifier,
-            speed: thisCar.status.speed
-          }) + this.temporarySpeed ({
-            thisDM: rammed.damageModifier,
-            otherDM: rammer.damageModifier,
-            speed: car.status.speed
-          }) / 2
+          const tmp =
+            this.temporarySpeed({
+              thisDM: rammer.damageModifier,
+              otherDM: rammed.damageModifier,
+              speed: thisCar.status.speed,
+            }) +
+            this.temporarySpeed({
+              thisDM: rammed.damageModifier,
+              otherDM: rammer.damageModifier,
+              speed: car.status.speed,
+            }) /
+              2
           rammer.newSpeed = rammed.newSpeed = Math.floor(tmp / 5) * 5
 
           Log.info('rear end collision', thisCar)
-          Log.info(`handling: ${thisCar.status.handling}; change: ${this.handlingChange(rammer.newSpeed)}`, thisCar)
-          rammer.handlingStatus = this.normalizeHandlingStatus(thisCar.status.handling - this.handlingChange(rammer.newSpeed))
-          rammed.handlingStatus = this.normalizeHandlingStatus(car.status.handling - this.handlingChange(rammed.newSpeed))
+          Log.info(
+            `handling: ${
+              thisCar.status.handling
+            }; change: ${this.handlingChange({ speed: rammer.newSpeed })}`,
+            thisCar,
+          )
+          rammer.handlingStatus = Control.normalizeHandlingStatus(
+            thisCar.status.handling -
+              this.handlingChange({ speed: rammer.newSpeed }),
+          )
+          rammed.handlingStatus = Control.normalizeHandlingStatus(
+            car.status.handling -
+              this.handlingChange({ speed: rammed.newSpeed }),
+          )
         } else {
-          if (Collisions.isSideswipe({ car: thisCar, other: car, skew })) {
-            const facingDelta = Math.abs(car.rect.facing - thisCar.phasing.rect.facing)
+          if (Collisions.isSideswipe({ rammer: thisCar, rammed: car })) {
+            const facingDelta = Math.abs(
+              car.rect.facing - thisCar.phasing.rect.facing,
+            )
 
             let netSpeed = 0
             if (facingDelta >= 0 && facingDelta <= 45) {
@@ -164,35 +148,58 @@ class Collisions {
               rammer.type = rammed.type = 'different-direction-sideswipe'
               netSpeed = Math.abs(car.status.speed + thisCar.status.speed)
             }
-            collisionSpeed = Math.ceil((netSpeed / 4) / 5) * 5
+            collisionSpeed = Math.ceil(netSpeed / 4 / 5) * 5
 
-            rammer.damage = rammed.damage = Collisions.ramDamageBySpeed(collisionSpeed)
-            rammer.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
-            rammed.damageModifier = Collisions.damageModifierFromWeight(car.design.attributes.weight)
+            rammer.damage = rammed.damage = Collisions.ramDamageBySpeed(
+              collisionSpeed,
+            )
+            rammer.damageModifier = Collisions.damageModifierFromWeight(
+              thisCar.design.attributes.weight,
+            )
+            rammed.damageModifier = Collisions.damageModifierFromWeight(
+              car.design.attributes.weight,
+            )
 
-            rammer.handlingStatus = this.normalizeHandlingStatus(thisCar.status.handling - this.handlingChange(collisionSpeed))
-            rammed.handlingStatus = this.normalizeHandlingStatus(car.status.handling - this.handlingChange(collisionSpeed))
+            rammer.handlingStatus = Control.normalizeHandlingStatus(
+              thisCar.status.handling -
+                this.handlingChange({ speed: collisionSpeed }),
+            )
+            rammed.handlingStatus = Control.normalizeHandlingStatus(
+              car.status.handling -
+                this.handlingChange({ speed: collisionSpeed }),
+            )
 
             rammer.newSpeed = thisCar.status.speed
             rammed.newSpeed = car.status.speed
           } else {
             rammer.type = rammed.type = 't-bone'
             collisionSpeed = thisCar.status.speed
-            rammer.damage = rammed.damage = Collisions.ramDamageBySpeed(collisionSpeed)
-            rammer.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
-            rammed.damageModifier = Collisions.damageModifierFromWeight(car.design.attributes.weight)
+            rammer.damage = rammed.damage = Collisions.ramDamageBySpeed(
+              collisionSpeed,
+            )
+            rammer.damageModifier = Collisions.damageModifierFromWeight(
+              thisCar.design.attributes.weight,
+            )
+            rammed.damageModifier = Collisions.damageModifierFromWeight(
+              car.design.attributes.weight,
+            )
 
-            rammer.newSpeed = this.temporarySpeed ({
+            rammer.newSpeed = this.temporarySpeed({
               thisDM: rammer.damageModifier,
               otherDM: rammed.damageModifier,
-              speed: thisCar.status.speed
+              speed: thisCar.status.speed,
             })
-            console.log(rammer.newSpeed)
-            rammed.newSpeed = car.status.speed
-            console.log(rammed.newSpeed)
 
-            rammer.handlingStatus = this.normalizeHandlingStatus(thisCar.status.handling - this.handlingChange(rammer.newSpeed))
-            rammed.handlingStatus = this.normalizeHandlingStatus(car.status.handling - this.handlingChange(rammed.newSpeed))
+            rammed.newSpeed = car.status.speed
+
+            rammer.handlingStatus = Control.normalizeHandlingStatus(
+              thisCar.status.handling -
+                this.handlingChange({ speed: rammer.newSpeed }),
+            )
+            rammed.handlingStatus = Control.normalizeHandlingStatus(
+              car.status.handling -
+                this.handlingChange({ speed: rammed.newSpeed }),
+            )
           }
         }
 
@@ -203,23 +210,12 @@ class Collisions {
     })
   }
 
-  static isSideswipe ({ car, other, skew }) {
-    var delta = Math.abs((car.phasing.rect.facing + 360) % 360 - (other.rect.facing + 360) % 360)
-    // first mod to one side
-    delta %= 180
-    // then anything > 45 deg from the middle is a sideswipe.
-    //
-    // BUGBUG: At exactly 45 degrees from perpendicular this could be a sideswipe
-    // or not. pp 18-19 don't specify which to choose. I chose to treat the
-    // boundary cases a non-sideswipes.
-    return (delta < 45 || delta > 135)
-  }
-
   // BUGBUG: Assumes forward movement; not reverse.
-  static detectWithWalls ({ thisCar, walls }) {
-
+  static detectWithWalls({ thisCar, walls }) {
     // shortcut - premature optimization?
-    if (thisCar.phasing.collisionDetected) { return }
+    if (thisCar.phasing.collisionDetected) {
+      return
+    }
 
     for (const wall of walls) {
       // var skew = thisCar.phasing.rect.intersectRectangle(wall.rect);
@@ -228,31 +224,39 @@ class Collisions {
       if (skew) {
         thisCar.phasing.collisionDetected = true
         Log.info(`detect ${thisCar.color} car collisions with walls`, thisCar)
-        let collisionInfo = {
+        const collisionInfo = {
           damage: 0,
           damageModifier: 0,
           rammed: wall.id,
-          type: 'unknown'
+          type: 'unknown',
         }
 
-        var type = 'unknown'
-        if (Collisions.isSideswipe({ car: thisCar, other: wall, skew })) {
+        // all wall collisiions are sideswipe or head-on
+        if (Collisions.isSideswipe({ rammer: thisCar, rammed: wall })) {
           // TODO : determine same/opposite dir sideswipe based on facings.
           collisionInfo.type = 'sideswipe'
-          let netSpeed = Math.abs(thisCar.status.speed)
-          collisionSpeed = Math.ceil((netSpeed / 4) / 5) * 5
+          const netSpeed = Math.abs(thisCar.status.speed)
+          const collisionSpeed = Math.ceil(netSpeed / 4 / 5) * 5
           collisionInfo.damage = Collisions.ramDamageBySpeed(collisionSpeed)
-          collisionInfo.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
-          collisionInfo.handlingStatus = this.normalizeHandlingStatus(thisCar.status.handling - this.handlingChange(collisionSpeed))
+          collisionInfo.damageModifier = Collisions.damageModifierFromWeight(
+            thisCar.design.attributes.weight,
+          )
+          collisionInfo.handlingStatus = Control.normalizeHandlingStatus(
+            thisCar.status.handling -
+              this.handlingChange({ speed: collisionSpeed }),
+          )
           collisionInfo.newSpeed = thisCar.status.speed
         } else {
           collisionInfo.type = 'head-on'
-          collisionSpeed = thisCar.status.speed
-          damage = Collisions.ramDamageBySpeed(collisionSpeed)
-          let rammer = {}
+          const collisionSpeed = thisCar.status.speed
+          const damage = Collisions.ramDamageBySpeed(collisionSpeed)
           collisionInfo.damage = damage
-          collisionInfo.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
-          collisionInfo.handlingStatus = this.normalizeHandlingStatus(-Math.floor(thisCar.status.speed / 10))
+          collisionInfo.damageModifier = Collisions.damageModifierFromWeight(
+            thisCar.design.attributes.weight,
+          )
+          collisionInfo.handlingStatus = Control.normalizeHandlingStatus(
+            -Math.floor(thisCar.status.speed / 10),
+          )
           collisionInfo.newSpeed = 0
         }
         console.log(collisionInfo)
@@ -261,16 +265,69 @@ class Collisions {
     }
   }
 
-  static detect ({ cars, map, thisCar }) {
-    const walls = map.wallData
-    // clear old collision data just in case
-    Collisions.clear({ cars })
-    Collisions.detectWithCars({ cars, thisCar })
-    Collisions.detectWithWalls({ walls, thisCar })
+  static handlingChange({ speed }) {
+    let result = Math.floor(Math.abs(speed) / 10)
+    if (result === 0) {
+      result = 1
+    }
+    return result
   }
 
-  static resolve ({ car, collision }) {
-    console.log(`handle collision:`)
+  static isSideswipe({ rammer, rammed }) {
+    var delta = Math.abs(
+      ((rammer.phasing.rect.facing + 360) % 360) -
+        ((rammed.rect.facing + 360) % 360),
+    )
+    // first mod to one side
+    delta %= 180
+    // then anything > 45 deg from the middle is a sideswipe.
+    //
+    // BUGBUG: At exactly 45 degrees from perpendicular this could be a sideswipe
+    // or not. pp 18-19 don't specify which to choose. I chose to treat the
+    // boundary cases a non-sideswipes.
+    return delta < 45 || delta > 135
+  }
+
+  static ramDamageBySpeed(speed) {
+    if (speed < 0) {
+      throw new Error(`speed < 0! "${speed}"`)
+    }
+    if (speed % 5 !== 0) {
+      throw new Error(`speed not multiple of 5: "${speed}"`)
+    }
+    switch (speed) {
+      case 0:
+        return '0d'
+      case 5:
+        return '1d-4'
+      case 10:
+        return '1d-2'
+      case 15:
+        return '1d-1'
+      case 20:
+      case 25:
+        return '1d'
+      default:
+        return `${speed / 5 - 5}d`
+    }
+  }
+
+  static resolve({ car, collision }) {
+    /*
+  Need to figure out mechanics for these:
+
+   p.19: "The driver of the conforming vehicle selects an appropriate pivot corner from the choices shown in
+Figure 10."
+
+  p. 20: "If a collision occurs and it is on the border of two types of collisions, the defender
+decides what type of collision it is."
+
+  Also, beware this:
+  p.20: "Note that subsequent phases in which
+the vehicles are still in contact are not new
+collisions"
+  */
+    console.log('handle collision:')
     console.log(collision)
     // have a game object class
     // let this be a collision of objects.
@@ -285,40 +342,44 @@ class Collisions {
     */
   }
 
-  //
-  //  (T-Bone, Head-On, Rear-End or Sideswipe)
-  //
-  // head-on - collide from the other vehicle's front arc
-  //
-  // rear end - collide from the other vehicle's back arc
-  //
-  // sideswipe - collide into a vehicles's side, from its side arc, but
-  // in the direction of (or opposite of) it's front and back arcs
-  // Can be same dir or opposite dir.
-  //
-  // t-bone - collie into a vehicle's side, from any direction opposite its
-  // side arc
-  //
-  // all wall collisiions are sideswipe or head-on
-  //
-  /*
-  Need to figure out mechanics for these:
-
-   p.19: "The driver of the conforming vehicle selects an appropriate pivot corner from the choices shown in
-Figure 10."
-
-  p. 20: "If a collision occurs and it is on the border of two types of collisions, the defender
-decides what type of collision it is."
-
-  Also, beware this:
-  p.20: "Note that subsequent phases in which
-the vehicles are still in contact are not new
-collisions"
-  */
-  //
-
-  //
-  //
+  static temporarySpeed({ thisDM, otherDM, speed }) {
+    if (thisDM <= 0) {
+      throw new Error(`invalid DM: ${thisDM}`)
+    }
+    if (otherDM <= 0) {
+      throw new Error(`invalid DM: ${otherDM}`)
+    }
+    const table =
+      // prettier-ignore
+      [
+        [1 / 2, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0],
+        [1, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+        [1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+        [1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+        [1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+        [1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4],
+        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4],
+        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+      ]
+    const row = thisDM >= 1 ? thisDM + 1 : thisDM * 3 - 1
+    const column = otherDM >= 1 ? otherDM + 1 : otherDM * 3 - 1
+    const unroundedResult = table[row][column] * speed
+    return Math.ceil(unroundedResult / 5) * 5 // round up to nearest 5MPH
+  }
 }
 
 export default Collisions

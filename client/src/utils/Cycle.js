@@ -24,7 +24,7 @@ class Cycle {
   }
 
   setIndex(index) {
-    if (index < 0 || index > this.elements.length -1 ) {
+    if (index < 0 || index > this.elements.length - 1) {
       throw new Error(`Index out of range: ${index}`)
     }
     this.index = index

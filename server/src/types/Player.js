@@ -1,5 +1,5 @@
 import uuid from 'uuid/v4'
-import { DATA,  matchCars } from '../DATA'
+import { DATA } from '../DATA'
 
 DATA.players = []
 
@@ -22,28 +22,28 @@ export const typeDef = `
 
 export const resolvers = {
   Query: {
-    player: (parent, args, context) =>  {
-      return DATA.players.find(el => el.id === args.id)
+    player: (parent, args, context) => {
+      return DATA.players.find((el) => el.id === args.id)
     },
-    players: () =>  {
+    players: () => {
       return DATA.players
     },
   },
   Mutation: {
     addCar: (parent, args, context) => {
-      player = DATA.players.find(player => player.id === args.playerId)
+      const player = DATA.players.find((player) => player.id === args.playerId)
       player.carIds.push(args.carId)
       return player
     },
     createPlayer: (parent, args, context) => {
-      let newPlayer = {
+      const newPlayer = {
         id: args.id || uuid(),
         name: args.name,
         carIds: [],
-        color: args.color
+        color: args.color,
       }
       DATA.players.push(newPlayer)
       return newPlayer
     },
-  }
+  },
 }

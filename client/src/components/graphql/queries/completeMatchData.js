@@ -2,7 +2,7 @@ import { gql } from 'apollo-boost'
 
 const completeMatchData = gql`
   query($matchId: ID!) {
-    completeMatchData (matchId: $matchId) {
+    completeMatchData(matchId: $matchId) {
       match {
         id
         carIds

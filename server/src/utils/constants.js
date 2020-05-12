@@ -8,7 +8,7 @@ export const FACE = Object.freeze({
   RIGHT: 90,
   R: 90,
   BACK: 180,
-  B: 180
+  B: 180,
 })
 
 export const COMPASS = Object.freeze({
@@ -19,5 +19,5 @@ export const COMPASS = Object.freeze({
   WEST: 180,
   W: 180,
   NORTH: 270,
-  N: 270
+  N: 270,
 })

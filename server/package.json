@@ -2,11 +2,15 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
+  "jest": {
+    "verbose": true
+  },
   "main": "index.js",
   "scripts": {
     "debug": "babel-watch --inspect 9229 src/index.js",
     "start": "babel-watch src/index.js",
-    "test": "jest *.spec.js --watchAll"
+    "test": "jest --testMatch **/__tests__/**/*.spec.js --watchAll",
+    "cover": "jest --testMatch **/__tests__/**/*.spec.js --coverage"
   },
   "keywords": [],
   "author": "",
@@ -16,10 +20,23 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
     "@babel/preset-typescript": "^7.8.3",
+    "@typescript-eslint/eslint-plugin": "^2.32.0",
+    "@typescript-eslint/parser": "^2.32.0",
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-watch": "^7.0.0",
-    "jest": "^26.0.1"
+    "eslint": "^7.0.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.10.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "jest": "^26.0.1",
+    "prettier": "2.0.5"
   },
   "dependencies": {
     "@babel/core": "^7.8.3",

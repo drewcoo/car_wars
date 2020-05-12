@@ -1,133 +1,93 @@
-import Dice from '../utils/Dice'
+import _ from 'lodash'
 import { INCH } from '../utils/constants'
+import Dice from '../utils/Dice'
 import Log from '../utils/Log'
 
 class Control {
-  static foo () {
-    return 'bar'
-  }
-
-  static table = [
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2'], // 5-10
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '4'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '4'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '4', '5'], // 45-50
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '4', '4', '5'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '4', '5', '6'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '3', '4', '5', '5', '6'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '5', '5', '6', 'XX'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '4', '5', '6', '6', 'XX'], // 95-100
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '3', '4', '6', '6', 'XX', 'XX'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '4', '5', '6', 'XX', 'XX', 'XX'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '3', '4', '6', 'XX', 'XX', 'XX', 'XX']
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX', 'XX'], // 145-150
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '4', '5', '6', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', '3', '4', '6', 'XX', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', '2', '4', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', 'safe', 'safe', 'safe', 'safe', '3', '4', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'], // 195-200
-    ['safe', 'safe', 'safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', 'safe', 'safe', 'safe', '2', '4', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', 'safe', 'safe', 'safe', '3', '4', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', 'safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', 'safe', 'safe', '2', '4', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'], // 245-250
-    ['safe', 'safe', '2', '3', '4', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', '2', '3', '4', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', '2', '3', '4', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
-    ['safe', '3', '4', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'] // 295-300
-  ]
+  static table =
+    // prettier-ignore
+    [
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2'], // 5-10
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '4'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '4'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '4', '5'], // 45-50
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '4', '4', '5'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '4', '5', '6'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '3', '4', '5', '5', '6'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '5', '5', '6', 'XX'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '4', '5', '6', '6', 'XX'], // 95-100
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '3', '4', '6', '6', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '4', '5', '6', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', '3', '4', '6', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX', 'XX'], // 145-150
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', '2', '4', '5', '6', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', '3', '4', '6', 'XX', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', '2', '4', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', 'safe', 'safe', '3', '4', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'], // 195-200
+      ['safe', 'safe', 'safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', 'safe', '2', '4', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', 'safe', '3', '4', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', 'safe', '2', '4', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'], // 245-250
+      ['safe', 'safe', '2', '3', '4', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', 'safe', '2', '3', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', '2', '3', '4', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', '2', '3', '4', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
+      ['safe', '3', '4', '5', '6', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'], // 295-300
+    ]
 
   static statusIndex = [7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
 
-  static row({ speed }) {
-    let absSpeed = Math.abs(speed)
-    if (absSpeed <= 5) {
-      return ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe']
-    }
-    let tableRow = Math.ceil(absSpeed / 10) - 1
-    return Control.table[tableRow]
-  }
-
-  static crashModifier({ speed }) {
-    let absSpeed = Math.abs(speed)
-    if (absSpeed <= 5) {
-      return null
-    }
-    let tableRow = Math.ceil(absSpeed / 10) - 1
-    let mods = [-3, -2, -1, 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9]
-    return mods[tableRow]
-  }
-
   static checkNeeded({ speed, handlingStatus }) {
-    Log.info('in checkNeeded', )
-    let row = Control.row({ speed })
-
-    if (row === null) {
-      Log.info('too slow - no crash roll')
-      return 'safe'
-    }
-    if (speed === 0) {
-      Log.info('speed 0 - SAFE', car)
-      return 'safe'
-    }
-
-    Log.info(`checkneeded - handling status: ${handlingStatus} at speed ${speed}:`)
-    Log.info(Control.statusIndex)
-    Log.info(`column = ${Control.statusIndex.indexOf(handlingStatus)}`)
-    let column = Control.statusIndex.indexOf(handlingStatus)
-    Log.info(row.map((value, index) => {
-      return (index === column) ? `[${value}]` : value
-    }).join())
-    Log.info(`needed? ${row[column]}`)
+    const row = Control.row({ speed })
+    const column = Control.statusIndex.indexOf(handlingStatus)
     return row[column]
   }
 
-  static loseControl({ car }) {
-    Log.info('in loseControl', car)
-    let needed = Control.checkNeeded({ speed: car.status.speed, handlingStatus: car.status.handling })
-    Log.info(needed, car)
-    if (needed === 'safe') { return false }
-    if (needed === 'XX') { return true }
-    let roll = Dice.roll()
-    Log.info(`control roll: ${roll}`, car)
-    if (roll >= needed) { return false }
-    return true
+  static crashModifier({ speed }) {
+    const absSpeed = Math.abs(speed)
+    if (absSpeed < 5) {
+      return null
+    }
+    const tableRow = Math.ceil(absSpeed / 10) - 1
+    const mods =
+      // prettier-ignore
+      [-3, -2, -1, 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9]
+    return mods[tableRow]
   }
-
-  static spinDirection() {
-    let result = (Math.floor(Math.random() * 2) == 0) ? 'right' : 'left'
-    return result
-  }
-
-  // between failed maneuver checks and bootleggers (and other?),
-  // should I add a "next turn"
 
   // pass in a car and get everything from it?
   // also set everything on it, including moving it plus future moves
-  // a.k.a. Table 2
-  static hazardCheck({ car, hazard }) {
+  // a.k.a. Crash Table 2
+  static hazardCheck({ car, difficulty }) {
     let result = 'pass'
-    Log.info('hazard check', car)
-    Log.info(`handling: ${car.status.handling} - ${hazard} = ${car.status.handling - hazard}`, car)
-    car.status.handling -= hazard
-    if (car.status.handling < -6) { car.status.handling = -6 }
-    let skillBonus = 0 // BUGBUG: get from character + reflex instead
+    Log.info(
+      `hazard check, modified handling: ${
+        car.status.handling
+      } - ${difficulty} = ${car.status.handling - difficulty}`,
+      car,
+    )
+    car.status.handling = Control.normalizeHandlingStatus(
+      car.status.handling - difficulty,
+    )
+
     if (!Control.loseControl({ car })) {
-      Log.info(`passed control check`, car)
       return result
     }
-    Log.info('lose control!', car)
-    let dieRoll = Dice.roll('2d')
-    Log.info(`roll (2d6): ${dieRoll}`, car)
-    Log.info(`+ D${hazard}`, car)
-    let crashModifier = Control.crashModifier({ speed: car.status.speed })
-    Log.info(`+ crash modifier: ${crashModifier}`, car)
-    Log.info(`- skill bonus: ${skillBonus}`, car)
+    const dieRoll = Dice.roll('2d')
+    const skillBonus = 0 // BUGBUG: get from character + reflex instead
+    Log.info(`speed: ${car.status.speed}`)
+    const crashModifier = Control.crashModifier({ speed: car.status.speed })
+    Log.info(`crashModifier: ${crashModifier}`)
 
-    let crashRoll = dieRoll + hazard - skillBonus + crashModifier
+    Log.info(
+      `crash roll = ${dieRoll} (2d) + ${difficulty} (difficulty) + ${skillBonus} (skill) + ${crashModifier} (crash mod)`,
+      car,
+    )
+    const crashRoll = dieRoll + difficulty - skillBonus + crashModifier
     Log.info(`total crash roll: ${crashRoll}`, car)
 
     Log.info(`${car.color} FISHTAILS!`, car)
@@ -138,102 +98,125 @@ class Control {
         fishtailDistance: 0,
         maneuver: null,
         maneuverDirection: null,
-        maneuverDistance: 0
+        maneuverDistance: 0,
       }
     }
 
-    let spinDirection = (car.status.nextMove[0].spinDirection != '') ? car.status.nextMove[0].spinDirection : Control.spinDirection()
+    const spinDirection =
+      car.status.nextMove[0].spinDirection !== ''
+        ? car.status.nextMove[0].spinDirection
+        : Control.spinDirection()
     Log.info(`fishtail to the ${spinDirection}`, car)
-    Log.info(crashRoll, car)
-    Log.info(`initial result: ${result}`, car)
-    let oldDistance = Math.abs(car.status.nextMove[0].fishtailDistance)
-    console.log(`old distance: ${oldDistance}`)
+    const oldDistance = Math.abs(car.status.nextMove[0].fishtailDistance)
+
     if (crashRoll <= 4) {
-      Log.info('<= 4', car)
       if (oldDistance < 15) {
         car.status.nextMove[0].fishtailDistance = 15
         car.status.nextMove[0].spinDirection = spinDirection
         // Any further aimed weapon fire from Control vehicle on Control turn will be at a −3 to hit
-        result = 'minor fishtail - 1/4"'
+        result = 'minor fishtail'
       } else {
-        result = 'NOT a minor fishtail - 1/4"'
+        result = 'NOT a minor fishtail'
       }
-      Log.info(result, car)
     } else if (crashRoll <= 8) {
-      Log.info('<= 8', car)
       if (Math.abs(car.status.nextMove[0].fishtailDistance) < 30) {
         car.status.nextMove[0].fishtailDistance = 30
         car.status.nextMove[0].spinDirection = spinDirection
         // Any further aimed weapon fire from Control vehicle on Control turn will be at a −6 to hit
-        result = 'major fishtail - 1/2"'
+        result = 'major fishtail'
       } else {
-        result = 'NOT a major fishtail - 1/2"'
+        result = 'NOT a major fishtail'
       }
-      Log.info(result, car)
     } else if (crashRoll <= 10) {
-      Log.info('<= 10', car)
       if (car.status.nextMove[0].maneuver === null) {
         car.status.nextMove[0].fishtailDistance = 15
         car.status.nextMove[0].spinDirection = spinDirection
         Log.info('fishtail 1/4" plus maneuver check . . .', car)
-        let maneuverCheckString = Control.maneuverCheck({ car })
         // Any further aimed weapon fire from Control vehicle on Control turn will be at a −6 to hit
-        result = `minor fishtail (1/4") and ${maneuverCheckString}`
+        result = 'minor fishtail and roll on Crash Table 1'
       } else {
-        result = `NOT a minor fishtail (1/4") plus crash table 1`
+        result = 'NOT minor fishtail and roll on Crash Table 1'
       }
-      Log.info(result, car)
     } else if (crashRoll <= 14) {
-      Log.info('<= 14', car)
-      if (Math.abs(car.status.nextMove[0].fishtailDistance) < 30 ||
-        car.status.nextMove[0].maneuver === null) {
+      if (
+        Math.abs(car.status.nextMove[0].fishtailDistance) < 30 ||
+        car.status.nextMove[0].maneuver === null
+      ) {
         car.status.nextMove[0].fishtailDistance = 30
         car.status.nextMove[0].spinDirection = spinDirection
         Log.info('fishtail 1/2" plus maneuver check . . .', car)
-        let maneuverCheckString = Control.maneuverCheck({ car })
         // No further aimed weapon fire permitted from Control vehicle Control turn
-        result = `major fishtail (1/2") and ${maneuverCheckString}`
+        result = 'major fishtail and roll on Crash Table 1'
       } else {
-        result = `NOT a major fishtail (1/2") plus crash table 1`
+        result = 'NOT and roll on Crash Table 1'
       }
-      Log.info(result, car)
     } else {
-      Log.info('> 14', car)
       if (Math.abs(car.status.nextMove[0].fishtailDistance) < 45) {
         car.status.nextMove[0].fishtailDistance = 45
         car.status.nextMove[0].spinDirection = spinDirection
         Log.info('fishtail 3/4" plus maneuver check . . .', car)
-        let maneuverCheckString = Control.maneuverCheck({ car })
         // No further aimed weapon fire permitted from Control vehicle Control turn
-        result = `3/4" fishtail and ${maneuverCheckString}`
+        result = 'major and minor fishtail and roll on Crash Table 1'
       } else {
-        result = `NOT a 3/4" fishtail plus crash table 1`
+        result = 'NOT major and minor fishtail and roll on Crash Table 1'
       }
-      Log.info(result, car)
     }
     Log.info(result, car)
-    console.log(car.status)
+    return result
+  }
+
+  static loseControl({ car }) {
+    const needed = Control.checkNeeded({
+      speed: car.status.speed,
+      handlingStatus: car.status.handling,
+    })
+    Log.info(`lose control: ${needed}`, car)
+    if (needed === 'safe') {
+      return false
+    }
+    if (needed === 'XX') {
+      return true
+    }
+    const roll = Dice.roll('1d')
+    const result = roll < needed
+    Log.info(`control roll: ${roll} (control loss? ${result})`, car)
     return result
   }
 
   // pass in a car and get everything from it?
   // also set everything on it, including moving it plus future moves
-  // a.k.a. Table 1
-  static maneuverCheck({ car }) {
+  // a.k.a. Crash Table 1
+  static maneuverCheck({ car, forceCrashTable2Roll = false }) {
     Log.info('maneuver check', car)
-    let skillBonus = 0 // BUGBUG: get from character + reflex instead
+    const skillBonus = 0 // BUGBUG: get from character + reflex instead
     let result = 'no change'
-    if (car.phasing.difficulty === 0) { return result } // no maneuver; no check
-    if (!Control.loseControl({ car })) { return result }
-    let dieRoll = Dice.roll('2d')
-    Log.info(`die roll(2d): ${dieRoll}`, car)
-    let modifiedDifficulty = car.phasing.difficulty - 3
-    Log.info(`+ modified difficulty: ${modifiedDifficulty}`, car)
-    Log.info(`- skill modifier: ${skillBonus}`, car)
-    let crashModifier = Control.crashModifier({ speed: car.status.speed })
-    Log.info(`+ crash modifier at speed ${car.status.speed}: ${crashModifier}`, car)
-    let crashRoll = dieRoll + modifiedDifficulty - skillBonus + crashModifier
-    Log.info(`${car.color} LOST CONTROL!!! crash roll number: ${crashRoll}`, car)
+    if (
+      !forceCrashTable2Roll &&
+      (car.phasing.difficulty === 0 || !Control.loseControl({ car }))
+    ) {
+      return result
+    } // no maneuver; no check
+
+    const dieRoll = Dice.roll('2d')
+    // p.17 The difficulty of the maneuver (or hazard) that caused the loss of
+    // control plays an important part in determining a crash result. Take
+    // the modified Difficulty rating of the hazard or maneuver, subtract 3,
+    // and add the result (negative or positive) to the Crash Table roll.
+    // Thus, a D4 maneuver gives a +1 to the roll, while a D1 maneuver gives a −2
+    const modifiedDifficulty =
+      car.phasing.difficulty !== 0 ? car.phasing.difficulty - 3 : 0
+    const crashModifier = Control.crashModifier({ speed: car.status.speed })
+    Log.info(
+      `crash roll = ${dieRoll} (2d) + ${modifiedDifficulty} (modded difficulty) - ${skillBonus} (skill) + ${crashModifier} (crash mod)`,
+      car,
+    )
+    const crashRoll = dieRoll + modifiedDifficulty - skillBonus + crashModifier
+    Log.info(
+      `${car.color} LOST CONTROL!!! crash roll number: ${crashRoll}`,
+      car,
+    )
+
+    Log.info(car.status)
 
     if (typeof car.status.nextMove[0] === 'undefined') {
       car.status.nextMove[0] = {
@@ -241,7 +224,7 @@ class Control {
         fishtailDistance: 0,
         maneuver: null,
         maneuverDirection: null,
-        maneuverDistance: 0
+        maneuverDistance: 0,
       }
     }
     Log.info(`spinDirection: ${car.status.nextMove[0].spinDirection}`, car)
@@ -254,34 +237,38 @@ class Control {
         car.status.nextMove[0].maneuver = 'skid'
         car.status.nextMove[0].maneuverDirection = car.rect.facing
         car.status.nextMove[0].maneuverDistance = INCH / 4
-        result = 'trivial skid - 1/4"'
+        result = 'trivial skid'
       } else {
-        result = 'NOT a trivial skid - 1/4"'
+        result = 'NOT a trivial skid'
       }
       Log.info(result, car)
     } else if (crashRoll <= 4) {
       Log.info('in <= 4', car)
-      let distance = INCH / 2
-      if (car.status.nextMove[0].maneuver === null ||
-          (car.status.nextMove[0].maneuver === 'skid' && car.maneuverDistance < distance)
-        ) {
+      const distance = INCH / 2
+      if (
+        car.status.nextMove[0].maneuver === null ||
+        (car.status.nextMove[0].maneuver === 'skid' &&
+          car.maneuverDistance < distance)
+      ) {
         // do Control next turn: PhasingMove.skid({ car, INCH / 2 })
         car.status.speed -= 5
         // Any further aimed weapon fire from Control vehicle on Control turn will be at a −6 to hit
         car.status.nextMove[0].maneuver = 'skid'
         car.status.nextMove[0].maneuverDirection = car.rect.facing
         car.status.nextMove[0].maneuverDistance = distance
-        result = 'minor skid - 1/2"'
+        result = 'minor skid'
       } else {
-        result = 'NOT a minor skid - 1/2"'
+        result = 'NOT a minor skid'
       }
       Log.info(result, car)
     } else if (crashRoll <= 6) {
       Log.info('in <= 6', car)
-      let distance = INCH * 3 / 4
-      if (car.status.nextMove[0].maneuver === null ||
-          (car.status.nextMove[0].maneuver === 'skid' && car.maneuverDistance < distance)
-        ) {
+      const distance = (INCH * 3) / 4
+      if (
+        car.status.nextMove[0].maneuver === null ||
+        (car.status.nextMove[0].maneuver === 'skid' &&
+          car.maneuverDistance < distance)
+      ) {
         // do Control next turn: PhasingMove.skid({ car, INCH * 3/4 })
         car.status.speed -= 10
         // each tire loses 1 DP
@@ -292,26 +279,28 @@ class Control {
           fishtailDistance: car.status.nextMove[0].fishtailDistance || 0,
           maneuver: 'skid',
           maneuverDirection: car.rect.facing,
-          maneuverDistance: distance
+          maneuverDistance: distance,
         }
         car.status.nextMove[1] = {
           spinDirection: '',
           fishtailDistance: 0,
           maneuver: 'skid',
           maneuverDirection: car.rect.facing,
-          maneuverDistance: INCH / 4
+          maneuverDistance: INCH / 4,
         }
-        result = 'moderate skid - 3/4"'
+        result = 'moderate skid'
       } else {
-        result = 'NOT a moderate skid - 3/4"'
+        result = 'NOT a moderate skid'
       }
       Log.info(result, car)
     } else if (crashRoll <= 8) {
       Log.info('in <= 8', car)
-      let distance = INCH
-      if (car.status.nextMove[0].maneuver === null ||
-          (car.status.nextMove[0].maneuver === 'skid' && car.maneuverDistance < distance)
-        ) {
+      const distance = INCH
+      if (
+        car.status.nextMove[0].maneuver === null ||
+        (car.status.nextMove[0].maneuver === 'skid' &&
+          car.maneuverDistance < distance)
+      ) {
         // No further aimed weapon fire permitted from Control vehicle Control turn
         car.status.speed -= 20
         car.status.nextMove[0] = {
@@ -319,50 +308,47 @@ class Control {
           fishtailDistance: car.status.nextMove[0].fishtailDistance || 0,
           maneuver: 'skid',
           maneuverDirection: car.rect.facing,
-          maneuverDistance: distance
+          maneuverDistance: distance,
         }
         car.status.nextMove[1] = {
           spinDirection: '',
           fishtailDistance: 0,
           maneuver: 'skid',
           maneuverDirection: car.rect.facing,
-          maneuverDistance: INCH / 2
+          maneuverDistance: INCH / 2,
         }
-        result = 'severe skid - 1"'
+        result = 'severe skid'
       } else {
-        result = 'NOT a severe skid - 1"'
+        result = 'NOT a severe skid'
       }
       Log.info(result, car)
     } else if (crashRoll <= 10) {
       Log.info('in <= 10', car)
       // spinout
-      console.log(car.status.nextMove[0].spinDirection)
-      let direction = (typeof car.status.nextMove[0] === 'undefined') ? Control.spinDirection() : car.status.nextMove[0].spinDirection
-      console.log(`spin dir: ${direction}`)
-      console.log(`speed: ${car.status.speed}`)
-      let quarterTurns = Math.ceil(car.status.speed / 20)
-      console.log(`${quarterTurns} quarter turns`)
-      for(let i = 0; i < quarterTurns; i++) {
+      if (car.status.nextMove[0].spinDirection === '') {
+        car.status.nextMove[0].spinDirection = Control.spinDirection()
+        car.status.nextMove[0].maneuver = 'spinout'
+      }
+      Log.info(`speed: ${car.status.speed}`, car)
+      const quarterTurns = Math.ceil(car.status.speed / 20)
+      Log.info(`${quarterTurns} quarter turns`, car)
+      for (let i = 0; i < quarterTurns; i++) {
         console.log(`i: ${i}`)
-        let Distance = 0
-        if (typeof car.status.nextMove[i] != 'undefined' &&
-            typeof car.status.nextMove[i].fishtailDistance != 'undefined') {
-          fishtailDistance = car.status.nextMove[i].fishtailDistance
+        // const Distance = 0
+        if (typeof car.status.nextMove[i] === 'undefined') {
+          throw new Error('nextMove undefined!')
         }
-        console.log(`typeof direction: ${typeof direction}`)
-        console.log(`typeof string: ${typeof "foo"}`)
-
+        if (typeof car.status.nextMove[i].fishtailDistance === 'undefined') {
+          throw new Error('fishtailDistance not defined!')
+        }
         car.status.nextMove[i] = {
           spinDirection: direction,
-          fishtailDistance: fishtailDistance,
+          fishtailDistance: car.status.nextMove[i].fishtailDistance,
           maneuver: 'spinout',
           maneuverDirection: car.rect.facing,
-          maneuverDistance: 0
+          maneuverDistance: 0,
         }
-
       }
-      console.log('status?')
-      console.log(car.status)
       // Vehicle spins, rotating
       // 90° and moving 1” in the direction it was
       // previously traveling (before the maneuver
@@ -379,8 +365,7 @@ class Control {
       // If the roll is successful the spinout stops.
       // If the roll is missed the spinout continues
       // normally. If control is regained, and the
-      // vehicle is facing the direction it is moving,
-      // movement continues on as usual. If the car
+      // vehicle is facing the direction it is moving, // movement continues on as usual. If the car
       // is facing sideways it must perform an immediate T-stop. It may discontinue a T-stop
       // by turning “into” the direction of the skid
       // and then continue the turn. If the vehicle
@@ -403,8 +388,7 @@ class Control {
       // e.g., in the first phase it moves 1”, turns
       // sideways, and rolls onto its side; the next
       // phase it moves, it goes 1” and rolls onto its
-      // top, etc. It takes 1d damage to the side (top,
-      // etc.) rolled onto each phase. When the bottom hits, each tire takes 1d damage. After
+      // top, etc. It takes 1d damage to the side (top, // etc.) rolled onto each phase. When the bottom hits, each tire takes 1d damage. After
       // all tires are gone, the bottom takes damage
       // when it hits. Occupants may jump out at any
       // time, or stay inside and hope that no damage
@@ -418,7 +402,8 @@ class Control {
       Log.info(result, car)
     } else if (crashRoll <= 14) {
       Log.info('in <= 14', car)
-      car.status.nextMove[0].maneuver = 'turn sideways and roll - possibly on fire'
+      car.status.nextMove[0].maneuver =
+        'turn sideways and roll, possibly on fire'
       // As above, but vehicle is burning on a roll of 4, 5, or 6 on 1 die. (For
       // more information on burning vehi
 
@@ -456,5 +441,30 @@ class Control {
     Log.info(result, car)
     return result
   }
+
+  static normalizeHandlingStatus(status) {
+    return _.clamp(status, -6, 7)
+  }
+
+  static row({ speed }) {
+    const absSpeed = Math.abs(speed)
+    if (absSpeed > 300) {
+      throw new Error('Speeds > 300MPH not handled')
+    }
+    if (absSpeed < 5) {
+      // prettier-ignore
+      return (
+        ['safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe', 'safe']
+      )
+    }
+    const tableRow = Math.ceil(absSpeed / 10) - 1
+    return Control.table[tableRow]
+  }
+
+  static spinDirection() {
+    return _.random(1) === 1 ? 'right' : 'left'
+  }
+
+  /// ////////////////////////////
 }
 export default Control

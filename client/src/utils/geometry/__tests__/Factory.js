@@ -4,15 +4,15 @@ import Rectangle from '../Rectangle'
 import { COMPASS } from '../../constants'
 
 class Factory {
-  static RandomNumber (max = 1000) {
+  static RandomNumber(max = 1000) {
     return max * Math.random()
   }
 
-  static Point (x = Factory.RandomNumber(), y = Factory.RandomNumber()) {
+  static Point(x = Factory.RandomNumber(), y = Factory.RandomNumber()) {
     return new Point({ x, y })
   }
 
-  static Segment (orientation = null) {
+  static Segment(orientation = null) {
     const p1 = Factory.Point()
     const p2 = Factory.Point()
     switch (orientation) {
@@ -28,7 +28,7 @@ class Factory {
     return new Segment([p1, p2])
   }
 
-  static Rectangle () {
+  static Rectangle() {
     return new Rectangle({ facing: COMPASS.NORTH, brPoint: Factory.Point() })
   }
 }

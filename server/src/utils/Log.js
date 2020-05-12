@@ -4,11 +4,11 @@ class Log {
   // Do something better later.
   //
   // Examples: '4d-3', '2d', '1d+2'
-  static info (message, target = null) {
+  static info(message, target = null) {
     if (target != null) {
       target.log.push(message)
     }
-    color = target ? target.color : ''
+    const color = target ? target.color : ''
     console.log(`${color}: ${message}`)
   }
 }

@@ -9,7 +9,7 @@ export const NULL_WEAPON = () => {
     damagePoints: 0,
     effect: 'area',
     firedThisTurn: false,
-    requiresPlant: false
+    requiresPlant: false,
   }
 }
 
@@ -24,7 +24,7 @@ export const MG = (location) => {
     damagePoints: 3,
     effect: 'area',
     firedThisTurn: false,
-    requiresPlant: false
+    requiresPlant: false,
   }
 }
 
@@ -39,7 +39,7 @@ export const HR = (location) => {
     damagePoints: 2,
     effect: 'burst',
     firedThisTurn: false,
-    requiresPlant: false
+    requiresPlant: false,
   }
 }
 
@@ -54,7 +54,7 @@ export const RL = (location) => {
     damagePoints: 2,
     effect: 'burst',
     firedThisTurn: false,
-    requiresPlant: false
+    requiresPlant: false,
   }
 }
 
@@ -69,6 +69,6 @@ export const L = (location) => {
     damagePoints: 2,
     effect: 'area',
     firedThisTurn: false,
-    requiresPlant: true
+    requiresPlant: true,
   }
 }

@@ -1,13 +1,9 @@
-import _ from 'lodash'
-import uuid from 'uuid/v4'
 import { PubSub } from 'apollo-server-express'
 import { withFilter } from 'graphql-subscriptions'
-import Movement from '../gameServerHelpers/Movement'
-import Phase from '../gameServerHelpers/Phase'
-import Car from './Car'
-import Player from './Player'
-import { DATA,  matchCars } from '../DATA'
-import {INCH} from '../utils/constants'
+import _ from 'lodash'
+import uuid from 'uuid/v4'
+import { DATA } from '../DATA'
+import Time from '../gameServerHelpers/Time'
 
 DATA.matches = []
 
@@ -85,7 +81,7 @@ export const typeDef = `
   }
 `
 
-allTheNothings = {}
+const allTheNothings = {}
 
 const addNothing = ({ matchId, msg }) => {
   const id = uuid()
@@ -93,9 +89,13 @@ const addNothing = ({ matchId, msg }) => {
   if (allTheNothings[matchId] && allTheNothings[matchId].length > 0) {
     previousId = allTheNothings[matchId][allTheNothings[matchId].length - 1].id
   }
-  let timestamp = `${Date.now()}`
-  pubsub.publish(NOTHING_CHANNEL, { nothingChannel: { id, previousId, timestamp, matchId, msg }})
-  if(!allTheNothings[matchId]) { allTheNothings[matchId] = [] }
+  const timestamp = `${Date.now()}`
+  pubsub.publish(NOTHING_CHANNEL, {
+    nothingChannel: { id, previousId, timestamp, matchId, msg },
+  })
+  if (!allTheNothings[matchId]) {
+    allTheNothings[matchId] = []
+  }
   allTheNothings[matchId].push({ id, previousId, timestamp, msg })
   return timestamp
 }
@@ -105,30 +105,35 @@ const NOTHING_CHANNEL = 'nothing_channel'
 export const resolvers = {
   Query: {
     match: (parent, args, context) => {
-      return DATA.matches.find(match => match.id === args.matchId)
+      return DATA.matches.find((match) => match.id === args.matchId)
     },
-    matches: () =>  {
+    matches: () => {
       return DATA.matches
     },
     nothings: (parent, args, context) => {
-      if (!allTheNothings[args.matchId]) { return [] }
+      if (!allTheNothings[args.matchId]) {
+        return []
+      }
       return allTheNothings[args.matchId]
-    }
+    },
   },
   Subscription: {
     nothingChannel: {
-      subscribe: withFilter(() => pubsub.asyncIterator(NOTHING_CHANNEL), (payload, variables) => {
-        if (variables.matchId === '*') return true
-        return (payload.nothingChannel.matchId === variables.matchId)
-      })
-    }
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(NOTHING_CHANNEL),
+        (payload, variables) => {
+          if (variables.matchId === '*') return true
+          return payload.nothingChannel.matchId === variables.matchId
+        },
+      ),
+    },
   },
   Mutation: {
     sayNothing: (parent, args, context) => {
       return addNothing({ matchId: args.matchId, msg: args.msg })
     },
     addMatch: (parent, args, context) => {
-      let newMatch = {
+      const newMatch = {
         id: uuid(),
         carIds: [],
         map: null,
@@ -141,62 +146,72 @@ export const resolvers = {
             unmoved: [],
             canTarget: [],
             playersToAckDamage: [],
-            playersToAckSpeedChange: []
+            playersToAckSpeedChange: [],
           },
           turn: {
-            number: 0
-          }
-        }
+            number: 0,
+          },
+        },
       }
       DATA.matches.push(newMatch)
       return newMatch
     },
     matchSetMap: (parent, args, context) => {
-      let match = DATA.matches.find(el => el.id === args.matchId)
+      const match = DATA.matches.find((el) => el.id === args.matchId)
       if (!match) {
         throw new Error(`Match does not exist: ${args.matchId}`)
       }
-      let originalMap = DATA.maps.find(el => el.name === args.mapName)
+      const originalMap = DATA.maps.find((el) => el.name === args.mapName)
       if (!originalMap) {
         throw new Error(`Map does not exist: ${args.mapName}`)
       }
       if (match.carIds !== undefined) {
         if (match.carIds.length > originalMap.startingPositions.length) {
-          throw new Error(`Map only supports ${originalMap.startingPositions.length} starting positions`)
+          throw new Error(
+            `Map only supports ${originalMap.startingPositions.length} starting positions`,
+          )
         }
       }
       match.map = _.cloneDeep(originalMap)
       return match
     },
     matchAddCar: (parent, args, context) => {
-      let match = DATA.matches.find(el => el.id === args.matchId)
+      const match = DATA.matches.find((el) => el.id === args.matchId)
       if (match === undefined) {
         throw new Error(`match not found: ${args.matchId}`)
       }
       if (match.carIds === undefined) {
         throw new Error('match.carIds undefined')
       }
-      if (undefined === DATA.cars.find(el => el.id === args.carId))  {
+      if (undefined === DATA.cars.find((el) => el.id === args.carId)) {
         throw new Error(`Car does not exist: ${args.carId}`)
       }
-      if (match.map !== null &&
-          match.carIds.length >= match.map.startingPositions.length) {
-            throw new Error(`Map only has ${match.map.startingPositions.length} starting positions`)
-          }
+      if (
+        match.map !== null &&
+        match.carIds.length >= match.map.startingPositions.length
+      ) {
+        throw new Error(
+          `Map only has ${match.map.startingPositions.length} starting positions`,
+        )
+      }
       match.carIds.push(args.carId)
-      DATA.cars.find(car => car.id === args.carId).currentMatch = args.matchId
+      DATA.cars.find((car) => car.id === args.carId).currentMatch = args.matchId
       return match
     },
     startMatch: (parent, args, context) => {
-      let match = DATA.matches.find(el => el.id === args.matchId)
-      if (!match) { throw new Error(`Match does not exist: ${args.matchId}`) }
-      if (match.status !== 'new') { throw new Error('Restart match?') }
+      const match = DATA.matches.find((el) => el.id === args.matchId)
+      if (!match) {
+        throw new Error(`Match does not exist: ${args.matchId}`)
+      }
+      if (match.status !== 'new') {
+        throw new Error('Restart match?')
+      }
       match.status = 'started'
-      Phase.subphase1_start({ match })
+      Time.subphase1_start({ match })
       return match
     },
     finishMatch: (parent, args, context) => {
-      let match = DATA.matches.find(el => el.id === args.matchId)
+      const match = DATA.matches.find((el) => el.id === args.matchId)
       if (!match) {
         throw new Error(`Match does not exist: ${args.matchId}`)
       }
@@ -206,25 +221,35 @@ export const resolvers = {
       // generally:
       // - privateering
       // - prizes
-      match.carIds.map(carId => {
-        DATA.cars.find(car => car.id === carId).currentMatch = null
+      match.carIds.map((carId) => {
+        DATA.cars.find((car) => car.id === carId).currentMatch = null
       })
       match.status = 'finished'
       return match
     },
     ackDamage: (parent, args, context) => {
-      const match = DATA.matches.find(el => el.id === args.matchId)
-      const ptadIndex = match.time.phase.playersToAckDamage.indexOf(args.playerId)
-      if (ptadIndex === -1) { throw new Error(`player not waiting to ack damage: ${args.playerId}`)}
+      const match = DATA.matches.find((el) => el.id === args.matchId)
+      const ptadIndex = match.time.phase.playersToAckDamage.indexOf(
+        args.playerId,
+      )
+      if (ptadIndex === -1) {
+        throw new Error(`player not waiting to ack damage: ${args.playerId}`)
+      }
       match.time.phase.playersToAckDamage.splice(ptadIndex, 1)
-      Phase.subphase5_damage({ match})
+      Time.subphase5_damage({ match })
     },
     ackSpeedChange: (parent, args, context) => {
-      const match = DATA.matches.find(el => el.id === args.matchId)
-      const index = match.time.phase.playersToAckSpeedChange.indexOf(args.playerId)
-      if (index === -1) { throw new Error(`player not waiting to ack speed change: ${args.playerId}`)}
+      const match = DATA.matches.find((el) => el.id === args.matchId)
+      const index = match.time.phase.playersToAckSpeedChange.indexOf(
+        args.playerId,
+      )
+      if (index === -1) {
+        throw new Error(
+          `player not waiting to ack speed change: ${args.playerId}`,
+        )
+      }
       match.time.phase.playersToAckSpeedChange.splice(index, 1)
-      Phase.subphase_2_1_revealSpeedChange({ match})
-    }
-  }
+      Time.subphase_2_1_revealSpeedChange({ match })
+    },
+  },
 }

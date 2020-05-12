@@ -17,15 +17,15 @@ const SERVER_PORT = 4000
 
 // Create an http link:
 const httpLink = new HttpLink({
-  uri: `http://localhost:${SERVER_PORT}/graphql`
+  uri: `http://localhost:${SERVER_PORT}/graphql`,
 })
 
 // Create a WebSocket link:
 const wsLink = new WebSocketLink({
   uri: `ws://localhost:${SERVER_PORT}/graphql`,
   options: {
-    reconnect: true
-  }
+    reconnect: true,
+  },
 })
 
 // using the ability to split links, you can send data to each link
@@ -40,22 +40,22 @@ const link = split(
     )
   },
   wsLink,
-  httpLink
+  httpLink,
 )
 
 const client = new ApolloClient({
   link: link,
   // uri: 'http://localhost:4000/graphql',
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
 })
 
 class App extends Component {
-  render () {
+  render() {
     return (
       <ApolloProvider client={client}>
         <div>
           <Router>
-            <NavSelector client={client}/>
+            <NavSelector client={client} />
           </Router>
         </div>
       </ApolloProvider>

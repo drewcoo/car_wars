@@ -1,18 +1,16 @@
 import _ from 'lodash'
 import uuid from 'uuid/v4'
-
-import { DATA,  matchCars } from '../DATA'
+import { DATA } from '../DATA'
+import * as ArenaMap1 from '../maps/arenaMap1'
 
 DATA.maps = []
-
-import * as ArenaMap1 from '../maps/arenaMap1'
 const loadMap = (mapName) => {
   if (mapName !== 'ArenaMap1') {
-    throw new Error(`${args.name} not found in map names`)
+    throw new Error(`${mapName} not found in map names`)
   }
   // I really need to learn some lodash
   // because I don't know where .default came from.
-  let result = _.cloneDeep(ArenaMap1).default
+  const result = _.cloneDeep(ArenaMap1).default
   result.id = uuid()
   result.name = mapName
   return result
@@ -49,19 +47,19 @@ export const typeDef = `
 
 export const resolvers = {
   Query: {
-    maps: () =>  {
+    maps: () => {
       return DATA.maps
     },
   },
   Mutation: {
     addMap: (parent, args, context) => {
-      let newMap = loadMap(args.name)
+      const newMap = loadMap(args.name)
       newMap.id = uuid()
       DATA.maps.push(newMap)
       return newMap
     },
     reply: (parent, args, context) => {
       return `hello, ${args.name}`
-    }
-  }
+    },
+  },
 }

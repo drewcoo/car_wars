@@ -1,5 +1,5 @@
 export const DATA = {}
 
-export const matchCars = ({ match }) => {
-  return match.carIds.map(outerCarId => DATA.cars.find(innerCar => outerCarId === innerCar.id))
+export const matchCars = ({ match, _data = DATA }) => {
+  return match.carIds.map((carId) => _data.cars.find((car) => car.id === carId))
 }

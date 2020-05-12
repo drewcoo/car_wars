@@ -3,81 +3,49 @@ import { degreesDifference } from '../utils/conversions'
 import Log from '../utils/Log'
 import Control from './Control'
 import VehicleStatusHelper from './VehicleStatusHelper'
+import Rectangle from '../utils/geometry/Rectangle'
 
 class PhasingMove {
-  static hasMoved ({ car }) {
-    return !car.rect.brPoint().equals(car.phasing.rect.brPoint()) ||
-           car.rect.facing !== car.phasing.rect.facing
-  }
-
-  static possibleSpeeds ({ car }) {
-    const setSpeeds = ({ currentSpeed, topSpeed, acceleration, canAccelerate, canBrake  }) => {
-      const acc = canAccelerate ? acceleration : 0
-      // BUGBUG: Only does forward
-      const possibleMax = currentSpeed + acc
-      const max = (topSpeed >= possibleMax) ? possibleMax : topSpeed
-      // no more than 45 slower without special equipment
-      const possibleMin = canBrake ? currentSpeed - 45 : currentSpeed
-      const min = possibleMin >= 0 ? possibleMin : 0
-      const result = []
-      for (let i = min; i <= max; i += 5) { result.push({ speed: i, difficulty: 0, damageDice: '' }) }
-      return result
-    }
-
-    const result = setSpeeds({
-      currentSpeed: car.status.speed,
-      topSpeed: car.design.attributes.topSpeed,
-      acceleration: car.design.attributes.acceleration,
-      canAccelerate: VehicleStatusHelper.canAccelerate(car),
-      canBrake: VehicleStatusHelper.canBrake(car)
+  static bend({ car, degrees }) {
+    // how far already?
+    const currentFacingDelta = degreesDifference({
+      initial: car.rect.facing,
+      second: car.phasing.rect.facing,
     })
+    const desiredFacing = currentFacingDelta + degrees
 
-    let index = result.findIndex(change => change.speed === car.status.speed) -3
-
-    // unclear how to handle > 45mph deceleration - see p.9
-    let difficulties = [
-      { dIndex: -3, difficulty: 1, damageDice: '' },
-      { dIndex: -4, difficulty: 2, damageDice: '' },
-      { dIndex: -5, difficulty: 3, damageDice: '' },
-      { dIndex: -6, difficulty: 5, damageDice: '' },
-      { dIndex: -7, difficulty: 7, damageDice: '0d+2' },
-      { dIndex: -8, difficulty: 9, damageDice: '1d' },
-      { dIndex: -9, difficulty: 11, damageDice: '1d+3' }
-    ]
-
-    while (index >= 0) {
-      let change = difficulties.shift()
-      result[index].difficulty = change.difficulty
-      result[index].damageDice = change.damageDice
-      index--
+    // if already + delta too big, return
+    // Can't turn more than 90 deg.
+    if (Math.abs(desiredFacing) > 90) {
+      return car.phasing.rect
     }
 
-    return result
-  }
+    // calculate change from a forward move and do it
+    const facingRight = currentFacingDelta > 0
+    const facingLeft = currentFacingDelta < 0
+    const turningRight = degrees > 0
 
-  static reset ({ car }) {
-    const possibles = this.possibleSpeeds({ car })
-    car.phasing = {
-      rect: car.rect.clone(),
-      damage: [],
-      difficulty: 0,
-      maneuverIndex: 0,
-      speedChanges: possibles,
-      speedChangeIndex: possibles.findIndex(possible => possible.speed === car.status.speed),
-      weaponIndex: car.phasing.weaponIndex,
-      targets: [],
-      targetIndex: 0, // BUGBUG: keep old targets? We want sustained fire . . .
-      collisionDetected: false,
-      collisions: []
+    let resultRect = PhasingMove.forward({ car: PhasingMove.center({ car }) })
+
+    if (turningRight) {
+      if (!facingLeft) {
+        resultRect = resultRect.backRightCornerPivot(desiredFacing)
+      } /* facing left */ else {
+        resultRect = resultRect.backLeftCornerPivot(desiredFacing)
+      }
+    } /* turning left */ else {
+      if (!facingRight) {
+        resultRect = resultRect.backLeftCornerPivot(desiredFacing)
+      } /* facing right */ else {
+        resultRect = resultRect.backRightCornerPivot(desiredFacing)
+      }
     }
 
-    if (car.phasing.speedChangeIndex === -1) {
-      throw new Error('wat happened?')
-    } 
+    car.phasing.difficulty = Math.ceil(
+      Math.abs(resultRect.facing - car.rect.facing) / 15,
+    )
 
-    car.phasing.controlChecksForSpeedChanges = car.phasing.speedChanges.map(setting => {
-      return { speed: setting.speed, checks: Control.row({ speed: setting.speed })}
-    })
+    return resultRect
   }
 
   //
@@ -92,84 +60,138 @@ class PhasingMove {
   //
   // Or change it???
   //
-  static center ({ car }) {
+  static center({ car }) {
     car.phasing.rect = car.rect.clone()
     return car
   }
 
-  // BUGBUG: Move the phasing rect instead.
-  static forward ({ car, distance = INCH }) {
-    return car.phasing.rect.move({ distance, degrees: car.phasing.rect.facing })
+  static drift({ car, distance }) {
+    // BUGBUG:
+    // how far already?
+    /*
+    const currentDistanceDelta = car.rect
+      .frPoint()
+      .distanceTo(car.phasing.rect.brPoint())
+    const currentDegrees = car.rect
+      .frPoint()
+      .degreesTo(car.phasing.rect.brPoint())
+    const currentdirectionFactor =
+      car.rect.arcForPoint(car.phasing.rect.blPoint()) === 'L' ? -1 : 1
+*/
+    // if already + delta too big, return
+    /*
+    if (
+      Math.abs(currentDirectionFactor * currentDistanceDalta + distance) >
+      INCH / 2
+    ) {
+      return car.phasing.rect
+    }
+    */
+
+    // calculate change from a forward move and do it
+    const targetPoint = car.phasing.rect
+      .brPoint()
+      .move({ degrees: car.rect.facing + FACE.RIGHT, distance })
+    const nullBrPoint = car.rect
+      .brPoint()
+      .move({ degrees: car.rect.facing, distance: INCH })
+    const currentDist = Math.floor(targetPoint.distanceTo(nullBrPoint))
+
+    // Drifts are max 1/2".
+    if (currentDist > INCH / 2) {
+      return car.phasing.rect
+    }
+
+    car.phasing.rect._brPoint = targetPoint
+
+    // Set maneuver difficulty. Resolve that when the move is accepted.
+    if (currentDist === 0) {
+      car.phasing.difficulty = 0
+    } else if (currentDist > INCH / 4) {
+      car.phasing.difficulty = 3
+    } else {
+      car.phasing.difficulty = 1
+    }
+
+    return car.phasing.rect
   }
 
-  static fishtail ({ car, direction, degrees }) {
-    Log.info(`fishtail ${direction} ${degrees} degrees!`)
-    Log.info(`previous facing: ${car.rect.facing}`)
+  static fishtail({ car, direction, degrees }) {
+    Log.info(`fishtail ${direction} ${degrees} degrees!`, car)
     if (direction === 'left') {
-      car.phasing.rect = car.phasing.rect.leftFrontCornerPivot(degrees)
-    } else if (direction === 'right'){
-      car.phasing.rect = car.phasing.rect.rightFrontCornerPivot(-degrees)
+      car.phasing.rect = car.phasing.rect.frontLeftCornerPivot(degrees)
+    } else if (direction === 'right') {
+      car.phasing.rect = car.phasing.rect.frontRightCornerPivot(-degrees)
     } else {
       throw new Error(`unknown direction: ${direction}`)
     }
-    Log.info(`new facing: ${car.rect.facing}`)
     return direction
   }
 
-  static skid ({ car, distance, degrees = null, controlled = false }) {
-    let thisTotalMove = 1
-    if (Movement.distanceThisPhase({ speed: car.status.speed, phase: match.time.phase.number }) === 0.5) {
-      thisTotalMove = 0.5
-    }
-
-    if (degrees === null) { degrees = car.rect.facing }
-    car.phasing.rect = car.phasing.rect.move({ degrees, distance })
-
-    if (controlled) { car.phasing.difficulty += Math.round(distance * 4 / INCH) }
-
-    car.phasing.rect = car.phasing.rect.move({ degrees, distance, slide: true })
-    car.phasing.rect = car.phasing.rect.move({ degrees, distance: thisTotalMove - distance, slide: true })
+  static forward({ car, distance = INCH }) {
+    return car.phasing.rect.move({ distance, degrees: car.phasing.rect.facing })
   }
 
-  // controlled skid skids on next move
-  static bend ({ car, degrees }) {
-    const currentFacingDelta = degreesDifference({
-      initial: car.rect.facing,
-      second: car.phasing.rect.facing
+  static hasMoved({ car }) {
+    return !new Rectangle(car.rect).equals(new Rectangle(car.phasing.rect))
+  }
+
+  static possibleSpeeds({ car }) {
+    const setSpeeds = ({
+      currentSpeed,
+      topSpeed,
+      acceleration,
+      canAccelerate,
+      canBrake,
+    }) => {
+      const acc = canAccelerate ? acceleration : 0
+      // BUGBUG: Only does forward
+      const possibleMax = currentSpeed + acc
+      const max = topSpeed >= possibleMax ? possibleMax : topSpeed
+      // no more than 45 slower without special equipment
+      const possibleMin = canBrake ? currentSpeed - 45 : currentSpeed
+      const min = possibleMin >= 0 ? possibleMin : 0
+      const result = []
+      for (let i = min; i <= max; i += 5) {
+        result.push({ speed: i, difficulty: 0, damageDice: '' })
+      }
+      return result
+    }
+
+    const result = setSpeeds({
+      currentSpeed: car.status.speed,
+      topSpeed: car.design.attributes.topSpeed,
+      acceleration: car.design.attributes.acceleration,
+      canAccelerate: VehicleStatusHelper.canAccelerate(car),
+      canBrake: VehicleStatusHelper.canBrake(car),
     })
-    const desiredFacing = currentFacingDelta + degrees
 
-    // Can't turn more than 90 deg.
-    if (Math.abs(desiredFacing) > 90) { return car.phasing.rect }
+    let index =
+      result.findIndex((change) => change.speed === car.status.speed) - 3
 
-    const facingRight = currentFacingDelta > 0
-    const facingLeft = currentFacingDelta < 0
-    const turningRight = degrees > 0
+    // unclear how to handle > 45mph deceleration - see p.9
+    const difficulties = [
+      { dIndex: -3, difficulty: 1, damageDice: '' },
+      { dIndex: -4, difficulty: 2, damageDice: '' },
+      { dIndex: -5, difficulty: 3, damageDice: '' },
+      { dIndex: -6, difficulty: 5, damageDice: '' },
+      { dIndex: -7, difficulty: 7, damageDice: '0d+2' },
+      { dIndex: -8, difficulty: 9, damageDice: '1d' },
+      { dIndex: -9, difficulty: 11, damageDice: '1d+3' },
+    ]
 
-    PhasingMove.center({ car })
-    let resultRect = PhasingMove.forward({ car })
-
-    if (turningRight) {
-      if (!facingLeft) {
-        resultRect = resultRect.rightBackCornerPivot(desiredFacing)
-      } else /* facing left */ {
-        resultRect = resultRect.leftBackCornerPivot(desiredFacing)
-      }
-    } else /* turning left */ {
-      if (!facingRight) {
-        resultRect = resultRect.leftBackCornerPivot(desiredFacing)
-      } else /* facing right */ {
-        resultRect = resultRect.rightBackCornerPivot(desiredFacing)
-      }
+    while (index >= 0) {
+      const change = difficulties.shift()
+      result[index].difficulty = change.difficulty
+      result[index].damageDice = change.damageDice
+      index--
     }
 
-    car.phasing.difficulty = Math.ceil(Math.abs(resultRect.facing - car.rect.facing) / 15)
-
-    return resultRect
+    return result
   }
 
   // controlled skid skids on next move
-  static swerve ({ car, degrees }) {
+  static swerve({ car, degrees }) {
     //  |
     //  |
     //  |
@@ -184,16 +206,29 @@ class PhasingMove {
     // Maybe I could solve this for everything by creating a degree class or
     // degree comparison functions.
 
+    // how far already?
     const currentFacingDelta = degreesDifference({
       initial: car.rect.facing,
-      second: car.phasing.rect.facing
+      second: car.phasing.rect.facing,
     })
+
+    console.log(currentFacingDelta)
+
     const desiredFacing = currentFacingDelta + degrees
-    let resultRect = car.phasing.rect.clone()
+    // let resultRect = car.phasing.rect.clone()
+
+    console.log(desiredFacing)
+
+    // if already + delta too big, return
+    let resultRect = PhasingMove.forward({ car: PhasingMove.center({ car }) })
 
     // Can't turn more than 90 deg.
-    if (Math.abs(desiredFacing) > 90) { return resultRect }
+    if (Math.abs(desiredFacing) > 90) {
+      return car.phasing.rect
+      // return resultRect
+    }
 
+    // calculate change from a forward move and do it
     const facingLeft = currentFacingDelta < 0
     const facingRight = currentFacingDelta > 0
     const turningToFront = desiredFacing === 0
@@ -202,8 +237,8 @@ class PhasingMove {
 
     const drift = (direction = 'right') => {
       resultRect = resultRect.move({
-        degrees: (resultRect.facing + FACE.RIGHT),
-        distance: ((direction === 'right') ? INCH / 4 : -INCH / 4)
+        degrees: resultRect.facing + FACE.RIGHT,
+        distance: direction === 'right' ? INCH / 4 : -INCH / 4,
       })
       resultRect.facing += FACE.LEFT
     }
@@ -212,54 +247,74 @@ class PhasingMove {
       resultRect._brPoint = resultRect.brPoint().clone()
       resultRect = car.rect.move({
         degrees: car.rect.facing,
-        distance: INCH
+        distance: INCH,
       })
     } else if (turningRight) {
       if (facingRight) {
-        resultRect = resultRect.rightBackCornerPivot(degrees)
+        resultRect = resultRect.backRightCornerPivot(degrees)
       } else if (facingLeft) {
-        resultRect = resultRect.leftBackCornerPivot(degrees)
-      } else /* facing forward */ {
+        resultRect = resultRect.backLeftCornerPivot(degrees)
+      } /* facing forward */ else {
         drift('left')
-        resultRect = resultRect.rightBackCornerPivot(degrees)
+        resultRect = resultRect.backRightCornerPivot(degrees)
       }
     } else if (turningLeft) {
       if (facingLeft) {
-        resultRect = resultRect.leftBackCornerPivot(degrees)
+        resultRect = resultRect.backLeftCornerPivot(degrees)
       } else if (facingRight) {
-        resultRect = resultRect.rightBackCornerPivot(degrees)
-      } else /* facing forward */ {
+        resultRect = resultRect.backRightCornerPivot(degrees)
+      } /* facing forward */ else {
         drift('right')
-        resultRect = resultRect.leftBackCornerPivot(degrees)
+        resultRect = resultRect.backLeftCornerPivot(degrees)
       }
     }
 
     car.phasing.difficulty = Math.ceil(Math.abs(desiredFacing) / 15)
-    if (car.phasing.difficulty > 0) { car.phasing.difficulty++ }
+    if (car.phasing.difficulty > 0) {
+      car.phasing.difficulty++
+    }
 
     return resultRect
   }
 
-  static drift ({ car, distance }) {
-    const targetPoint = car.phasing.rect.brPoint().move({ degrees: car.rect.facing + FACE.RIGHT, distance })
-    const nullBrPoint = car.rect.brPoint().move({ degrees: car.rect.facing, distance: INCH })
-    const currentDist = Math.floor(targetPoint.distanceTo(nullBrPoint))
+  /// /////////////////////////////////
 
-    // Drifts are max 1/2".
-    if (currentDist > INCH / 2) { return car.phasing.rect }
+  static reset({ car }) {
+    const possibles = this.possibleSpeeds({ car })
 
-    car.phasing.rect._brPoint = targetPoint
-
-    // Set maneuver difficulty. Resolve that when the move is accepted.
-    if (currentDist === 0) {
-      car.phasing.difficulty = 0
-    } else if (currentDist > INCH / 4) {
-      car.phasing.difficulty = 3
-    } else {
-      car.phasing.difficulty = 1
+    car.phasing = {
+      collisionDetected: false,
+      collisions: [],
+      controlChecksForSpeedChanges: [],
+      damage: [],
+      difficulty: 0,
+      maneuverIndex: 0,
+      rect: car.rect ? car.rect.clone() : null,
+      showSpeedChangeModal: false,
+      speedChangeIndex: possibles.findIndex(
+        (possible) => possible.speed === car.status.speed,
+      ),
+      speedChanges: possibles,
+      targetIndex: car.phasing.targetIndex,
+      targets: [],
+      weaponIndex: car.phasing.weaponIndex,
+      // BUGBUG: should keep weapon & target indices by character because often
+      // some weapons will be used by a single crew member (e.g. gunner uses the turreted TWL
+      // while driver handles dropped weapons) and maybe also leverage for sustained fire bonuses
     }
 
-    return car.phasing.rect
+    if (car.phasing.speedChangeIndex === -1) {
+      throw new Error('wat happened?')
+    }
+
+    car.phasing.controlChecksForSpeedChanges = car.phasing.speedChanges.map(
+      (setting) => {
+        return {
+          speed: setting.speed,
+          checks: Control.row({ speed: setting.speed }),
+        }
+      },
+    )
   }
 }
 

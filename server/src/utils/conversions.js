@@ -5,11 +5,11 @@ export const toInches = (pixels) => {
 }
 
 export const degreesToRadians = (degrees) => {
-  return Math.PI / 180 * degrees
+  return (Math.PI / 180) * degrees
 }
 
 export const radiansToDegrees = (radians) => {
-  return 180 / Math.PI * radians
+  return (180 / Math.PI) * radians
 }
 
 export const degreesEqual = (d1, d2) => {
@@ -22,7 +22,11 @@ export const degreesParallel = (d1, d2) => {
 
 export const degreesDifference = ({ initial, second }) => {
   let diff = (second % 360) - (initial % 360)
-  if (diff > 180) { diff -= 360 }
-  if (diff < -180) { diff += 360 }
-  return(diff)
+  if (diff > 180) {
+    diff -= 360
+  }
+  if (diff < -180) {
+    diff += 360
+  }
+  return diff
 }

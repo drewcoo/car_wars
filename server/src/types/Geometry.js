@@ -41,10 +41,10 @@ export const resolvers = {
   },
   Mutation: {
     addPoint: (parent, args, context) => {
-      let val = { x: args.x, y: args.y }
-      let result = { x: args.point.x, y: args.point.y }
+      const val = { x: args.x, y: args.y }
+      const result = { x: args.point.x, y: args.point.y }
       points.push(result)
       return result
     },
-  }
+  },
 }

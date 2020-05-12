@@ -1,12 +1,11 @@
 // only used by ActiveCar???
 
 class Maneuver {
-  static currentManeuver (car) {
-    return (car.status.maneuvers[car.phasing.maneuverIndex])
+  static currentManeuver(car) {
+    return car.status.maneuvers[car.phasing.maneuverIndex]
   }
 
-  static turnRight ({ matchId, car, fRight }) {
-
+  static turnRight({ matchId, car, fRight }) {
     /*
     switch (this.currentManeuver(car)) {
       case 'forward':
@@ -35,8 +34,7 @@ class Maneuver {
     */
   }
 
-  static showHideCar ({ matchId, car, indexDelta }) {
-
+  static showHideCar({ matchId, car, indexDelta }) {
     /*
     var index = (car.phasing.maneuverIndex + indexDelta) %
                  car.status.maneuvers.length
@@ -51,15 +49,14 @@ class Maneuver {
     */
   }
 
-  static next ({ matchId, car }) {
-
+  static next({ matchId, car }) {
     /*
     store.dispatch(maneuverNext({ matchId: matchId, id: car.id }))
     this.showHideCar({ matchId: matchId, car: car, indexDelta: 1 })
     */
   }
 
-  static previousManeuver ({ matchId, car }) {
+  static previousManeuver({ matchId, car }) {
     /*
     store.dispatch(maneuverPrevious({ matchId: matchId, id: car.id }))
     this.showHideCar({ matchId: matchId, car: car, indexDelta: -1 })

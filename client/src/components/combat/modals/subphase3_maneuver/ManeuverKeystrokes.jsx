@@ -33,20 +33,34 @@ import setWeapon from '../../../graphql/mutations/setWeapon'
 //
 
 const DO_MOVE = graphql(doMove, { name: 'doMove' })
-const ACTIVE_MANEUVER_NEXT = graphql(activeManeuverNext, { name: 'activeManeuverNext' })
-const ACTIVE_MANEUVER_PREVIOUS = graphql(activeManeuverPrevious, { name: 'activeManeuverPrevious' })
-const ACTIVE_MANEUVER_SET = graphql(activeManeuverSet, { name: 'activeManeuverSet' })
+const ACTIVE_MANEUVER_NEXT = graphql(activeManeuverNext, {
+  name: 'activeManeuverNext',
+})
+const ACTIVE_MANEUVER_PREVIOUS = graphql(activeManeuverPrevious, {
+  name: 'activeManeuverPrevious',
+})
+const ACTIVE_MANEUVER_SET = graphql(activeManeuverSet, {
+  name: 'activeManeuverSet',
+})
 const ACTIVE_MOVE_BEND = graphql(activeMoveBend, { name: 'activeMoveBend' })
 const ACTIVE_MOVE_DRIFT = graphql(activeMoveDrift, { name: 'activeMoveDrift' })
-const ACTIVE_MOVE_FORWARD = graphql(activeMoveForward, { name: 'activeMoveForward' })
-const ACTIVE_MOVE_HALF_FORWARD = graphql(activeMoveHalfForward, { name: 'activeMoveHalfForward' })
+const ACTIVE_MOVE_FORWARD = graphql(activeMoveForward, {
+  name: 'activeMoveForward',
+})
+const ACTIVE_MOVE_HALF_FORWARD = graphql(activeMoveHalfForward, {
+  name: 'activeMoveHalfForward',
+})
 const ACTIVE_MOVE_RESET = graphql(activeMoveReset, { name: 'activeMoveReset' })
-const ACTIVE_MOVE_SWERVE = graphql(activeMoveSwerve, { name: 'activeMoveSwerve' })
-const ACTIVE_SHOW_COLLISIONS = graphql(activeShowCollisions, { name: 'activeShowCollisions' })
+const ACTIVE_MOVE_SWERVE = graphql(activeMoveSwerve, {
+  name: 'activeMoveSwerve',
+})
+const ACTIVE_SHOW_COLLISIONS = graphql(activeShowCollisions, {
+  name: 'activeShowCollisions',
+})
 const SET_WEAPON = graphql(setWeapon, { name: 'setWeapon' })
 
 class ManeuverKeystrokes extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = { value: '' }
     this.keyMap = {
@@ -57,116 +71,118 @@ class ManeuverKeystrokes extends React.Component {
       turnRight: ['x', 'shift+z', 'right'],
       nextWeapon: 'w',
       previousWeapon: 'shift+w',
-      home: '.'
+      home: '.',
     }
   }
 
-  async activeMoveForward ({ id }) {
+  async activeMoveForward({ id }) {
     return this.props.activeMoveForward({
-      variables: { id: id }
+      variables: { id: id },
     })
   }
 
-  async activeMoveHalfForward ({ id }) {
+  async activeMoveHalfForward({ id }) {
     return this.props.activeMoveHalfForward({
-      variables: { id: id }
+      variables: { id: id },
     })
   }
 
-  async activeMoveDrift ({ id, direction }) {
+  async activeMoveDrift({ id, direction }) {
     return this.props.activeMoveDrift({
-      variables: { id: id, direction: direction }
+      variables: { id: id, direction: direction },
     })
   }
 
-  async activeManeuverNext ({ id }) {
+  async activeManeuverNext({ id }) {
     await this.props.activeManeuverNext({
-      variables: { id: id }
+      variables: { id: id },
     })
   }
 
-  async activeManeuverPrevious ({ id }) {
+  async activeManeuverPrevious({ id }) {
     await this.props.activeManeuverPrevious({
-      variables: { id: id }
+      variables: { id: id },
     })
   }
 
-  async activeManeuverSet ({ id, maneuverIndex }) {
+  async activeManeuverSet({ id, maneuverIndex }) {
     await this.props.activeManeuverSet({
-      variables: { id: id, maneuverIndex: maneuverIndex }
+      variables: { id: id, maneuverIndex: maneuverIndex },
     })
   }
 
-  async activeMoveReset ({ id }) {
+  async activeMoveReset({ id }) {
     return this.props.activeMoveReset({
-      variables: { id: id }
+      variables: { id: id },
     })
   }
 
-  async activeShowCollisions ({ id }) {
+  async activeShowCollisions({ id }) {
     return this.props.activeShowCollisions({
-      variables: { id: id }
+      variables: { id: id },
     })
   }
 
-  async activeMoveBend ({ id, degrees }) {
+  async activeMoveBend({ id, degrees }) {
     return this.props.activeMoveBend({
-      variables: { id: id, degrees: degrees }
+      variables: { id: id, degrees: degrees },
     })
   }
 
-  async activeMoveSwerve ({ id, degrees }) {
+  async activeMoveSwerve({ id, degrees }) {
     return this.props.activeMoveSwerve({
-      variables: { id: id, degrees: degrees }
+      variables: { id: id, degrees: degrees },
     })
   }
 
-  async weaponSetter ({ id, weaponIndex }) {
+  async weaponSetter({ id, weaponIndex }) {
     await this.props.setWeapon({
-      variables: { id: id, weaponIndex: weaponIndex }
+      variables: { id: id, weaponIndex: weaponIndex },
     })
   }
 
-  async doMove ({ id }) {
+  async doMove({ id }) {
     await this.props.doMove({
       variables: {
         id: id,
         maneuver: 'forward?',
-        howFar: 77 // currently bogus
-      }
+        howFar: 77, // currently bogus
+      },
     })
   }
 
-  turnRight (fRight) {
+  turnRight(fRight) {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.activeCar()
     switch (lms.currentManeuver()) {
       case 'forward':
         // Make it easy to maneuver (bend from forward position) as long as that's possible.
-        if (!car.status.maneuvers.includes('bend')) { break }
+        if (!car.status.maneuvers.includes('bend')) {
+          break
+        }
         this.activeManeuverSet({
           id: car.id,
-          maneuverIndex: car.status.maneuvers.indexOf('bend')
+          maneuverIndex: car.status.maneuvers.indexOf('bend'),
         })
         this.activeMoveBend({
           id: car.id,
-          degrees: (fRight ? 15 : -15)
+          degrees: fRight ? 15 : -15,
         })
         break
       case 'bend':
         this.activeMoveBend({
           id: car.id,
-          degrees: (fRight ? 15 : -15)
+          degrees: fRight ? 15 : -15,
         })
         break
       case 'drift':
         this.activeMoveDrift({
           id: car.id,
-          direction: (fRight ? 'right' : 'left')
+          direction: fRight ? 'right' : 'left',
         })
         break
       case 'swerve':
-        this.activeMoveSwerve({ id: car.id, degrees: (fRight ? 15 : -15) })
+        this.activeMoveSwerve({ id: car.id, degrees: fRight ? 15 : -15 })
         break
       default:
         console.log(`maneuver: ${lms.currentManeuver()}`)
@@ -175,28 +191,31 @@ class ManeuverKeystrokes extends React.Component {
     this.activeShowCollisions({ id: car.id })
   }
 
-  respondUnlessModalShowing (handlers) {
+  respondUnlessModalShowing(handlers) {
     return (
       <HotKeys
-        attach={ document }
-        focused={ true }
-        handlers={ handlers }
-        keyMap={ this.keyMap } />
+        attach={document}
+        focused={true}
+        handlers={handlers}
+        keyMap={this.keyMap}
+      />
     )
   }
 
-  render () {
+  render() {
     const lms = new LocalMatchState(this.props.matchData)
     // this.props.carId passed in from speed change Modal
     // will I also do that for targeting/firing?
-    if (!Session.loggedInAsActivePlayer(this.props.matchData) &&
-        !this.props.carId) {
-      return (<></>)
+    if (
+      !Session.loggedInAsActivePlayer(this.props.matchData) &&
+      !this.props.carId
+    ) {
+      return <></>
     }
 
-    const car = this.props.carId ? lms.car({ id: this.props.carId }) : lms.activeCar()
-
-    console.log(car)
+    const car = this.props.carId
+      ? lms.car({ id: this.props.carId })
+      : lms.activeCar()
 
     const handlers = {
       nextManeuver: (event) => {
@@ -209,30 +228,18 @@ class ManeuverKeystrokes extends React.Component {
         lms.nextWeapon({ id: car.id })
         this.weaponSetter({
           id: car.id,
-          weaponIndex: lms.weaponIndex({ id: car.id })
+          weaponIndex: lms.weaponIndex({ id: car.id }),
         })
       },
       previousWeapon: (event) => {
         lms.previousWeapon({ id: car.id })
         this.weaponSetter({
           id: car.id,
-          weaponIndex: lms.weaponIndex({ id: car.id })
+          weaponIndex: lms.weaponIndex({ id: car.id }),
         })
       },
       acceptMove: (event) => {
-        console.log('herereeee!!!')
         this.props.handlers.accept(event)
-        /*
-        var moved = (car.rect.brPoint().x !== car.phasing.rect.brPoint().x) ||
-                     (car.rect.brPoint().y !== car.phasing.rect.brPoint().y)
-        if (moved) {
-          this.doMove({
-            id: car.id,
-            maneuver: 'forward',
-            howFar: 0
-          })
-        }
-        */
       },
       turnRight: (event) => {
         this.turnRight(true)
@@ -244,14 +251,12 @@ class ManeuverKeystrokes extends React.Component {
         this.activeMoveReset({ id: car.id })
         this.weaponSetter({
           id: car.id,
-          weaponIndex: 0
+          weaponIndex: 0,
         })
-      }
+      },
     }
 
-    return (
-      this.respondUnlessModalShowing(handlers)
-    )
+    return this.respondUnlessModalShowing(handlers)
   }
 }
 
@@ -267,5 +272,5 @@ export default compose(
   ACTIVE_MOVE_BEND,
   ACTIVE_MOVE_SWERVE,
   ACTIVE_MANEUVER_SET,
-  SET_WEAPON
+  SET_WEAPON,
 )(ManeuverKeystrokes)
