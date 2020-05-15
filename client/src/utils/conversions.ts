@@ -24,5 +24,5 @@ export const degreesDifference = ({ initial, second }: { initial: number, second
   let diff = (second % 360) - (initial % 360)
   if (diff > 180) { diff -= 360 }
   if (diff < -180) { diff += 360 }
-  return(diff)
+  return (diff)
 }

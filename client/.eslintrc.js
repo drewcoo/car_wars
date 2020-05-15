@@ -1,16 +1,11 @@
 module.exports = {
   env: {
     browser: true,
-    commonjs: true,
     es6: true,
-    'jest/globals': true,
-    node: true,
   },
   extends: [
-    'prettier',
     'plugin:jest/recommended',
     'plugin:jest/style',
-    'plugin:prettier/recommended',
     'plugin:react/recommended',
     'standard',
   ],
@@ -18,23 +13,21 @@ module.exports = {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
+
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: 2018,
+    ecmaVersion: 11,
+    sourceType: 'module',
   },
-
-  plugins: ['jest', 'prettier', 'react'],
+  plugins: ['jest', 'react', '@typescript-eslint'],
   rules: {
-    'react/prop-types': 0,
     'comma-dangle': ['error', 'always-multiline'],
-    'prettier/prettier': 'error',
+    'jest/no-identical-title': 0,
+    'jest/no-disabled-tests': 0,
+    'prefer-arrow-callback': 'error',
     'space-before-function-paren': ['error', 'never'],
-  },
-  settings: {
-    react: {
-      version: 'detect',
-    },
   },
 }

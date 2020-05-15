@@ -7,12 +7,12 @@ import matches from '../../graphql/queries/matches'
 const MATCH_QUERY = graphql(matches)
 
 class List extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = { value: '' }
   }
 
-  listList () {
+  listList() {
     if (!this.props.data) {
       throw new Error('no data')
     }
@@ -39,17 +39,17 @@ class List extends React.Component {
     )
   }
 
-  colorStyle (myColor = 'white') {
+  colorStyle(myColor = 'white') {
     return {
       background: 'black',
       color: myColor,
       fontSize: '40px',
       fontFamily: 'fantasy',
-      fontVariant: 'small-caps'
+      fontVariant: 'small-caps',
     }
   }
 
-  render () {
+  render() {
     if (document.getElementById('navOptions')) {
       document.getElementById('navOptions').style.display = ''
     }

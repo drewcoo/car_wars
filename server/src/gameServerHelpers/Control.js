@@ -216,7 +216,7 @@ class Control {
       car,
     )
 
-    Log.info(car.status)
+    Log.info(car.status, car)
 
     if (typeof car.status.nextMove[0] === 'undefined') {
       car.status.nextMove[0] = {
@@ -324,9 +324,10 @@ class Control {
       Log.info(result, car)
     } else if (crashRoll <= 10) {
       Log.info('in <= 10', car)
+      const direction = Control.spinDirection()
       // spinout
       if (car.status.nextMove[0].spinDirection === '') {
-        car.status.nextMove[0].spinDirection = Control.spinDirection()
+        car.status.nextMove[0].spinDirection = direction
         car.status.nextMove[0].maneuver = 'spinout'
       }
       Log.info(`speed: ${car.status.speed}`, car)
@@ -335,11 +336,15 @@ class Control {
       for (let i = 0; i < quarterTurns; i++) {
         console.log(`i: ${i}`)
         // const Distance = 0
+
         if (typeof car.status.nextMove[i] === 'undefined') {
-          throw new Error('nextMove undefined!')
+          // throw new Error('nextMove undefined!')
+          car.status.nextMove[i] = { fishtailDistance: 0 }
         }
+
         if (typeof car.status.nextMove[i].fishtailDistance === 'undefined') {
-          throw new Error('fishtailDistance not defined!')
+          // throw new Error('fishtailDistance not defined!')
+          car.status.nextMove[i].fishtailDistance = 0
         }
         car.status.nextMove[i] = {
           spinDirection: direction,

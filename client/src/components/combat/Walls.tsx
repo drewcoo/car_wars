@@ -12,14 +12,14 @@ class Walls extends React.Component {
     return (
       data.map((wall: any) => (
         <g key={ wall.id }>
-        <rect
-          className={ 'Wall' }
-          x = { wall.rect._brPoint.x - wall.rect.width }
-          y = { wall.rect._brPoint.y - wall.rect.length }
-          width = { wall.rect.width }
-          height = { wall.rect.length }
-          transform = { `rotate(${ wall.rect.facing + 90 } ${ wall.rect._brPoint.x } ${ wall.rect._brPoint.y })` }
-        />
+          <rect
+            className={ 'Wall' }
+            x = { wall.rect._brPoint.x - wall.rect.width }
+            y = { wall.rect._brPoint.y - wall.rect.length }
+            width = { wall.rect.width }
+            height = { wall.rect.length }
+            transform = { `rotate(${wall.rect.facing + 90} ${wall.rect._brPoint.x} ${wall.rect._brPoint.y})` }
+          />
         </g>
       ))
     )

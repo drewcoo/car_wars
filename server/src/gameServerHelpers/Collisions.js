@@ -34,7 +34,7 @@ class Collisions {
     Collisions.detectWithWalls({ walls, thisCar })
   }
 
-  // BUGBUG: Assumes forward movement; not reverse.
+  // BUGBUG: Assumes straight movement; not reverse.
   static detectWithCars({ cars, thisCar }) {
     cars.forEach((car) => {
       if (car.id === thisCar.id) {
@@ -210,7 +210,7 @@ class Collisions {
     })
   }
 
-  // BUGBUG: Assumes forward movement; not reverse.
+  // BUGBUG: Assumes straight movement; not reverse.
   static detectWithWalls({ thisCar, walls }) {
     // shortcut - premature optimization?
     if (thisCar.phasing.collisionDetected) {

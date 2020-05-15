@@ -20,12 +20,12 @@ class PhasingMove {
       return car.phasing.rect
     }
 
-    // calculate change from a forward move and do it
+    // calculate change from a straight move and do it
     const facingRight = currentFacingDelta > 0
     const facingLeft = currentFacingDelta < 0
     const turningRight = degrees > 0
 
-    let resultRect = PhasingMove.forward({ car: PhasingMove.center({ car }) })
+    let resultRect = PhasingMove.straight({ car: PhasingMove.center({ car }) })
 
     if (turningRight) {
       if (!facingLeft) {
@@ -88,7 +88,7 @@ class PhasingMove {
     }
     */
 
-    // calculate change from a forward move and do it
+    // calculate change from a straight move and do it
     const targetPoint = car.phasing.rect
       .brPoint()
       .move({ degrees: car.rect.facing + FACE.RIGHT, distance })
@@ -128,7 +128,7 @@ class PhasingMove {
     return direction
   }
 
-  static forward({ car, distance = INCH }) {
+  static straight({ car, distance = INCH }) {
     return car.phasing.rect.move({ distance, degrees: car.phasing.rect.facing })
   }
 
@@ -145,7 +145,7 @@ class PhasingMove {
       canBrake,
     }) => {
       const acc = canAccelerate ? acceleration : 0
-      // BUGBUG: Only does forward
+      // BUGBUG: Only does straight
       const possibleMax = currentSpeed + acc
       const max = topSpeed >= possibleMax ? possibleMax : topSpeed
       // no more than 45 slower without special equipment
@@ -190,95 +190,6 @@ class PhasingMove {
     return result
   }
 
-  // controlled skid skids on next move
-  static swerve({ car, degrees }) {
-    //  |
-    //  |
-    //  |
-    //  |
-    // \|/
-    //  V
-    // TODO: make this use first the new drift and then the new bend usage
-    // Each possibility tries to make a complete move - that way we can active collisions
-
-    // BUGBUG: I have absolutely no idea why this needs different special
-    // handling than bend. Changing facing should be the same, I'd think.
-    // Maybe I could solve this for everything by creating a degree class or
-    // degree comparison functions.
-
-    // how far already?
-    const currentFacingDelta = degreesDifference({
-      initial: car.rect.facing,
-      second: car.phasing.rect.facing,
-    })
-
-    console.log(currentFacingDelta)
-
-    const desiredFacing = currentFacingDelta + degrees
-    // let resultRect = car.phasing.rect.clone()
-
-    console.log(desiredFacing)
-
-    // if already + delta too big, return
-    let resultRect = PhasingMove.forward({ car: PhasingMove.center({ car }) })
-
-    // Can't turn more than 90 deg.
-    if (Math.abs(desiredFacing) > 90) {
-      return car.phasing.rect
-      // return resultRect
-    }
-
-    // calculate change from a forward move and do it
-    const facingLeft = currentFacingDelta < 0
-    const facingRight = currentFacingDelta > 0
-    const turningToFront = desiredFacing === 0
-    const turningLeft = degrees < 0
-    const turningRight = degrees > 0
-
-    const drift = (direction = 'right') => {
-      resultRect = resultRect.move({
-        degrees: resultRect.facing + FACE.RIGHT,
-        distance: direction === 'right' ? INCH / 4 : -INCH / 4,
-      })
-      resultRect.facing += FACE.LEFT
-    }
-
-    if (turningToFront) {
-      resultRect._brPoint = resultRect.brPoint().clone()
-      resultRect = car.rect.move({
-        degrees: car.rect.facing,
-        distance: INCH,
-      })
-    } else if (turningRight) {
-      if (facingRight) {
-        resultRect = resultRect.backRightCornerPivot(degrees)
-      } else if (facingLeft) {
-        resultRect = resultRect.backLeftCornerPivot(degrees)
-      } /* facing forward */ else {
-        drift('left')
-        resultRect = resultRect.backRightCornerPivot(degrees)
-      }
-    } else if (turningLeft) {
-      if (facingLeft) {
-        resultRect = resultRect.backLeftCornerPivot(degrees)
-      } else if (facingRight) {
-        resultRect = resultRect.backRightCornerPivot(degrees)
-      } /* facing forward */ else {
-        drift('right')
-        resultRect = resultRect.backLeftCornerPivot(degrees)
-      }
-    }
-
-    car.phasing.difficulty = Math.ceil(Math.abs(desiredFacing) / 15)
-    if (car.phasing.difficulty > 0) {
-      car.phasing.difficulty++
-    }
-
-    return resultRect
-  }
-
-  /// /////////////////////////////////
-
   static reset({ car }) {
     const possibles = this.possibleSpeeds({ car })
 
@@ -315,6 +226,68 @@ class PhasingMove {
         }
       },
     )
+  }
+
+  // controlled skid skids on next move
+  static swerve({ car, degrees }) {
+    const currentFacingDelta = degreesDifference({
+      initial: car.rect.facing,
+      second: car.phasing.rect.facing,
+    })
+    const desiredFacing = currentFacingDelta + degrees
+    let resultRect = car.phasing.rect.clone()
+
+    // Can't turn more than 90 deg.
+    if (Math.abs(desiredFacing) > 90) {
+      return resultRect
+    }
+
+    const facingLeft = currentFacingDelta < 0
+    const facingRight = currentFacingDelta > 0
+    const turningToFront = desiredFacing === 0
+    const turningLeft = degrees < 0
+    const turningRight = degrees > 0
+
+    const drift = (direction = 'right') => {
+      resultRect = resultRect.move({
+        degrees: resultRect.facing + FACE.RIGHT,
+        distance: direction === 'right' ? INCH / 4 : -INCH / 4,
+      })
+      resultRect.facing += FACE.LEFT
+    }
+
+    if (turningToFront) {
+      resultRect._brPoint = resultRect.brPoint().clone()
+      resultRect = car.rect.move({
+        degrees: car.rect.facing,
+        distance: INCH,
+      })
+    } else if (turningRight) {
+      if (facingRight) {
+        resultRect = resultRect.backRightCornerPivot(degrees)
+      } else if (facingLeft) {
+        resultRect = resultRect.backLeftCornerPivot(degrees)
+      } /* facing straight */ else {
+        drift('left')
+        resultRect = resultRect.backRightCornerPivot(degrees)
+      }
+    } else if (turningLeft) {
+      if (facingLeft) {
+        resultRect = resultRect.backLeftCornerPivot(degrees)
+      } else if (facingRight) {
+        resultRect = resultRect.backRightCornerPivot(degrees)
+      } /* facing straight */ else {
+        drift('right')
+        resultRect = resultRect.backLeftCornerPivot(degrees)
+      }
+    }
+
+    car.phasing.difficulty = Math.ceil(Math.abs(desiredFacing) / 15)
+    if (car.phasing.difficulty > 0) {
+      car.phasing.difficulty++
+    }
+
+    return resultRect
   }
 }
 

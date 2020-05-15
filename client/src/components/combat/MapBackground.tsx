@@ -2,7 +2,7 @@ import * as React from 'react'
 import { INCH } from '../../utils/constants'
 import LocalMatchState from './lib/LocalMatchState'
 
-class MapLine  extends React.Component {
+class MapLine extends React.Component {
   props: any
   x1: number
   y1: number
@@ -19,7 +19,7 @@ class MapLine  extends React.Component {
     this.y2 = props.y2
     this.style = {
       stroke: 'slategrey',
-      fill: 'none'
+      fill: 'none',
     }
     this.lineWidth = props.lineWidth
   }
@@ -87,7 +87,7 @@ class MapGrid extends React.Component {
       result.push(this.GridVertical({ x: x * edgeLength, height: this.height, lineWidth: this.GridLineWidth(x) }))
     }
     for (var y = 0; y < this.height / edgeLength; y++) {
-      result.push(this.GridHorizontal({ y: y * edgeLength, width: this.width, lineWidth: this.GridLineWidth(y)}))
+      result.push(this.GridHorizontal({ y: y * edgeLength, width: this.width, lineWidth: this.GridLineWidth(y) }))
     }
     return result
   }

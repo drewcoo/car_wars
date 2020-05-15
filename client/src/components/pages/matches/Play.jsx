@@ -1,7 +1,7 @@
 import React from 'react'
 import { withRouter } from 'react-router'
 import { Query } from 'react-apollo'
-import SwitchUser from '../../combat/controls/SwitchUser'
+import SwitchUser from '../../combat/lib/SwitchUser'
 import LocalMatchState from '../../combat/lib/LocalMatchState'
 import Session from '../../combat/lib/Session'
 import ArenaMap from '../../combat/ArenaMap'
@@ -13,20 +13,20 @@ import '../../../App.css'
 const MATCH_DATA = completeMatchData
 
 class Match extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
-      playerId: localStorage.getItem('playerId')
+      playerId: localStorage.getItem('playerId'),
     }
     this.onUserIdChange = this.onUserIdChange.bind(this)
   }
 
-  onUserIdChange (playerId) {
+  onUserIdChange(playerId) {
     localStorage.setItem('playerId', playerId)
     this.setState({ playerId: playerId })
   }
 
-  render () {
+  render() {
     console.log(this.state.playerId)
 
     const matchId = this.props.match.params.matchId

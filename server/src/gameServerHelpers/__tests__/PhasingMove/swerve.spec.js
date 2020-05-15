@@ -25,6 +25,19 @@ describe('PhasingMove', () => {
       expect(car.rect.side('F').middle()).equalsPoint(result.blPoint())
     })
 
+    it('left, left', () => {
+      const degrees = -15
+      const initFacing = car.rect.facing
+
+      let result = PhasingMove.swerve({ car, degrees })
+      expect(result.facing).degreesEqual(initFacing + degrees)
+      expect(car.rect.side('F').middle()).equalsPoint(result.blPoint())
+      car.phasing.rect = result
+      result = PhasingMove.swerve({ car, degrees })
+      expect(result.facing).degreesEqual(initFacing + 2 * degrees)
+      expect(car.rect.side('F').middle()).equalsPoint(result.blPoint())
+    })
+
     it('right', () => {
       const degrees = _.random(1, 90)
       const result = PhasingMove.swerve({ car, degrees })

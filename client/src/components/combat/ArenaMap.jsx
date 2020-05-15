@@ -5,9 +5,10 @@ import MapBackground from './MapBackground'
 import Walls from './Walls'
 import ActiveCar from './ActiveCar'
 import ViewElement from './lib/ViewElement'
+import PropTypes from 'prop-types'
 
 class ArenaMap extends React.Component {
-  componentDidMount () {
+  componentDidMount() {
     const lms = new LocalMatchState(this.props.matchData)
     if (lms.activeCar()) {
       ViewElement(lms.activeCar().id)
@@ -19,7 +20,7 @@ class ArenaMap extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const lms = new LocalMatchState(this.props.matchData)
     return (
       <svg
@@ -50,6 +51,11 @@ class ArenaMap extends React.Component {
       </svg>
     )
   }
+}
+
+ArenaMap.propTypes = {
+  client: PropTypes.object,
+  matchData: PropTypes.object,
 }
 
 export default ArenaMap

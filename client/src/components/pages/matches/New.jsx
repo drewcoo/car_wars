@@ -10,7 +10,7 @@ import createCompleteMatch from '../../graphql/mutations/createCompleteMatch'
 const CREATE_MATCH = graphql(createCompleteMatch, { name: 'createCompleteMatch' })
 
 class MatchNew extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = { value: '', foo: '' }
     this.map = 'arenaMap1'
@@ -18,7 +18,7 @@ class MatchNew extends React.Component {
       { name: 'You', color: 'red' },
       { name: 'Bob', color: 'blue' },
       { name: 'Carol', color: 'green' },
-      { name: 'Donald', color: 'purple' }
+      { name: 'Donald', color: 'purple' },
     ])
     this.cars = this.createCars({ startingPositions: [0, 1, 2, 3] })
     Object.keys(this.cars).forEach((carId) => {
@@ -35,7 +35,7 @@ class MatchNew extends React.Component {
     this.listStarted = false
   }
 
-  createPlayers (namesAndColors) {
+  createPlayers(namesAndColors) {
     const result = {}
     namesAndColors.forEach(({ name, color = 'black' }) => {
       const id = uuid()
@@ -43,24 +43,24 @@ class MatchNew extends React.Component {
         carIds: [],
         color: color,
         id: id,
-        name: name
+        name: name,
       }
     })
     return result
   }
 
-  createCar ({ id, playerId, name, design, startingPosition }) {
+  createCar({ id, playerId, name, design, startingPosition }) {
     return {
       color: this.players[playerId].color,
       name: name,
       id: id,
       playerId: playerId,
       design: design,
-      startingPosition: startingPosition
+      startingPosition: startingPosition,
     }
   }
 
-  createCars ({ startingPositions }) {
+  createCars({ startingPositions }) {
     const result = {}
     let index = 0
     Object.keys(this.players).forEach((playerId) => {
@@ -69,7 +69,7 @@ class MatchNew extends React.Component {
         playerId: playerId,
         name: `car${index}`,
         design: 'Killer Kart',
-        startingPosition: startingPositions[index]
+        startingPosition: startingPositions[index],
       })
       result[car.id] = car
       index++
@@ -77,41 +77,37 @@ class MatchNew extends React.Component {
     return result
   }
 
-  colorStyle (myColor = 'white') {
+  colorStyle(myColor = 'white') {
     return {
       background: 'black',
       color: myColor,
       fontSize: '40px',
       fontFamily: 'fantasy',
-      fontVariant: 'small-caps'
+      fontVariant: 'small-caps',
     }
   }
 
-  submitStyle (color) {
-    Object.keys(this.players).forEach(k => console.log(k))
-    console.log(`this player: ${Object.keys(this.players)[0]}`)
-
-    const result = this.colorStyle(color)
-    return result
+  submitStyle(color) {
+    return this.colorStyle(color)
   }
 
-  handlePlayerNameChange (event) {
+  handlePlayerNameChange(event) {
     this.players[event.target.id].name = event.target.value
   }
 
-  handleColorChange (event) {
+  handleColorChange(event) {
     const id = event.target.id.replace('color-', '')
     const player = this.players[id]
     player.color = event.target.value
     this.setState({ value: event.target.value })
   }
 
-  handleCarNameChange (event) {
+  handleCarNameChange(event) {
     const car = this.cars[event.target.id]
     car.name = event.target.value
   }
 
-  async handleSubmit (event) {
+  async handleSubmit(event) {
     event.preventDefault()
 
     console.log(
@@ -121,7 +117,7 @@ class MatchNew extends React.Component {
           name: car.name,
           playerName: player.name,
           playerColor: player.color,
-          designName: car.design
+          designName: car.design,
         }
       })
     )
@@ -136,10 +132,10 @@ class MatchNew extends React.Component {
             playerName: player.name,
             playerId: player.id,
             playerColor: player.color,
-            designName: car.design
+            designName: car.design,
           }
-        })
-      }
+        }),
+      },
     })
 
     const match = response.data.createCompleteMatch
@@ -158,12 +154,12 @@ class MatchNew extends React.Component {
 
     this.props.history.push({
       pathname: `/match/${match.id}`, // }?godmode=true`,
-      state: { from: this.props.location }
+      state: { from: this.props.location },
     })
     console.log()
   }
 
-  addPlayerColorSelector (player) {
+  addPlayerColorSelector(player) {
     var result = []
     this.palette.forEach(color =>
       result.push(
@@ -188,7 +184,7 @@ class MatchNew extends React.Component {
     )
   }
 
-  showCars (player) {
+  showCars(player) {
     var result = []
     // BUGBUG: hard-code to first car
     player.carIds.forEach((carId) => {
@@ -210,13 +206,13 @@ class MatchNew extends React.Component {
     return result
   }
 
-  startList () {
+  startList() {
     if (this.listStarted) { return false }
     this.listStarted = true
     return true
   }
 
-  addPlayerToForm (player) {
+  addPlayerToForm(player) {
     return (
       <label key={ player.id }>
         <input
@@ -235,7 +231,7 @@ class MatchNew extends React.Component {
     )
   }
 
-  render () {
+  render() {
     this.listStarted = false
     if (document.getElementById('navOptions')) {
       document.getElementById('navOptions').style.display = ''

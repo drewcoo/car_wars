@@ -90,10 +90,10 @@ class GameObjectFactory {
         handling: designNode.attributes.handlingClass,
         killed: false,
         lastDamageBy: [],
-        maneuvers: ['forward', 'bend', 'drift', 'swerve'],
+        maneuvers: ['straight', 'bend', 'drift', 'swerve'],
         nextMove: [],
         speed: speed,
-        speedChangedThisTurn: false,
+        speedSetThisTurn: false,
       },
     }
   }

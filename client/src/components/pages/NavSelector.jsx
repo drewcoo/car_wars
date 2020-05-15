@@ -6,7 +6,7 @@ import {
   // Link,
   //  useRouteMatch,
   //  useParams,
-  withRouter
+  withRouter,
 } from 'react-router-dom'
 
 import Home from './Home'
@@ -16,18 +16,18 @@ import Matches from './matches/List'
 import '../../App.css'
 
 class NavSelector extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.client = props.client
     this.handleChange = this.handleChange.bind(this)
   }
 
-  handleChange (event) {
+  handleChange(event) {
     this.props.history.push(event.target.value)
     document.getElementById('navOptions').blur()
   }
 
-  render () {
+  render() {
     return (
       <div>
         <div id='navOptions'>

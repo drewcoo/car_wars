@@ -409,7 +409,7 @@ class Damage {
       hazard += 2
       if (crewMember.role === 'driver') {
         Log.info('driver incapacitated - steering out', car)
-        car.status.maneuvers = ['none', 'forward']
+        car.status.maneuvers = ['none', 'straight']
       }
     } else if (crewMember.damagePoints < 1) {
       // dead
@@ -419,7 +419,7 @@ class Damage {
       hazard += 2
       if (crewMember.role === 'driver') {
         Log.info('driver killed - steering out', car)
-        car.status.maneuvers = ['none', 'forward']
+        car.status.maneuvers = ['none', 'straight']
       }
     }
 

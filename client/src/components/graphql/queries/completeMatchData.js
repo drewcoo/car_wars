@@ -196,7 +196,8 @@ const completeMatchData = gql`
             spinDirection
           }
           speed
-          speedChangedThisTurn
+          speedInitThisTurn
+          speedSetThisTurn
         }
       }
       players {

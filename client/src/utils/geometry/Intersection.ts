@@ -4,7 +4,7 @@ import Rectangle from './Rectangle'
 import Segment from './Segment'
 
 class Intersection {
-  static exists (thing1: any, thing2: any) {
+  static exists(thing1: any, thing2: any) {
     switch (true) {
       case thing1 instanceof Point:
         switch (true) {
@@ -44,11 +44,11 @@ class Intersection {
     }
   }
 
-  static pointPointExists ({ point, point2 }) {
+  static pointPointExists({ point, point2 }) {
     return point.equals(point2)
   }
 
-  static pointRectangleExists ({ point, rectangle }) {
+  static pointRectangleExists({ point, rectangle }) {
     // Actually, "is at least partially inside" would be mmore apt.
     // If a segment from a vertex to one of its ends crosses the opposite
     // rect sides, it's ouside.
@@ -69,16 +69,16 @@ class Intersection {
     return !outside
   }
 
-  static pointSegmentExists ({ point, segment }) {
+  static pointSegmentExists({ point, segment }) {
     const parts = point.distanceTo(segment.points[0]) + point.distanceTo(segment.points[1])
     return parts.toFixed(2) === segment.length().toFixed(2)
   }
 
-  static rectanglePointExists ({ point, rectangle }) {
+  static rectanglePointExists({ point, rectangle }) {
     return Intersection.pointRectangleExists({ point, rectangle })
   }
 
-  static rectangleRectangleExists ({ rectangle, rectangle2 }) {
+  static rectangleRectangleExists({ rectangle, rectangle2 }) {
     // returns false or skew between facing and a rect side
     // BUGBUG: Does this handle corners?
 
@@ -93,15 +93,15 @@ class Intersection {
             Intersection.segmentRectangleExists({ rectangle, segment: rectangle2.rSide() }))
   }
 
-  static rectangleSegmentExists ({ segment, rectangle }) {
+  static rectangleSegmentExists({ segment, rectangle }) {
     return Intersection.segmentRectangleExists({ segment, rectangle })
   }
 
-  static segmentPointExists ({ segment, point }) {
+  static segmentPointExists({ segment, point }) {
     return Intersection.pointSegmentExists({ point, segment })
   }
 
-  static segmentRectangleExists ({ segment, rectangle }) {
+  static segmentRectangleExists({ segment, rectangle }) {
     const sidesIntersectSegment = () => {
       return (Intersection.segmentSegmentExists({ segment, segment2: rectangle.fSide() }) ||
                 Intersection.segmentSegmentExists({ segment, segment2: rectangle.rSide() }) ||
@@ -120,7 +120,7 @@ class Intersection {
     return sidesIntersectSegment() || segmentIsInsideRectangle()
   }
 
-  static segmentSegmentExists ({ segment, segment2 }) {
+  static segmentSegmentExists({ segment, segment2 }) {
     // from Stack Overflow - url forgotten
     const copypasta = (a: number, b: number, c: number, d: number, p: number, q: number, r: number, s: number) => {
       var det: number, gamma: number, lambda: number

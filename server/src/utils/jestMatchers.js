@@ -3,7 +3,9 @@ import { degreesEqual as testDegrees } from './conversions'
 expect.extend({
   degreesEqual(arg1, arg2) {
     return {
-      message: () => `received: ${arg1}°; expected: ${arg2}°`,
+      message: () =>
+        `received: ${arg1}°; expected: ${arg2}° (difference: ${arg1 - arg2}°)`,
+      // message: () => `received: ${arg1}; expected: ${arg2}`,
       pass: testDegrees(arg1, arg2),
     }
   },

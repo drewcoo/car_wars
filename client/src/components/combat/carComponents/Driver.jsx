@@ -3,7 +3,7 @@ import Component from './GenericComponent'
 import LocalMatchState from '../lib/LocalMatchState'
 
 class Driver extends React.Component {
-  render () {
+  render() {
     // const car = new LocalMatchState(this.props.matchData).activeCar()
     const car = new LocalMatchState(this.props.matchData).car({ id: this.props.carId })
 

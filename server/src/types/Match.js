@@ -22,6 +22,7 @@ export const typeDef = `
     sayNothing(matchId: ID!, msg: String!): String!
   }
 
+
   input CarInput{
     name: String!
     playerName: String!
@@ -207,7 +208,7 @@ export const resolvers = {
         throw new Error('Restart match?')
       }
       match.status = 'started'
-      Time.subphase1_start({ match })
+      Time.subphase1Start({ match })
       return match
     },
     finishMatch: (parent, args, context) => {
@@ -236,7 +237,7 @@ export const resolvers = {
         throw new Error(`player not waiting to ack damage: ${args.playerId}`)
       }
       match.time.phase.playersToAckDamage.splice(ptadIndex, 1)
-      Time.subphase5_damage({ match })
+      Time.subphase6Damage({ match })
     },
     ackSpeedChange: (parent, args, context) => {
       const match = DATA.matches.find((el) => el.id === args.matchId)
@@ -249,7 +250,7 @@ export const resolvers = {
         )
       }
       match.time.phase.playersToAckSpeedChange.splice(index, 1)
-      Time.subphase_2_1_revealSpeedChange({ match })
+      Time.subphase3RevealSpeedChange({ match })
     },
   },
 }

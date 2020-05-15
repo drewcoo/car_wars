@@ -22,10 +22,10 @@ export const degreesParallel = (d1, d2) => {
 
 export const degreesDifference = ({ initial, second }) => {
   let diff = (second % 360) - (initial % 360)
-  if (diff > 180) {
+  while (diff > 180) {
     diff -= 360
   }
-  if (diff < -180) {
+  while (diff < -180) {
     diff += 360
   }
   return diff

@@ -10,7 +10,7 @@ describe('Rectangle', () => {
     it('#brPoint thows on _brPoint not point', () => {
       const rectangle = Factory.Rectangle()
       rectangle._brPoint = 'notAPoint'
-      expect(function () {
+      expect(() => {
         rectangle.brPoint()
       }).toThrow(Error)
     })
@@ -304,7 +304,7 @@ describe('Rectangle', () => {
 
     describe('non-thing', () => {
       it('throws', () => {
-        expect(function () {
+        expect(() => {
           rectangle.intersects(null)
         }).toThrow(Error)
       })

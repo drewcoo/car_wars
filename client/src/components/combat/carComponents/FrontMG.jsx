@@ -4,7 +4,7 @@ import '../../../App.css'
 import LocalMatchState from '../lib/LocalMatchState'
 
 class FrontMG extends React.Component {
-  render () {
+  render() {
     // const car = new LocalMatchState(this.props.matchData).activeCar()
     const car = new LocalMatchState(this.props.matchData).car({ id: this.props.carId })
 

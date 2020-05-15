@@ -1,31 +1,31 @@
 import * as React from 'react'
 import Car from './Car'
-import Maneuver from './controls/lib/Maneuver'
+import Maneuver from './lib/Maneuver'
 import Point from '../../utils/geometry/Point'
 import { degreesDifference } from '../../utils/conversions'
 import LocalMatchState from './lib/LocalMatchState'
 import ViewElement from './lib/ViewElement'
 
 class ActiveCar extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       drag: false,
       firstPoint: null,
-      lastPoint: null
+      lastPoint: null,
     }
     this.startHandler = this.startHandler.bind(this)
     this.moveHandler = this.moveHandler.bind(this)
     this.stopHandler = this.stopHandler.bind(this)
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     ViewElement('shotResult') ||
     ViewElement('reticle') ||
     ViewElement(new LocalMatchState(this.props.matchData).activeCarId())
   }
 
-  eventPoint (event) {
+  eventPoint(event) {
     // First, get the page coordinates of the click or touch.
     let result
     if (event.clientX) { // Mouse - correct coords
@@ -33,7 +33,7 @@ class ActiveCar extends React.Component {
     } else { // Otherwise assume touch - incorrect
       result = new Point({
         x: event.changedTouches[0].pageX,
-        y: event.changedTouches[0].pageY
+        y: event.changedTouches[0].pageY,
       })
     }
 
@@ -45,20 +45,20 @@ class ActiveCar extends React.Component {
     return result.toFixed(0)
   }
 
-  handleOnDrag (event) {
+  handleOnDrag(event) {
     this.moveHandler(event)
   }
 
-  handleOnDragStop (event) {
+  handleOnDragStop(event) {
     this.stopHandler(event)
   }
 
-  startHandler (event) {
+  startHandler(event) {
     const point = this.eventPoint(event)
     this.setState({ drag: false, firstPoint: point, lastPoint: point })
   }
 
-  moveHandler (event) {
+  moveHandler(event) {
     if (this.state.firstPoint === null) {
       if (this.state.drag === false) {
         this.stopHandler(event)
@@ -87,17 +87,17 @@ class ActiveCar extends React.Component {
     const swipeDirection = this.state.firstPoint.degreesTo(this.state.lastPoint)
     const deltaDirection = degreesDifference({
       initial: car.phasing.rect.facing,
-      second: swipeDirection
+      second: swipeDirection,
     })
     Maneuver.turnRight({
       matchId: lms.matchId(),
       car: car,
-      fRight: (deltaDirection > 0)
+      fRight: (deltaDirection > 0),
     })
     this.setState({ drag: true, lastPoint: point })
   }
 
-  stopHandler (event) {
+  stopHandler(event) {
     if (this.state.drag) {
       // stop dragging
     } else {
@@ -108,7 +108,7 @@ class ActiveCar extends React.Component {
     this.setState({ drag: false, firstPoint: null, lastPoint: null })
   }
 
-  render () {
+  render() {
     const lms = new LocalMatchState(this.props.matchData)
     if (lms.awaitAllSpeedsSet()) {
       return (<></>)
