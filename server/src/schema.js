@@ -1,6 +1,7 @@
 import { makeExecutableSchema } from 'graphql-tools'
 import resolvers from './resolvers'
 import { typeDef as Car } from './types/Car'
+import { typeDef as Character } from './types/Character'
 import { typeDef as Geometry } from './types/Geometry'
 import { typeDef as Map } from './types/Map'
 import { typeDef as Match } from './types/Match'
@@ -22,6 +23,7 @@ const typeDefs = [
 ]
 
 typeDefs.push(Car)
+typeDefs.push(Character)
 typeDefs.push(Geometry)
 typeDefs.push(Map)
 typeDefs.push(Match)

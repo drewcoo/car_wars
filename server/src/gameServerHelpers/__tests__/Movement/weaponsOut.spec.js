@@ -7,9 +7,7 @@ describe('Movement', () => {
 
     beforeEach(() => {
       car = GameObjectFactory.car({})
-      weapons = car.design.components.weapons.filter(
-        (elem) => elem.type !== 'none',
-      )
+      weapons = car.design.components.weapons.filter(elem => elem.type !== 'none')
     })
 
     it('car has none', () => {
@@ -22,13 +20,13 @@ describe('Movement', () => {
     })
 
     it('weapons require plant but plant out', () => {
-      weapons.forEach((w) => (w.requiresPlant = true))
+      weapons.forEach(w => (w.requiresPlant = true))
       car.design.components.powerPlant.damagePoints = 0
       expect(Movement.weaponsOut({ car })).toBe(true)
     })
 
     it('weapons all destroyed', () => {
-      weapons.forEach((w) => (w.damagePoints = 0))
+      weapons.forEach(w => (w.damagePoints = 0))
       expect(Movement.weaponsOut({ car })).toBe(true)
     })
   })

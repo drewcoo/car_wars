@@ -1,5 +1,6 @@
 import * as Promise from 'bluebird'
 import { resolvers as Car } from './types/Car'
+import { resolvers as Character } from './types/Character'
 import { resolvers as Geometry } from './types/Geometry'
 import { resolvers as Map } from './types/Map'
 import { resolvers as Match } from './types/Match'
@@ -21,6 +22,7 @@ const mungeResolvers = (target, source) => {
 
 const resolvers = { Query: {}, Mutation: {}, Subscription: {} }
 mungeResolvers(resolvers, Car)
+mungeResolvers(resolvers, Character)
 mungeResolvers(resolvers, Player)
 mungeResolvers(resolvers, Geometry)
 mungeResolvers(resolvers, Map)
@@ -40,10 +42,17 @@ resolvers.Mutation.createCompleteMatch = async (parent, args, context) => {
       color: elem.playerColor,
       id: elem.playerId,
     })
+    const character = await resolvers.Mutation.createCharacter(null, {
+      id: elem.characterId,
+      name: `${elem.playerName} driver`,
+      matchId: match.id,
+      playerId: elem.playerId,
+    })
     const car = await resolvers.Mutation.createCar(null, {
       name: elem.name,
       playerId: player.id,
       designName: elem.designName,
+      crew: [{ role: 'driver', id: character.id }],
     })
     await resolvers.Mutation.addCar(null, {
       carId: car.id,
@@ -70,13 +79,19 @@ resolvers.Query.completeMatchData = async (parent, args, context) => {
   const cars = await Promise.map(match.carIds, (carId) => {
     return resolvers.Query.car(null, { id: carId })
   })
+  const characters = await Promise.map(match.characterIds, (characterId) => {
+    return resolvers.Query.character(null, { id: characterId })
+  })
   const players = await Promise.map(cars, (car) => {
     return resolvers.Query.player(null, { id: car.playerId })
   })
+  // write every time we're queried
+  process.stdout.write('.')
   return {
     match: match,
     cars: cars,
     players: players,
+    characters: characters,
   }
 }
 

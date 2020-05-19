@@ -2,7 +2,7 @@ import { FACE, INCH } from '../utils/constants'
 import { degreesDifference } from '../utils/conversions'
 import Log from '../utils/Log'
 import Control from './Control'
-import VehicleStatusHelper from './VehicleStatusHelper'
+import Vehicle from './Vehicle'
 import Rectangle from '../utils/geometry/Rectangle'
 
 class PhasingMove {
@@ -41,9 +41,7 @@ class PhasingMove {
       }
     }
 
-    car.phasing.difficulty = Math.ceil(
-      Math.abs(resultRect.facing - car.rect.facing) / 15,
-    )
+    car.phasing.difficulty = Math.ceil(Math.abs(resultRect.facing - car.rect.facing) / 15)
 
     return resultRect
   }
@@ -89,12 +87,8 @@ class PhasingMove {
     */
 
     // calculate change from a straight move and do it
-    const targetPoint = car.phasing.rect
-      .brPoint()
-      .move({ degrees: car.rect.facing + FACE.RIGHT, distance })
-    const nullBrPoint = car.rect
-      .brPoint()
-      .move({ degrees: car.rect.facing, distance: INCH })
+    const targetPoint = car.phasing.rect.brPoint().move({ degrees: car.rect.facing + FACE.RIGHT, distance })
+    const nullBrPoint = car.rect.brPoint().move({ degrees: car.rect.facing, distance: INCH })
     const currentDist = Math.floor(targetPoint.distanceTo(nullBrPoint))
 
     // Drifts are max 1/2".
@@ -129,7 +123,7 @@ class PhasingMove {
   }
 
   static straight({ car, distance = INCH }) {
-    return car.phasing.rect.move({ distance, degrees: car.phasing.rect.facing })
+    return car.rect.move({ distance, degrees: car.phasing.rect.facing })
   }
 
   static hasMoved({ car }) {
@@ -137,13 +131,7 @@ class PhasingMove {
   }
 
   static possibleSpeeds({ car }) {
-    const setSpeeds = ({
-      currentSpeed,
-      topSpeed,
-      acceleration,
-      canAccelerate,
-      canBrake,
-    }) => {
+    const setSpeeds = ({ currentSpeed, topSpeed, acceleration, canAccelerate, canBrake }) => {
       const acc = canAccelerate ? acceleration : 0
       // BUGBUG: Only does straight
       const possibleMax = currentSpeed + acc
@@ -162,12 +150,11 @@ class PhasingMove {
       currentSpeed: car.status.speed,
       topSpeed: car.design.attributes.topSpeed,
       acceleration: car.design.attributes.acceleration,
-      canAccelerate: VehicleStatusHelper.canAccelerate(car),
-      canBrake: VehicleStatusHelper.canBrake(car),
+      canAccelerate: Vehicle.canAccelerate(car),
+      canBrake: Vehicle.canBrake(car),
     })
 
-    let index =
-      result.findIndex((change) => change.speed === car.status.speed) - 3
+    let index = result.findIndex((change) => change.speed === car.status.speed) - 3
 
     // unclear how to handle > 45mph deceleration - see p.9
     const difficulties = [
@@ -202,9 +189,7 @@ class PhasingMove {
       maneuverIndex: 0,
       rect: car.rect ? car.rect.clone() : null,
       showSpeedChangeModal: false,
-      speedChangeIndex: possibles.findIndex(
-        (possible) => possible.speed === car.status.speed,
-      ),
+      speedChangeIndex: possibles.findIndex((possible) => possible.speed === car.status.speed),
       speedChanges: possibles,
       targetIndex: car.phasing.targetIndex,
       targets: [],
@@ -218,14 +203,12 @@ class PhasingMove {
       throw new Error('wat happened?')
     }
 
-    car.phasing.controlChecksForSpeedChanges = car.phasing.speedChanges.map(
-      (setting) => {
-        return {
-          speed: setting.speed,
-          checks: Control.row({ speed: setting.speed }),
-        }
-      },
-    )
+    car.phasing.controlChecksForSpeedChanges = car.phasing.speedChanges.map((setting) => {
+      return {
+        speed: setting.speed,
+        checks: Control.row({ speed: setting.speed }),
+      }
+    })
   }
 
   // controlled skid skids on next move

@@ -1,22 +1,24 @@
 import Movement from '../../Movement'
 import GameObjectFactory from '../GameObjectFactory'
+import Vehicle from '../../Vehicle'
 
 describe('Movement', () => {
+  Vehicle.withId = jest.fn()
+
   let car0, car1, match0, match1, _data
 
   beforeEach(() => {
     car0 = GameObjectFactory.car({ id: 'car0', speed: 40 })
     car1 = GameObjectFactory.car({ id: 'car1', speed: 50 })
 
-    match0 = GameObjectFactory.match({
-      id: 'match0',
-      carIds: [car0.id, car1.id],
-    })
+    match0 = GameObjectFactory.match({ id: 'match0' })
+    GameObjectFactory.putVehicleInMatch({ match: match0, vehicle: car0 })
+    GameObjectFactory.putVehicleInMatch({ match: match0, vehicle: car1 })
     match0.time.phase.number = 4
-    match1 = GameObjectFactory.match({
-      id: 'match1',
-      carIds: [car0.id, car1.id],
-    })
+
+    match1 = GameObjectFactory.match({ id: 'match1' })
+    GameObjectFactory.putVehicleInMatch({ match: match1, vehicle: car0 })
+    GameObjectFactory.putVehicleInMatch({ match: match1, vehicle: car1 })
     match1.time.phase.number = 5
 
     _data = {
@@ -26,6 +28,11 @@ describe('Movement', () => {
   })
 
   describe('#canMoveThisPhase', () => {
+    beforeEach(() => {
+      Vehicle.withId.mockReturnValueOnce(car0)
+      Vehicle.withId.mockReturnValueOnce(car1)
+    })
+
     it('phase 4: car0 moves 0; car1 moves 1', () => {
       expect(
         Movement.canMoveThisPhase({

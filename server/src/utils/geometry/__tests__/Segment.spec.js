@@ -6,27 +6,17 @@ describe('Segment', () => {
   describe('#length', () => {
     it('is distance between points', () => {
       const segment = GeometryFactory.segment()
-      expect(segment.length()).toEqual(
-        segment.points[0].distanceTo(segment.points[1]),
-      )
+      expect(segment.length()).toEqual(segment.points[0].distanceTo(segment.points[1]))
     })
   })
 
   describe('#isParallelTo', () => {
     it('vertical lines are parallel', () => {
-      expect(
-        GeometryFactory.segment('vertical').isParallelTo(
-          GeometryFactory.segment('vertical'),
-        ),
-      ).toBe(true)
+      expect(GeometryFactory.segment('vertical').isParallelTo(GeometryFactory.segment('vertical'))).toBe(true)
     })
 
     it('horizontal lines are parallel', () => {
-      expect(
-        GeometryFactory.segment('horizontal').isParallelTo(
-          GeometryFactory.segment('horizontal'),
-        ),
-      ).toBe(true)
+      expect(GeometryFactory.segment('horizontal').isParallelTo(GeometryFactory.segment('horizontal'))).toBe(true)
     })
   })
 
@@ -41,112 +31,70 @@ describe('Segment', () => {
   })
 
   describe('#intersects', () => {
-    const segment = new Segment([
-      new Point({ x: 3, y: 3 }),
-      new Point({ x: 3, y: 6 }),
-    ])
+    const segment = new Segment([new Point({ x: 3, y: 3 }), new Point({ x: 3, y: 6 })])
 
     describe('is colinear', () => {
       it('does not intersect', () => {
-        const comparison = new Segment([
-          new Point({ x: 3, y: 9 }),
-          new Point({ x: 3, y: 7 }),
-        ])
+        const comparison = new Segment([new Point({ x: 3, y: 9 }), new Point({ x: 3, y: 7 })])
         expect(segment.intersects(comparison)).toBe(false)
       })
 
       it('shares one vertex', () => {
-        const comparison = new Segment([
-          new Point({ x: 3, y: 9 }),
-          new Point({ x: 3, y: 6 }),
-        ])
+        const comparison = new Segment([new Point({ x: 3, y: 9 }), new Point({ x: 3, y: 6 })])
         expect(segment.intersects(comparison)).toBe(true)
       })
 
       it('horizontal - also shares one vertex', () => {
-        const segment2 = new Segment([
-          new Point({ x: 3, y: 3 }),
-          new Point({ x: 6, y: 3 }),
-        ])
-        const comparison = new Segment([
-          new Point({ x: 9, y: 3 }),
-          new Point({ x: 4, y: 3 }),
-        ])
+        const segment2 = new Segment([new Point({ x: 3, y: 3 }), new Point({ x: 6, y: 3 })])
+        const comparison = new Segment([new Point({ x: 9, y: 3 }), new Point({ x: 4, y: 3 })])
         const intersection = segment2.intersects(comparison)
         expect(intersection).toBe(true)
       })
 
       it('overlaps, more than one point', () => {
-        const comparison = new Segment([
-          new Point({ x: 3, y: 9 }),
-          new Point({ x: 3, y: 5 }),
-        ])
+        const comparison = new Segment([new Point({ x: 3, y: 9 }), new Point({ x: 3, y: 5 })])
         expect(segment.intersects(comparison)).toBe(true)
       })
 
       it('shares both vertices', () => {
-        const comparison = new Segment([
-          new Point({ x: 3, y: 6 }),
-          new Point({ x: 3, y: 3 }),
-        ])
+        const comparison = new Segment([new Point({ x: 3, y: 6 }), new Point({ x: 3, y: 3 })])
         expect(segment.intersects(comparison)).toBe(true)
       })
 
       it('second eclipsed by first', () => {
-        const comparison = new Segment([
-          new Point({ x: 3, y: 5 }),
-          new Point({ x: 3, y: 4 }),
-        ])
+        const comparison = new Segment([new Point({ x: 3, y: 5 }), new Point({ x: 3, y: 4 })])
         expect(segment.intersects(comparison)).toBe(true)
       })
 
       it('first eclipsed by second', () => {
-        const comparison = new Segment([
-          new Point({ x: 3, y: 0 }),
-          new Point({ x: 3, y: 9 }),
-        ])
+        const comparison = new Segment([new Point({ x: 3, y: 0 }), new Point({ x: 3, y: 9 })])
         expect(segment.intersects(comparison)).toBe(true)
       })
     })
 
     describe('is not colinear', () => {
       it('is parallel', () => {
-        const comparison = new Segment([
-          new Point({ x: 4, y: 3 }),
-          new Point({ x: 4, y: 6 }),
-        ])
+        const comparison = new Segment([new Point({ x: 4, y: 3 }), new Point({ x: 4, y: 6 })])
         expect(segment.intersects(comparison)).toBe(false)
       })
 
       it('shares a vertex', () => {
-        const comparison = new Segment([
-          new Point({ x: 3, y: 6 }),
-          new Point({ x: 6, y: 4 }),
-        ])
+        const comparison = new Segment([new Point({ x: 3, y: 6 }), new Point({ x: 6, y: 4 })])
         expect(segment.intersects(comparison)).toBe(true)
       })
 
       it('one has a vertex in the middle of the other', () => {
-        const comparison = new Segment([
-          new Point({ x: 3, y: 4 }),
-          new Point({ x: 6, y: 4 }),
-        ])
+        const comparison = new Segment([new Point({ x: 3, y: 4 }), new Point({ x: 6, y: 4 })])
         expect(segment.intersects(comparison)).toBe(true)
       })
 
       it('crosses in the middles', () => {
-        const comparison = new Segment([
-          new Point({ x: 1, y: 4 }),
-          new Point({ x: 6, y: 4 }),
-        ])
+        const comparison = new Segment([new Point({ x: 1, y: 4 }), new Point({ x: 6, y: 4 })])
         expect(segment.intersects(comparison)).toBe(true)
       })
 
       it('does not cross', () => {
-        const comparison = new Segment([
-          new Point({ x: 1, y: 2 }),
-          new Point({ x: 2, y: 6 }),
-        ])
+        const comparison = new Segment([new Point({ x: 1, y: 2 }), new Point({ x: 2, y: 6 })])
         expect(segment.intersects(comparison)).toBe(false)
       })
     })

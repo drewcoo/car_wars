@@ -9,7 +9,7 @@ describe('Movement', () => {
     driver = car.design.components.crew.find((elem) => elem.role === 'driver')
   })
 
-  describe('#driverOut', () => {
+  xdescribe('#driverOut', () => {
     it('driver injured - not out', () => {
       driver.damagePoints = 2
       expect(Movement.driverOut({ car })).toBe(false)

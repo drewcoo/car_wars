@@ -6,6 +6,7 @@ const completeMatchData = gql`
       match {
         id
         carIds
+        characterIds
         map {
           id
           name
@@ -77,9 +78,8 @@ const completeMatchData = gql`
               U
             }
             crew {
+              id
               role
-              damagePoints
-              firedThisTurn
             }
             powerPlant {
               damagePoints
@@ -199,6 +199,27 @@ const completeMatchData = gql`
           speedInitThisTurn
           speedSetThisTurn
         }
+      }
+      characters {
+        damagePoints
+        equipment {
+          name
+          weight
+        }
+        firedThisTurn
+        id
+        inVehicleId
+        log
+        name
+        matchId
+        playerId
+        prestige
+        reflexRoll
+        skills {
+          name
+          points
+        }
+        wealth
       }
       players {
         id

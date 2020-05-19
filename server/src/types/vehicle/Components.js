@@ -22,9 +22,8 @@ export const typeDef = `
   }
 
   type CrewMember {
+    id: ID
     role: String!
-    damagePoints: Int!
-    firedThisTurn: Boolean!
   }
 
   type PowerPlant {

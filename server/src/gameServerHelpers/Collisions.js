@@ -1,10 +1,10 @@
-import { DATA, matchCars } from '../DATA'
 import Log from '../utils/Log'
 import Control from './Control'
+import Match from './Match'
 
 class Collisions {
-  static clear({ match, _data }) {
-    matchCars({ match, _data }).forEach((car) => {
+  static clear({ match }) {
+    Match.cars({ match }).forEach((car) => {
       // This is ugly.
       car.phasing.collisionDetected = false
       car.collisionDetected = false
@@ -27,7 +27,7 @@ class Collisions {
 
   static detect({ cars, map, thisCar }) {
     const walls = map.wallData
-    const match = DATA.matches.find((elem) => elem.id === thisCar.currentMatch)
+    const match = Match.withVehicle({ vehicle: thisCar })
     // clear old collision data just in case
     Collisions.clear({ match })
     Collisions.detectWithCars({ cars, thisCar })
@@ -51,9 +51,7 @@ class Collisions {
         let collisionSpeed = 'NOT SET'
         let damageToEach = 'NOT SET'
 
-        const arcOfRammedVehicle = car.rect.arcForPoint(
-          thisCar.rect.fSide().middle(),
-        )
+        const arcOfRammedVehicle = car.rect.arcForPoint(thisCar.rect.fSide().middle())
 
         if (
           (arcOfRammedVehicle === 'F' && car.status.speed >= 0) ||
@@ -65,15 +63,10 @@ class Collisions {
           collisionSpeed = thisCar.status.speed + car.status.speed
           damageToEach = Collisions.ramDamageBySpeed(collisionSpeed)
           rammer.damage = rammed.damage = damageToEach
-          rammer.damageModifier = Collisions.damageModifierFromWeight(
-            thisCar.design.attributes.weight,
-          )
-          rammed.damageModifier = Collisions.damageModifierFromWeight(
-            car.design.attributes.weight,
-          )
+          rammer.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
+          rammed.damageModifier = Collisions.damageModifierFromWeight(car.design.attributes.weight)
           rammer.handlingStatus = Control.normalizeHandlingStatus(
-            car.status.handling -
-              this.handlingChange({ speed: car.status.speed }),
+            car.status.handling - this.handlingChange({ speed: car.status.speed }),
           )
           rammed.newSpeed = 0
           if (thisCar.status.speed <= car.status.speed) {
@@ -83,9 +76,9 @@ class Collisions {
           }
           Log.info('head-on collision', thisCar)
           Log.info(
-            `handling: ${
-              thisCar.status.handling
-            }; change: ${this.handlingChange({ speed: rammer.newSpeed })}`,
+            `handling: ${thisCar.status.handling}; change: ${this.handlingChange({
+              speed: rammer.newSpeed,
+            })}`,
             thisCar,
           )
         } else if (
@@ -98,12 +91,8 @@ class Collisions {
           collisionSpeed = thisCar.status.speed - car.status.speed
           damageToEach = Collisions.ramDamageBySpeed(collisionSpeed)
           rammer.damage = rammed.damage = damageToEach
-          rammer.damageModifier = Collisions.damageModifierFromWeight(
-            thisCar.design.attributes.weight,
-          )
-          rammed.damageModifier = Collisions.damageModifierFromWeight(
-            car.design.attributes.weight,
-          )
+          rammer.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
+          rammed.damageModifier = Collisions.damageModifierFromWeight(car.design.attributes.weight)
 
           const tmp =
             this.temporarySpeed({
@@ -121,24 +110,20 @@ class Collisions {
 
           Log.info('rear end collision', thisCar)
           Log.info(
-            `handling: ${
-              thisCar.status.handling
-            }; change: ${this.handlingChange({ speed: rammer.newSpeed })}`,
+            `handling: ${thisCar.status.handling}; change: ${this.handlingChange({
+              speed: rammer.newSpeed,
+            })}`,
             thisCar,
           )
           rammer.handlingStatus = Control.normalizeHandlingStatus(
-            thisCar.status.handling -
-              this.handlingChange({ speed: rammer.newSpeed }),
+            thisCar.status.handling - this.handlingChange({ speed: rammer.newSpeed }),
           )
           rammed.handlingStatus = Control.normalizeHandlingStatus(
-            car.status.handling -
-              this.handlingChange({ speed: rammed.newSpeed }),
+            car.status.handling - this.handlingChange({ speed: rammed.newSpeed }),
           )
         } else {
           if (Collisions.isSideswipe({ rammer: thisCar, rammed: car })) {
-            const facingDelta = Math.abs(
-              car.rect.facing - thisCar.phasing.rect.facing,
-            )
+            const facingDelta = Math.abs(car.rect.facing - thisCar.phasing.rect.facing)
 
             let netSpeed = 0
             if (facingDelta >= 0 && facingDelta <= 45) {
@@ -150,23 +135,15 @@ class Collisions {
             }
             collisionSpeed = Math.ceil(netSpeed / 4 / 5) * 5
 
-            rammer.damage = rammed.damage = Collisions.ramDamageBySpeed(
-              collisionSpeed,
-            )
-            rammer.damageModifier = Collisions.damageModifierFromWeight(
-              thisCar.design.attributes.weight,
-            )
-            rammed.damageModifier = Collisions.damageModifierFromWeight(
-              car.design.attributes.weight,
-            )
+            rammer.damage = rammed.damage = Collisions.ramDamageBySpeed(collisionSpeed)
+            rammer.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
+            rammed.damageModifier = Collisions.damageModifierFromWeight(car.design.attributes.weight)
 
             rammer.handlingStatus = Control.normalizeHandlingStatus(
-              thisCar.status.handling -
-                this.handlingChange({ speed: collisionSpeed }),
+              thisCar.status.handling - this.handlingChange({ speed: collisionSpeed }),
             )
             rammed.handlingStatus = Control.normalizeHandlingStatus(
-              car.status.handling -
-                this.handlingChange({ speed: collisionSpeed }),
+              car.status.handling - this.handlingChange({ speed: collisionSpeed }),
             )
 
             rammer.newSpeed = thisCar.status.speed
@@ -174,15 +151,9 @@ class Collisions {
           } else {
             rammer.type = rammed.type = 't-bone'
             collisionSpeed = thisCar.status.speed
-            rammer.damage = rammed.damage = Collisions.ramDamageBySpeed(
-              collisionSpeed,
-            )
-            rammer.damageModifier = Collisions.damageModifierFromWeight(
-              thisCar.design.attributes.weight,
-            )
-            rammed.damageModifier = Collisions.damageModifierFromWeight(
-              car.design.attributes.weight,
-            )
+            rammer.damage = rammed.damage = Collisions.ramDamageBySpeed(collisionSpeed)
+            rammer.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
+            rammed.damageModifier = Collisions.damageModifierFromWeight(car.design.attributes.weight)
 
             rammer.newSpeed = this.temporarySpeed({
               thisDM: rammer.damageModifier,
@@ -193,12 +164,10 @@ class Collisions {
             rammed.newSpeed = car.status.speed
 
             rammer.handlingStatus = Control.normalizeHandlingStatus(
-              thisCar.status.handling -
-                this.handlingChange({ speed: rammer.newSpeed }),
+              thisCar.status.handling - this.handlingChange({ speed: rammer.newSpeed }),
             )
             rammed.handlingStatus = Control.normalizeHandlingStatus(
-              car.status.handling -
-                this.handlingChange({ speed: rammed.newSpeed }),
+              car.status.handling - this.handlingChange({ speed: rammed.newSpeed }),
             )
           }
         }
@@ -219,7 +188,7 @@ class Collisions {
 
     for (const wall of walls) {
       // var skew = thisCar.phasing.rect.intersectRectangle(wall.rect);
-      var skew = thisCar.phasing.rect.intersects(wall.rect)
+      const skew = thisCar.phasing.rect.intersects(wall.rect)
 
       if (skew) {
         thisCar.phasing.collisionDetected = true
@@ -238,12 +207,9 @@ class Collisions {
           const netSpeed = Math.abs(thisCar.status.speed)
           const collisionSpeed = Math.ceil(netSpeed / 4 / 5) * 5
           collisionInfo.damage = Collisions.ramDamageBySpeed(collisionSpeed)
-          collisionInfo.damageModifier = Collisions.damageModifierFromWeight(
-            thisCar.design.attributes.weight,
-          )
+          collisionInfo.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
           collisionInfo.handlingStatus = Control.normalizeHandlingStatus(
-            thisCar.status.handling -
-              this.handlingChange({ speed: collisionSpeed }),
+            thisCar.status.handling - this.handlingChange({ speed: collisionSpeed }),
           )
           collisionInfo.newSpeed = thisCar.status.speed
         } else {
@@ -251,12 +217,8 @@ class Collisions {
           const collisionSpeed = thisCar.status.speed
           const damage = Collisions.ramDamageBySpeed(collisionSpeed)
           collisionInfo.damage = damage
-          collisionInfo.damageModifier = Collisions.damageModifierFromWeight(
-            thisCar.design.attributes.weight,
-          )
-          collisionInfo.handlingStatus = Control.normalizeHandlingStatus(
-            -Math.floor(thisCar.status.speed / 10),
-          )
+          collisionInfo.damageModifier = Collisions.damageModifierFromWeight(thisCar.design.attributes.weight)
+          collisionInfo.handlingStatus = Control.normalizeHandlingStatus(-Math.floor(thisCar.status.speed / 10))
           collisionInfo.newSpeed = 0
         }
         console.log(collisionInfo)
@@ -274,10 +236,7 @@ class Collisions {
   }
 
   static isSideswipe({ rammer, rammed }) {
-    var delta = Math.abs(
-      ((rammer.phasing.rect.facing + 360) % 360) -
-        ((rammed.rect.facing + 360) % 360),
-    )
+    let delta = Math.abs(((rammer.phasing.rect.facing + 360) % 360) - ((rammed.rect.facing + 360) % 360))
     // first mod to one side
     delta %= 180
     // then anything > 45 deg from the middle is a sideswipe.
@@ -352,29 +311,29 @@ collisions"
     const table =
       // prettier-ignore
       [
-        [1 / 2, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0],
-        [1, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-        [1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-        [1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-        [1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-        [1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
-        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4],
-        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4],
-        [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-        [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
-      ]
+                [1 / 2, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 0, 0, 0, 0, 0, 0, 0],
+                [1, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+                [1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+                [1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+                [1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+                [1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+                [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+                [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+                [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 4],
+                [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4, 1 / 4],
+                [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 4],
+                [1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+                [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+                [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+                [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+                [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+                [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+                [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+                [1, 1, 1, 1, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 3 / 4, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2],
+            ]
     const row = thisDM >= 1 ? thisDM + 1 : thisDM * 3 - 1
     const column = otherDM >= 1 ? otherDM + 1 : otherDM * 3 - 1
     const unroundedResult = table[row][column] * speed

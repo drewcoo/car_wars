@@ -2,6 +2,8 @@ import _ from 'lodash'
 import { INCH } from '../utils/constants'
 import Dice from '../utils/Dice'
 import Log from '../utils/Log'
+import Character from './Character'
+import Vehicle from './Vehicle'
 
 class Control {
   static table =
@@ -65,26 +67,26 @@ class Control {
   static hazardCheck({ car, difficulty }) {
     let result = 'pass'
     Log.info(
-      `hazard check, modified handling: ${
-        car.status.handling
-      } - ${difficulty} = ${car.status.handling - difficulty}`,
+      `hazard check, modified handling: ${car.status.handling} - ${difficulty} = ${car.status.handling - difficulty}`,
       car,
     )
-    car.status.handling = Control.normalizeHandlingStatus(
-      car.status.handling - difficulty,
-    )
+    car.status.handling = Control.normalizeHandlingStatus(car.status.handling - difficulty)
 
     if (!Control.loseControl({ car })) {
       return result
     }
     const dieRoll = Dice.roll('2d')
-    const skillBonus = 0 // BUGBUG: get from character + reflex instead
-    Log.info(`speed: ${car.status.speed}`)
+
+    const characterId = Vehicle.driverId({ vehicle: car })
+    const skillLevel = Character.skillLevel({ skill: 'driver', characterId })
+    const skillBonus = skillLevel < 0 ? 0 : skillLevel
+
+    Log.info(`speed: ${car.status.speed}`, car)
     const crashModifier = Control.crashModifier({ speed: car.status.speed })
-    Log.info(`crashModifier: ${crashModifier}`)
+    Log.info(`crashModifier: ${crashModifier}`, car)
 
     Log.info(
-      `crash roll = ${dieRoll} (2d) + ${difficulty} (difficulty) + ${skillBonus} (skill) + ${crashModifier} (crash mod)`,
+      `crash roll = ${dieRoll} (2d) + ${difficulty} (difficulty) - ${skillBonus} (skill) + ${crashModifier} (crash mod)`,
       car,
     )
     const crashRoll = dieRoll + difficulty - skillBonus + crashModifier
@@ -103,9 +105,7 @@ class Control {
     }
 
     const spinDirection =
-      car.status.nextMove[0].spinDirection !== ''
-        ? car.status.nextMove[0].spinDirection
-        : Control.spinDirection()
+      car.status.nextMove[0].spinDirection !== '' ? car.status.nextMove[0].spinDirection : Control.spinDirection()
     Log.info(`fishtail to the ${spinDirection}`, car)
     const oldDistance = Math.abs(car.status.nextMove[0].fishtailDistance)
 
@@ -138,10 +138,7 @@ class Control {
         result = 'NOT minor fishtail and roll on Crash Table 1'
       }
     } else if (crashRoll <= 14) {
-      if (
-        Math.abs(car.status.nextMove[0].fishtailDistance) < 30 ||
-        car.status.nextMove[0].maneuver === null
-      ) {
+      if (Math.abs(car.status.nextMove[0].fishtailDistance) < 30 || car.status.nextMove[0].maneuver === null) {
         car.status.nextMove[0].fishtailDistance = 30
         car.status.nextMove[0].spinDirection = spinDirection
         Log.info('fishtail 1/2" plus maneuver check . . .', car)
@@ -188,12 +185,13 @@ class Control {
   // a.k.a. Crash Table 1
   static maneuverCheck({ car, forceCrashTable2Roll = false }) {
     Log.info('maneuver check', car)
-    const skillBonus = 0 // BUGBUG: get from character + reflex instead
+
+    const characterId = Vehicle.driverId({ vehicle: car })
+    const skillLevel = Character.skillLevel({ skill: 'driver', characterId })
+    const skillBonus = skillLevel < 0 ? 0 : skillLevel
+
     let result = 'no change'
-    if (
-      !forceCrashTable2Roll &&
-      (car.phasing.difficulty === 0 || !Control.loseControl({ car }))
-    ) {
+    if (!forceCrashTable2Roll && (car.phasing.difficulty === 0 || !Control.loseControl({ car }))) {
       return result
     } // no maneuver; no check
 
@@ -203,18 +201,14 @@ class Control {
     // the modified Difficulty rating of the hazard or maneuver, subtract 3,
     // and add the result (negative or positive) to the Crash Table roll.
     // Thus, a D4 maneuver gives a +1 to the roll, while a D1 maneuver gives a −2
-    const modifiedDifficulty =
-      car.phasing.difficulty !== 0 ? car.phasing.difficulty - 3 : 0
+    const modifiedDifficulty = car.phasing.difficulty !== 0 ? car.phasing.difficulty - 3 : 0
     const crashModifier = Control.crashModifier({ speed: car.status.speed })
     Log.info(
       `crash roll = ${dieRoll} (2d) + ${modifiedDifficulty} (modded difficulty) - ${skillBonus} (skill) + ${crashModifier} (crash mod)`,
       car,
     )
     const crashRoll = dieRoll + modifiedDifficulty - skillBonus + crashModifier
-    Log.info(
-      `${car.color} LOST CONTROL!!! crash roll number: ${crashRoll}`,
-      car,
-    )
+    Log.info(`${car.color} LOST CONTROL!!! crash roll number: ${crashRoll}`, car)
 
     Log.info(car.status, car)
 
@@ -247,8 +241,7 @@ class Control {
       const distance = INCH / 2
       if (
         car.status.nextMove[0].maneuver === null ||
-        (car.status.nextMove[0].maneuver === 'skid' &&
-          car.maneuverDistance < distance)
+        (car.status.nextMove[0].maneuver === 'skid' && car.maneuverDistance < distance)
       ) {
         // do Control next turn: PhasingMove.skid({ car, INCH / 2 })
         car.status.speed -= 5
@@ -266,8 +259,7 @@ class Control {
       const distance = (INCH * 3) / 4
       if (
         car.status.nextMove[0].maneuver === null ||
-        (car.status.nextMove[0].maneuver === 'skid' &&
-          car.maneuverDistance < distance)
+        (car.status.nextMove[0].maneuver === 'skid' && car.maneuverDistance < distance)
       ) {
         // do Control next turn: PhasingMove.skid({ car, INCH * 3/4 })
         car.status.speed -= 10
@@ -298,8 +290,7 @@ class Control {
       const distance = INCH
       if (
         car.status.nextMove[0].maneuver === null ||
-        (car.status.nextMove[0].maneuver === 'skid' &&
-          car.maneuverDistance < distance)
+        (car.status.nextMove[0].maneuver === 'skid' && car.maneuverDistance < distance)
       ) {
         // No further aimed weapon fire permitted from Control vehicle Control turn
         car.status.speed -= 20
@@ -407,8 +398,7 @@ class Control {
       Log.info(result, car)
     } else if (crashRoll <= 14) {
       Log.info('in <= 14', car)
-      car.status.nextMove[0].maneuver =
-        'turn sideways and roll, possibly on fire'
+      car.status.nextMove[0].maneuver = 'turn sideways and roll, possibly on fire'
       // As above, but vehicle is burning on a roll of 4, 5, or 6 on 1 die. (For
       // more information on burning vehi
 

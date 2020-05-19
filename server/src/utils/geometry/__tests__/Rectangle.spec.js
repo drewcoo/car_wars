@@ -139,27 +139,19 @@ describe('Rectangle', () => {
     const rectangle = GeometryFactory.rectangle({})
 
     it('#flAngle is 30 deg counterclockwise from facing', () => {
-      expect(degreesEqual(rectangle.flAngle(), rectangle.facing - 30)).toBe(
-        true,
-      )
+      expect(degreesEqual(rectangle.flAngle(), rectangle.facing - 30)).toBe(true)
     })
 
     it('#frAngle is 30 deg clockwise from facing', () => {
-      expect(degreesEqual(rectangle.frAngle(), rectangle.facing + 30)).toBe(
-        true,
-      )
+      expect(degreesEqual(rectangle.frAngle(), rectangle.facing + 30)).toBe(true)
     })
 
     it('#blAngle is (180 + 30) deg clockwise from facing ', () => {
-      expect(degreesEqual(rectangle.blAngle(), rectangle.facing + 210)).toBe(
-        true,
-      )
+      expect(degreesEqual(rectangle.blAngle(), rectangle.facing + 210)).toBe(true)
     })
 
     it('#brAngle is (180 - 30) deg clockwise from facing', () => {
-      expect(degreesEqual(rectangle.brAngle(), rectangle.facing + 150)).toBe(
-        true,
-      )
+      expect(degreesEqual(rectangle.brAngle(), rectangle.facing + 150)).toBe(true)
     })
   })
 
@@ -183,10 +175,7 @@ describe('Rectangle', () => {
     })
 
     it.skip('goes the correct distance', () => {
-      const actual = Math.sqrt(
-        Math.pow(original.x - translated.x, 2) +
-          Math.pow(original.y - translated.y, 2),
-      )
+      const actual = Math.sqrt(Math.pow(original.x - translated.x, 2) + Math.pow(original.y - translated.y, 2))
       expect(distance).toEqual(actual)
     })
   })
@@ -195,7 +184,10 @@ describe('Rectangle', () => {
     const rectangle = GeometryFactory.rectangle({})
     const result = rectangle.backLeftCornerPivot(180)
     const doubleLength = parseInt(
-      result.flPoint().distanceTo(rectangle.flPoint()).toFixed(0),
+      result
+        .flPoint()
+        .distanceTo(rectangle.flPoint())
+        .toFixed(0),
     )
     expect(result.facing).toEqual(rectangle.facing + 180)
     expect(doubleLength).toEqual(2 * result.length)
@@ -205,7 +197,10 @@ describe('Rectangle', () => {
     const rectangle = GeometryFactory.rectangle({})
     const result = rectangle.backRightCornerPivot(180)
     const doubleLength = parseInt(
-      result.frPoint().distanceTo(rectangle.frPoint()).toFixed(0),
+      result
+        .frPoint()
+        .distanceTo(rectangle.frPoint())
+        .toFixed(0),
     )
     expect(result.facing).toEqual(rectangle.facing + 180)
     expect(doubleLength).toEqual(2 * result.length)
@@ -215,7 +210,10 @@ describe('Rectangle', () => {
     const rectangle = GeometryFactory.rectangle({})
     const result = rectangle.frontLeftCornerPivot(180)
     const doubleLength = parseInt(
-      result.blPoint().distanceTo(rectangle.blPoint()).toFixed(0),
+      result
+        .blPoint()
+        .distanceTo(rectangle.blPoint())
+        .toFixed(0),
     )
     expect(result.facing).toEqual(rectangle.facing + 180)
     expect(doubleLength).toEqual(2 * result.length)
@@ -225,7 +223,10 @@ describe('Rectangle', () => {
     const rectangle = GeometryFactory.rectangle({})
     const result = rectangle.frontRightCornerPivot(180)
     const doubleLength = parseInt(
-      result.brPoint().distanceTo(rectangle.brPoint()).toFixed(0),
+      result
+        .brPoint()
+        .distanceTo(rectangle.brPoint())
+        .toFixed(0),
     )
     expect(result.facing).toEqual(rectangle.facing + 180)
     expect(doubleLength).toEqual(2 * result.length)
@@ -248,43 +249,28 @@ describe('Rectangle', () => {
     })
 
     it('outside example', () => {
-      const seg = new Segment([
-        new Point({ x: 1, y: 1 }),
-        new Point({ x: 1, y: 0 }),
-      ])
+      const seg = new Segment([new Point({ x: 1, y: 1 }), new Point({ x: 1, y: 0 })])
       expect(rect.intersects(seg)).toBe(false)
     })
 
     it('cross helper example', () => {
-      const seg = new Segment([
-        new Point({ x: 4, y: 4 }),
-        new Point({ x: 7, y: 7 }),
-      ])
+      const seg = new Segment([new Point({ x: 4, y: 4 }), new Point({ x: 7, y: 7 })])
       expect(rect.intersects(seg)).toBe(true)
     })
 
     it('cross example', () => {
-      const seg = new Segment([
-        new Point({ x: 4, y: 4 }),
-        new Point({ x: 8, y: 8 }),
-      ])
+      const seg = new Segment([new Point({ x: 4, y: 4 }), new Point({ x: 8, y: 8 })])
       expect(rect.intersects(seg)).toBe(true)
     })
 
     it('segment inside example', () => {
-      const seg = new Segment([
-        new Point({ x: 4, y: 4 }),
-        new Point({ x: 3, y: 3 }),
-      ])
+      const seg = new Segment([new Point({ x: 4, y: 4 }), new Point({ x: 3, y: 3 })])
       expect(rect.intersects(seg)).toBe(true)
     })
 
     // This one is left. It fails to show as intersected when entirely inside the rect.
     it('inside example', () => {
-      const seg = new Segment([
-        new Point({ x: 4, y: 4 }),
-        new Point({ x: 3, y: 3 }),
-      ])
+      const seg = new Segment([new Point({ x: 4, y: 4 }), new Point({ x: 3, y: 3 })])
       expect(rect.intersects(seg)).toBe(true)
     })
   })
@@ -344,18 +330,12 @@ describe('Rectangle', () => {
 
     describe('segments', () => {
       it('intersects', () => {
-        const segment = new Segment([
-          new Point({ x: 2, y: 2 }),
-          new Point({ x: 4, y: 4 }),
-        ])
+        const segment = new Segment([new Point({ x: 2, y: 2 }), new Point({ x: 4, y: 4 })])
         expect(rectangle.intersects(segment)).toBe(true)
       })
 
       it('does not intersect', () => {
-        const segment = new Segment([
-          new Point({ x: 5, y: 5 }),
-          new Point({ x: 5, y: 8 }),
-        ])
+        const segment = new Segment([new Point({ x: 5, y: 5 }), new Point({ x: 5, y: 8 })])
         expect(rectangle.intersects(segment)).toBe(false)
       })
     })

@@ -4,11 +4,9 @@ import Rectangle from './Rectangle'
 import Segment from './Segment'
 
 class Intersection {
-  static exists(thing1, thing2) {
+  static exists(thing1, thing2) /*: boolean*/ {
     if (!thing1) {
-      throw new Error(
-        `Checking intersection of unrecognized thing(0): ${thing1}`,
-      )
+      throw new Error(`Checking intersection of unrecognized thing(0): ${thing1}`)
     }
     switch (true) {
       case thing1 instanceof Point:
@@ -29,9 +27,7 @@ class Intersection {
               rectangle: thing2,
             })
           default:
-            throw new Error(
-              `Checking intersection of unrecognized thing(1): ${thing2}`,
-            )
+            throw new Error(`Checking intersection of unrecognized thing(1): ${thing2}`)
         }
       case thing1 instanceof Segment:
         switch (true) {
@@ -51,9 +47,7 @@ class Intersection {
               rectangle: thing2,
             })
           default:
-            throw new Error(
-              `Checking intersection of unrecognized thing(2): ${thing2}`,
-            )
+            throw new Error(`Checking intersection of unrecognized thing(2): ${thing2}`)
         }
       case thing1 instanceof Rectangle:
         switch (true) {
@@ -73,22 +67,18 @@ class Intersection {
               rectangle2: thing2,
             })
           default:
-            throw new Error(
-              `Checking intersection of unrecognized thing(3): ${thing2}`,
-            )
+            throw new Error(`Checking intersection of unrecognized thing(3): ${thing2}`)
         }
       default:
-        throw new Error(
-          `Checking intersection of unrecognized thing(4): ${thing1}`,
-        )
+        throw new Error(`Checking intersection of unrecognized thing(4): ${thing1}`)
     }
   }
 
-  static pointPointExists({ point, point2 }) {
+  static pointPointExists({ point, point2 }) /*: boolean*/ {
     return point.equals(point2)
   }
 
-  static pointRectangleExists({ point, rectangle }) {
+  static pointRectangleExists({ point, rectangle }) /*: boolean*/ {
     // Actually, "is at least partially inside" would be mmore apt.
     // If a segment from a vertex to one of its ends crosses the opposite
     // rect sides, it's ouside.
@@ -132,17 +122,16 @@ class Intersection {
     return !outside
   }
 
-  static pointSegmentExists({ point, segment }) {
-    const parts =
-      point.distanceTo(segment.points[0]) + point.distanceTo(segment.points[1])
+  static pointSegmentExists({ point, segment }) /*: boolean*/ {
+    const parts = point.distanceTo(segment.points[0]) + point.distanceTo(segment.points[1])
     return parts.toFixed(2) === segment.length().toFixed(2)
   }
 
-  static rectanglePointExists({ point, rectangle }) {
+  static rectanglePointExists({ point, rectangle }) /*: boolean*/ {
     return Intersection.pointRectangleExists({ point, rectangle })
   }
 
-  static rectangleRectangleExists({ rectangle, rectangle2 }) {
+  static rectangleRectangleExists({ rectangle, rectangle2 }) /*: boolean*/ {
     // returns false or skew between facing and a rect side
     // BUGBUG: Does this handle corners?
 
@@ -171,16 +160,16 @@ class Intersection {
     )
   }
 
-  static rectangleSegmentExists({ segment, rectangle }) {
+  static rectangleSegmentExists({ segment, rectangle }) /*: boolean*/ {
     return Intersection.segmentRectangleExists({ segment, rectangle })
   }
 
-  static segmentPointExists({ segment, point }) {
+  static segmentPointExists({ segment, point }) /*: boolean*/ {
     return Intersection.pointSegmentExists({ point, segment })
   }
 
-  static segmentRectangleExists({ segment, rectangle }) {
-    const sidesIntersectSegment = () => {
+  static segmentRectangleExists({ segment, rectangle }) /*: boolean*/ {
+    const sidesIntersectSegment /*: boolean*/ = () => {
       return (
         Intersection.segmentSegmentExists({
           segment,
@@ -201,7 +190,7 @@ class Intersection {
       )
     }
 
-    const segmentIsInsideRectangle = () => {
+    const segmentIsInsideRectangle /*: boolean*/ = () => {
       return (
         Intersection.pointRectangleExists({
           point: segment.points[0],
@@ -220,29 +209,28 @@ class Intersection {
     return sidesIntersectSegment() || segmentIsInsideRectangle()
   }
 
-  static segmentSegmentExists({ segment, segment2 }) {
+  static segmentSegmentExists({ segment, segment2 }) /*: boolean*/ {
     // from Stack Overflow - url forgotten
-    const copypasta = (
-      a: number,
-      b: number,
-      c: number,
-      d: number,
-      p: number,
-      q: number,
-      r: number,
-      s: number,
+    const copypasta /*: boolean*/ = (
+      a /*: number*/,
+      b /*: number*/,
+      c /*: number*/,
+      d /*: number*/,
+      p /*: number*/,
+      q /*: number*/,
+      r /*: number*/,
+      s /*: number*/,
     ) => {
-      var det: number, gamma: number, lambda: number
-      det = (c - a) * (s - q) - (r - p) * (d - b)
+      const det = (c - a) * (s - q) - (r - p) * (d - b)
       if (det === 0) {
         return false
       }
-      lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det
-      gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det
+      const lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det
+      const gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det
       return lambda > 0 && lambda < 1 && gamma > 0 && gamma < 1
     }
 
-    const crosses = () => {
+    const crosses /*: boolean*/ = () => {
       return copypasta(
         segment.points[0].x,
         segment.points[0].y,
@@ -255,7 +243,7 @@ class Intersection {
       )
     }
 
-    const touchesOrOverlaps = () => {
+    const touchesOrOverlaps /*: boolean*/ = () => {
       return (
         Intersection.pointSegmentExists({
           segment,

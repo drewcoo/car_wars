@@ -24,9 +24,8 @@ class Car extends React.Component {
     this.setState({ showModal: false })
   }
 
-  handleClick(e) {
+  handleClick() {
     this.setState({ showModal: !this.state.showModal })
-    // e.stopPropagation()
   }
 
   manyColoredFill() {
@@ -70,11 +69,7 @@ class Car extends React.Component {
       }
       const msgs = []
       if (nextMove.fishtailDistance !== 0) {
-        msgs.push(
-          `fishtail ${nextMove.spinDirection} ${
-            nextMove.fishtailDistance / INCH
-          }"`,
-        )
+        msgs.push(`fishtail ${nextMove.spinDirection} ${nextMove.fishtailDistance / INCH}"`)
       }
       if (nextMove.maneuver) {
         if (nextMove.maneuver.match(/skid/i)) {
@@ -109,54 +104,48 @@ class Car extends React.Component {
     )
   }
 
-  opacity(vehicle) {
-    const lms = new LocalMatchState(this.props.matchData)
-    let result = 1
-    if (
-      lms.isActiveCar({ id: this.props.id }) &&
-      !this.props.active &&
-      !lms.awaitAllSpeedsSet()
-    ) {
-      result = 0.5
-    }
-    if (this.props.shadow) {
-      result = 1 / 4
-    }
-    return result
-  }
-
   style(car) {
-    const opacity = this.opacity(car)
+    const opacity = () => {
+      const lms = new LocalMatchState(this.props.matchData)
+      let result = 1
+      if (lms.isActiveCar({ id: this.props.id }) && !this.props.active && !lms.awaitAllSpeedsSet()) {
+        result = 0.5
+      }
+      if (this.props.shadow) {
+        result = 1 / 4
+      }
+      return result
+    }
 
     return {
       Body: {
         fill: car.color,
         stroke: 'black',
         strokeWidth: 3,
-        opacity: opacity,
+        opacity: opacity(),
       },
       Roof: {
         fill: car.color,
-        opacity: opacity,
+        opacity: opacity(),
       },
       MainBody: {
         fill: car.color,
         stroke: 'black',
         strokeWidth: 2,
-        opacity: opacity,
+        opacity: opacity(),
       },
       Glass: {
         fill: 'white',
         stroke: 'gray',
         strokeWidth: 3,
-        opacity: opacity,
+        opacity: opacity(),
       },
       Outline: {
         fill: this.manyColoredFill(),
         stroke: 'black',
         strokeWidth: 2,
-        opacity: this.collisionDetected ? 1 : opacity,
-        fillOpacity: this.manyColoredOpacity(opacity),
+        opacity: this.collisionDetected ? 1 : opacity(),
+        fillOpacity: this.manyColoredOpacity(opacity()),
       },
     }
   }
@@ -194,9 +183,7 @@ class Car extends React.Component {
         {/* side windows */}
         <rect
           rx={tempRect.width / 8}
-          x={
-            tempRect.brPoint().x - tempRect.width / 2 - (roofWidth + smidge) / 2
-          }
+          x={tempRect.brPoint().x - tempRect.width / 2 - (roofWidth + smidge) / 2}
           y={tempRect.brPoint().y - tempRect.length + hoodLength + 2 * smidge}
           width={roofWidth + smidge}
           height={roofLength - smidge}
@@ -207,12 +194,7 @@ class Car extends React.Component {
         <rect
           rx={tempRect.width / 8}
           x={tempRect.brPoint().x - tempRect.width / 2 - roofWidth / 2}
-          y={
-            tempRect.brPoint().y -
-            tempRect.length +
-            hoodLength +
-            (smidge * 3) / 2
-          }
+          y={tempRect.brPoint().y - tempRect.length + hoodLength + (smidge * 3) / 2}
           width={roofWidth}
           height={roofLength}
           style={this.style(car).Roof}
@@ -234,10 +216,7 @@ class Car extends React.Component {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.id })
 
-    if (
-      this.props.shadow &&
-      this.props.matchData.match.time.phase.subphase !== '6_damage'
-    ) {
+    if (this.props.shadow && this.props.matchData.match.time.phase.subphase !== '6_damage') {
       if (lms.isActiveCar({ id: this.props.id })) {
         return <g></g>
       }
@@ -246,17 +225,11 @@ class Car extends React.Component {
       }
     }
 
-    if (car) {
-      console.log(car.color)
-    } else {
-      console.log(this.props)
-      console.log(car)
+    if (!car) {
       return <></>
     }
 
-    let tempRect = this.props.active
-      ? new Rectangle(car.phasing.rect)
-      : new Rectangle(car.rect)
+    let tempRect = this.props.active ? new Rectangle(car.phasing.rect) : new Rectangle(car.rect)
     const nextMove = car.status.nextMove[0]
     if (this.props.shadow && nextMove) {
       if (nextMove.fishtailDistance !== 0) {
@@ -268,10 +241,7 @@ class Car extends React.Component {
           throw new Error(`direction unknown: ${nextMove.spinDirection}`)
         }
       }
-      if (
-        nextMove.maneuver === 'skid' ||
-        nextMove.maneuver === 'controlledSkid'
-      ) {
+      if (nextMove.maneuver === 'skid' || nextMove.maneuver === 'controlledSkid') {
         // show skid for next probable move - handle 1/2"
         tempRect = tempRect.move({
           degrees: nextMove.maneuverDirection,
@@ -289,16 +259,14 @@ class Car extends React.Component {
       }
     }
 
-    this.collisionDetected = this.props.active
-      ? car.phasing.collisionDetected
-      : car.collisionDetected
+    this.collisionDetected = this.props.active ? car.phasing.collisionDetected : car.collisionDetected
 
-    var rotatePoint = {
+    const rotatePoint = {
       x: tempRect.brPoint().x,
       y: tempRect.brPoint().y,
     }
     // BUGBUG: Why + 90 degree rotation?
-    var transform = `rotate(${tempRect.facing + 90},
+    const transform = `rotate(${tempRect.facing + 90},
                             ${rotatePoint.x},
                             ${rotatePoint.y})`
 
@@ -324,11 +292,7 @@ class Car extends React.Component {
           carId={car.id}
           client={this.props.client}
         />
-        <TimingOverlays
-          client={this.props.client}
-          matchData={this.props.matchData}
-          id={car.id}
-        />
+        <TimingOverlays client={this.props.client} matchData={this.props.matchData} id={car.id} />
         <KillMessage matchData={this.props.matchData} carId={car.id} />
         {this.wipeoutLabel(car, tempRect.center().x - 30, tempRect.center().y)}
       </svg>

@@ -12,15 +12,11 @@ describe('Collisions', () => {
       expect(Collisions.damageModifierFromWeight(weights.Hotshot)).toEqual(1)
     })
     it('Killer Kart has DM of 2/3', () => {
-      expect(Collisions.damageModifierFromWeight(weights.Killer_Kart)).toEqual(
-        2 / 3,
-      )
+      expect(Collisions.damageModifierFromWeight(weights.Killer_Kart)).toEqual(2 / 3)
     })
 
     it('Killer Kart has DM of 2/3', () => {
-      expect(Collisions.damageModifierFromWeight(weights.Shogun_100)).toEqual(
-        1 / 3,
-      )
+      expect(Collisions.damageModifierFromWeight(weights.Shogun_100)).toEqual(1 / 3)
     })
   })
 })

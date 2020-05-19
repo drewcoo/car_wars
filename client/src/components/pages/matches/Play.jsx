@@ -27,15 +27,12 @@ class Match extends React.Component {
   }
 
   render() {
-    console.log(this.state.playerId)
-
     const matchId = this.props.match.params.matchId
 
     return (
       <Query pollInterval={250} query={MATCH_DATA} variables={{ matchId }}>
         {({ loading, error, data }) => {
           if (loading) {
-            console.log('loading')
             return 'Loading...'
           }
           if (error) {
@@ -51,16 +48,14 @@ class Match extends React.Component {
           const matchData = data.completeMatchData
           matchData.location = this.props.location
 
+          console.log(matchData.characters)
+
           if (Session.godMode(matchData)) {
             if (
               !localStorage.getItem('playerId') ||
-              !matchData.players.find(
-                (obj) => obj.id === localStorage.getItem('playerId')
-              )
+              !matchData.players.find((obj) => obj.id === localStorage.getItem('playerId'))
             ) {
-              console.log(
-                `RESETTING TO ${matchData.players[0].color} PLAYER: ${matchData.players[0].id}`
-              )
+              console.log(`RESETTING TO ${matchData.players[0].color} PLAYER: ${matchData.players[0].id}`)
               localStorage.setItem('playerId', matchData.players[0].id)
             }
           }
@@ -68,9 +63,7 @@ class Match extends React.Component {
           if (this.state.playerId) {
             matchData.playerSession = this.state.playerId
           } else if (matchData.match.time.phase.moving) {
-            matchData.playerSession = new LocalMatchState(
-              matchData
-            ).activePlayerId()
+            matchData.playerSession = new LocalMatchState(matchData).activePlayerId()
           } else {
             // can get here if not a player
             // as a lurker you can still watch and even click on things to inspect
@@ -80,24 +73,15 @@ class Match extends React.Component {
             <div>
               <div className="TitleRow">
                 <span>
-                  <SwitchUser
-                    matchData={matchData}
-                    onUserIdChange={this.onUserIdChange}
-                  />
+                  <SwitchUser matchData={matchData} onUserIdChange={this.onUserIdChange} />
                   <Turn client={this.props.client} matchData={matchData} />
                   <Phase client={this.props.client} matchData={matchData} />
                 </span>
               </div>
               <div className="MapBorder">
                 <div id="ArenaMap" className="ArenaMap">
-                  <svg
-                    width={matchData.match.map.size.width}
-                    height={matchData.match.map.size.height}
-                  >
-                    <ArenaMap
-                      client={this.props.client}
-                      matchData={matchData}
-                    />
+                  <svg width={matchData.match.map.size.width} height={matchData.match.map.size.height}>
+                    <ArenaMap client={this.props.client} matchData={matchData} />
                   </svg>
                 </div>
               </div>

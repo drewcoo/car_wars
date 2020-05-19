@@ -10,9 +10,7 @@ class Targets {
   }
 
   refresh() {
-    const weapon = this.car.design.components.weapons[
-      this.car.phasing.weaponIndex
-    ]
+    const weapon = this.car.design.components.weapons[this.car.phasing.weaponIndex]
     const canFire = Weapon.canFire({
       weapon,
       plant: this.car.design.components.powerPlant,
@@ -83,19 +81,17 @@ class Targets {
 
   allTargetableLocations() {
     return this.cars
-      .filter((element) => this.car.id !== element.id)
-      .map((element) => this.targetableLocations(element))
+      .filter(element => this.car.id !== element.id)
+      .map(element => this.targetableLocations(element))
       .flat()
   }
 
   allOtherCarRects() {
-    return this.cars
-      .filter((element) => this.car.id !== element.id)
-      .map((element) => element.rect)
+    return this.cars.filter(element => this.car.id !== element.id).map(element => element.rect)
   }
 
   allWallRects() {
-    return this.walls.map((element) => element.rect)
+    return this.walls.map(element => element.rect)
   }
 
   allRects() {
@@ -103,10 +99,8 @@ class Targets {
   }
 
   rectPointsInArc(rect) {
-    const firingArc = this.car.design.components.weapons[
-      this.car.phasing.weaponIndex
-    ].location
-    return rect.points().filter((point) => {
+    const firingArc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
+    return rect.points().filter(point => {
       return this.car.phasing.rect.arcForPoint(point) === firingArc
     })
   }
@@ -118,9 +112,9 @@ class Targets {
   // to the targets we return.
 
   shotBlocked({ sourcePoint, targetPoint, ignore = null }) {
-    var lineToTarget = new Segment([sourcePoint, targetPoint])
-    return this.allRects().some((rect) => {
-      return Object.keys(rect.sides()).some((sideKey) => {
+    const lineToTarget = new Segment([sourcePoint, targetPoint])
+    return this.allRects().some(rect => {
+      return Object.keys(rect.sides()).some(sideKey => {
         if (ignore !== null && ignore.equals(rect.side(sideKey))) {
           console.log('ignored')
           return false
@@ -134,14 +128,12 @@ class Targets {
   }
 
   targetPointsInArc() {
-    const weaponLoc = this.car.design.components.weapons[
-      this.car.phasing.weaponIndex
-    ].location
+    const weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
     const sourcePoint = this.car.phasing.rect.side(weaponLoc).middle()
-    const otherCars = this.cars.filter((element) => this.car.id !== element.id)
-    const allPoints = otherCars.map((car) => this.targetablePoints(car)).flat()
+    const otherCars = this.cars.filter(element => this.car.id !== element.id)
+    const allPoints = otherCars.map(car => this.targetablePoints(car)).flat()
 
-    return allPoints.filter((point) => {
+    return allPoints.filter(point => {
       return (
         this.car.phasing.rect.pointIsInArc({
           point: point.location,
@@ -156,30 +148,22 @@ class Targets {
   }
 
   targetSidesInArc() {
-    const weaponLoc = this.car.design.components.weapons[
-      this.car.phasing.weaponIndex
-    ].location
+    const weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
     const sourcePoint = this.car.phasing.rect.side(weaponLoc).middle()
-    const otherCars = this.cars.filter((element) => this.car.id !== element.id)
-    const allSides = otherCars.map((car) => this.targetableSides(car)).flat()
+    const otherCars = this.cars.filter(element => this.car.id !== element.id)
+    const allSides = otherCars.map(car => this.targetableSides(car)).flat()
 
     // BUGBUG: This is cheating so that I don't need to map out a bunch of
     // triangles in the arc, figuring out what parts are occluded.
     // The cheat is to sample. Pick a higher sample rate to do better
     // and maybe take longer.
-    return allSides.filter((side) => {
+    return allSides.filter(side => {
       const slices = 32
       let hits = 0
       for (let i = 1; i < slices; i++) {
         const tryPoint = new Point({
-          x:
-            side.location.points[0].x +
-            (side.location.points[1].x - side.location.points[0].x) *
-              (i / slices),
-          y:
-            side.location.points[0].y +
-            (side.location.points[1].y - side.location.points[0].y) *
-              (i / slices),
+          x: side.location.points[0].x + (side.location.points[1].x - side.location.points[0].x) * (i / slices),
+          y: side.location.points[0].y + (side.location.points[1].y - side.location.points[0].y) * (i / slices),
         })
         if (
           this.car.phasing.rect.arcForPoint(tryPoint) === weaponLoc &&
@@ -201,19 +185,14 @@ class Targets {
   }
 
   targetsInArc() {
-    var weaponLoc = this.car.design.components.weapons[
-      this.car.phasing.weaponIndex
-    ].location
+    const weaponLoc = this.car.design.components.weapons[this.car.phasing.weaponIndex].location
     if (weaponLoc === 'none') {
       return []
     }
-    var source = this.car.phasing.rect.side(weaponLoc).middle()
+    const source = this.car.phasing.rect.side(weaponLoc).middle()
     return this.targetPointsInArc()
       .concat(this.targetSidesInArc())
-      .sort(
-        (a, b) =>
-          source.distanceTo(a.displayPoint) - source.distanceTo(b.displayPoint),
-      )
+      .sort((a, b) => source.distanceTo(a.displayPoint) - source.distanceTo(b.displayPoint))
   }
 }
 export default Targets

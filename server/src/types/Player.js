@@ -23,18 +23,20 @@ export const typeDef = `
 export const resolvers = {
   Query: {
     player: (parent, args, context) => {
-      return DATA.players.find((el) => el.id === args.id)
+      return DATA.players.find(el => el.id === args.id)
     },
     players: () => {
       return DATA.players
     },
   },
+
   Mutation: {
     addCar: (parent, args, context) => {
-      const player = DATA.players.find((player) => player.id === args.playerId)
+      const player = DATA.players.find(player => player.id === args.playerId)
       player.carIds.push(args.carId)
       return player
     },
+
     createPlayer: (parent, args, context) => {
       const newPlayer = {
         id: args.id || uuid(),

@@ -1,10 +1,12 @@
-import Control from './Control'
-import Log from '../utils/Log'
-import VehicleStatusHelper from './VehicleStatusHelper'
+import _ from 'lodash'
 import Dice from '../utils/Dice'
+import Log from '../utils/Log'
+import Character from './Character'
+import Control from './Control'
+import Vehicle from './Vehicle'
 
 class Damage {
-  static damageAllTires({ car, damageDice }) {
+  static damageAllTires({ car, damageDice }) /*: void */ {
     const points = {
       FL: car.rect.flPoint(),
       FR: car.rect.frPoint(),
@@ -37,17 +39,12 @@ class Damage {
   //
   //
 
-  static dealDamage({ damageRecord }) {
+  static dealDamage({ damageRecord }) /*: any*/ {
     const car = damageRecord.target.car
-    const damage = (damageRecord.target.damage = Dice.roll(
-      damageRecord.target.damageDice,
-    ))
+    const damage = (damageRecord.target.damage = Dice.roll(damageRecord.target.damageDice))
     const location = damageRecord.target.location
 
-    Log.info(
-      `${damageRecord.target.damageDice} dealt to car ${car.color} at ${location}`,
-      car,
-    )
+    Log.info(`${damageRecord.target.damageDice} dealt to car ${car.color} at ${location}`, car)
     if (damage < 1) {
       return
     }
@@ -60,7 +57,7 @@ class Damage {
       hazard = 3
     }
     // Hazard
-    var damageToDeal = damage
+    let damageToDeal = damage
     if (location.length === 1) {
       Log.info(`side: ${location}`, car)
       Log.info(`armor there: ${car.design.components.armor[location]}`, car)
@@ -233,9 +230,9 @@ class Damage {
   // no longer steer, accelerate, or brake.
   //
 
-  static damageTire({ car, damage, location, hazard }) {
+  static damageTire({ car, damage, location, hazard }) /*: number*/ {
     Log.info(`${damage} damage to ${location} tire`, car)
-    var tire = car.design.components.tires.find((tire) => {
+    const tire = car.design.components.tires.find((tire) => {
       return tire.location === location
     })
     Log.info(`tire has ${tire.damagePoints} DP`, car)
@@ -253,7 +250,7 @@ class Damage {
       }
 
       // This is when a car first loses two wheels.
-      if (VehicleStatusHelper.numberOfWheels() === 2) {
+      if (Vehicle.numberOfWheels() === 2) {
         Control.maneuverCheck({ car })
       }
 
@@ -288,10 +285,10 @@ class Damage {
     return remaining
   }
 
-  static damageArmor({ car, damage, location }) {
+  static damageArmor({ car, damage, location }) /*: number*/ {
     Log.info(`${damage} damage to ${location} armor`, car)
     car.design.components.armor[location] -= damage
-    var remaining = 0
+    let remaining = 0
     if (car.design.components.armor[location] < 0) {
       remaining = -car.design.components.armor[location]
       car.design.components.armor[location] = 0
@@ -299,18 +296,15 @@ class Damage {
     return remaining
   }
 
-  static damageWeapons({ car, damage, location }) {
+  static damageWeapons({ car, damage, location }) /*: number*/ {
     // randomly choose which weapon is hit
-    const thisSideWeapons = car.design.components.weapons.filter(
-      (weapon) => weapon.location === location,
-    )
+    const thisSideWeapons = car.design.components.weapons.filter((weapon) => weapon.location === location)
 
     if (thisSideWeapons.length < 1) {
       return damage
     }
 
-    const hitWeapon =
-      thisSideWeapons[Math.floor(Math.random() * thisSideWeapons.length)]
+    const hitWeapon = thisSideWeapons[Math.floor(Math.random() * thisSideWeapons.length)]
 
     Log.info(`${damage} damage to ${location} ${hitWeapon.abbreviation}`, car)
 
@@ -324,7 +318,7 @@ class Damage {
     return remaining
   }
 
-  static damageInterior({ car, damage, hazard }) {
+  static damageInterior({ car, damage, hazard }) /*: number*/ {
     if (damage < 1) {
       Log.info('0 damage to interior', car)
       return 0
@@ -343,10 +337,10 @@ class Damage {
     return remaining
   }
 
-  static damagePlant({ car, damage }) {
+  static damagePlant({ car, damage }) /*: number*/ {
     Log.info(`${damage} damage to plant`, car)
     car.design.components.powerPlant.damagePoints -= damage
-    var remaining = 0
+    let remaining = 0
     if (car.design.components.powerPlant.damagePoints <= 0) {
       remaining = -car.design.components.powerPlant.damagePoints
       car.design.components.powerPlant.damagePoints = 0
@@ -382,51 +376,52 @@ class Damage {
   // until it stops or hits something.
   //
   //
-  static damageCrew({ car, damage, hazard }) {
+  static damageCrew({ car, damage, hazard }) /*: number*/ {
     if (damage < 1) {
       return 0
     }
 
-    const randomCrewMember = (car) => {
-      const keys = Array.from(Object.keys(car.design.components.crew))
-      return keys[Math.floor(Math.random() * keys.length)]
+    const randomCrewSlot /*: any*/ = (car) => {
+      const crew = car.design.components.crew
+      return crew[_.random(0, crew.length - 1)]
     }
 
-    const crewMember = car.design.components.crew[randomCrewMember(car)]
-    Log.info(`${damage} damage to crew member: ${crewMember.role}`, car)
-    crewMember.damagePoints -= damage
+    const crewSlot = randomCrewSlot(car)
+    const character = Character.withId({ id: crewSlot.id })
+    Log.info(`${damage} damage: ${character.role}`, character)
+    character.damagePoints -= damage
 
-    if (crewMember.damagePoints === 2) {
-      // assume driver for now
-      // injured
-      // - all skills at -2
-      hazard += 2
-    } else if (crewMember.damagePoints === 1) {
-      // unconscious
-      // - all skill and reflex bonuses gone
-      // assume driver for now
-      // - no turning
-      hazard += 2
-      if (crewMember.role === 'driver') {
-        Log.info('driver incapacitated - steering out', car)
+    const isDriver = crewSlot.role === 'driver'
+    if (character.damagePoints === 2) {
+      // injured - all skills at -2
+      if (isDriver) {
+        hazard += 2
+      }
+      Log.info('injured', character)
+    } else if (character.damagePoints === 1) {
+      // unconscious - all skill and reflex bonuses gone
+      if (isDriver) {
+        hazard += 2
+      }
+      Log.info('unconscious', character)
+      if (isDriver) {
+        Log.info('steering out', car)
         car.status.maneuvers = ['none', 'straight']
       }
-    } else if (crewMember.damagePoints < 1) {
-      // dead
-      // - all skill and reflex bonuses gone
-      // assume driver for now
-      // - no turning
-      hazard += 2
-      if (crewMember.role === 'driver') {
-        Log.info('driver killed - steering out', car)
+    } else if (character.damagePoints < 1) {
+      // dead - all skill and reflex bonuses gone
+      Log.info('killed', character)
+      if (isDriver) {
+        hazard += 2
+        Log.info('steering out', car)
         car.status.maneuvers = ['none', 'straight']
       }
     }
 
-    var remaining = 0
-    if (crewMember.damagePoints < 0) {
-      remaining = -crewMember.damagePoints
-      crewMember.damagePoints = 0
+    let remaining = 0
+    if (character.damagePoints < 0) {
+      remaining = -character.damagePoints
+      character.damagePoints = 0
     }
     return remaining
   }

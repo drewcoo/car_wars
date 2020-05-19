@@ -7,7 +7,7 @@ class GameObjectFactory {
   static car({ id = `car-${uuid()}`, speed = 50 }) {
     const designNode = _.cloneDeep(DesignData)
 
-    return {
+    result = {
       collisionDetected: false,
       collisions: [],
       color: 'beige',
@@ -18,41 +18,11 @@ class GameObjectFactory {
         collisionDetected: false,
         collisions: [],
         damage: [],
+        difficulty: 0,
+        maneuverIndex: 0,
         rect: GeometryFactory.rectangle({}),
+        showSpeedChangeModal: false,
         /*
-
-          damage {
-            source {
-              point {
-                x
-                y
-              }
-              character
-              weapon
-            }
-            target {
-              point {
-                x
-                y
-              }
-              location
-              damage
-              damageDice
-            }
-            message
-          }
-          difficulty
-          maneuverIndex
-          rect {
-            facing
-            length
-            width
-            _brPoint {
-              x
-              y
-            }
-          }
-          showSpeedChangeModal
           speedChangeIndex
           speedChanges {
             speed
@@ -74,17 +44,9 @@ class GameObjectFactory {
           }
           weaponIndex
         }
-        playerId
-        rect {
-          facing
-          length
-          width
-          _brPoint {
-            x
-            y
-          }
         */
       },
+      // playerId
       rect: GeometryFactory.rectangle({}),
       status: {
         handling: designNode.attributes.handlingClass,
@@ -95,6 +57,49 @@ class GameObjectFactory {
         speed: speed,
         speedSetThisTurn: false,
       },
+    }
+    return result
+  }
+
+  //GameObjectFactory.putCrewInVehicle({ vehicle: car, crewMember: driver })
+  static putCrewInVehicle({ crewLocation = 'driver', crewMember, vehicle }) {
+    const crewSlot = vehicle.design.components.crew.find((element) => element.role === crewLocation)
+    crewSlot.id = crewMember.id
+    crewMember.inVehicleId = vehicle.id
+  }
+
+  static character({ id = `character-${uuid()}` }) {
+    return {
+      damagePoints: 3,
+      firedThisTurn: false,
+      equipment: [],
+      id: id || uuid(),
+      inVehicleId: '', //carId,
+      log: [],
+      matchId: '', //matchId,
+      //name: args.name,
+      //playerId: args.playerId,
+      prestige: 0,
+      reflexRoll: null, // roll at beginning of combat
+      skills: [
+        // { name: 'areaKnowledge', points: 10}, // home town (p. 38)
+        { name: 'climbing', points: 10 },
+        { name: 'computerTech', points: 0 },
+        { name: 'cyclist', points: 0 },
+        { name: 'driver', points: 0 },
+        { name: 'fastTalk', points: 0 },
+        { name: 'general', points: 30 }, // points to be spent on gaining skills
+        { name: 'gunner', points: 0 },
+        { name: 'handgunner', points: 0 },
+        { name: 'luck', points: 0 },
+        { name: 'martialArts', points: 0 },
+        { name: 'mechanic', points: 0 },
+        { name: 'paramedic', points: 0 },
+        { name: 'running', points: 10 },
+        { name: 'security', points: 0 },
+        { name: 'streetwise', points: 0 },
+      ],
+      wealth: 0,
     }
   }
 
@@ -107,14 +112,6 @@ class GameObjectFactory {
       rammed: 'carIdFoo',
       rammedBy: '',
       type: 't-bone',
-    }
-  }
-
-  static crewMember({ role = 'passenger' }) {
-    return {
-      damagePoints: 2, // injured
-      firedThisTurn: false,
-      role: role,
     }
   }
 
@@ -139,19 +136,30 @@ class GameObjectFactory {
     return GameObjectFactory.crewMember({ role: 'driver' })
   }
 
-  static match({ id = `match-${uuid()}`, carIds }) {
+  static putVehicleInMatch({ match, vehicle }) {
+    match.carIds.push(vehicle.id)
+    // vehicle. matchId // does not exist yet
+  }
+
+  static putCharacterInMatch({ match, character }) {
+    character.matchId = match.id
+    match.characterIds.push(character.id)
+  }
+
+  static match({ id = `match-${uuid()}` }) {
     return {
-      carIds: carIds,
+      carIds: [],
+      characterIds: [],
       id: id,
       // map
       /* players:
-       {
-        id
-        name
-        carIds
-        color
-      },
-      */
+     {
+      id
+      name
+      carIds
+      color
+    },
+    */
       time: {
         phase: {
           number: 1,

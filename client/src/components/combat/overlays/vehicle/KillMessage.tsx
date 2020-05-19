@@ -7,14 +7,14 @@ class KillMessage extends React.Component {
   props: any
 
   msgStyle() {
-    return ({
+    return {
       fill: 'black',
       stroke: 'white',
       strokewidth: 1,
       fontSize: '20px', // default is 24
       fontFamily: 'fantasy',
       fontVariant: 'small-caps',
-    })
+    }
   }
 
   nameStyle(color: string) {
@@ -30,10 +30,12 @@ class KillMessage extends React.Component {
   render() {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
-    if (!car.status.killed) { return (<g/>) }
+    if (!car.status.killed) {
+      return <g />
+    }
 
     const killerCar = lms.car({ id: car.status.lastDamageBy[car.status.lastDamageBy.length - 1] })
-    const killerPlayer = lms.player(killerCar.playerId)
+    const killerPlayer = lms.player({ id: killerCar.playerId })
 
     const rect = new Rectangle(car.rect)
     const x = rect.center().x
@@ -47,10 +49,12 @@ class KillMessage extends React.Component {
 
     return (
       <g>
-        <image x= {x - 16} y = {y - 30} width = "45" height = "45" href="/img/skull_and_bones.svg" />
-        <text x = {x} y = {y} style = {this.msgStyle()} dy="0">
+        <image x={x - 16} y={y - 30} width="45" height="45" href="/img/skull_and_bones.svg" />
+        <text x={x} y={y} style={this.msgStyle()} dy="0">
           {/* <tspan text-anchor="middle" >killed by</tspan> */}
-          <tspan textAnchor="middle" x={x} dy="1em" style={this.nameStyle(killerPlayer.color)}>{killerPlayer.name}</tspan>
+          <tspan textAnchor="middle" x={x} dy="1em" style={this.nameStyle(killerPlayer.color)}>
+            {killerPlayer.name}
+          </tspan>
         </text>
       </g>
     )

@@ -1,6 +1,5 @@
 import * as React from 'react'
 import LocalMatchState from '../../../lib/LocalMatchState'
-import DangerColorizer from '../../../lib/DangerColorizer'
 import HandlingStats from './HandlingStats'
 
 class CarStats extends React.Component {
@@ -9,9 +8,7 @@ class CarStats extends React.Component {
 
   render() {
     const lms = new LocalMatchState(this.props.matchData)
-    const car = this.props.carId
-      ? lms.car({ id: this.props.carId })
-      : lms.activeCar()
+    const car = this.props.carId ? lms.car({ id: this.props.carId }) : lms.activeCar()
     // const car = new LocalMatchState(this.props.matchData).activeCar()
     if (!car) {
       return null
@@ -38,10 +35,7 @@ class CarStats extends React.Component {
         <br />
         <span>speed: {car.status.speed}</span>
         <br />
-        <HandlingStats
-          matchData={this.props.matchData}
-          carId={this.props.carId}
-        />
+        <HandlingStats matchData={this.props.matchData} carId={this.props.carId} />
       </div>
     )
   }

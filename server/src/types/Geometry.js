@@ -39,6 +39,7 @@ export const resolvers = {
       return rectangles
     },
   },
+
   Mutation: {
     addPoint: (parent, args, context) => {
       const val = { x: args.x, y: args.y }

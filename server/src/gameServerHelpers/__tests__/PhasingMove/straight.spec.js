@@ -10,10 +10,13 @@ describe('PhasingMove', () => {
 
     beforeEach(() => {
       car = GameObjectFactory.car({})
-      const signedDistance = _.random(-150, 150)
-      distance = Math.abs(signedDistance)
+      //let signedDistance = _.random(-150, 150)
+      distance = _.random(0, 150) //Math.abs(signedDistance)
+      car.rect = car.phasing.rect.clone()
       init = car.phasing.rect.clone()
       moved = PhasingMove.straight({ car, distance })
+
+      //expect(moved).toEqual(car.phasing.rect)
     })
 
     it('moves the distance', () => {

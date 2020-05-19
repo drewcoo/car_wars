@@ -4,7 +4,7 @@ import { DATA } from '../DATA'
 import * as ArenaMap1 from '../maps/arenaMap1'
 
 DATA.maps = []
-const loadMap = (mapName) => {
+const loadMap = mapName => {
   if (mapName !== 'ArenaMap1') {
     throw new Error(`${mapName} not found in map names`)
   }
@@ -19,7 +19,6 @@ const loadMap = (mapName) => {
 export const typeDef = `
   extend type Mutation {
     addMap(name: String!): Map
-    reply(name: String!): String
   }
 
   extend type Query {
@@ -51,15 +50,13 @@ export const resolvers = {
       return DATA.maps
     },
   },
+
   Mutation: {
     addMap: (parent, args, context) => {
       const newMap = loadMap(args.name)
       newMap.id = uuid()
       DATA.maps.push(newMap)
       return newMap
-    },
-    reply: (parent, args, context) => {
-      return `hello, ${args.name}`
     },
   },
 }

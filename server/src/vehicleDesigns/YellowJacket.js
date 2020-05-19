@@ -15,10 +15,8 @@ export const Design = {
   components: {
     armor: { F: 5, R: 4, L: 4, B: 5, T: 0, U: 0 },
     crew: {
-      driver: {
-        damagePoints: 3,
-        firedThisTurn: false,
-      },
+      role: 'driver',
+      firedThisTurn: false,
     },
     powerPlant: {
       type: 'small',

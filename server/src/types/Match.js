@@ -4,6 +4,8 @@ import _ from 'lodash'
 import uuid from 'uuid/v4'
 import { DATA } from '../DATA'
 import Time from '../gameServerHelpers/Time'
+import Match from '../gameServerHelpers/Match'
+import Vehicle from '../gameServerHelpers/Vehicle'
 
 DATA.matches = []
 
@@ -21,7 +23,6 @@ export const typeDef = `
     ackSpeedChange(matchId: ID!, playerId: ID!): Int
     sayNothing(matchId: ID!, msg: String!): String!
   }
-
 
   input CarInput{
     name: String!
@@ -53,6 +54,7 @@ export const typeDef = `
   type AllData {
     match: Match
     cars: [Car!]
+    characters: [Character!]
     players: [Player!]
   }
 
@@ -60,14 +62,17 @@ export const typeDef = `
     name: String
     id: ID!
     carIds: [ID]
+    characterIds: [ID]
     map: Map
     status: String
     time: MatchTime
   }
+
   type MatchTime {
     phase: Phase
     turn: Turn
   }
+
   type Phase {
     number: Int!
     subphase: String
@@ -77,12 +82,15 @@ export const typeDef = `
     playersToAckDamage: [ID]
     playersToAckSpeedChange: [ID]
   }
+  
   type Turn {
     number: Int!
   }
 `
 
 const allTheNothings = {}
+
+const NOTHING_CHANNEL = 'nothing_channel'
 
 const addNothing = ({ matchId, msg }) => {
   const id = uuid()
@@ -101,16 +109,16 @@ const addNothing = ({ matchId, msg }) => {
   return timestamp
 }
 
-const NOTHING_CHANNEL = 'nothing_channel'
-
 export const resolvers = {
   Query: {
     match: (parent, args, context) => {
-      return DATA.matches.find((match) => match.id === args.matchId)
+      return Match.withId({ id: args.matchId })
     },
+
     matches: () => {
       return DATA.matches
     },
+
     nothings: (parent, args, context) => {
       if (!allTheNothings[args.matchId]) {
         return []
@@ -118,6 +126,7 @@ export const resolvers = {
       return allTheNothings[args.matchId]
     },
   },
+
   Subscription: {
     nothingChannel: {
       subscribe: withFilter(
@@ -129,14 +138,17 @@ export const resolvers = {
       ),
     },
   },
+
   Mutation: {
     sayNothing: (parent, args, context) => {
       return addNothing({ matchId: args.matchId, msg: args.msg })
     },
+
     addMatch: (parent, args, context) => {
       const newMatch = {
         id: uuid(),
         carIds: [],
+        characterIds: [],
         map: null,
         status: 'new',
         time: {
@@ -157,8 +169,9 @@ export const resolvers = {
       DATA.matches.push(newMatch)
       return newMatch
     },
+
     matchSetMap: (parent, args, context) => {
-      const match = DATA.matches.find((el) => el.id === args.matchId)
+      const match = Match.withId({ id: args.matchId })
       if (!match) {
         throw new Error(`Match does not exist: ${args.matchId}`)
       }
@@ -168,51 +181,56 @@ export const resolvers = {
       }
       if (match.carIds !== undefined) {
         if (match.carIds.length > originalMap.startingPositions.length) {
-          throw new Error(
-            `Map only supports ${originalMap.startingPositions.length} starting positions`,
-          )
+          throw new Error(`Map only supports ${originalMap.startingPositions.length} starting positions`)
         }
       }
       match.map = _.cloneDeep(originalMap)
       return match
     },
+
     matchAddCar: (parent, args, context) => {
-      const match = DATA.matches.find((el) => el.id === args.matchId)
+      const match = Match.withId({ id: args.matchId })
+      console.log(`carId: ${args.carId}`)
+      console.log(`matchId: ${args.matchId}`)
       if (match === undefined) {
         throw new Error(`match not found: ${args.matchId}`)
       }
       if (match.carIds === undefined) {
         throw new Error('match.carIds undefined')
       }
-      if (undefined === DATA.cars.find((el) => el.id === args.carId)) {
+      const car = Vehicle.withId({ id: args.carId })
+      if (undefined === car) {
         throw new Error(`Car does not exist: ${args.carId}`)
       }
-      if (
-        match.map !== null &&
-        match.carIds.length >= match.map.startingPositions.length
-      ) {
-        throw new Error(
-          `Map only has ${match.map.startingPositions.length} starting positions`,
-        )
+      if (match.map !== null && match.carIds.length >= match.map.startingPositions.length) {
+        throw new Error(`Map only has ${match.map.startingPositions.length} starting positions`)
       }
+
       match.carIds.push(args.carId)
-      DATA.cars.find((car) => car.id === args.carId).currentMatch = args.matchId
+
+      // add crew in cars
+      car.design.components.crew.forEach((crewMember) => {
+        match.characterIds.push(crewMember.id)
+      })
+
+      Vehicle.withId({ id: args.carId }).currentMatch = args.matchId
       return match
     },
+
     startMatch: (parent, args, context) => {
-      const match = DATA.matches.find((el) => el.id === args.matchId)
+      const match = Match.withId({ id: args.matchId })
       if (!match) {
         throw new Error(`Match does not exist: ${args.matchId}`)
       }
       if (match.status !== 'new') {
         throw new Error('Restart match?')
       }
-      match.status = 'started'
-      Time.subphase1Start({ match })
+      Time.matchStart({ match })
       return match
     },
+
     finishMatch: (parent, args, context) => {
-      const match = DATA.matches.find((el) => el.id === args.matchId)
+      const match = Match.withId({ id: args.matchId })
       if (!match) {
         throw new Error(`Match does not exist: ${args.matchId}`)
       }
@@ -223,32 +241,28 @@ export const resolvers = {
       // - privateering
       // - prizes
       match.carIds.map((carId) => {
-        DATA.cars.find((car) => car.id === carId).currentMatch = null
+        Vehicle.withId({ id: carId }).currentMatch = null
       })
       match.status = 'finished'
       return match
     },
+
     ackDamage: (parent, args, context) => {
-      const match = DATA.matches.find((el) => el.id === args.matchId)
-      const ptadIndex = match.time.phase.playersToAckDamage.indexOf(
-        args.playerId,
-      )
-      if (ptadIndex === -1) {
+      const match = Match.withId({ id: args.matchId })
+      const ptadIndex = match.time.phase.playersToAckDamage.indexOf(args.playerId)
+      /* if (ptadIndex === -1) {
         throw new Error(`player not waiting to ack damage: ${args.playerId}`)
-      }
+      }*/
       match.time.phase.playersToAckDamage.splice(ptadIndex, 1)
       Time.subphase6Damage({ match })
     },
+
     ackSpeedChange: (parent, args, context) => {
-      const match = DATA.matches.find((el) => el.id === args.matchId)
-      const index = match.time.phase.playersToAckSpeedChange.indexOf(
-        args.playerId,
-      )
-      if (index === -1) {
-        throw new Error(
-          `player not waiting to ack speed change: ${args.playerId}`,
-        )
-      }
+      const match = Match.withId({ id: args.matchId })
+      const index = match.time.phase.playersToAckSpeedChange.indexOf(args.playerId)
+      /*if (index === -1) {
+        throw new Error(`player not waiting to ack speed change: ${args.playerId}`)
+      }*/
       match.time.phase.playersToAckSpeedChange.splice(index, 1)
       Time.subphase3RevealSpeedChange({ match })
     },

@@ -1,11 +1,11 @@
 import PhasingMove from '../../PhasingMove'
-import VehicleStatusHelper from '../../VehicleStatusHelper'
+import Vehicle from '../../Vehicle'
 import GameObjectFactory from '../GameObjectFactory'
 
 describe('PhasingMove', () => {
   describe('#possibleSpeeds', () => {
-    VehicleStatusHelper.canAccelerate = jest.fn()
-    VehicleStatusHelper.canBrake = jest.fn()
+    Vehicle.canAccelerate = jest.fn()
+    Vehicle.canBrake = jest.fn()
 
     let car
 
@@ -17,15 +17,15 @@ describe('PhasingMove', () => {
 
     describe('no acceleration', () => {
       it('or braking', () => {
-        VehicleStatusHelper.canAccelerate.mockReturnValueOnce(false)
-        VehicleStatusHelper.canBrake.mockReturnValueOnce(false)
+        Vehicle.canAccelerate.mockReturnValueOnce(false)
+        Vehicle.canBrake.mockReturnValueOnce(false)
         const expected = [{ damageDice: '', difficulty: 0, speed: 5 }]
         expect(PhasingMove.possibleSpeeds({ car })).toEqual(expected)
       })
 
       it('but can brake', () => {
-        VehicleStatusHelper.canAccelerate.mockReturnValueOnce(false)
-        VehicleStatusHelper.canBrake.mockReturnValueOnce(true)
+        Vehicle.canAccelerate.mockReturnValueOnce(false)
+        Vehicle.canBrake.mockReturnValueOnce(true)
         // set to lower speed to make this simple
         const expected = [
           { damageDice: '', difficulty: 0, speed: 0 },
@@ -36,8 +36,8 @@ describe('PhasingMove', () => {
     })
 
     it('has full range - also damage for some decel', () => {
-      VehicleStatusHelper.canAccelerate.mockReturnValueOnce(true)
-      VehicleStatusHelper.canBrake.mockReturnValueOnce(true)
+      Vehicle.canAccelerate.mockReturnValueOnce(true)
+      Vehicle.canBrake.mockReturnValueOnce(true)
       car.status.speed = 35
       const expected = [
         { damageDice: '0d+2', difficulty: 7, speed: 0 },

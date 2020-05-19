@@ -9,7 +9,7 @@ class FiringArc extends React.Component {
   sides({ inches = 0 }) {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
-    const arcFacing = lms.currentWeapon(car).location
+    const arcFacing = lms.currentWeapon({ car }).location
     const rect = car.phasing.rect
 
     let left = null
@@ -82,9 +82,7 @@ class FiringArc extends React.Component {
     const car = lms.car({ id: this.props.carId })
 
     const rect = car.phasing.rect
-    return rect
-      .center()
-      .move({ degrees: this.sides({}).facing, distance: inches * INCH })
+    return rect.center().move({ degrees: this.sides({}).facing, distance: inches * INCH })
   }
 
   // Change this to show the +4 inside the 1" arc?
@@ -128,9 +126,9 @@ class FiringArc extends React.Component {
           return 0
       }
     }
-    const weapon = new LocalMatchState(this.props.matchData).currentWeapon(car)
-    var result = {}
-    for (var i = 1; i < 12; i++) {
+    const weapon = new LocalMatchState(this.props.matchData).currentWeapon({ car })
+    const result = {}
+    for (let i = 1; i < 12; i++) {
       result[arcFacingDistanceMod(weapon.location) + 4 * i] = -i
     }
     result[arcFacingDistanceMod(weapon.location) + 1] = '+4'
@@ -138,16 +136,6 @@ class FiringArc extends React.Component {
   }
 
   draw() {
-    const lms = new LocalMatchState(this.props.matchData)
-    const car = lms.car({ id: this.props.carId })
-
-    if (!lms.canFire(car)) {
-      return
-    }
-    if (this.sides({}) === null) {
-      return
-    }
-
     const increments = this.graduationIncrements()
 
     return (
@@ -161,14 +149,23 @@ class FiringArc extends React.Component {
   }
 
   render() {
+    console.log('FIRING ARC!!!')
+    console.log(this.props)
+
+    const lms = new LocalMatchState(this.props.matchData)
+    const car = lms.car({ id: this.props.carId })
+
+    if (this.props.matchData.match.time.phase.subphase !== '5_fire_weapons') {
+      return <></>
+    }
+    if (!lms.canFire({ car }) || this.sides({}) === null) {
+      return <></>
+    }
+
     return (
       <>
         {this.draw()}
-        <Reticle
-          client={this.props.client}
-          carId={this.props.carId}
-          matchData={this.props.matchData}
-        />
+        <Reticle client={this.props.client} carId={this.props.carId} matchData={this.props.matchData} />
       </>
     )
   }

@@ -59,9 +59,7 @@ class LocalMatchState {
     if (!this.activePlayerId()) {
       return null
     }
-    return this.data.players.find(
-      (player) => player.id === this.activePlayerId(),
-    )
+    return this.data.players.find((player) => player.id === this.activePlayerId())
   }
 
   activePlayerId() {
@@ -71,7 +69,7 @@ class LocalMatchState {
     return this.activeCar().playerId
   }
 
-  player(id) {
+  player({ id }) {
     return this.data.players.find((player) => player.id === id)
   }
 
@@ -79,27 +77,25 @@ class LocalMatchState {
     return this.data.players
   }
 
-  currentWeapon(car = this.activeCar()) {
+  currentWeapon({ car = this.activeCar() }) {
     const weaponIndex = car.phasing.weaponIndex
     return car.design.components.weapons[weaponIndex]
   }
 
-  canFire(car = this.activeCar()) {
+  canFire({ car = this.activeCar() }) {
     const weaponCanFire =
-      this.currentWeapon(car).location !== 'none' &&
-      this.currentWeapon(car).damagePoints > 0 &&
-      !this.currentWeapon(car).firedThisTurn &&
-      (this.currentWeapon(car).ammo > 0 ||
-        (this.currentWeapon(car).requiresPlant &&
-          car.design.components.powerPlant.damagePoints > 0))
-    const driverCanFire =
-      !this.driver({ car }).firedThisTurn &&
-      this.driver({ car }).damagePoints > 1
+      this.currentWeapon({ car }).location !== 'none' &&
+      this.currentWeapon({ car }).damagePoints > 0 &&
+      !this.currentWeapon({ car }).firedThisTurn &&
+      (this.currentWeapon({ car }).ammo > 0 ||
+        (this.currentWeapon({ car }).requiresPlant && car.design.components.powerPlant.damagePoints > 0))
+    const driverCanFire = !this.driver({ car }).firedThisTurn && this.driver({ car }).damagePoints > 1
     return weaponCanFire && driverCanFire
   }
 
   driver({ car = this.activeCar() }) {
-    return car.design.components.crew.find((person) => person.role === 'driver')
+    const driverId = car.design.components.crew.find((person) => person.role === 'driver').id
+    return this.data.characters.find((element) => element.id === driverId)
   }
 
   map() {

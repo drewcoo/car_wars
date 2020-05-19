@@ -25,9 +25,25 @@ class MatchNew extends React.Component {
       const pid = this.cars[carId].playerId
       this.players[pid].carIds.push(carId)
     })
-    this.palette = ['maroon', 'red', 'orange', 'yellow', 'olive', 'green',
-      'purple', 'fuchsia', 'lime', 'teal', 'aqua', 'blue',
-      'navy', 'black', 'gray', 'silver', 'white']
+    this.palette = [
+      'maroon',
+      'red',
+      'orange',
+      'yellow',
+      'olive',
+      'green',
+      'purple',
+      'fuchsia',
+      'lime',
+      'teal',
+      'aqua',
+      'blue',
+      'navy',
+      'black',
+      'gray',
+      'silver',
+      'white',
+    ]
     this.handleCarNameChange = this.handleCarNameChange.bind(this)
     this.handleColorChange = this.handleColorChange.bind(this)
     this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this)
@@ -111,7 +127,7 @@ class MatchNew extends React.Component {
     event.preventDefault()
 
     console.log(
-      Object.values(this.players).map(player => {
+      Object.values(this.players).map((player) => {
         const car = this.cars[player.carIds[0]]
         return {
           name: car.name,
@@ -119,13 +135,13 @@ class MatchNew extends React.Component {
           playerColor: player.color,
           designName: car.design,
         }
-      })
+      }),
     )
 
     const response = await this.props.createCompleteMatch({
       variables: {
         mapName: 'ArenaMap1',
-        carData: Object.values(this.players).map(player => {
+        carData: Object.values(this.players).map((player) => {
           const car = this.cars[player.carIds[0]]
           return {
             name: car.name,
@@ -147,7 +163,7 @@ class MatchNew extends React.Component {
     // Strange kludge. Not sure how to do this right.
     // use some kind of navigate package?
 
-    Object.keys(this.players).forEach(k => console.log(k))
+    Object.keys(this.players).forEach((k) => console.log(k))
     console.log(`this player: ${Object.keys(this.players)[0]}`)
 
     localStorage.setItem('playerId', Object.keys(this.players)[0])
@@ -160,72 +176,70 @@ class MatchNew extends React.Component {
   }
 
   addPlayerColorSelector(player) {
-    var result = []
-    this.palette.forEach(color =>
+    const result = []
+    this.palette.forEach((color) =>
       result.push(
-        <option
-          key={ `${color}-${player.id}` }
-          id={ player.id }
-          value={ color }
-          style={ this.colorStyle(color) } >
-          { color }
-        </option>
-      )
+        <option key={`${color}-${player.id}`} id={player.id} value={color} style={this.colorStyle(color)}>
+          {color}
+        </option>,
+      ),
     )
     return (
       <select
-        id={ `color-${player.id}` }
-        onChange={ this.handleColorChange }
-        value={ player.color }
-        style={ this.colorStyle(player.color) }
+        id={`color-${player.id}`}
+        onChange={this.handleColorChange}
+        value={player.color}
+        style={this.colorStyle(player.color)}
       >
-        { result }
+        {result}
       </select>
     )
   }
 
   showCars(player) {
-    var result = []
+    const result = []
     // BUGBUG: hard-code to first car
     player.carIds.forEach((carId) => {
       const car = this.cars[carId]
       result.push(
-        <span key={ car.id } style={ this.colorStyle() }>
+        <span key={car.id} style={this.colorStyle()}>
           <input
-            id={ car.id }
-            key={ car.id }
-            style={ this.colorStyle() }
-            type='text'
-            defaultValue={ car.name }
-            onChange={ this.handleCarNameChange }
+            id={car.id}
+            key={car.id}
+            style={this.colorStyle()}
+            type="text"
+            defaultValue={car.name}
+            onChange={this.handleCarNameChange}
           />
-          { car.design }
-        </span>
+          {car.design}
+        </span>,
       )
     })
     return result
   }
 
   startList() {
-    if (this.listStarted) { return false }
+    if (this.listStarted) {
+      return false
+    }
     this.listStarted = true
     return true
   }
 
   addPlayerToForm(player) {
     return (
-      <label key={ player.id }>
+      <label key={player.id}>
         <input
-          autoFocus={ this.startList() }
-          id={ player.id }
-          key={ player.id }
-          style={ this.colorStyle() }
-          type='text'
-          defaultValue={ player.name }
-          onChange={ this.handlePlayerNameChange }
+          autoFocus={this.startList()}
+          id={player.id}
+          key={player.id}
+          style={this.colorStyle()}
+          type="text"
+          defaultValue={player.name}
+          onChange={this.handlePlayerNameChange}
         />
-        { this.addPlayerColorSelector(player) }
-        { this.showCars(player) }
+        {this.addPlayerColorSelector(player)}
+        {this.showCars(player)}
         <br />
       </label>
     )
@@ -238,23 +252,22 @@ class MatchNew extends React.Component {
     }
     return (
       <div>
-        <form onSubmit={ this.handleSubmit }>
-          <br/>
-          <div key='mapName' style={ this.colorStyle() } >
-            <span style={ { paddingRight: '1em' } }>map:</span>
-            { this.map }
+        <form onSubmit={this.handleSubmit}>
+          <br />
+          <div key="mapName" style={this.colorStyle()}>
+            <span style={{ paddingRight: '1em' }}>map:</span>
+            {this.map}
           </div>
-          <br/>
-          { Object.keys(this.players).map(playerId => this.addPlayerToForm(this.players[playerId])) }
-          <br/><br/>
-          <input type="submit" value="Submit" style={ this.submitStyle() } />
+          <br />
+          {Object.keys(this.players).map((playerId) => this.addPlayerToForm(this.players[playerId]))}
+          <br />
+          <br />
+          <input type="submit" value="Submit" style={this.submitStyle()} />
         </form>
       </div>
     )
   }
 }
 
-const unrouted = compose(
-  CREATE_MATCH
-)(MatchNew)
+const unrouted = compose(CREATE_MATCH)(MatchNew)
 export default withRouter(unrouted)

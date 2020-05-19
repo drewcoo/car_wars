@@ -25,7 +25,7 @@ describe('Movement', () => {
       expect(Movement.nextToMoveThisPhase({ match, _data })).toBeNull()
     })
 
-    it('greatest Math.abs(speed) next', () => {
+    xit('greatest Math.abs(speed) next', () => {
       match.time.phase.number = 1
       match.time.phase.unmoved = [car0.id, car1.id, car2.id]
       expect(Movement.nextToMoveThisPhase({ match, _data })).toEqual(car1.id)

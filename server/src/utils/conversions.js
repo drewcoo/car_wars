@@ -1,14 +1,14 @@
 import { INCH } from './constants'
 
-export const toInches = (pixels) => {
+export const toInches = pixels => {
   return Number.parseFloat((pixels / INCH).toFixed(2))
 }
 
-export const degreesToRadians = (degrees) => {
+export const degreesToRadians = degrees => {
   return (Math.PI / 180) * degrees
 }
 
-export const radiansToDegrees = (radians) => {
+export const radiansToDegrees = radians => {
   return (180 / Math.PI) * radians
 }
 

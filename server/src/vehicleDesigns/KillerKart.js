@@ -17,7 +17,6 @@ export const Design = {
     crew: [
       {
         role: 'driver',
-        damagePoints: 3,
         firedThisTurn: false,
       },
     ],

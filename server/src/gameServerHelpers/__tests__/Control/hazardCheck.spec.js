@@ -1,24 +1,23 @@
+import Character from '../../Character'
 import Control from '../../Control'
+import Vehicle from '../../Vehicle'
 import _ from 'lodash'
 import Dice from 'src/utils/Dice'
+import GameObjectFactory from '../GameObjectFactory'
 
 describe('Control', () => {
   describe('#hazardCheck', () => {
     Control.loseControl = jest.fn()
+    Vehicle.driverId = jest.fn()
+    Character.skillLevel = jest.fn()
 
-    const car = {
-      color: 'beige',
-      log: [],
-      phasing: {
-        difficulty: 0,
-      },
-      status: {
-        handling: 0,
-        nextMove: [],
-        speed: 0,
-      },
-    }
+    Vehicle.driverId.mockReturnValue('fake_ID')
+    Character.skillLevel.mockReturnValue(0)
+
     const difficulty = 0
+    const car = GameObjectFactory.car({ speed: 0 })
+    car.phasing.difficulty = difficulty
+    car.status.handling = 0
 
     it('pass when not #loseControl', () => {
       Control.loseControl.mockReturnValueOnce(false)
@@ -36,53 +35,37 @@ describe('Control', () => {
 
       it('roll 1-4: minor fishtail', () => {
         Dice.roll.mockReturnValueOnce(_.random(1, 4))
-        expect(Control.hazardCheck({ car, difficulty })).toEqual(
-          'minor fishtail',
-        )
+        expect(Control.hazardCheck({ car, difficulty })).toEqual('minor fishtail')
         expect(car.status.nextMove[0].fishtailDistance).toEqual(15)
-        expect(['left', 'right']).toContain(
-          car.status.nextMove[0].spinDirection,
-        )
+        expect(['left', 'right']).toContain(car.status.nextMove[0].spinDirection)
       })
+
       it('roll 5-8: major fishtail', () => {
         Dice.roll.mockReturnValueOnce(_.random(5, 8))
-        expect(Control.hazardCheck({ car, difficulty })).toEqual(
-          'major fishtail',
-        )
+        expect(Control.hazardCheck({ car, difficulty })).toEqual('major fishtail')
         expect(car.status.nextMove[0].fishtailDistance).toEqual(30)
-        expect(['left', 'right']).toContain(
-          car.status.nextMove[0].spinDirection,
-        )
+        expect(['left', 'right']).toContain(car.status.nextMove[0].spinDirection)
       })
+
       it('roll 9,10: minor fishtail & roll Crash Table 1', () => {
         Dice.roll.mockReturnValueOnce(_.random(9, 10))
-        expect(Control.hazardCheck({ car, difficulty })).toEqual(
-          'minor fishtail and roll on Crash Table 1',
-        )
+        expect(Control.hazardCheck({ car, difficulty })).toEqual('minor fishtail and roll on Crash Table 1')
         expect(car.status.nextMove[0].fishtailDistance).toEqual(15)
-        expect(['left', 'right']).toContain(
-          car.status.nextMove[0].spinDirection,
-        )
+        expect(['left', 'right']).toContain(car.status.nextMove[0].spinDirection)
       })
+
       it('roll 11-14: major fishtail & roll Crash Table 1', () => {
         Dice.roll.mockReturnValueOnce(_.random(11, 14))
-        expect(Control.hazardCheck({ car, difficulty })).toEqual(
-          'major fishtail and roll on Crash Table 1',
-        )
+        expect(Control.hazardCheck({ car, difficulty })).toEqual('major fishtail and roll on Crash Table 1')
         expect(car.status.nextMove[0].fishtailDistance).toEqual(30)
-        expect(['left', 'right']).toContain(
-          car.status.nextMove[0].spinDirection,
-        )
+        expect(['left', 'right']).toContain(car.status.nextMove[0].spinDirection)
       })
+
       it('roll 15 or more: major & minor fishtail & Crash Table 1', () => {
         Dice.roll.mockReturnValueOnce(_.random(15, 20))
-        expect(Control.hazardCheck({ car, difficulty })).toEqual(
-          'major and minor fishtail and roll on Crash Table 1',
-        )
+        expect(Control.hazardCheck({ car, difficulty })).toEqual('major and minor fishtail and roll on Crash Table 1')
         expect(car.status.nextMove[0].fishtailDistance).toEqual(45)
-        expect(['left', 'right']).toContain(
-          car.status.nextMove[0].spinDirection,
-        )
+        expect(['left', 'right']).toContain(car.status.nextMove[0].spinDirection)
       })
     })
   })

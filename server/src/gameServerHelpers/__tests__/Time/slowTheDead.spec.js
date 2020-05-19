@@ -1,61 +1,73 @@
 import Time from '../../Time'
-import VehicleStatusHelper from '../../VehicleStatusHelper'
+import Vehicle from '../../Vehicle'
+import Movement from '../../Movement'
 import GameObjectFactory from '../GameObjectFactory'
 
 describe('Time', () => {
   describe('#slowTheDead', () => {
-    VehicleStatusHelper.enoughWheels = jest.fn()
+    Movement.driverOut = jest.fn()
+    Movement.plantOut = jest.fn()
+    Vehicle.enoughWheels = jest.fn()
+
     let _data, car, driver, match, speedBefore
 
     beforeEach(() => {
+      driver = GameObjectFactory.character({})
       car = GameObjectFactory.car({})
-      match = GameObjectFactory.match({ carIds: [car.id] })
+
+      speedBefore = car.status.speed
+
+      GameObjectFactory.putCrewInVehicle({ vehicle: car, crewMember: driver })
+
+      match = GameObjectFactory.match({})
+      GameObjectFactory.putVehicleInMatch({ match, vehicle: car })
+
+      GameObjectFactory.putCharacterInMatch({ match, character: driver })
+
       _data = {
         cars: [car],
+        characters: [driver],
         matches: [match],
       }
 
-      driver = car.design.components.crew.find((elem) => elem.role === 'driver')
-      match = _data.matches[0]
       speedBefore = car.status.speed
     })
 
     it("doesn't slow vehicles when driver alert, plant working, and enough wheels", () => {
-      expect(driver.damagePoints).toBeGreaterThan(1)
-      expect(car.design.components.powerPlant.damagePoints).toBeGreaterThan(0)
-      VehicleStatusHelper.enoughWheels.mockReturnValueOnce(true)
+      Movement.driverOut.mockReturnValueOnce(false)
+      Movement.plantOut.mockReturnValueOnce(false)
+      Vehicle.enoughWheels.mockReturnValueOnce(true)
+
       Time.slowTheDead({ match, _data })
       expect(car.status.speed).toEqual(speedBefore)
     })
 
     describe('slows vehicles when', () => {
       it('driver not alert', () => {
-        driver.damagePoints = 1
-        expect(car.design.components.powerPlant.damagePoints).toBeGreaterThan(0)
-        VehicleStatusHelper.enoughWheels.mockReturnValueOnce(true)
+        Movement.driverOut.mockReturnValueOnce(true)
+        Movement.plantOut.mockReturnValueOnce(false)
+        Vehicle.enoughWheels.mockReturnValueOnce(true)
+
         Time.slowTheDead({ match, _data })
-        expect(car.status.speed).toEqual(
-          Math.sign(speedBefore) * (Math.abs(speedBefore) - 5),
-        )
+        expect(car.status.speed).toEqual(Math.sign(speedBefore) * (Math.abs(speedBefore) - 5))
       })
 
       it('plant not working', () => {
-        expect(driver.damagePoints).toBeGreaterThan(1)
-        car.design.components.powerPlant.damagePoints = 0
-        VehicleStatusHelper.enoughWheels.mockReturnValueOnce(true)
+        Movement.driverOut.mockReturnValueOnce(false)
+        Movement.plantOut.mockReturnValueOnce(true)
+        Vehicle.enoughWheels.mockReturnValueOnce(true)
+
         Time.slowTheDead({ match, _data })
-        expect(car.status.speed).toEqual(
-          Math.sign(speedBefore) * (Math.abs(speedBefore) - 5),
-        )
+        expect(car.status.speed).toEqual(Math.sign(speedBefore) * (Math.abs(speedBefore) - 5))
       })
-      it("doesn't have enough wheels", () => {
-        expect(driver.damagePoints).toBeGreaterThan(1)
-        expect(car.design.components.powerPlant.damagePoints).toBeGreaterThan(0)
-        VehicleStatusHelper.enoughWheels.mockReturnValueOnce(false)
+
+      it("doesn't have enough wheels: slow by 30MPH", () => {
+        Movement.driverOut.mockReturnValueOnce(false)
+        Movement.plantOut.mockReturnValueOnce(false)
+        Vehicle.enoughWheels.mockReturnValueOnce(false)
+
         Time.slowTheDead({ match, _data })
-        expect(car.status.speed).toEqual(
-          Math.sign(speedBefore) * (Math.abs(speedBefore) - 5),
-        )
+        expect(car.status.speed).toEqual(Math.sign(speedBefore) * (Math.abs(speedBefore) - 30))
       })
     })
   })

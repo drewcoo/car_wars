@@ -35,11 +35,7 @@ class TimingOverlays extends React.Component {
       case '2_set_speeds':
         // after this, show new speeds/changes?
         return (
-          <SpeedModal
-            key={uuid()}
-            client={this.props.client}
-            matchData={this.props.matchData}
-            carId={this.props.id} />
+          <SpeedModal key={uuid()} client={this.props.client} matchData={this.props.matchData} carId={this.props.id} />
         )
       case '3_reveal_speed_change':
         return (
@@ -48,18 +44,16 @@ class TimingOverlays extends React.Component {
               key={`damCar-${this.props.carId}`}
               client={this.props.client}
               matchData={this.props.matchData}
-              carId={this.props.id} />
-            <Reticle
-              client={this.props.client}
-              matchData={this.props.matchData} />
+              carId={this.props.id}
+            />
+            <Reticle client={this.props.client} carId={this.props.id} matchData={this.props.matchData} />
             <RevealSpeedChangeModal
               key={uuid()}
               client={this.props.client}
               matchData={this.props.matchData}
-              carId={this.props.id} />
-            <SpeedChange
-              matchData={this.props.matchData}
-              carId={this.props.id} />
+              carId={this.props.id}
+            />
+            <SpeedChange matchData={this.props.matchData} carId={this.props.id} />
           </>
         )
       case '4_maneuver':
@@ -68,18 +62,17 @@ class TimingOverlays extends React.Component {
             key={uuid()}
             client={this.props.client}
             matchData={this.props.matchData}
-            carId={this.props.id} />
+            carId={this.props.id}
+          />
         )
-      case '4_fire_weapons':
+      case '5_fire_weapons':
         return (
-          <FireModal
-            key={uuid()}
-            client={this.props.client}
-            matchData={this.props.matchData}
-            carId={this.props.id} />
+          <FireModal key={uuid()} client={this.props.client} matchData={this.props.matchData} carId={this.props.id} />
         )
       case '6_damage':
-        if (!car) { return (<></>) }
+        if (!car) {
+          return <></>
+        }
         // either make this a timeout or modals all around if there were shots fired
         // show weapons fire animations plus damage/miss stickers
         return (
@@ -88,21 +81,19 @@ class TimingOverlays extends React.Component {
               key={`damCar-${this.props.carId}`}
               client={this.props.client}
               matchData={this.props.matchData}
-              carId={this.props.id} />
+              carId={this.props.id}
+            />
             <DamageModal
               key={uuid()}
               client={this.props.client}
               matchData={this.props.matchData}
-              carId={this.props.id} />
-            <Reticle
-              client={this.props.client}
-              matchData={this.props.matchData} />
-            <SpeedChange
-              matchData={this.props.matchData}
-              carId={this.props.id} />
+              carId={this.props.id}
+            />
+
+            <SpeedChange matchData={this.props.matchData} carId={this.props.id} />
           </>
         )
-      case '6_end':
+      case '7_end':
         break
       default:
         throw new Error(`unknown subphase: ${subphase}`)

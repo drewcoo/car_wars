@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { MouseEvent } from 'react'
 import Modal from 'react-modal'
 import { compose } from 'recompose'
 import CarInset from './CarInset'
@@ -8,8 +8,23 @@ import LocalMatchState from '../../../lib/LocalMatchState'
 import '../../../../../App.css'
 import CarKeystrokes from './CarKeystrokes'
 
-class CarModal extends React.Component {
-  constructor(props) {
+/*
+interface CarModalProps {
+  carId: string
+  matchData: any
+  modalClose?: (event: React.MouseEvent<HTMLElement>) => any
+  showModal: boolean
+}
+
+interface CarModalState {
+  count: number
+  viewIndex: number
+  views: string[]
+}
+*/
+
+class CarModal extends React.Component /*<CarModalProps, CarModalState>*/ {
+  constructor(props /*: any*/) {
     super(props)
     this.state = {
       count: 0,
@@ -20,9 +35,9 @@ class CarModal extends React.Component {
     this.handleSwitch = this.handleSwitch.bind(this)
   }
 
-  handleClose(e) {
-    this.props.modalClose(e)
-    e.stopPropagation()
+  handleClose(event /*: React.MouseEvent<HTMLElement>*/) {
+    this.props.modalClose(event)
+    event.stopPropagation()
   }
 
   customStyles() {
@@ -62,32 +77,26 @@ class CarModal extends React.Component {
   view() {
     switch (this.state.views[this.state.viewIndex]) {
       case 'inset':
-        return (
-          <CarInset matchData={this.props.matchData} carId={this.props.carId} />
-        )
+        return <CarInset matchData={this.props.matchData} carId={this.props.carId} />
       case 'stats':
-        return (
-          <CarStats matchData={this.props.matchData} carId={this.props.carId} />
-        )
+        return <CarStats matchData={this.props.matchData} carId={this.props.carId} />
       case 'log':
-        return (
-          <Log matchData={this.props.matchData} carId={this.props.carId} />
-        )
+        return <Log matchData={this.props.matchData} carId={this.props.carId} />
       default:
         throw new Error(`unknown view index" ${this.state.viewIndex}`)
     }
   }
 
-  handleSwitch(e) {
+  handleSwitch(event /*: React.MouseEvent<HTMLElement>*/) {
     const newIndex = (this.state.viewIndex + 1) % this.state.views.length
     this.setState({ viewIndex: newIndex })
-    e.stopPropagation()
+    event.stopPropagation()
   }
 
   render() {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
-    const player = lms.player(car.playerId)
+    const player = lms.player({ id: car.playerId })
 
     const handlers = {
       close: this.props.modalClose,
@@ -97,33 +106,20 @@ class CarModal extends React.Component {
 
     let keystrokes = <></>
     if (this.props.showModal) {
-      keystrokes = (
-        <CarKeystrokes
-          handlers={handlers}
-          carId={this.props.carId}
-          matchData={this.props.matchData}
-        />
-      )
+      keystrokes = <CarKeystrokes handlers={handlers} carId={this.props.carId} matchData={this.props.matchData} />
     }
 
     return (
       <div onClick={this.handleSwitch}>
         {keystrokes}
-        <Modal
-          id={`${this.props.carId}-modal`}
-          isOpen={this.props.showModal}
-          style={this.customStyles()}
-        >
+        <Modal id={`${this.props.carId}-modal`} isOpen={this.props.showModal} style={this.customStyles()}>
           <span>
             <span style={{ color: car.color, fontSize: '40px' }}>
               {player.name}&nbsp;&nbsp;{car.name}
             </span>
             <div style={{ float: 'center' }}>{this.view()}</div>
             <div style={{ float: 'right' }}>
-              <button
-                className={'ReactModal__Buttons'}
-                onClick={this.handleClose}
-              >
+              <button className={'ReactModal__Buttons'} onClick={this.handleClose}>
                 Ok
               </button>
             </div>

@@ -24,8 +24,7 @@ describe('PhasingMove', () => {
       expect(result.facing).degreesEqual(car.rect.facing)
       console.log()
       expect(
-        car.rect.frPoint().distanceTo(result.brPoint()) +
-          car.rect.flPoint().distanceTo(result.brPoint()),
+        car.rect.frPoint().distanceTo(result.brPoint()) + car.rect.flPoint().distanceTo(result.brPoint()),
       ).toBeCloseTo(car.rect.frPoint().distanceTo(car.rect.flPoint()))
     })
 
@@ -35,8 +34,7 @@ describe('PhasingMove', () => {
 
       expect(result.facing).degreesEqual(car.rect.facing)
       expect(
-        car.rect.frPoint().distanceTo(result.blPoint()) +
-          car.rect.flPoint().distanceTo(result.blPoint()),
+        car.rect.frPoint().distanceTo(result.blPoint()) + car.rect.flPoint().distanceTo(result.blPoint()),
       ).toBeCloseTo(car.rect.frPoint().distanceTo(car.rect.flPoint()))
     })
   })

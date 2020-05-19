@@ -1,8 +1,9 @@
-import { DATA } from '../DATA'
 import Log from '../utils/Log'
+import Character from './Character'
+import Vehicle from './Vehicle'
 
 class Movement {
-  static canMoveThisPhase({ match, _data = DATA }) {
+  static canMoveThisPhase({ match }) {
     function checkMove(car) {
       if (
         Movement.distanceThisPhase({
@@ -16,7 +17,7 @@ class Movement {
       }
     }
     return match.carIds
-      .map((id) => _data.cars.find((car) => car.id === id)) // too much data
+      .map((id) => Vehicle.withId({ id }))
       .filter((car) => checkMove(car) > 0)
       .map((car) => car.id)
   }
@@ -42,9 +43,8 @@ class Movement {
   }
 
   static driverOut({ car }) {
-    const driver = car.design.components.crew.find(
-      (member) => member.role === 'driver',
-    )
+    const driverId = Vehicle.driverId({ vehicle: car })
+    const driver = Character.withId({ id: driverId })
     // 1 is unconscious; 0 is dead
     return driver.damagePoints < 2
   }
@@ -54,32 +54,28 @@ class Movement {
     // because of a direct attack, a crash during combat, surrender of the occupants,
     // or other circumstance
     Log.info('here', car)
-    const statusKilled =
-      typeof car.status.killed !== 'undefined' && car.status.killed === true
+    const statusKilled = typeof car.status.killed !== 'undefined' && car.status.killed === true
     const stopped = car.status.speed === 0
     const noDriver = Movement.driverOut({ car })
     const noPlant = Movement.plantOut({ car })
     const noWeapons = Movement.weaponsOut({ car })
     Log.info(
-      `statusKilled[${statusKilled ? 'X' : ''}] stopped[${
-        stopped ? 'X' : ''
-      }] noDriver[${noDriver ? 'X' : ''}] noMove/Shoot[noPlant[${
-        noPlant ? 'X' : ''
-      }] noWeapons[${noWeapons ? 'X' : ''}]]`,
+      `statusKilled[${statusKilled ? 'X' : ''}] stopped[${stopped ? 'X' : ''}] noDriver[${
+        noDriver ? 'X' : ''
+      }] noMove/Shoot[noPlant[${noPlant ? 'X' : ''}] noWeapons[${noWeapons ? 'X' : ''}]]`,
       car,
     )
-    const result =
-      statusKilled || (stopped && (noDriver || (noPlant && noWeapons)))
+    const result = statusKilled || (stopped && (noDriver || (noPlant && noWeapons)))
     Log.info(`vehicle killed? ${result}`, car)
     return result
   }
 
-  static nextToMoveThisPhase({ match, _data = DATA }) {
+  static nextToMoveThisPhase({ match }) {
     if (match.time.phase.unmoved.length < 1) {
       return null
     }
     const ordered = match.time.phase.unmoved
-      .map((id) => _data.cars.find((car) => car.id === id)) // too much data
+      .map((id) => Vehicle.withId({ id }))
       .sort((a, b) => Math.abs(b.status.speed) - Math.abs(a.status.speed))
       .map((car) => car.id)
 
@@ -88,6 +84,8 @@ class Movement {
     // to move or defer.
     const result = ordered.shift()
     match.time.phase.unmoved = ordered
+    console.log(ordered)
+    console.log(`but first ${result}`)
     return result
   }
 
@@ -99,9 +97,7 @@ class Movement {
     Log.info('in weapons out', car)
     const workingWeapon = car.design.components.weapons.find((weapon) => {
       const plantSitchOk =
-        !weapon.requiresPlant ||
-        (weapon.requiresPlant &&
-          car.design.components.powerPlant.damagePoints > 0)
+        !weapon.requiresPlant || (weapon.requiresPlant && car.design.components.powerPlant.damagePoints > 0)
       return weapon.damagePoints > 0 && plantSitchOk
     })
     Log.info(workingWeapon, car)
@@ -115,8 +111,6 @@ class Movement {
     }
     return typeof workingWeapon === 'undefined'
   }
-
-  /// //////////////
 }
 
 export default Movement

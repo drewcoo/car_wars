@@ -24,9 +24,7 @@ describe('Movement', () => {
       })
 
       it('moves 1 in other phases', () => {
-        expect(
-          Movement.distanceThisPhase({ speed, phase: _.random(2, 5) }),
-        ).toEqual(1)
+        expect(Movement.distanceThisPhase({ speed, phase: _.random(2, 5) })).toEqual(1)
       })
     })
   })

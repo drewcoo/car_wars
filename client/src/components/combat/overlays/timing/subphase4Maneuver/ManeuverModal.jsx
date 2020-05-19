@@ -59,15 +59,10 @@ class ManeuverModal extends React.Component {
       return (
         <>
           <span className="flexCentered">
-            <ManeuverSelector
-              carId={this.props.carId}
-              matchData={this.props.matchData}
-            />
+            <ManeuverSelector carId={this.props.carId} matchData={this.props.matchData} />
           </span>
           <span className="flexCentered">{dirStr}</span>
-          <span className="flexCentered">
-            &#xa0;{Math.abs(deg)}&#176;&#xa0;
-          </span>
+          <span className="flexCentered">&#xa0;{Math.abs(deg)}&#176;&#xa0;</span>
         </>
       )
     } else if (maneuver === 'drift') {
@@ -75,9 +70,7 @@ class ManeuverModal extends React.Component {
         degrees: car.rect.facing,
         distance: INCH,
       })
-      const dist = wouldBeCarRect
-        .brPoint()
-        .distanceTo(car.phasing.rect.brPoint())
+      const dist = wouldBeCarRect.brPoint().distanceTo(car.phasing.rect.brPoint())
       console.log(dist)
       let distStr = 'steep'
       if (dist < 29) {
@@ -88,9 +81,7 @@ class ManeuverModal extends React.Component {
       }
       let dirStr = ''
       if (distStr !== 'no') {
-        const dir =
-          wouldBeCarRect.brPoint().degreesTo(car.phasing.rect.brPoint()) -
-          car.rect.facing
+        const dir = wouldBeCarRect.brPoint().degreesTo(car.phasing.rect.brPoint()) - car.rect.facing
         dirStr = dir > 0 ? 'right' : 'left'
       }
 
@@ -98,10 +89,7 @@ class ManeuverModal extends React.Component {
         <>
           <span className="flexCentered">{distStr}</span>
           <span className="flexCentered">
-            <ManeuverSelector
-              carId={this.props.carId}
-              matchData={this.props.matchData}
-            />
+            <ManeuverSelector carId={this.props.carId} matchData={this.props.matchData} />
           </span>
           <span className="flexCentered">{dirStr}</span>
         </>
@@ -109,10 +97,7 @@ class ManeuverModal extends React.Component {
     } else {
       return (
         <span className="flexCentered">
-          <ManeuverSelector
-            carId={this.props.carId}
-            matchData={this.props.matchData}
-          />
+          <ManeuverSelector carId={this.props.carId} matchData={this.props.matchData} />
         </span>
       )
     }
@@ -126,8 +111,7 @@ class ManeuverModal extends React.Component {
       return <></>
     }
 
-    const showCar =
-      this.props.matchData.match.time.phase.moving === this.props.carId
+    const showCar = this.props.matchData.match.time.phase.moving === this.props.carId
     if (showCar && !this.props.client) {
       return <></>
     }
@@ -142,34 +126,22 @@ class ManeuverModal extends React.Component {
       accept: this.handleAccept,
     }
 
-    const color = lms.car({ id: this.props.matchData.match.time.phase.moving })
-      .color
+    console.log(this.props.matchData)
+    console.log(lms.car({ id: this.props.matchData.match.time.phase.moving }))
+
+    const color = lms.car({ id: this.props.matchData.match.time.phase.moving }).color
     return (
       <div onClick={this.handleEatIt}>
-        <Modal
-          isOpen={!showCar}
-          className={'Modal.Content'}
-          overlayClassName={'Modal.Overlay'}
-        >
+        <Modal isOpen={!showCar} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
           <br />
-          <span style={{ color: color }}>
-            {lms.car({ id: this.props.matchData.match.time.phase.moving }).name}
-          </span>
+          <span style={{ color: color }}>{lms.car({ id: this.props.matchData.match.time.phase.moving }).name}</span>
           <br />
           moving
           <br />
           &nbsp;
         </Modal>
-        <Modal
-          isOpen={showCar}
-          className={'Modal.Content'}
-          overlayClassName={'Modal.Overlay'}
-        >
-          <ManeuverKeystrokes
-            handlers={handlers}
-            client={this.props.client}
-            matchData={this.props.matchData}
-          />
+        <Modal isOpen={showCar} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
+          <ManeuverKeystrokes handlers={handlers} client={this.props.client} matchData={this.props.matchData} />
           <span className="flexCentered" style={{ color: car.color }}>
             {car.name}
           </span>
@@ -177,17 +149,11 @@ class ManeuverModal extends React.Component {
           {this.reading()}
           <br />
           <span className="flexCentered">
-            <HandlingStats
-              matchData={this.props.matchData}
-              carId={this.props.carId}
-            />
+            <HandlingStats matchData={this.props.matchData} carId={this.props.carId} />
           </span>
           <br />
           <span className="flexCentered">
-            <button
-              className={'ReactModal__Buttons'}
-              onClick={this.handleAccept}
-            >
+            <button className={'ReactModal__Buttons'} onClick={this.handleAccept}>
               Ok
             </button>
           </span>
