@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import Dice from 'src/utils/Dice'
+import Dice from '../utils/Dice'
 import { DATA } from '../DATA'
 import { INCH } from '../utils/constants'
 import Log from '../utils/Log'
@@ -11,6 +11,7 @@ import Match from './Match'
 import Movement from './Movement'
 import PhasingMove from './PhasingMove'
 import Vehicle from './Vehicle'
+import Rectangle from '../utils/geometry/Rectangle'
 
 /*
 subphases:
@@ -26,9 +27,9 @@ subphases:
 class Time {
   static matchStart({ match }) {
     const matchCars = Match.cars({ match })
+    
     matchCars.forEach((car) => {
-      const driverId = Vehicle.driverId({ vehicle: car })
-      const driver = Character.withId({ id: driverId })
+      const driver = Vehicle.driver({ vehicle: car })
 
       const skillLevel = Character.skillLevel({ skill: 'driver', character: driver })
       driver.reflexRoll = Dice.roll('1d') + (skillLevel < 0 ? 0 : skillLevel)
@@ -145,6 +146,9 @@ class Time {
       car.phasing.showSpeedChangeModal = !car.status.speedSetThisTurn
     })
 
+    console.log('start phase')
+    console.log(match)
+
     match.time.phase.subphase = '2_set_speeds'
     return Time.subphase2SetSpeeds({ match })
   }
@@ -227,10 +231,11 @@ class Time {
 
   static subphase3RevealSpeedChange({ match }) {
     Time.subphaseCheck('3_reveal_speed_change', match)
+    console.log('threee!')
     if (match.time.phase.playersToAckSpeedChange.length > 0) {
       return
     }
-
+console.log('have acked')
     Match.cars({ match }).forEach((car) => (car.phasing.damage = []))
     match.time.phase.unmoved = Movement.canMoveThisPhase({ match })
     match.time.phase.subphase = '4_maneuver'
@@ -240,18 +245,20 @@ class Time {
   static subphase4Maneuver({ match }) {
     Time.subphaseCheck('4_maneuver', match)
     match.time.phase.moving = Movement.nextToMoveThisPhase({ match })
-
+console.log('four')
     if (match.time.phase.moving) {
       const car = Match.cars({ match }).find((car) => car.id === match.time.phase.moving)
       Time.prepareActiveMover({ match, carId: car.id })
+      console.log(`${car.color} car?`)
       return car
     }
 
+    console.log('can target')
+
     match.time.phase.canTarget = Match.cars({ match })
       .filter((car) => {
-        // just driver for now
-        const crewId = Vehicle.driverId({ vehicle: car })
-        const crewMember = Character.withId({ id: crewId })
+        // just driver for now 
+        const crewMember = Vehicle.driver({ vehicle: car })
         return !(crewMember.firedThisTurn || crewMember.damagePoints < 1)
       })
       .map((car) => car.id)
@@ -290,6 +297,9 @@ class Time {
   static subphase6Damage({ match }) {
     Time.subphaseCheck('6_damage', match)
     if (match.time.phase.playersToAckDamage.length > 0) {
+      console.log(' ')
+      console.log('remaining players to ack:')
+      console.log(match.time.phase.playersToAckDamage)
       return
     }
 
@@ -367,7 +377,7 @@ class Time {
   }
 
   static regularMove({ car, match }) {
-    car.phasing.rect = car.rect
+    car.phasing.rect = car.rect.clone()
     const isHalfMove =
       Movement.distanceThisPhase({
         speed: car.status.speed,
@@ -399,15 +409,25 @@ class Time {
   }
 
   static prepareActiveMover({ match, carId }) {
+    console.log('prep move')
     let car = Match.cars({ match }).find((obj) => obj.id === carId)
+
+    console.log(car.rect.hello())
+    console.log(car.phasing.rect.hello())
+    console.log('center')
     car = PhasingMove.center({ car })
 
     if (car.status.speed === 0) {
       car.status.nextMove = []
     }
+    console.log('fichtail?')
     Time.fishtailIfNeeded({ car })
+    console.log('post-fish')
     Time.nonfishtailForcedMove({ car, match }) || Time.regularMove({ car, match })
     // Now we either skid or we don't.
+
+    console.log('detect')
+
     Collisions.detect({
       cars: Match.cars({ match }),
       map: match.map,

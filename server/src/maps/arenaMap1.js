@@ -5,7 +5,7 @@ import uuid from 'uuid/v4'
 
 const wallRect = ({ x, y, facing, length, width = INCH / 4 }) => {
   return new Rectangle({
-    brPoint: new Point({ x: x, y: y }),
+    _brPoint: new Point({ x: x, y: y }),
     facing: facing,
     length: length,
     width: width,
@@ -14,7 +14,7 @@ const wallRect = ({ x, y, facing, length, width = INCH / 4 }) => {
 
 const startingPosition = ({ x, y, facing }) => {
   return new Rectangle({
-    brPoint: new Point({ x: x, y: y }),
+    _brPoint: new Point({ x: x, y: y }),
     facing: facing,
   })
 }

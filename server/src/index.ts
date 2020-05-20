@@ -7,7 +7,17 @@ import schema from './schema'
 
 const PORT = 4000
 
-const server = new ApolloServer({ schema, resolvers })
+const server = new ApolloServer({
+  schema,
+  resolvers,
+  playground: {
+    endpoint: '/graphql',
+    settings: {
+      'editor.theme': 'light',
+    },
+  },
+})
+
 const app = express()
 app.use(cors())
 server.applyMiddleware({ app })

@@ -4,53 +4,52 @@ import Intersection from './Intersection'
 import { degreesParallel } from '../conversions'
 import Vehicle from '../../gameServerHelpers/Vehicle'
 
-/*
 interface Segment {
   points : Point[]
 }
-*/
+
 
 class Segment {
-  constructor(points) {
+  constructor(points: [Point, Point]) {
     this.points = points
   }
 
-  length() /*: number*/ {
+  length(): number {
     return this.points[0].distanceTo(this.points[1])
   }
 
-  middle() /*: Point*/ {
+  middle(): Point {
     return new Point({
       x: (this.points[0].x + this.points[1].x) / 2,
       y: (this.points[0].y + this.points[1].y) / 2,
     })
   }
 
-  isParallelTo(segment2 /*: Segment*/) /*: boolean*/ {
+  isParallelTo(segment2: Segment): boolean {
     return degreesParallel(this.points[0].degreesTo(this.points[1]), segment2.points[0].degreesTo(segment2.points[1]))
   }
 
-  isColinearWith(segment2 /*: Segment*/) /*: boolean*/ {
+  isColinearWith(segment2: Segment): boolean {
     const third = new Segment([this.points[0], segment2.points[0]])
     return this.isParallelTo(segment2) && this.isParallelTo(third)
   }
 
-  equals(segment2 /*: Segment*/) /*: boolean*/ {
+  equals(segment2: Segment): boolean {
     return (
       (this.points[0].equals(segment2.points[0]) && this.points[1].equals(segment2.points[1])) ||
       (this.points[0].equals(segment2.points[1]) && this.points[1].equals(segment2.points[0]))
     )
   }
 
-  intersects(thing /*: Point | Segment | Rectangle*/) /*: boolean*/ {
+  intersects(thing: Point | Segment | Rectangle): boolean {
     return this.isIntersecting(thing)
   }
 
-  isIntersecting(thing /*: Point | Segment | Rectangle*/) /*: boolean*/ {
+  isIntersecting(thing: Point | Segment | Rectangle): boolean {
     return Intersection.exists(this, thing)
   }
 
-  skew(segment2 /*: Segment*/) /*: number*/ {
+  skew(segment2: Segment): number {
     const thisDir = (this.points[0].degreesTo(this.points[1]) + 360) % 180
     const segment2Dir = (segment2.points[0].degreesTo(segment2.points[1]) + 360) % 180
     return Math.abs(thisDir - segment2Dir)

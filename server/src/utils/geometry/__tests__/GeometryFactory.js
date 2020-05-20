@@ -29,7 +29,7 @@ class GeometryFactory {
     // facing = _.random(0, 360)) {
     return new Rectangle({
       facing: facing, // COMPASS.NORTH
-      brPoint: GeometryFactory.point(),
+      _brPoint: GeometryFactory.point(),
       length: 60,
       width: 30,
     })

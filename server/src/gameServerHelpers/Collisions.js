@@ -58,7 +58,6 @@ class Collisions {
           (arcOfRammedVehicle === 'R' && car.status.speed < 0)
         ) {
           // BUGBUG: handle reverse speeds
-
           rammer.type = rammed.type = 'head-on'
           collisionSpeed = thisCar.status.speed + car.status.speed
           damageToEach = Collisions.ramDamageBySpeed(collisionSpeed)
@@ -187,7 +186,6 @@ class Collisions {
     }
 
     for (const wall of walls) {
-      // var skew = thisCar.phasing.rect.intersectRectangle(wall.rect);
       const skew = thisCar.phasing.rect.intersects(wall.rect)
 
       if (skew) {

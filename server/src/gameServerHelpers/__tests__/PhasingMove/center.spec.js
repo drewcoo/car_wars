@@ -1,6 +1,6 @@
 import PhasingMove from '../../PhasingMove'
 import GameObjectFactory from '../GameObjectFactory'
-import Rectangle from 'src/utils/geometry/Rectangle'
+import Rectangle from '../../../utils/geometry/Rectangle'
 
 describe('PhasingMove', () => {
   describe('#center', () => {

@@ -43,8 +43,7 @@ class Movement {
   }
 
   static driverOut({ car }) {
-    const driverId = Vehicle.driverId({ vehicle: car })
-    const driver = Character.withId({ id: driverId })
+    const driver = Vehicle.driver({ vehicle: car })
     // 1 is unconscious; 0 is dead
     return driver.damagePoints < 2
   }

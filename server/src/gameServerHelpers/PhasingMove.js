@@ -7,6 +7,7 @@ import Rectangle from '../utils/geometry/Rectangle'
 
 class PhasingMove {
   static bend({ car, degrees }) {
+    console.log('bend')
     // how far already?
     const currentFacingDelta = degreesDifference({
       initial: car.rect.facing,
@@ -25,8 +26,16 @@ class PhasingMove {
     const facingLeft = currentFacingDelta < 0
     const turningRight = degrees > 0
 
-    let resultRect = PhasingMove.straight({ car: PhasingMove.center({ car }) })
+    let centered = PhasingMove.center({ car })
+    let resultRect = PhasingMove.straight({ car: centered })
 
+    console.log(' ')
+    console.log(' ')
+    console.log(' ')
+    console.log(' ')
+console.log('xxxxxxxxxxxx')
+    console.log('about to pivot')
+    console.log(resultRect.hello())
     if (turningRight) {
       if (!facingLeft) {
         resultRect = resultRect.backRightCornerPivot(desiredFacing)
@@ -40,6 +49,8 @@ class PhasingMove {
         resultRect = resultRect.backRightCornerPivot(desiredFacing)
       }
     }
+
+    console.log('pivoted')
 
     car.phasing.difficulty = Math.ceil(Math.abs(resultRect.facing - car.rect.facing) / 15)
 
@@ -59,6 +70,9 @@ class PhasingMove {
   // Or change it???
   //
   static center({ car }) {
+    console.log('center')
+    console.log(car.rect.hello())
+    console.log(car.phasing.rect.hello())
     car.phasing.rect = car.rect.clone()
     return car
   }
@@ -123,6 +137,7 @@ class PhasingMove {
   }
 
   static straight({ car, distance = INCH }) {
+    console.log('straight')
     return car.rect.move({ distance, degrees: car.phasing.rect.facing })
   }
 

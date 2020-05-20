@@ -39,12 +39,6 @@ const schema = makeExecutableSchema({
   resolverValidationOptions: {
     requireResolversForResolveType: false,
   },
-  playground: {
-    endpoint: '/graphql',
-    settings: {
-      'editor.theme': 'light',
-    },
-  },
 })
 
 export default schema

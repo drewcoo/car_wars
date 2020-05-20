@@ -250,7 +250,7 @@ export const resolvers = {
     ackDamage: (parent, args, context) => {
       const match = Match.withId({ id: args.matchId })
       const ptadIndex = match.time.phase.playersToAckDamage.indexOf(args.playerId)
-      /* if (ptadIndex === -1) {
+      /*(if (ptadIndex === -1) {
         throw new Error(`player not waiting to ack damage: ${args.playerId}`)
       }*/
       match.time.phase.playersToAckDamage.splice(ptadIndex, 1)

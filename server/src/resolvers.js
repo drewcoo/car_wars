@@ -29,7 +29,7 @@ mungeResolvers(resolvers, Map)
 mungeResolvers(resolvers, Match)
 
 resolvers.Mutation.createCompleteMatch = async (parent, args, context) => {
-  const match = await resolvers.Mutation.addMatch(null)
+  let match = await resolvers.Mutation.addMatch(null)
   const map = await resolvers.Mutation.addMap(null, { name: args.mapName })
   await resolvers.Mutation.matchSetMap(null, {
     matchId: match.id,
@@ -37,8 +37,8 @@ resolvers.Mutation.createCompleteMatch = async (parent, args, context) => {
   })
   let index = 0
   for (const elem of args.playerAndDesign) {
-    const player = await resolvers.Mutation.createPlayer(null, {
-      name: elem.playerName,
+    let player = await resolvers.Mutation.createPlayer(null, {
+        name: elem.playerName,
       color: elem.playerColor,
       id: elem.playerId,
     })
@@ -48,26 +48,28 @@ resolvers.Mutation.createCompleteMatch = async (parent, args, context) => {
       matchId: match.id,
       playerId: elem.playerId,
     })
-    const car = await resolvers.Mutation.createCar(null, {
+    let car = await resolvers.Mutation.createCar(null, {
       name: elem.name,
       playerId: player.id,
       designName: elem.designName,
       crew: [{ role: 'driver', id: character.id }],
     })
-    await resolvers.Mutation.addCar(null, {
+    player = await resolvers.Mutation.addCar(null, {
       carId: car.id,
       playerId: player.id,
     })
-    await resolvers.Mutation.setCarPosition(null, {
+    car = await resolvers.Mutation.setCarPosition(null, {
       id: car.id,
       rect: map.startingPositions[index++],
     })
-    const garbage = await resolvers.Mutation.matchAddCar(null, {
+    match = await resolvers.Mutation.matchAddCar(null, {
       matchId: match.id,
       carId: car.id,
     })
   }
+  console.log('new match?')
   const newMatch = await resolvers.Query.match(null, { matchId: match.id })
+  console.log('started?')
   const started = await resolvers.Mutation.startMatch(null, {
     matchId: match.id,
   })
@@ -86,7 +88,7 @@ resolvers.Query.completeMatchData = async (parent, args, context) => {
     return resolvers.Query.player(null, { id: car.playerId })
   })
   // write every time we're queried
-  process.stdout.write('.')
+  // process.stdout.write('.')
   return {
     match: match,
     cars: cars,

@@ -48,7 +48,7 @@ class Match extends React.Component {
           const matchData = data.completeMatchData
           matchData.location = this.props.location
 
-          console.log(matchData.characters)
+          console.log(matchData)
 
           if (Session.godMode(matchData)) {
             if (

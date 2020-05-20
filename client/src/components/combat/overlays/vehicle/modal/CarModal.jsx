@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react'
+import React from 'react'
 import Modal from 'react-modal'
 import { compose } from 'recompose'
 import CarInset from './CarInset'

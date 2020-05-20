@@ -267,8 +267,7 @@ export const resolvers = {
     },
     driver: (parent, args, _context) => {
       const car = Vehicle.withId({ id: args.carId })
-      const driverId = car.design.components.crew.find((member) => member.role === 'driver').id
-      return Character.withId({ id: driverId })
+      return Vehicle.driver({ vehicle: car })
     },
     modals: (parent, args, _context) => {
       const car = Vehicle.withId({ id: args.carId })
@@ -507,8 +506,9 @@ export const resolvers = {
 
     setCarPosition: (parent, args, _context) => {
       const car = Vehicle.withId({ id: args.id })
-      car.rect = args.rect
-      return car.rect
+      car.rect = args.rect.clone()
+      car.phasing.rect = args.rect.clone()
+      return car
     },
 
     setSpeed: (parent, args, _context) => {
@@ -518,8 +518,7 @@ export const resolvers = {
         return
       }
 
-      const driverId = Vehicle.driverId({ vehicle: car })
-      const driver = Character.withId({ id: driverId })
+      const driver = Vehicle.driver({ vehicle: car })
 
       if (
         driver.damagePoints < 2 ||
@@ -689,8 +688,7 @@ export const resolvers = {
 
       const damageDice = toHit >= weapon.toHit ? weapon.damage : '0d'
       weapon.ammo--
-      driverId = Vehicle.driverId({ vehicle: car })
-      Character.withId({ id: driverId }).firedThisTurn = true
+      Vehicle.driver({ vehicle: car }).firedThisTurn = true
       weapon.firedThisTurn = true
 
       const targetCar = Vehicle.withId({ id: args.targetId })

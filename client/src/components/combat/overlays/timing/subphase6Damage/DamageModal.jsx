@@ -43,7 +43,7 @@ class DamageModal extends React.Component {
 
     if (!theCar) {
       return (
-        <div onClick={ this.handleEatIt }>
+        <div onClick={this.handleEatIt}>
           <Damage
             key={`damCar-${car.id}`}
             client={this.props.client}
@@ -54,9 +54,7 @@ class DamageModal extends React.Component {
       )
     }
 
-    const showModal = this.props.matchData.match.time.phase.playersToAckDamage.includes(
-      car.playerId
-    )
+    const showModal = this.props.matchData.match.time.phase.playersToAckDamage.includes(car.playerId)
 
     /*
     const allDamage = lms.cars().map(car => {
@@ -71,40 +69,26 @@ class DamageModal extends React.Component {
 
     return (
       <>
-
-        <div onClick={ this.handleEatIt }>
-          <Modal
-            className={'Modal.Content'}
-            overlayClassName={'Modal.Overlay'}
-            key={uuid()}
-            isOpen={showModal}
-          >
-            <DamageKeystrokes
-              matchData={this.props.matchData}
-              carId={this.props.carId}
-            />
-            <span className='flexCentered'>review</span>
-            <span className='flexCentered'>damage</span>
+        <div onClick={this.handleEatIt}>
+          <Modal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={showModal}>
+            <DamageKeystrokes matchData={this.props.matchData} carId={this.props.carId} />
+            <span className="flexCentered">review</span>
+            <span className="flexCentered">damage</span>
             <br />
-            <span className='flexCentered'>
+            <span className="flexCentered">
               <button onClick={this.handleClose} className={'ReactModal__Buttons'}>
                 Done
               </button>
             </span>
           </Modal>
-          <Modal
-            className={'Modal.Content'}
-            overlayClassName={'Modal.Overlay'}
-            key={uuid()}
-            isOpen={!showModal}
-          >
+          <Modal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={!showModal}>
             <br />
-              waiting
+            waiting
             <br />
-            <br/>
+            <br />
           </Modal>
         </div>
-     </>
+      </>
     )
   }
 }

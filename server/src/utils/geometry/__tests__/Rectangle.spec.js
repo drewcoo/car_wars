@@ -243,7 +243,7 @@ describe('Rectangle', () => {
     // (2,2) -> (5,5), axis-aligned
     const rect = new Rectangle({
       facing: COMPASS.NORTH,
-      brPoint: GeometryFactory.point(5, 5),
+      _brPoint: GeometryFactory.point(5, 5),
       length: 3,
       width: 3,
     })
@@ -277,14 +277,14 @@ describe('Rectangle', () => {
 
   describe('intersect rects?', () => {
     const rect1 = new Rectangle({
-      brPoint: new Point({ x: 3, y: 3 }),
+      _brPoint: new Point({ x: 3, y: 3 }),
       facing: COMPASS.NORTH,
       length: 2,
       width: 2,
     })
     it('intersects', () => {
       const rect2 = new Rectangle({
-        brPoint: new Point({ x: 4, y: 4 }),
+        _brPoint: new Point({ x: 4, y: 4 }),
         facing: COMPASS.NORTH,
         length: 2,
         width: 2,
@@ -294,7 +294,7 @@ describe('Rectangle', () => {
 
     it('does not intersect', () => {
       const rect2 = new Rectangle({
-        brPoint: new Point({ x: 1, y: 1 }),
+        _brPoint: new Point({ x: 1, y: 1 }),
         facing: COMPASS.NORTH,
         length: 1 / 2,
         width: 1 / 2,
@@ -311,7 +311,7 @@ describe('Rectangle', () => {
 
   describe('#intersects', () => {
     const rectangle = new Rectangle({
-      brPoint: new Point({ x: 3, y: 3 }),
+      _brPoint: new Point({ x: 3, y: 3 }),
       facing: COMPASS.NORTH,
       length: 2,
       width: 2,
@@ -343,7 +343,7 @@ describe('Rectangle', () => {
     describe('rectangles', () => {
       it('intersects', () => {
         const rectangle2 = new Rectangle({
-          brPoint: new Point({ x: 1.5, y: 1.5 }),
+          _brPoint: new Point({ x: 1.5, y: 1.5 }),
           facing: COMPASS.NORTH,
           length: 1,
           width: 1,
@@ -353,7 +353,7 @@ describe('Rectangle', () => {
 
       it('does not intersect', () => {
         const rectangle2 = new Rectangle({
-          brPoint: new Point({ x: 5, y: 5 }),
+          _brPoint: new Point({ x: 5, y: 5 }),
           facing: COMPASS.NORTH,
           length: 1,
           width: 1,

@@ -2,7 +2,7 @@ import Character from '../../Character'
 import Control from '../../Control'
 import Vehicle from '../../Vehicle'
 import _ from 'lodash'
-import Dice from 'src/utils/Dice'
+import Dice from '../../../utils/Dice'
 import GameObjectFactory from '../GameObjectFactory'
 
 describe('Control', () => {

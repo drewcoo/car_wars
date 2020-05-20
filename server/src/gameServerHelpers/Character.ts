@@ -1,17 +1,16 @@
 import { DATA } from '../DATA'
-// import Log from '../utils/Log'
 
 class Character {
-  static withId({ id }) /*: Character*/ {
-    return DATA.characters.find((element) => element.id === id)
+  static withId({ id }: { id: string }) /*: Character*/ {
+    return DATA.characters.find((element: any) => element.id === id)
   }
 
-  static skillLevel({ skill, character, characterId }) /*: number*/ {
+  static skillLevel({ skill, character, characterId}: { skill: string, character: any, characterId: string }) /*: number*/ {
     if (!character) {
       character = Character.withId({ id: characterId })
     }
     // use level === -1 as code for not even base level skill
-    let points = character.skills.find((element) => element.name === skill).points
+    let points = character.skills.find((element: any) => element.name === skill).points
     let level = -1
     let toNextLevel = 10
 

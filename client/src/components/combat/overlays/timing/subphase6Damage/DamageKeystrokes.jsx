@@ -32,20 +32,14 @@ class DamageKeystrokes extends React.Component {
           matchId: this.props.matchData.match.id,
           playerId: playerId,
         })
+        event.stopPropagation()
       },
       home: (event) => {
         const car = lms.car(this.props.carId)
         ViewElement(car.id)
       },
     }
-    return (
-      <HotKeys
-        attach={document}
-        focused={true}
-        handlers={handlers}
-        keyMap={this.keyMap}
-      />
-    )
+    return <HotKeys attach={document} focused={true} handlers={handlers} keyMap={this.keyMap} />
   }
 }
 
@@ -55,6 +49,4 @@ DamageKeystrokes.propTypes = {
   matchData: PropTypes.object,
 }
 
-export default compose(
-  ACK_DAMAGE
-)(DamageKeystrokes)
+export default compose(ACK_DAMAGE)(DamageKeystrokes)

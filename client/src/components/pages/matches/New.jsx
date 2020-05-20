@@ -12,6 +12,9 @@ const CREATE_MATCH = graphql(createCompleteMatch, { name: 'createCompleteMatch' 
 class MatchNew extends React.Component {
   constructor(props) {
     super(props)
+    this.fieldsetColor = '#121212'
+    this.trimColor = '#2b2b2b'
+    this.backgroundColor = 'black'
     this.state = { value: '', foo: '' }
     this.map = 'arenaMap1'
     this.players = this.createPlayers([
@@ -95,9 +98,10 @@ class MatchNew extends React.Component {
 
   colorStyle(myColor = 'white') {
     return {
-      background: 'black',
+      borderColor: this.trimColor,
+      background: this.backgroundColor,
       color: myColor,
-      fontSize: '40px',
+      fontSize: '30px',
       fontFamily: 'fantasy',
       fontVariant: 'small-caps',
     }
@@ -211,7 +215,7 @@ class MatchNew extends React.Component {
             defaultValue={car.name}
             onChange={this.handleCarNameChange}
           />
-          {car.design}
+          <div style={{ whiteSpace: 'nowrap' }}>{car.design}</div>
         </span>,
       )
     })
@@ -228,20 +232,25 @@ class MatchNew extends React.Component {
 
   addPlayerToForm(player) {
     return (
-      <label key={player.id}>
-        <input
-          autoFocus={this.startList()}
-          id={player.id}
-          key={player.id}
-          style={this.colorStyle()}
-          type="text"
-          defaultValue={player.name}
-          onChange={this.handlePlayerNameChange}
-        />
-        {this.addPlayerColorSelector(player)}
-        {this.showCars(player)}
+      <div key={player.id}>
+        <fieldset style={{ width: '80%', backgroundColor: this.backgroundColor, borderColor: this.trimColor }}>
+          <legend>
+            <input
+              autoFocus={this.startList()}
+              id={player.id}
+              key={player.id}
+              style={this.colorStyle()}
+              type="text"
+              defaultValue={player.name}
+              onChange={this.handlePlayerNameChange}
+            />
+          </legend>
+          {this.addPlayerColorSelector(player)}
+          <br />
+          {this.showCars(player)}
+        </fieldset>
         <br />
-      </label>
+      </div>
     )
   }
 
@@ -252,18 +261,29 @@ class MatchNew extends React.Component {
     }
     return (
       <div>
-        <form onSubmit={this.handleSubmit}>
+        <br />
+        <div style={{ backgroundColor: this.fieldsetColor }}>
+          <form onSubmit={this.handleSubmit}>
+            <br />
+            <fieldset style={{ borderColor: this.trimColor, backgroundColor: this.backgroundColor, width: '40%' }}>
+              <legend style={this.colorStyle()}>map</legend>
+              <div key="mapName" style={this.colorStyle()}>
+                {this.map}
+              </div>
+            </fieldset>
+            <br />
+            <fieldset style={{ borderColor: this.trimColor, borderStyle: 'solid' }}>
+              <legend style={this.colorStyle()}>Players</legend>
+              <div style={{ columns: 2 }}>
+                {Object.keys(this.players).map((playerId) => this.addPlayerToForm(this.players[playerId]))}
+              </div>
+            </fieldset>
+            <br />
+
+            <input type="submit" value="Submit" style={this.submitStyle()} />
+          </form>
           <br />
-          <div key="mapName" style={this.colorStyle()}>
-            <span style={{ paddingRight: '1em' }}>map:</span>
-            {this.map}
-          </div>
-          <br />
-          {Object.keys(this.players).map((playerId) => this.addPlayerToForm(this.players[playerId]))}
-          <br />
-          <br />
-          <input type="submit" value="Submit" style={this.submitStyle()} />
-        </form>
+        </div>
       </div>
     )
   }

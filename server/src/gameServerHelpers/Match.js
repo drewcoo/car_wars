@@ -54,9 +54,12 @@ interface Match {
 
 class Match {
   static cars({ match, _data = DATA }) {
-    return (outer = match.carIds.map((carId) => {
-      return _data.cars.find((car) => car.id === carId)
-    }))
+    return match.carIds.map((carId) => {
+      const car = _data.cars.find((car) => car.id === carId)
+      car.rect = new Rectangle(car.rect)
+      car.phasing.rect = new Rectangle(car.phasing.rect)
+      return car
+    })
   }
 
   static characters({ match, _data = DATA }) {

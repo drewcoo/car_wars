@@ -1,4 +1,4 @@
-import Dice from 'src/utils/Dice'
+import Dice from '../../../utils/Dice'
 import Control from '../../Control'
 
 describe('Control', () => {
