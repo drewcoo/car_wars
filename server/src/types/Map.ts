@@ -1,10 +1,10 @@
 import _ from 'lodash'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 import { DATA } from '../DATA'
 import * as ArenaMap1 from '../maps/arenaMap1'
 
 DATA.maps = []
-const loadMap = mapName => {
+const loadMap = (mapName: string) => {
   if (mapName !== 'ArenaMap1') {
     throw new Error(`${mapName} not found in map names`)
   }
@@ -52,7 +52,7 @@ export const resolvers = {
   },
 
   Mutation: {
-    addMap: (parent, args, context) => {
+    addMap: (parent: any, args: any) => {
       const newMap = loadMap(args.name)
       newMap.id = uuid()
       DATA.maps.push(newMap)

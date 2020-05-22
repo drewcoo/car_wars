@@ -53,25 +53,29 @@ interface Match {
 */
 
 class Match {
-  static cars({ match, _data = DATA }) {
-    return match.carIds.map((carId) => {
-      const car = _data.cars.find((car) => car.id === carId)
+  static cars({ match }: { match: any }) {
+    return match.carIds.map((carId: string) => {
+      const car: any = DATA.cars.find((car: any) => car.id === carId)
       car.rect = new Rectangle(car.rect)
       car.phasing.rect = new Rectangle(car.phasing.rect)
       return car
     })
   }
 
-  static characters({ match, _data = DATA }) {
-    return match.characterIds.map((characterId) => _data.characters.find((character) => character.id === characterId))
+  static characters({ match }: { match: any }) {
+    return match.characterIds.map((characterId: string) => DATA.characters.find((character: any) => character.id === characterId))
   }
 
-  static withId({ id }) {
-    return DATA.matches.find((element) => element.id === id)
+  static map ({ match }: { match: any }) {
+    return match.map
   }
 
-  static withVehicle({ vehicle }) {
-    return DATA.matches.find((element) => element.id === vehicle.currentMatch)
+  static withId({ id }: { id: string }) {
+    return DATA.matches.find((element: any) => element.id === id)
+  }
+
+  static withVehicle({ vehicle }: { vehicle: any }) {
+    return DATA.matches.find((element: any) => element.id === vehicle.currentMatch)
   }
 }
 

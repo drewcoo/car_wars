@@ -1,12 +1,6 @@
-import Dice from '../../utils/Dice'
+import Dice from '../Dice'
 
 describe('Dice#roll', () => {
-  it('should throw if not passed a string', () => {
-    expect(() => {
-      Dice.roll(5)
-    }).toThrow(TypeError)
-  })
-
   it('should throw when not passed a "d"', () => {
     expect(() => {
       Dice.roll('1')

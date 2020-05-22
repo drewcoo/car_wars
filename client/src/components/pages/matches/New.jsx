@@ -18,7 +18,7 @@ class MatchNew extends React.Component {
     this.state = { value: '', foo: '' }
     this.map = 'arenaMap1'
     this.players = this.createPlayers([
-      { name: 'You', color: 'red' },
+      { name: 'Alice', color: 'red' },
       { name: 'Bob', color: 'blue' },
       { name: 'Carol', color: 'green' },
       { name: 'Donald', color: 'purple' },
@@ -176,7 +176,6 @@ class MatchNew extends React.Component {
       pathname: `/match/${match.id}`, // }?godmode=true`,
       state: { from: this.props.location },
     })
-    console.log()
   }
 
   addPlayerColorSelector(player) {

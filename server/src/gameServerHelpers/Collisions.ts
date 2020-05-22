@@ -3,8 +3,8 @@ import Control from './Control'
 import Match from './Match'
 
 class Collisions {
-  static clear({ match }) {
-    Match.cars({ match }).forEach((car) => {
+  static clear({ match }: { match: any }) {
+    Match.cars({ match }).forEach((car: any) => {
       // This is ugly.
       car.phasing.collisionDetected = false
       car.collisionDetected = false
@@ -13,7 +13,7 @@ class Collisions {
     })
   }
 
-  static damageModifierFromWeight(weight) {
+  static damageModifierFromWeight(weight: number) {
     // p.17
     // pedestrians have DM of 1/5
     if (weight <= 2000) {
@@ -25,7 +25,7 @@ class Collisions {
     return Math.ceil(weight / 4000) - 1
   }
 
-  static detect({ cars, map, thisCar }) {
+  static detect({ cars, map, thisCar }: { cars: any, map: any, thisCar: any }) {
     const walls = map.wallData
     const match = Match.withVehicle({ vehicle: thisCar })
     // clear old collision data just in case
@@ -35,21 +35,21 @@ class Collisions {
   }
 
   // BUGBUG: Assumes straight movement; not reverse.
-  static detectWithCars({ cars, thisCar }) {
-    cars.forEach((car) => {
+  static detectWithCars({ cars, thisCar }: { cars: any, thisCar: any }) {
+    cars.forEach((car: any) => {
       if (car.id === thisCar.id) {
         return
       }
 
-      const rammer = { rammed: car.id }
-      const rammed = { rammedBy: thisCar.id }
+      const rammer: any = { rammed: car.id }
+      const rammed: any = { rammedBy: thisCar.id }
       const skew = thisCar.phasing.rect.intersects(car.rect)
 
       if (skew) {
         car.collisionDetected = true
         thisCar.phasing.collisionDetected = true
-        let collisionSpeed = 'NOT SET'
-        let damageToEach = 'NOT SET'
+        let collisionSpeed
+        let damageToEach
 
         const arcOfRammedVehicle = car.rect.arcForPoint(thisCar.rect.fSide().middle())
 
@@ -179,7 +179,7 @@ class Collisions {
   }
 
   // BUGBUG: Assumes straight movement; not reverse.
-  static detectWithWalls({ thisCar, walls }) {
+  static detectWithWalls({ thisCar, walls }: { thisCar: any, walls: any }) {
     // shortcut - premature optimization?
     if (thisCar.phasing.collisionDetected) {
       return
@@ -192,8 +192,10 @@ class Collisions {
         thisCar.phasing.collisionDetected = true
         Log.info(`detect ${thisCar.color} car collisions with walls`, thisCar)
         const collisionInfo = {
-          damage: 0,
+          damage:'',// 0,
           damageModifier: 0,
+          handlingStatus: 0,
+          newSpeed: 0,
           rammed: wall.id,
           type: 'unknown',
         }
@@ -219,13 +221,13 @@ class Collisions {
           collisionInfo.handlingStatus = Control.normalizeHandlingStatus(-Math.floor(thisCar.status.speed / 10))
           collisionInfo.newSpeed = 0
         }
-        console.log(collisionInfo)
+
         thisCar.phasing.collisions.push(collisionInfo)
       }
     }
   }
 
-  static handlingChange({ speed }) {
+  static handlingChange({ speed }: { speed: number }) {
     let result = Math.floor(Math.abs(speed) / 10)
     if (result === 0) {
       result = 1
@@ -233,7 +235,7 @@ class Collisions {
     return result
   }
 
-  static isSideswipe({ rammer, rammed }) {
+  static isSideswipe({ rammer, rammed }: { rammer: any, rammed: any }) {
     let delta = Math.abs(((rammer.phasing.rect.facing + 360) % 360) - ((rammed.rect.facing + 360) % 360))
     // first mod to one side
     delta %= 180
@@ -245,7 +247,7 @@ class Collisions {
     return delta < 45 || delta > 135
   }
 
-  static ramDamageBySpeed(speed) {
+  static ramDamageBySpeed(speed: number): string {
     if (speed < 0) {
       throw new Error(`speed < 0! "${speed}"`)
     }
@@ -269,7 +271,7 @@ class Collisions {
     }
   }
 
-  static resolve({ car, collision }) {
+  static resolve({ vehicle, collision }: { vehicle: any, collision: any }) {
     /*
   Need to figure out mechanics for these:
 
@@ -284,22 +286,18 @@ decides what type of collision it is."
 the vehicles are still in contact are not new
 collisions"
   */
-    console.log('handle collision:')
-    console.log(collision)
+
     // have a game object class
     // let this be a collision of objects.
     // deal.
     /*
-    if (collision.rammed.id.match(/car|wall/)) {
-      //console.log(`hit: ${collision.rammed.id}`)
-      //console.log(`type: ${collision.type}`)
-    } else {
+    if (collision.rammed.id.match(/vehicle|wall/)) {
       throw new Error(`unknown rammed thing: "${collision}"`)
     }
     */
   }
 
-  static temporarySpeed({ thisDM, otherDM, speed }) {
+  static temporarySpeed({ thisDM, otherDM, speed }: { thisDM: any, otherDM: any, speed: number }) {
     if (thisDM <= 0) {
       throw new Error(`invalid DM: ${thisDM}`)
     }

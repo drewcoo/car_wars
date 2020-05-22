@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 import { DATA } from '../DATA'
 
 DATA.players = []
@@ -22,8 +22,8 @@ export const typeDef = `
 
 export const resolvers = {
   Query: {
-    player: (parent, args, context) => {
-      return DATA.players.find(el => el.id === args.id)
+    player: (parent: any, args: any) => {
+      return DATA.players.find((el: any) => el.id === args.id)
     },
     players: () => {
       return DATA.players
@@ -31,13 +31,13 @@ export const resolvers = {
   },
 
   Mutation: {
-    addCar: (parent, args, context) => {
-      const player = DATA.players.find(player => player.id === args.playerId)
+    addCar: (parent: any, args: any) => {
+      const player: any = DATA.players.find((player: any) => player.id === args.playerId)
       player.carIds.push(args.carId)
       return player
     },
 
-    createPlayer: (parent, args, context) => {
+    createPlayer: (parent: any, args: any) => {
       const newPlayer = {
         id: args.id || uuid(),
         name: args.name,

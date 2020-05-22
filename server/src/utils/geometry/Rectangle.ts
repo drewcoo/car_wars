@@ -7,7 +7,7 @@ enum SideStrings {
   B = 'B',
   F = 'F',
   L = 'L',
-  R = 'R'
+  R = 'R',
 }
 
 interface Sides {
@@ -15,6 +15,13 @@ interface Sides {
   F: Segment
   L: Segment
   R: Segment
+}
+
+interface Corners {
+  FL: Point
+  FR: Point
+  BL: Point
+  BR: Point
 }
 
 class Rectangle {
@@ -30,11 +37,11 @@ class Rectangle {
   // Or does that only apply to vehicles, which have rectangles?
   //
   // bugbug - not ANY
-  constructor({ _brPoint, facing, length, width }: { _brPoint: Point, facing: number, length: number, width: number }) {
+  constructor({ _brPoint, facing, length = INCH, width = INCH/2 }: { _brPoint: Point, facing: number, length?: number, width?: number }) {
     this._brPoint = new Point(_brPoint)
     this.facing = (facing + 360) % 360
-    this.length = length || INCH
-    this.width = width || INCH / 2
+    this.length = length
+    this.width = width
   }
 
   hello(): string {
@@ -112,7 +119,6 @@ class Rectangle {
   }
 
   clone(): Rectangle {
-    console.log('clone')
     return new Rectangle({
       _brPoint: new Point({ x: this.brPoint().x, y: this.brPoint().y }),
       facing: this.facing,
@@ -123,8 +129,7 @@ class Rectangle {
 
   // returns a new rectangle, moved direction and distance from here
   // can make this take direction of movement later
-  move({ degrees, distance, slide = false }: { degrees: number, distance: number, slide: boolean }): Rectangle {
-    console.log('move')
+  move({ degrees, distance, slide = false }: { degrees: number, distance: number, slide?: boolean }): Rectangle {
     const result = new Rectangle({
       _brPoint: this.brPoint().move({ degrees, distance }),
       facing: slide ? this.facing : degrees,
@@ -174,7 +179,6 @@ class Rectangle {
   // can take into account direction of movement?
 
   intersects(thing: (Point | Segment | Rectangle)): boolean {
-    console.log('am i?')
     return this.isIntersecting(thing)
   }
 
@@ -197,6 +201,15 @@ class Rectangle {
       'F': this.fSide(),
       'L': this.lSide(),
       'R': this.rSide(),
+    }
+  }
+
+  corners(): Corners {
+    return {
+      'FL': this.flPoint(),
+      'FR': this.frPoint(),
+      'BL': this.blPoint(),
+      'BR': this.brPoint(),
     }
   }
 

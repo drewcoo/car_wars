@@ -1,4 +1,5 @@
 import { degreesEqual as testDegrees } from './conversions'
+import Point from './geometry/Point'
 
 expect.extend({
   degreesEqual(arg1, arg2) {

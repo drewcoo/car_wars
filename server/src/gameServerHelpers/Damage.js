@@ -189,7 +189,7 @@ class Damage {
       throw new Error(`unknown target (name) type: "${location}"`)
     }
     Log.info(`hazard: ${hazard}`, car)
-    Control.hazardCheck({ car, difficulty: hazard })
+    Control.hazardCheck({ vehicle: car, difficulty: hazard })
     Log.info(`${damageToDeal} points of damage blow through!`, car)
     return damageRecord
   }

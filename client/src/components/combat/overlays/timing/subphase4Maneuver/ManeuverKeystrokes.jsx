@@ -64,8 +64,8 @@ class ManeuverKeystrokes extends React.Component {
     super(props)
     this.state = { value: '' }
     this.keyMap = {
-      nextManeuver: ['m', 'down'],
-      previousManeuver: ['shift+m', 'up'],
+      nextManeuver: ['m', 'up'],
+      previousManeuver: ['shift+m', 'down'],
       acceptMove: ['enter'],
       turnLeft: ['z', 'shift+x', 'left'],
       turnRight: ['x', 'shift+z', 'right'],
@@ -192,30 +192,18 @@ class ManeuverKeystrokes extends React.Component {
   }
 
   respondUnlessModalShowing(handlers) {
-    return (
-      <HotKeys
-        attach={document}
-        focused={true}
-        handlers={handlers}
-        keyMap={this.keyMap}
-      />
-    )
+    return <HotKeys attach={document} focused={true} handlers={handlers} keyMap={this.keyMap} />
   }
 
   render() {
     const lms = new LocalMatchState(this.props.matchData)
     // this.props.carId passed in from speed change Modal
     // will I also do that for targeting/firing?
-    if (
-      !Session.loggedInAsActivePlayer(this.props.matchData) &&
-      !this.props.carId
-    ) {
+    if (!Session.loggedInAsActivePlayer(this.props.matchData) && !this.props.carId) {
       return <></>
     }
 
-    const car = this.props.carId
-      ? lms.car({ id: this.props.carId })
-      : lms.activeCar()
+    const car = this.props.carId ? lms.car({ id: this.props.carId }) : lms.activeCar()
 
     const handlers = {
       nextManeuver: (event) => {

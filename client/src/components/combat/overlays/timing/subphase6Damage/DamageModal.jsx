@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { graphql } from 'react-apollo'
-import Modal from 'react-modal'
+import ReactModal from 'react-modal'
 import { compose } from 'recompose'
 import uuid from 'uuid/v4'
 import '../../../../../App.css'
@@ -42,6 +42,10 @@ class DamageModal extends React.Component {
     const theCar = car.playerId === localStorage.getItem('playerId')
 
     if (!theCar) {
+      return <></>
+    }
+    
+    if (!theCar) {
       return (
         <div onClick={this.handleEatIt}>
           <Damage
@@ -67,26 +71,40 @@ class DamageModal extends React.Component {
     })
     */
 
+    let color = car.color,
+      name = car.name
+    if (this.props.matchData.match.time.phase.moving) {
+      color = lms.car({ id: this.props.matchData.match.time.phase.moving }).color
+      name = lms.car({ id: this.props.matchData.match.time.phase.moving }).name
+    }
+
     return (
       <>
         <div onClick={this.handleEatIt}>
-          <Modal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={showModal}>
-            <DamageKeystrokes matchData={this.props.matchData} carId={this.props.carId} />
-            <span className="flexCentered">review</span>
-            <span className="flexCentered">damage</span>
-            <br />
-            <span className="flexCentered">
-              <button onClick={this.handleClose} className={'ReactModal__Buttons'}>
-                Done
-              </button>
-            </span>
-          </Modal>
-          <Modal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={!showModal}>
-            <br />
-            waiting
-            <br />
-            <br />
-          </Modal>
+          <ReactModal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={showModal}>
+            <fieldset className="ModalFieldset">
+              <legend style={{ color: color }}>{name}</legend>
+
+              <DamageKeystrokes matchData={this.props.matchData} carId={this.props.carId} />
+              <span className="flexCentered">review</span>
+              <span className="flexCentered">damage</span>
+              <br />
+              <span className="flexCentered">
+                <button onClick={this.handleClose} className={'ReactModal__Buttons'}>
+                  Done
+                </button>
+              </span>
+            </fieldset>
+          </ReactModal>
+          <ReactModal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={!showModal}>
+            <fieldset className="ModalFieldset">
+              <legend style={{ color: color }}>{name}</legend>
+              <br />
+              waiting
+              <br />
+              <br />
+            </fieldset>
+          </ReactModal>
         </div>
       </>
     )
@@ -100,6 +118,6 @@ DamageModal.propTypes = {
   matchData: PropTypes.object,
 }
 
-Modal.setAppElement('#root')
+ReactModal.setAppElement('#root')
 
 export default compose(ACK_DAMAGE)(DamageModal)

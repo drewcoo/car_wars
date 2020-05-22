@@ -16,6 +16,7 @@ export const Design = {
     armor: { type: 'standard', F: 5, R: 3, L: 3, B: 3, T: 2, U: 2 },
     crew: [
       {
+        id: '',
         role: 'driver',
         firedThisTurn: false,
       },

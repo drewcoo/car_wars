@@ -7,14 +7,6 @@ import { COMPASS } from '../../constants'
 
 describe('Rectangle', () => {
   describe('points', () => {
-    it('#brPoint thows on _brPoint not point', () => {
-      const rectangle = GeometryFactory.rectangle({})
-      rectangle._brPoint = 'notAPoint'
-      expect(() => {
-        rectangle.brPoint()
-      }).toThrow(Error)
-    })
-
     describe('valid', () => {
       const rectangle = GeometryFactory.rectangle({ facing: COMPASS.NORTH })
       const brp = rectangle.brPoint()
@@ -82,10 +74,6 @@ describe('Rectangle', () => {
 
     it('4 of #sides', () => {
       expect(Object.keys(rectangle.sides())).toHaveLength(4)
-    })
-
-    it('can seek a #side', () => {
-      expect(rectangle.side('B').equals(rectangle.bSide())).toBe(true)
     })
   })
 
@@ -172,11 +160,6 @@ describe('Rectangle', () => {
       expect(translated.brPoint() instanceof Point).toBe(true)
       const actual = original.brPoint().degreesTo(translated.brPoint())
       expect(degreesEqual(actual, degrees)).toBe(true)
-    })
-
-    it.skip('goes the correct distance', () => {
-      const actual = Math.sqrt(Math.pow(original.x - translated.x, 2) + Math.pow(original.y - translated.y, 2))
-      expect(distance).toEqual(actual)
     })
   })
 
@@ -359,14 +342,6 @@ describe('Rectangle', () => {
           width: 1,
         })
         expect(rectangle.intersects(rectangle2)).toBe(false)
-      })
-    })
-
-    describe('non-thing', () => {
-      it('throws', () => {
-        expect(() => {
-          rectangle.intersects(null)
-        }).toThrow(Error)
       })
     })
   })

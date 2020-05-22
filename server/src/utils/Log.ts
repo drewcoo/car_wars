@@ -12,11 +12,17 @@ class Log {
     }
     const color = target ? target.color : ''
     console.log(`${color}: ${message}`)
-    if (target.inVehicleId) {
-      // it's a character in a vehicle; do this?
-      const vehicle = Vehicle.withId({ id: target.inVehicleId })
-      Log.info(`${target.name}: ${message}`, vehicle)
+    if(!target) {
+      console.log('NO TARGET!')
+      console.log(message)
+    } else {
+      if (target.inVehicleId) {
+        // it's a character in a vehicle; do this?
+        const vehicle = Vehicle.withId({ id: target.inVehicleId })
+        Log.info(`${target.name}: ${message}`, vehicle)
+      }
     }
+    
   }
 }
 export default Log

@@ -115,7 +115,6 @@ class Rectangle {
 
   // can make this take direction of movement later
   leftBackCornerPivot(degrees: number) {
-    console.log(`pivot ${degrees}`)
     const result = this.clone()
     const blp = result.blPoint()
     result._brPoint = result.brPoint().rotateAround({ fixedPoint: blp, degrees: degrees })

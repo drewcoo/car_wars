@@ -1,9 +1,9 @@
 import { COMPASS, INCH } from '../utils/constants'
 import Rectangle from '../utils/geometry/Rectangle'
 import Point from '../utils/geometry/Point'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
-const wallRect = ({ x, y, facing, length, width = INCH / 4 }) => {
+const wallRect = ({ x, y, facing, length, width = INCH / 4 }: { x: number, y: number, facing: number, length?: number, width?: number }) => {
   return new Rectangle({
     _brPoint: new Point({ x: x, y: y }),
     facing: facing,
@@ -12,7 +12,7 @@ const wallRect = ({ x, y, facing, length, width = INCH / 4 }) => {
   })
 }
 
-const startingPosition = ({ x, y, facing }) => {
+const startingPosition = ({ x, y, facing }: { x: number, y: number, facing: number }) => {
   return new Rectangle({
     _brPoint: new Point({ x: x, y: y }),
     facing: facing,
@@ -25,6 +25,7 @@ const MAP = {
 }
 
 const Map = {
+  id: 'none',
   name: 'arenaMap1',
   size: {
     height: MAP.HEIGHT,

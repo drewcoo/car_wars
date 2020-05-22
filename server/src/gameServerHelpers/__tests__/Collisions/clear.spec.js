@@ -5,38 +5,38 @@ import GameObjectFactory from '../GameObjectFactory'
 describe('Collisions', () => {
   describe('#clear', () => {
     Match.cars = jest.fn()
-    const car = GameObjectFactory.car({})
-    Match.cars.mockReturnValue([car])
+    const vehicle = GameObjectFactory.vehicle({})
+    Match.cars.mockReturnValue([vehicle])
 
     beforeEach(() => {
-      car.phasing.collisionDetected = false
-      car.collisionDetected = false
-      car.phasing.collisions = []
-      car.collisions = []
+      vehicle.phasing.collisionDetected = false
+      vehicle.collisionDetected = false
+      vehicle.phasing.collisions = []
+      vehicle.collisions = []
     })
 
     it('clears non-phasing .collisionDetected', () => {
-      car.collisionDetected = true
+      vehicle.collisionDetected = true
       Collisions.clear({ match: 'foo' })
-      expect(car.collisionDetected).toBe(false)
+      expect(vehicle.collisionDetected).toBe(false)
     })
 
     it('clears phasing .collisionDetected', () => {
-      car.phasing.collisionDetected = true
+      vehicle.phasing.collisionDetected = true
       Collisions.clear({ match: 'foo' })
-      expect(car.phasing.collisionDetected).toBe(false)
+      expect(vehicle.phasing.collisionDetected).toBe(false)
     })
 
     it('clears non-phasing collisions array', () => {
-      car.collisions = ['bar', 'baz']
+      vehicle.collisions = ['bar', 'baz']
       Collisions.clear({ match: 'foo' })
-      expect(car.collisions.length).toEqual(0)
+      expect(vehicle.collisions.length).toEqual(0)
     })
 
     it('clears phasing collisions array', () => {
-      car.phasing.collisions = ['bar', 'baz']
+      vehicle.phasing.collisions = ['bar', 'baz']
       Collisions.clear({ match: 'foo' })
-      expect(car.phasing.collisions.length).toEqual(0)
+      expect(vehicle.phasing.collisions.length).toEqual(0)
     })
   })
 })

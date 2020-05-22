@@ -125,7 +125,7 @@ body {
   fill: none;
   stroke: red;
   /* strokeWidth: 5; */
-  opacity: 0.8;
+  opacity: 0.7;
 }
 .FiringArcGraduationText {
   fill: red;
@@ -199,19 +199,21 @@ body {
   -webkit-transform: scale(0.5) rotateX(-30deg);
   transform: scale(0.5) rotateX(-30deg);
     top: 50%;
-    left: 80%;
-    /*right: 10%;*/
+    /*left: 50%; */
+    right: 10%;
     /*bottom: auto;*/
    /* margin-right: -50%;*/
     transform: translate(-50%, -50%);
-    background-color: black;
+    background-color: transparent;
     color: white;
-    border: 3px solid lightgray;
+    outline: none;
+    border: 5px solid;
+    border-style: none;
     border-radius: 5px;
     font-family: fantasy;
     font-size: 50px;
     font-variant: small-caps;
-    opacity: 0.8;
+    opacity: 0.75;
   }
 .ReactModal__Overlay {
     background-color: rgba(0,0,0, 0.5);
@@ -230,4 +232,10 @@ body {
 }
 .ReactModal__Buttons:hover {
   background-color: gray;
+}
+.ModalFieldset {
+  border: 5px groove white;
+  border-radius: 15px;
+  background-color: black;
+  /*color: 'black';*/
 }

@@ -29,6 +29,8 @@
     "@babel/plugin-transform-arrow-functions": "^7.8.3",
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-typescript": "^7.9.0",
+    "@types/bluebird": "^3.5.32",
+    "@types/jest": "^25.2.3",
     "@types/lodash": "^4.14.151",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
@@ -45,7 +47,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.8.7",
-    "@types/bluebird": "^3.5.31",
+    "@types/uuid": "^8.0.0",
     "apollo-server": "^2.9.16",
     "apollo-server-express": "^2.9.16",
     "awesome-typescript-loader": "^5.2.1",

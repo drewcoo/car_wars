@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { graphql } from 'react-apollo'
-import Modal from 'react-modal'
+import ReactModal from 'react-modal'
 import { compose } from 'recompose'
 import '../../../../../App.css'
 import { INCH } from '../../../../../utils/constants'
@@ -32,7 +32,6 @@ class ManeuverModal extends React.Component {
   }
 
   handleAccept() {
-    console.log('modal accept')
     this.acceptMove({ id: this.props.carId })
   }
 
@@ -44,62 +43,55 @@ class ManeuverModal extends React.Component {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
     const maneuver = car.status.maneuvers[car.phasing.maneuverIndex]
+    let dirStr = ''
+    let distStr = ''
     if (maneuver === 'bend' || maneuver === 'swerve') {
       let deg = degreesDifference({
         initial: car.rect.facing,
         second: car.phasing.rect.facing,
       })
-      let dirStr = ''
       if (deg > 0) dirStr = 'right'
       if (deg < 0) dirStr = 'left'
       if (deg > 180) {
         deg = 360 - deg
       }
-      // &#x2190; &#x2192;
-      return (
-        <>
-          <span className="flexCentered">
-            <ManeuverSelector carId={this.props.carId} matchData={this.props.matchData} />
-          </span>
-          <span className="flexCentered">{dirStr}</span>
-          <span className="flexCentered">&#xa0;{Math.abs(deg)}&#176;&#xa0;</span>
-        </>
-      )
+      distStr = `${Math.abs(deg)}°`
     } else if (maneuver === 'drift') {
       const wouldBeCarRect = car.rect.move({
         degrees: car.rect.facing,
         distance: INCH,
       })
       const dist = wouldBeCarRect.brPoint().distanceTo(car.phasing.rect.brPoint())
-      console.log(dist)
-      let distStr = 'steep'
+      distStr = 'steep'
       if (dist < 29) {
         distStr = ''
       }
       if (dist < 1) {
-        distStr = 'no'
+        distStr = 'none'
       }
-      let dirStr = ''
-      if (distStr !== 'no') {
+      if (distStr !== 'none') {
         const dir = wouldBeCarRect.brPoint().degreesTo(car.phasing.rect.brPoint()) - car.rect.facing
         dirStr = dir > 0 ? 'right' : 'left'
       }
+    }
 
-      return (
-        <>
-          <span className="flexCentered">{distStr}</span>
-          <span className="flexCentered">
-            <ManeuverSelector carId={this.props.carId} matchData={this.props.matchData} />
-          </span>
-          <span className="flexCentered">{dirStr}</span>
-        </>
-      )
-    } else {
-      return (
-        <span className="flexCentered">
+    return (
+      <>
+        <span className="flexCentered" style={{ height: '50px' }}>
           <ManeuverSelector carId={this.props.carId} matchData={this.props.matchData} />
         </span>
-      )
+        <span className="flexCentered">
+          &nbsp;{distStr} {dirStr}
+        </span>
+      </>
+    )
+  }
+
+  customStyle() {
+    return {
+      content: {
+        backgroundColor: 'black',
+      },
     }
   }
 
@@ -120,49 +112,51 @@ class ManeuverModal extends React.Component {
     // have the same id.
     ViewElement(this.props.carId)
 
-    console.log(car)
-
     const handlers = {
       accept: this.handleAccept,
     }
+    
+    let color = car.color,
+      name = car.name
+    if (this.props.matchData.match.time.phase.moving) {
+      color = lms.car({ id: this.props.matchData.match.time.phase.moving }).color
+      name = lms.car({ id: this.props.matchData.match.time.phase.moving }).name
+    }
 
-    console.log(this.props.matchData)
-    console.log(lms.car({ id: this.props.matchData.match.time.phase.moving }))
-
-    const color = lms.car({ id: this.props.matchData.match.time.phase.moving }).color
     return (
       <div onClick={this.handleEatIt}>
-        <Modal isOpen={!showCar} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
-          <br />
-          <span style={{ color: color }}>{lms.car({ id: this.props.matchData.match.time.phase.moving }).name}</span>
-          <br />
-          moving
-          <br />
-          &nbsp;
-        </Modal>
-        <Modal isOpen={showCar} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
-          <ManeuverKeystrokes handlers={handlers} client={this.props.client} matchData={this.props.matchData} />
-          <span className="flexCentered" style={{ color: car.color }}>
-            {car.name}
-          </span>
-          <span className="flexCentered">maneuver</span>
-          {this.reading()}
-          <br />
-          <span className="flexCentered">
-            <HandlingStats matchData={this.props.matchData} carId={this.props.carId} />
-          </span>
-          <br />
-          <span className="flexCentered">
-            <button className={'ReactModal__Buttons'} onClick={this.handleAccept}>
-              Ok
-            </button>
-          </span>
-        </Modal>
+        <ReactModal isOpen={!showCar} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
+          <fieldset className="ModalFieldset">
+            <legend style={{ color: color }}>{name}</legend>
+            moving . . .
+            <br />
+            <br />
+          </fieldset>
+        </ReactModal>
+
+        <ReactModal isOpen={showCar} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
+          <fieldset className="ModalFieldset">
+            <legend style={{ color: color }}>{name}</legend>
+            <ManeuverKeystrokes handlers={handlers} client={this.props.client} matchData={this.props.matchData} />
+            {this.reading()}
+            <br />
+            <span className="flexCentered">
+              ↔↕&nbsp;&nbsp;&nbsp;
+              <button className={'ReactModal__Buttons'} onClick={this.handleAccept}>
+                &nbsp;Ok&nbsp;
+              </button>
+            </span>
+            <hr />
+            <span className="flexCentered">
+              <HandlingStats matchData={this.props.matchData} carId={this.props.carId} />
+            </span>
+          </fieldset>
+        </ReactModal>
       </div>
     )
   }
 }
 
-Modal.setAppElement('#root')
+ReactModal.setAppElement('#root')
 
 export default compose(DO_MOVE)(ManeuverModal)

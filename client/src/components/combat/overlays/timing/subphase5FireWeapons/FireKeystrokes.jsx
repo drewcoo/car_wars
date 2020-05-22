@@ -68,8 +68,15 @@ class FireKeystrokes extends React.Component {
     const handlers = {
       enter: (event) => {
         // Fire if target, otherwise finish
-        this.fire({ id: car.id })
-        this.finishFiring({ id: car.id })
+        // BUGBUG: Should check on server side.
+        // This allows server to hit error.
+        if (lms.currentTarget({ id: car.id })) {
+          this.fire({ id: car.id })
+        } else {
+          this.finishFiring({ id: car.id })
+        }
+        
+        
       },
       nextWeapon: (event) => {
         lms.nextWeapon({ id: car.id })

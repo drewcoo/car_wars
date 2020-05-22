@@ -22,8 +22,6 @@ class Reticle extends React.Component {
   }
 
   draw() {
-    console.log(this.props.carId)
-    console.log(this.props.matchData)
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
     if (!car || !lms.canFire({ car })) {

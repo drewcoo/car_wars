@@ -43,13 +43,13 @@ class Control {
 
   static statusIndex = [7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
 
-  static checkNeeded({ speed, handlingStatus }) {
+  static checkNeeded({ speed, handlingStatus }: { speed: number, handlingStatus: number }) {
     const row = Control.row({ speed })
     const column = Control.statusIndex.indexOf(handlingStatus)
     return row[column]
   }
 
-  static crashModifier({ speed }) {
+  static crashModifier({ speed }: { speed: number }) {
     const absSpeed = Math.abs(speed)
     if (absSpeed < 5) {
       return null
@@ -64,38 +64,39 @@ class Control {
   // pass in a car and get everything from it?
   // also set everything on it, including moving it plus future moves
   // a.k.a. Crash Table 2
-  static hazardCheck({ car, difficulty }) {
+  static hazardCheck({ vehicle, difficulty }: { vehicle: any, difficulty: number }) {
     let result = 'pass'
     Log.info(
-      `hazard check, modified handling: ${car.status.handling} - ${difficulty} = ${car.status.handling - difficulty}`,
-      car,
+      `hazard check, modified handling: ${vehicle.status.handling} - ${difficulty} = ${vehicle.status.handling - difficulty}`,
+      vehicle,
     )
-    car.status.handling = Control.normalizeHandlingStatus(car.status.handling - difficulty)
+    vehicle.status.handling = Control.normalizeHandlingStatus(vehicle.status.handling - difficulty)
 
-    if (!Control.loseControl({ car })) {
+    if (!Control.loseControl({ vehicle })) {
       return result
     }
     const dieRoll = Dice.roll('2d')
 
-    const characterId = Vehicle.driverId({ vehicle: car })
-    const skillLevel = Character.skillLevel({ skill: 'driver', characterId })
+    const characterId = Vehicle.driverId({ vehicle })
+    const character = Character.withId({ id: characterId })
+    const skillLevel: any = Character.skillLevel({ skill: 'driver', character })
     const skillBonus = skillLevel < 0 ? 0 : skillLevel
 
-    Log.info(`speed: ${car.status.speed}`, car)
-    const crashModifier = Control.crashModifier({ speed: car.status.speed })
-    Log.info(`crashModifier: ${crashModifier}`, car)
+    Log.info(`speed: ${vehicle.status.speed}`, vehicle)
+    const crashModifier: any = Control.crashModifier({ speed: vehicle.status.speed })
+    Log.info(`crashModifier: ${crashModifier}`, vehicle)
 
     Log.info(
       `crash roll = ${dieRoll} (2d) + ${difficulty} (difficulty) - ${skillBonus} (skill) + ${crashModifier} (crash mod)`,
-      car,
+      vehicle,
     )
     const crashRoll = dieRoll + difficulty - skillBonus + crashModifier
-    Log.info(`total crash roll: ${crashRoll}`, car)
+    Log.info(`total crash roll: ${crashRoll}`, vehicle)
 
-    Log.info(`${car.color} FISHTAILS!`, car)
+    Log.info(`${vehicle.color} FISHTAILS!`, vehicle)
 
-    if (typeof car.status.nextMove[0] === 'undefined') {
-      car.status.nextMove[0] = {
+    if (typeof vehicle.status.nextMove[0] === 'undefined') {
+      vehicle.status.nextMove[0] = {
         spinDirection: '',
         fishtailDistance: 0,
         maneuver: null,
@@ -105,69 +106,69 @@ class Control {
     }
 
     const spinDirection =
-      car.status.nextMove[0].spinDirection !== '' ? car.status.nextMove[0].spinDirection : Control.spinDirection()
-    Log.info(`fishtail to the ${spinDirection}`, car)
-    const oldDistance = Math.abs(car.status.nextMove[0].fishtailDistance)
+    vehicle.status.nextMove[0].spinDirection !== '' ? vehicle.status.nextMove[0].spinDirection : Control.spinDirection()
+    Log.info(`fishtail to the ${spinDirection}`, vehicle)
+    const oldDistance = Math.abs(vehicle.status.nextMove[0].fishtailDistance)
 
     if (crashRoll <= 4) {
       if (oldDistance < 15) {
-        car.status.nextMove[0].fishtailDistance = 15
-        car.status.nextMove[0].spinDirection = spinDirection
+        vehicle.status.nextMove[0].fishtailDistance = 15
+        vehicle.status.nextMove[0].spinDirection = spinDirection
         // Any further aimed weapon fire from Control vehicle on Control turn will be at a −3 to hit
         result = 'minor fishtail'
       } else {
         result = 'NOT a minor fishtail'
       }
     } else if (crashRoll <= 8) {
-      if (Math.abs(car.status.nextMove[0].fishtailDistance) < 30) {
-        car.status.nextMove[0].fishtailDistance = 30
-        car.status.nextMove[0].spinDirection = spinDirection
+      if (Math.abs(vehicle.status.nextMove[0].fishtailDistance) < 30) {
+        vehicle.status.nextMove[0].fishtailDistance = 30
+        vehicle.status.nextMove[0].spinDirection = spinDirection
         // Any further aimed weapon fire from Control vehicle on Control turn will be at a −6 to hit
         result = 'major fishtail'
       } else {
         result = 'NOT a major fishtail'
       }
     } else if (crashRoll <= 10) {
-      if (car.status.nextMove[0].maneuver === null) {
-        car.status.nextMove[0].fishtailDistance = 15
-        car.status.nextMove[0].spinDirection = spinDirection
-        Log.info('fishtail 1/4" plus maneuver check . . .', car)
+      if (vehicle.status.nextMove[0].maneuver === null) {
+        vehicle.status.nextMove[0].fishtailDistance = 15
+        vehicle.status.nextMove[0].spinDirection = spinDirection
+        Log.info('fishtail 1/4" plus maneuver check . . .', vehicle)
         // Any further aimed weapon fire from Control vehicle on Control turn will be at a −6 to hit
         result = 'minor fishtail and roll on Crash Table 1'
       } else {
         result = 'NOT minor fishtail and roll on Crash Table 1'
       }
     } else if (crashRoll <= 14) {
-      if (Math.abs(car.status.nextMove[0].fishtailDistance) < 30 || car.status.nextMove[0].maneuver === null) {
-        car.status.nextMove[0].fishtailDistance = 30
-        car.status.nextMove[0].spinDirection = spinDirection
-        Log.info('fishtail 1/2" plus maneuver check . . .', car)
+      if (Math.abs(vehicle.status.nextMove[0].fishtailDistance) < 30 || vehicle.status.nextMove[0].maneuver === null) {
+        vehicle.status.nextMove[0].fishtailDistance = 30
+        vehicle.status.nextMove[0].spinDirection = spinDirection
+        Log.info('fishtail 1/2" plus maneuver check . . .', vehicle)
         // No further aimed weapon fire permitted from Control vehicle Control turn
         result = 'major fishtail and roll on Crash Table 1'
       } else {
         result = 'NOT and roll on Crash Table 1'
       }
     } else {
-      if (Math.abs(car.status.nextMove[0].fishtailDistance) < 45) {
-        car.status.nextMove[0].fishtailDistance = 45
-        car.status.nextMove[0].spinDirection = spinDirection
-        Log.info('fishtail 3/4" plus maneuver check . . .', car)
+      if (Math.abs(vehicle.status.nextMove[0].fishtailDistance) < 45) {
+        vehicle.status.nextMove[0].fishtailDistance = 45
+        vehicle.status.nextMove[0].spinDirection = spinDirection
+        Log.info('fishtail 3/4" plus maneuver check . . .', vehicle)
         // No further aimed weapon fire permitted from Control vehicle Control turn
         result = 'major and minor fishtail and roll on Crash Table 1'
       } else {
         result = 'NOT major and minor fishtail and roll on Crash Table 1'
       }
     }
-    Log.info(result, car)
+    Log.info(result, vehicle)
     return result
   }
 
-  static loseControl({ car }) {
+  static loseControl({ vehicle }: { vehicle: any }) {
     const needed = Control.checkNeeded({
-      speed: car.status.speed,
-      handlingStatus: car.status.handling,
+      speed: vehicle.status.speed,
+      handlingStatus: vehicle.status.handling,
     })
-    Log.info(`lose control: ${needed}`, car)
+    Log.info(`lose control: ${needed}`, vehicle)
     if (needed === 'safe') {
       return false
     }
@@ -175,23 +176,24 @@ class Control {
       return true
     }
     const roll = Dice.roll('1d')
-    const result = roll < needed
-    Log.info(`control roll: ${roll} (control loss? ${result})`, car)
+    const result = roll < parseInt(needed)
+    Log.info(`control roll: ${roll} (control loss? ${result})`, vehicle)
     return result
   }
 
   // pass in a car and get everything from it?
   // also set everything on it, including moving it plus future moves
   // a.k.a. Crash Table 1
-  static maneuverCheck({ car, forceCrashTable2Roll = false }) {
-    Log.info('maneuver check', car)
+  static maneuverCheck({ vehicle, forceCrashTable2Roll = false }: { vehicle: any, forceCrashTable2Roll?: boolean }) {
+    Log.info('maneuver check', vehicle)
 
-    const characterId = Vehicle.driverId({ vehicle: car })
-    const skillLevel = Character.skillLevel({ skill: 'driver', characterId })
+    const characterId = Vehicle.driverId({ vehicle })
+    const character = Character.withId({ id: characterId })
+    const skillLevel = Character.skillLevel({ skill: 'driver', character })
     const skillBonus = skillLevel < 0 ? 0 : skillLevel
 
     let result = 'no change'
-    if (!forceCrashTable2Roll && (car.phasing.difficulty === 0 || !Control.loseControl({ car }))) {
+    if (!forceCrashTable2Roll && (vehicle.phasing.difficulty === 0 || !Control.loseControl({ vehicle }))) {
       return result
     } // no maneuver; no check
 
@@ -201,19 +203,19 @@ class Control {
     // the modified Difficulty rating of the hazard or maneuver, subtract 3,
     // and add the result (negative or positive) to the Crash Table roll.
     // Thus, a D4 maneuver gives a +1 to the roll, while a D1 maneuver gives a −2
-    const modifiedDifficulty = car.phasing.difficulty !== 0 ? car.phasing.difficulty - 3 : 0
-    const crashModifier = Control.crashModifier({ speed: car.status.speed })
+    const modifiedDifficulty = vehicle.phasing.difficulty !== 0 ? vehicle.phasing.difficulty - 3 : 0
+    const crashModifier: any = Control.crashModifier({ speed: vehicle.status.speed })
     Log.info(
       `crash roll = ${dieRoll} (2d) + ${modifiedDifficulty} (modded difficulty) - ${skillBonus} (skill) + ${crashModifier} (crash mod)`,
-      car,
+      vehicle,
     )
     const crashRoll = dieRoll + modifiedDifficulty - skillBonus + crashModifier
-    Log.info(`${car.color} LOST CONTROL!!! crash roll number: ${crashRoll}`, car)
+    Log.info(`${vehicle.color} LOST CONTROL!!! crash roll number: ${crashRoll}`, vehicle)
 
-    Log.info(car.status, car)
+    Log.info(vehicle.status, vehicle)
 
-    if (typeof car.status.nextMove[0] === 'undefined') {
-      car.status.nextMove[0] = {
+    if (typeof vehicle.status.nextMove[0] === 'undefined') {
+      vehicle.status.nextMove[0] = {
         spinDirection: '',
         fishtailDistance: 0,
         maneuver: null,
@@ -221,127 +223,123 @@ class Control {
         maneuverDistance: 0,
       }
     }
-    Log.info(`spinDirection: ${car.status.nextMove[0].spinDirection}`, car)
+    Log.info(`spinDirection: ${vehicle.status.nextMove[0].spinDirection}`, vehicle)
 
     if (crashRoll <= 2) {
-      Log.info('in <= 2', car)
-      if (car.status.nextMove[0].maneuver === null) {
-        // do Control next turn: PhasingMove.skid({ car, INCH / 4 })
+      Log.info('in <= 2', vehicle)
+      if (vehicle.status.nextMove[0].maneuver === null) {
+        // do Control next turn: PhasingMove.skid({ vehicle, INCH / 4 })
         // Any further aimed weapon fire from Control vehicle on Control turn will be at a −3 to hit
-        car.status.nextMove[0].maneuver = 'skid'
-        car.status.nextMove[0].maneuverDirection = car.rect.facing
-        car.status.nextMove[0].maneuverDistance = INCH / 4
+        vehicle.status.nextMove[0].maneuver = 'skid'
+        vehicle.status.nextMove[0].maneuverDirection = vehicle.rect.facing
+        vehicle.status.nextMove[0].maneuverDistance = INCH / 4
         result = 'trivial skid'
       } else {
         result = 'NOT a trivial skid'
       }
-      Log.info(result, car)
+      Log.info(result, vehicle)
     } else if (crashRoll <= 4) {
-      Log.info('in <= 4', car)
+      Log.info('in <= 4', vehicle)
       const distance = INCH / 2
       if (
-        car.status.nextMove[0].maneuver === null ||
-        (car.status.nextMove[0].maneuver === 'skid' && car.maneuverDistance < distance)
+        vehicle.status.nextMove[0].maneuver === null ||
+        (vehicle.status.nextMove[0].maneuver === 'skid' && vehicle.maneuverDistance < distance)
       ) {
-        // do Control next turn: PhasingMove.skid({ car, INCH / 2 })
-        car.status.speed -= 5
+        // do Control next turn: PhasingMove.skid({ vehicle, INCH / 2 })
+        vehicle.status.speed -= 5
         // Any further aimed weapon fire from Control vehicle on Control turn will be at a −6 to hit
-        car.status.nextMove[0].maneuver = 'skid'
-        car.status.nextMove[0].maneuverDirection = car.rect.facing
-        car.status.nextMove[0].maneuverDistance = distance
+        vehicle.status.nextMove[0].maneuver = 'skid'
+        vehicle.status.nextMove[0].maneuverDirection = vehicle.rect.facing
+        vehicle.status.nextMove[0].maneuverDistance = distance
         result = 'minor skid'
       } else {
         result = 'NOT a minor skid'
       }
-      Log.info(result, car)
+      Log.info(result, vehicle)
     } else if (crashRoll <= 6) {
-      Log.info('in <= 6', car)
+      Log.info('in <= 6', vehicle)
       const distance = (INCH * 3) / 4
       if (
-        car.status.nextMove[0].maneuver === null ||
-        (car.status.nextMove[0].maneuver === 'skid' && car.maneuverDistance < distance)
+        vehicle.status.nextMove[0].maneuver === null ||
+        (vehicle.status.nextMove[0].maneuver === 'skid' && vehicle.maneuverDistance < distance)
       ) {
-        // do Control next turn: PhasingMove.skid({ car, INCH * 3/4 })
-        car.status.speed -= 10
+        // do Control next turn: PhasingMove.skid({ vehicle, INCH * 3/4 })
+        vehicle.status.speed -= 10
         // each tire loses 1 DP
         // No further aimed weapon fire permitted from Control vehicle Control turn
         // trivial skid on next move
-        car.status.nextMove[0] = {
-          spinDirection: car.status.nextMove[0].spinDirection,
-          fishtailDistance: car.status.nextMove[0].fishtailDistance || 0,
+        vehicle.status.nextMove[0] = {
+          spinDirection: vehicle.status.nextMove[0].spinDirection,
+          fishtailDistance: vehicle.status.nextMove[0].fishtailDistance || 0,
           maneuver: 'skid',
-          maneuverDirection: car.rect.facing,
+          maneuverDirection: vehicle.rect.facing,
           maneuverDistance: distance,
         }
-        car.status.nextMove[1] = {
+        vehicle.status.nextMove[1] = {
           spinDirection: '',
           fishtailDistance: 0,
           maneuver: 'skid',
-          maneuverDirection: car.rect.facing,
+          maneuverDirection: vehicle.rect.facing,
           maneuverDistance: INCH / 4,
         }
         result = 'moderate skid'
       } else {
         result = 'NOT a moderate skid'
       }
-      Log.info(result, car)
+      Log.info(result, vehicle)
     } else if (crashRoll <= 8) {
-      Log.info('in <= 8', car)
+      Log.info('in <= 8', vehicle)
       const distance = INCH
       if (
-        car.status.nextMove[0].maneuver === null ||
-        (car.status.nextMove[0].maneuver === 'skid' && car.maneuverDistance < distance)
+        vehicle.status.nextMove[0].maneuver === null ||
+        (vehicle.status.nextMove[0].maneuver === 'skid' && vehicle.maneuverDistance < distance)
       ) {
         // No further aimed weapon fire permitted from Control vehicle Control turn
-        car.status.speed -= 20
-        car.status.nextMove[0] = {
-          spinDirection: car.status.nextMove[0].spinDirection,
-          fishtailDistance: car.status.nextMove[0].fishtailDistance || 0,
+        vehicle.status.speed -= 20
+        vehicle.status.nextMove[0] = {
+          spinDirection: vehicle.status.nextMove[0].spinDirection,
+          fishtailDistance: vehicle.status.nextMove[0].fishtailDistance || 0,
           maneuver: 'skid',
-          maneuverDirection: car.rect.facing,
+          maneuverDirection: vehicle.rect.facing,
           maneuverDistance: distance,
         }
-        car.status.nextMove[1] = {
+        vehicle.status.nextMove[1] = {
           spinDirection: '',
           fishtailDistance: 0,
           maneuver: 'skid',
-          maneuverDirection: car.rect.facing,
+          maneuverDirection: vehicle.rect.facing,
           maneuverDistance: INCH / 2,
         }
         result = 'severe skid'
       } else {
         result = 'NOT a severe skid'
       }
-      Log.info(result, car)
+      Log.info(result, vehicle)
     } else if (crashRoll <= 10) {
-      Log.info('in <= 10', car)
+      Log.info('in <= 10', vehicle)
       const direction = Control.spinDirection()
       // spinout
-      if (car.status.nextMove[0].spinDirection === '') {
-        car.status.nextMove[0].spinDirection = direction
-        car.status.nextMove[0].maneuver = 'spinout'
+      if (vehicle.status.nextMove[0].spinDirection === '') {
+        vehicle.status.nextMove[0].spinDirection = direction
+        vehicle.status.nextMove[0].maneuver = 'spinout'
       }
-      Log.info(`speed: ${car.status.speed}`, car)
-      const quarterTurns = Math.ceil(car.status.speed / 20)
-      Log.info(`${quarterTurns} quarter turns`, car)
+      Log.info(`speed: ${vehicle.status.speed}`, vehicle)
+      const quarterTurns = Math.ceil(vehicle.status.speed / 20)
+      Log.info(`${quarterTurns} quarter turns`, vehicle)
       for (let i = 0; i < quarterTurns; i++) {
-        console.log(`i: ${i}`)
-        // const Distance = 0
 
-        if (typeof car.status.nextMove[i] === 'undefined') {
-          // throw new Error('nextMove undefined!')
-          car.status.nextMove[i] = { fishtailDistance: 0 }
+        if (typeof vehicle.status.nextMove[i] === 'undefined') {
+          vehicle.status.nextMove[i] = { fishtailDistance: 0 }
         }
 
-        if (typeof car.status.nextMove[i].fishtailDistance === 'undefined') {
-          // throw new Error('fishtailDistance not defined!')
-          car.status.nextMove[i].fishtailDistance = 0
+        if (typeof vehicle.status.nextMove[i].fishtailDistance === 'undefined') {
+          vehicle.status.nextMove[i].fishtailDistance = 0
         }
-        car.status.nextMove[i] = {
+        vehicle.status.nextMove[i] = {
           spinDirection: direction,
-          fishtailDistance: car.status.nextMove[i].fishtailDistance,
+          fishtailDistance: vehicle.status.nextMove[i].fishtailDistance,
           maneuver: 'spinout',
-          maneuverDirection: car.rect.facing,
+          maneuverDirection: vehicle.rect.facing,
           maneuverDistance: 0,
         }
       }
@@ -371,12 +369,11 @@ class Control {
       // under its normal top speed for reverse.***
 
       // No further aimed weapon fire permitted from Control vehicle Control turn
-      console.log('set up spinout')
       result = 'spinout'
-      Log.info(result, car)
+      Log.info(result, vehicle)
     } else if (crashRoll <= 12) {
-      Log.info('in <= 12', car)
-      car.status.nextMove[0].maneuver = 'turn sideways and roll'
+      Log.info('in <= 12', vehicle)
+      vehicle.status.nextMove[0].maneuver = 'turn sideways and roll'
       // Car turns sideways (as in a Tstop; see Figure 7, p. 14) and rolls. The
       // driver is no longer in control. The car decelerates at 20 mph per turn. Each phase
       // it moves, it goes 1” in the direction it was
@@ -395,19 +392,19 @@ class Control {
 
       // No further aimed weapon fire permitted from Control vehicle Control turn
       result = 'turn sideways and roll'
-      Log.info(result, car)
+      Log.info(result, vehicle)
     } else if (crashRoll <= 14) {
-      Log.info('in <= 14', car)
-      car.status.nextMove[0].maneuver = 'turn sideways and roll, possibly on fire'
+      Log.info('in <= 14', vehicle)
+      vehicle.status.nextMove[0].maneuver = 'turn sideways and roll, possibly on fire'
       // As above, but vehicle is burning on a roll of 4, 5, or 6 on 1 die. (For
       // more information on burning vehi
 
       // No further aimed weapon fire permitted from Control vehicle Control turn
       result = 'turn sideways and roll, possibly on fire'
-      Log.info(result, car)
+      Log.info(result, vehicle)
     } else {
-      Log.info('in > 14', car)
-      car.status.nextMove[0].maneuver = 'vault into air'
+      Log.info('in > 14', vehicle)
+      vehicle.status.nextMove[0].maneuver = 'vault into air'
       // vault into air
       // The vehicle vaults into
       // the air by the side (or front) tires, the tires
@@ -427,21 +424,21 @@ class Control {
 
       // No further aimed weapon fire permitted from Control vehicle Control turn
       result = 'vault into air'
-      Log.info(result, car)
+      Log.info(result, vehicle)
     }
-    if (car.status.speed < 0) {
-      console.log(`BUGBUG: Set speed of ${car.status.speed} to 0!`)
-      car.status.speed = 0
+    if (vehicle.status.speed < 0) {
+      console.log(`BUGBUG: Set speed of ${vehicle.status.speed} to 0!`)
+      vehicle.status.speed = 0
     }
-    Log.info(result, car)
+    Log.info(result, vehicle)
     return result
   }
 
-  static normalizeHandlingStatus(status) {
+  static normalizeHandlingStatus(status: any) {
     return _.clamp(status, -6, 7)
   }
 
-  static row({ speed }) {
+  static row({ speed }: { speed: any }) {
     const absSpeed = Math.abs(speed)
     if (absSpeed > 300) {
       throw new Error('Speeds > 300MPH not handled')
@@ -459,7 +456,5 @@ class Control {
   static spinDirection() {
     return _.random(1) === 1 ? 'right' : 'left'
   }
-
-  /// ////////////////////////////
 }
 export default Control

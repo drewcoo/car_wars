@@ -5,31 +5,31 @@ import { degreesEqual } from '../../../utils/jestMatchers'
 
 describe('PhasingMove', () => {
   describe('#fishtail', () => {
-    let car, initialFacing
+    let vehicle, initialFacing
 
     beforeEach(() => {
-      car = GameObjectFactory.car({})
-      initialFacing = car.phasing.rect.facing
+      vehicle = GameObjectFactory.vehicle({})
+      initialFacing = vehicle.phasing.rect.facing
     })
 
     describe('direction', () => {
       // fishtailing in a direction means your tail moves that way
       // so your facing goes opposite
       it('goes left', () => {
-        car.phasing.rect.facing -= 30
-        PhasingMove.fishtail({ car, direction: 'left', degrees: 30 })
-        expect(car.phasing.rect.facing).degreesEqual(initialFacing)
+        vehicle.phasing.rect.facing -= 30
+        PhasingMove.fishtail({ vehicle, direction: 'left', degrees: 30 })
+        expect(vehicle.phasing.rect.facing).degreesEqual(initialFacing)
       })
 
       it('goes right', () => {
-        car.phasing.rect.facing += 30
-        PhasingMove.fishtail({ car, direction: 'right', degrees: 30 })
-        expect(car.phasing.rect.facing).degreesEqual(initialFacing)
+        vehicle.phasing.rect.facing += 30
+        PhasingMove.fishtail({ vehicle, direction: 'right', degrees: 30 })
+        expect(vehicle.phasing.rect.facing).degreesEqual(initialFacing)
       })
 
       it('does not go anywhere else', () => {
         expect(() => {
-          PhasingMove.fishtail({ car, direction: 'anywhere else', degrees: 30 })
+          PhasingMove.fishtail({ vehicle, direction: 'anywhere else', degrees: 30 })
         }).toThrow()
       })
     })

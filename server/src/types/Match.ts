@@ -1,7 +1,7 @@
 import { PubSub } from 'apollo-server-express'
 import { withFilter } from 'graphql-subscriptions'
 import _ from 'lodash'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 import { DATA } from '../DATA'
 import Time from '../gameServerHelpers/Time'
 import Match from '../gameServerHelpers/Match'
@@ -88,11 +88,11 @@ export const typeDef = `
   }
 `
 
-const allTheNothings = {}
+const allTheNothings: any = {}
 
 const NOTHING_CHANNEL = 'nothing_channel'
 
-const addNothing = ({ matchId, msg }) => {
+const addNothing = ({ matchId, msg }: { matchId: string, msg: string }) => {
   const id = uuid()
   let previousId = ''
   if (allTheNothings[matchId] && allTheNothings[matchId].length > 0) {
@@ -111,7 +111,7 @@ const addNothing = ({ matchId, msg }) => {
 
 export const resolvers = {
   Query: {
-    match: (parent, args, context) => {
+    match: (parent: any, args: any) => {
       return Match.withId({ id: args.matchId })
     },
 
@@ -119,7 +119,7 @@ export const resolvers = {
       return DATA.matches
     },
 
-    nothings: (parent, args, context) => {
+    nothings: (parent: any, args: any) => {
       if (!allTheNothings[args.matchId]) {
         return []
       }
@@ -140,11 +140,11 @@ export const resolvers = {
   },
 
   Mutation: {
-    sayNothing: (parent, args, context) => {
+    sayNothing: (parent: any, args: any) => {
       return addNothing({ matchId: args.matchId, msg: args.msg })
     },
 
-    addMatch: (parent, args, context) => {
+    addMatch: (parent: any, args: any) => {
       const newMatch = {
         id: uuid(),
         carIds: [],
@@ -170,12 +170,12 @@ export const resolvers = {
       return newMatch
     },
 
-    matchSetMap: (parent, args, context) => {
+    matchSetMap: (parent: any, args: any) => {
       const match = Match.withId({ id: args.matchId })
       if (!match) {
         throw new Error(`Match does not exist: ${args.matchId}`)
       }
-      const originalMap = DATA.maps.find((el) => el.name === args.mapName)
+      const originalMap = DATA.maps.find((element: any) => element.name === args.mapName)
       if (!originalMap) {
         throw new Error(`Map does not exist: ${args.mapName}`)
       }
@@ -188,10 +188,9 @@ export const resolvers = {
       return match
     },
 
-    matchAddCar: (parent, args, context) => {
+    matchAddCar: (parent: any, args: any) => {
       const match = Match.withId({ id: args.matchId })
-      console.log(`carId: ${args.carId}`)
-      console.log(`matchId: ${args.matchId}`)
+      (`matchId: ${args.matchId}`)
       if (match === undefined) {
         throw new Error(`match not found: ${args.matchId}`)
       }
@@ -209,7 +208,7 @@ export const resolvers = {
       match.carIds.push(args.carId)
 
       // add crew in cars
-      car.design.components.crew.forEach((crewMember) => {
+      car.design.components.crew.forEach((crewMember: any) => {
         match.characterIds.push(crewMember.id)
       })
 
@@ -217,7 +216,7 @@ export const resolvers = {
       return match
     },
 
-    startMatch: (parent, args, context) => {
+    startMatch: (parent: any, args: any) => {
       const match = Match.withId({ id: args.matchId })
       if (!match) {
         throw new Error(`Match does not exist: ${args.matchId}`)
@@ -229,7 +228,7 @@ export const resolvers = {
       return match
     },
 
-    finishMatch: (parent, args, context) => {
+    finishMatch: (parent: any, args: any) => {
       const match = Match.withId({ id: args.matchId })
       if (!match) {
         throw new Error(`Match does not exist: ${args.matchId}`)
@@ -240,14 +239,14 @@ export const resolvers = {
       // generally:
       // - privateering
       // - prizes
-      match.carIds.map((carId) => {
+      match.carIds.map((carId: string) => {
         Vehicle.withId({ id: carId }).currentMatch = null
       })
       match.status = 'finished'
       return match
     },
 
-    ackDamage: (parent, args, context) => {
+    ackDamage: (parent: any, args: any) => {
       const match = Match.withId({ id: args.matchId })
       const ptadIndex = match.time.phase.playersToAckDamage.indexOf(args.playerId)
       /*(if (ptadIndex === -1) {
@@ -257,7 +256,7 @@ export const resolvers = {
       Time.subphase6Damage({ match })
     },
 
-    ackSpeedChange: (parent, args, context) => {
+    ackSpeedChange: (parent: any, args: any) => {
       const match = Match.withId({ id: args.matchId })
       const index = match.time.phase.playersToAckSpeedChange.indexOf(args.playerId)
       /*if (index === -1) {

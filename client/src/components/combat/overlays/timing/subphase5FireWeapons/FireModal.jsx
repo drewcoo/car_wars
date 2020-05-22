@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { graphql } from 'react-apollo'
-import Modal from 'react-modal'
+import ReactModal from 'react-modal'
 import { compose } from 'recompose'
 import '../../../../../App.css'
 import finishFiring from '../../../../graphql/mutations/finishFiring'
@@ -83,38 +83,50 @@ class FireModal extends React.Component {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
     const theCar = car.playerId === localStorage.getItem('playerId')
+
+    let color = car.color,
+      name = car.name
+    if (this.props.matchData.match.time.phase.moving) {
+      color = lms.car({ id: this.props.matchData.match.time.phase.moving }).color
+      name = lms.car({ id: this.props.matchData.match.time.phase.moving }).name
+    }
+
     if (!theCar) {
       return <></>
     }
     if (!lms.data.match.time.phase.canTarget.includes(car.id)) {
       return (
         <div onClick={this.handleEatIt}>
-          <Modal isOpen={true} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
-            <br />
-            firing
-            <br />
-            &nbsp;
-          </Modal>
+          <ReactModal isOpen={true} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
+            <fieldset className="ModalFieldset">
+              <legend style={{ color: color }}>{name}</legend>
+              waiting
+              <br />
+              (firing)
+              <br />
+            </fieldset>
+          </ReactModal>
         </div>
       )
     }
-
-    console.log(this.props)
     return (
       <>
         <div onClick={this.handleEatIt}>
-          <Modal isOpen={true} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
-            <FireKeystrokes matchData={this.props.matchData} carId={this.props.carId} />
-            <span className="flexCentered">fire!</span>
-            <div className="ActionControls">
-              <WeaponSelector matchData={this.props.matchData} carId={this.props.carId} />
-              <br />
-              <TargetSelector matchData={this.props.matchData} carId={this.props.carId} />
-              <br />
-              <br />
-              {this.buttons(car)}
-            </div>
-          </Modal>
+          <ReactModal isOpen={true} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
+            <fieldset className="ModalFieldset">
+              <legend style={{ color: color }}>{name}</legend>
+              <FireKeystrokes matchData={this.props.matchData} carId={this.props.carId} />
+
+              <div className="ActionControls">
+                <WeaponSelector matchData={this.props.matchData} carId={this.props.carId} />
+                <br />
+                <TargetSelector matchData={this.props.matchData} carId={this.props.carId} />
+                <br />
+                <br />
+                {this.buttons(car)}
+              </div>
+            </fieldset>
+          </ReactModal>
         </div>
         <FiringArc
           client={this.props.client}
@@ -126,6 +138,6 @@ class FireModal extends React.Component {
   }
 }
 
-Modal.setAppElement('#root')
+ReactModal.setAppElement('#root')
 
 export default compose(FINISH_FIRING, FIRE_WEAPON)(FireModal)

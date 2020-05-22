@@ -2,7 +2,7 @@ import { ApolloServer } from 'apollo-server-express'
 import cors from 'cors'
 import express from 'express'
 import http from 'http'
-import resolvers from './resolvers'
+import resolvers from './resolvers.js'
 import schema from './schema'
 
 const PORT = 4000

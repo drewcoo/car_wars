@@ -7,12 +7,12 @@ describe('PhasingMove', () => {
     Vehicle.canAccelerate = jest.fn()
     Vehicle.canBrake = jest.fn()
 
-    let car
+    let vehicle
 
     beforeEach(() => {
-      car = GameObjectFactory.car({})
+      vehicle = GameObjectFactory.vehicle({})
       // set to low speed to make this simpler
-      car.status.speed = 5
+      vehicle.status.speed = 5
     })
 
     describe('no acceleration', () => {
@@ -20,7 +20,7 @@ describe('PhasingMove', () => {
         Vehicle.canAccelerate.mockReturnValueOnce(false)
         Vehicle.canBrake.mockReturnValueOnce(false)
         const expected = [{ damageDice: '', difficulty: 0, speed: 5 }]
-        expect(PhasingMove.possibleSpeeds({ car })).toEqual(expected)
+        expect(PhasingMove.possibleSpeeds({ vehicle })).toEqual(expected)
       })
 
       it('but can brake', () => {
@@ -31,14 +31,14 @@ describe('PhasingMove', () => {
           { damageDice: '', difficulty: 0, speed: 0 },
           { damageDice: '', difficulty: 0, speed: 5 },
         ]
-        expect(PhasingMove.possibleSpeeds({ car })).toEqual(expected)
+        expect(PhasingMove.possibleSpeeds({ vehicle })).toEqual(expected)
       })
     })
 
     it('has full range - also damage for some decel', () => {
       Vehicle.canAccelerate.mockReturnValueOnce(true)
       Vehicle.canBrake.mockReturnValueOnce(true)
-      car.status.speed = 35
+      vehicle.status.speed = 35
       const expected = [
         { damageDice: '0d+2', difficulty: 7, speed: 0 },
         { damageDice: '', difficulty: 5, speed: 5 },
@@ -51,7 +51,7 @@ describe('PhasingMove', () => {
         { damageDice: '', difficulty: 0, speed: 40 },
         { damageDice: '', difficulty: 0, speed: 45 },
       ]
-      expect(PhasingMove.possibleSpeeds({ car })).toEqual(expected)
+      expect(PhasingMove.possibleSpeeds({ vehicle })).toEqual(expected)
     })
   })
 })

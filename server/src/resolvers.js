@@ -1,7 +1,6 @@
 import * as Promise from 'bluebird'
 import { resolvers as Car } from './types/Car'
 import { resolvers as Character } from './types/Character'
-import { resolvers as Geometry } from './types/Geometry'
 import { resolvers as Map } from './types/Map'
 import { resolvers as Match } from './types/Match'
 import { resolvers as Player } from './types/Player'
@@ -24,11 +23,10 @@ const resolvers = { Query: {}, Mutation: {}, Subscription: {} }
 mungeResolvers(resolvers, Car)
 mungeResolvers(resolvers, Character)
 mungeResolvers(resolvers, Player)
-mungeResolvers(resolvers, Geometry)
 mungeResolvers(resolvers, Map)
 mungeResolvers(resolvers, Match)
 
-resolvers.Mutation.createCompleteMatch = async (parent, args, context) => {
+resolvers.Mutation.createCompleteMatch = async (parent, args) => {
   let match = await resolvers.Mutation.addMatch(null)
   const map = await resolvers.Mutation.addMap(null, { name: args.mapName })
   await resolvers.Mutation.matchSetMap(null, {
@@ -67,17 +65,16 @@ resolvers.Mutation.createCompleteMatch = async (parent, args, context) => {
       carId: car.id,
     })
   }
-  console.log('new match?')
   const newMatch = await resolvers.Query.match(null, { matchId: match.id })
-  console.log('started?')
   const started = await resolvers.Mutation.startMatch(null, {
     matchId: match.id,
   })
   return started
 }
 
-resolvers.Query.completeMatchData = async (parent, args, context) => {
+resolvers.Query.completeMatchData = async (parent, args) => {
   const match = await resolvers.Query.match(null, { matchId: args.matchId })
+  if (!match) { return {} }
   const cars = await Promise.map(match.carIds, (carId) => {
     return resolvers.Query.car(null, { id: carId })
   })

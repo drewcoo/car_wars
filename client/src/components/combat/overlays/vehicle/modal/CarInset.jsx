@@ -22,40 +22,20 @@ class InsetLayout extends React.Component {
   }
 
   plant(carId) {
-    return (
-      <Plant
-        carId={carId}
-        width={this.props.width}
-        length={this.props.length}
-        matchData={this.props.matchData}
-      />
-    )
+    return <Plant carId={carId} width={this.props.width} length={this.props.length} matchData={this.props.matchData} />
   }
 
   frontMg(carId) {
     return (
-      <FrontMG
-        carId={carId}
-        width={this.props.width}
-        length={this.props.length}
-        matchData={this.props.matchData}
-      />
+      <FrontMG carId={carId} width={this.props.width} length={this.props.length} matchData={this.props.matchData} />
     )
   }
 
   driver(carId) {
-    return (
-      <Driver
-        carId={carId}
-        width={this.props.width}
-        length={this.props.length}
-        matchData={this.props.matchData}
-      />
-    )
+    return <Driver carId={carId} width={this.props.width} length={this.props.length} matchData={this.props.matchData} />
   }
 
   armor(carId, location) {
-    console.log(`use this carId later: ${carId}`)
     const dimensions = {
       F: { x: (this.props.width * 16) / 64, y: (this.props.length * 9) / 64 },
       T: { x: (this.props.width * 38) / 64, y: (this.props.length * 9) / 64 },
@@ -82,11 +62,7 @@ class InsetLayout extends React.Component {
       )
     }
     return (
-      <text
-        x={dimensions[location].x}
-        y={dimensions[location].y}
-        style={DP < 1 ? style.red : style.black}
-      >
+      <text x={dimensions[location].x} y={dimensions[location].y} style={DP < 1 ? style.red : style.black}>
         {location}:{DP}
       </text>
     )
@@ -118,7 +94,9 @@ class CarInset extends React.Component {
     const initMatchData = this.props.matchData
     const lms = new LocalMatchState(this.props.matchData)
     const car = this.props.carId ? lms.car({ id: this.props.carId }) : lms.activeCar()
-    if (!car) { return <></> }
+    if (!car) {
+      return <></>
+    }
     const inset = true
     const scaling = 1 // inset ? 1 : 1;    ///5; //40/INCH : 1/10;
     const active = false
@@ -174,30 +152,23 @@ class CarInset extends React.Component {
     const roofLength = 3 * margin
     const roofWidth = width - 1.75 * windshieldMargin
 
-    var rotatePoint = {
+    const rotatePoint = {
       x: tempBrPoint.x,
       y: tempBrPoint.y,
     }
-    var transform = `rotate(${tempFacing},
+    const transform = `rotate(${tempFacing},
                             ${rotatePoint.x},
                             ${rotatePoint.y}),
                      scale(${scaling}, ${scaling})`
 
     function showInset(carId) {
       if (inset) {
-        return (
-          <InsetLayout
-            carId={carId}
-            length={length}
-            width={width}
-            matchData={initMatchData}
-          />
-        )
+        return <InsetLayout carId={carId} length={length} width={width} matchData={initMatchData} />
       }
     }
 
     return (
-      <svg className='flexCentered' id={`${car.id}-inset`} x='0' y='0' width='200' height='400'>
+      <svg className="flexCentered" id={`${car.id}-inset`} x="0" y="0" width="200" height="400">
         {/* outline */}
         <rect
           x={tempBrPoint.x - width}

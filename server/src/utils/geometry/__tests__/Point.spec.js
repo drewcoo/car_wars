@@ -35,7 +35,7 @@ describe('Point', () => {
     })
   })
 
-  it('#toFixed', () => {
+  xit('#toFixed', () => {
     const initial = GeometryFactory.point()
     const digits = 2
     const fixed = initial.toFixed(digits)
@@ -132,10 +132,6 @@ describe('Point', () => {
       const moved = point.move({ degrees: COMPASS.WEST, distance: 3 })
       const expected = new Point({ x: point.x - 3, y: point.y })
       expect(moved.equals(expected)).toBe(true)
-    })
-
-    it('must pass direction in radians or degrees', () => {
-      expect(() => point.move({ distance: 2 })).toThrow()
     })
   })
 })

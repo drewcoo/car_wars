@@ -4,23 +4,23 @@ import Rectangle from '../../../utils/geometry/Rectangle'
 
 describe('PhasingMove', () => {
   describe('#center', () => {
-    let car
+    let vehicle
 
     beforeEach(() => {
-      car = GameObjectFactory.car({})
+      vehicle = GameObjectFactory.vehicle({})
     })
 
     it('moves a moved phasing rect back to its starting place', () => {
-      const oldLocation = car.phasing.rect
+      const oldLocation = vehicle.phasing.rect
       const rectangleOldLocation = new Rectangle(oldLocation)
 
-      PhasingMove.center({ car })
+      vehicle.phasing.rect = PhasingMove.center({ vehicle })
 
-      const rectangleCarRect = new Rectangle(car.rect)
-      const rectangleCarPhasingRect = new Rectangle(car.phasing.rect)
+      const rectanglevehicleRect = new Rectangle(vehicle.rect)
+      const rectanglevehiclePhasingRect = new Rectangle(vehicle.phasing.rect)
 
-      expect(rectangleCarRect.equals(rectangleCarPhasingRect)).toBe(true)
-      expect(rectangleOldLocation.equals(rectangleCarPhasingRect)).toBe(false)
+      expect(rectanglevehicleRect.equals(rectanglevehiclePhasingRect)).toBe(true)
+      expect(rectangleOldLocation.equals(rectanglevehiclePhasingRect)).toBe(false)
     })
   })
 })

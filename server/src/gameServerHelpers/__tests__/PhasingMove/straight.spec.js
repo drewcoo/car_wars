@@ -6,17 +6,17 @@ import { degreesEqual } from '../../../utils/jestMatchers'
 
 describe('PhasingMove', () => {
   describe('#straight', () => {
-    let car, distance, init, moved
+    let vehicle, distance, init, moved
 
     beforeEach(() => {
-      car = GameObjectFactory.car({})
+      vehicle = GameObjectFactory.vehicle({})
       //let signedDistance = _.random(-150, 150)
       distance = _.random(0, 150) //Math.abs(signedDistance)
-      car.rect = car.phasing.rect.clone()
-      init = car.phasing.rect.clone()
-      moved = PhasingMove.straight({ car, distance })
+      vehicle.rect = vehicle.phasing.rect.clone()
+      init = vehicle.phasing.rect.clone()
+      moved = PhasingMove.straight({ vehicle, distance })
 
-      //expect(moved).toEqual(car.phasing.rect)
+      //expect(moved).toEqual(vehicle.phasing.rect)
     })
 
     it('moves the distance', () => {

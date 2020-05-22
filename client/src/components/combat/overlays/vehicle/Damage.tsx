@@ -128,8 +128,6 @@ class Damage extends React.Component<Props> {
   }
 
   drawDamage({ point, damage }: { point: Point; damage: number | string }) {
-    console.log(point)
-    console.log(damage)
     const offset = (2 * Math.PI) / 10
     if (damage === 0) {
       return (

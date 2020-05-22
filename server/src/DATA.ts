@@ -1,4 +1,4 @@
-export const DATA = {
+export const DATA: any = {
   cars: [],
   characters: [],
   matches: [],

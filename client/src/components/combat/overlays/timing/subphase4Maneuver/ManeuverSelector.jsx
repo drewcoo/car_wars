@@ -22,7 +22,9 @@ class Maneuver extends React.Component {
   }
 
   onChange(event) {
-    if (!Session.loggedInAsActivePlayer(this.props.matchData)) { return }
+    if (!Session.loggedInAsActivePlayer(this.props.matchData)) {
+      return
+    }
     const id = new LocalMatchState(this.props.matchData).activeCarId()
 
     this.activeManeuverSet({
@@ -36,12 +38,12 @@ class Maneuver extends React.Component {
 
   listManeuvers() {
     const car = new LocalMatchState(this.props.matchData).activeCar()
-    var result = []
-    for (var i = 0; i < car.status.maneuvers.length; i++) {
+    const result = []
+    for (let i = 0; i < car.status.maneuvers.length; i++) {
       result.push(
-        <option key={ i } value={ i }>
-          { car.status.maneuvers[i] }
-        </option>
+        <option key={i} value={i} style={{ fontSize: '50px' }}>
+          {car.status.maneuvers[i]}
+        </option>,
       )
     }
     return result
@@ -58,23 +60,24 @@ class Maneuver extends React.Component {
 
   render() {
     const activeCar = new LocalMatchState(this.props.matchData).activeCar()
-    if (!activeCar) { return (<></>) }
+    if (!activeCar) {
+      return <></>
+    }
 
     return (
       <span>
         <select
-          className='Options'
-          id={ this.thisId }
-          value={ activeCar.phasing.maneuverIndex }
-          onChange={ this.onChange }
+          className="Options"
+          id={this.thisId}
+          value={activeCar.phasing.maneuverIndex}
+          onChange={this.onChange}
+          style={{ height: '60px', fontSize: '50px', borderColor: 'black' }}
         >
-          { this.listManeuvers() }
-        </select>
+          {this.listManeuvers()}
+        </select>{' '}
       </span>
     )
   }
 }
 
-export default compose(
-  ACTIVE_MANEUVER_SET
-)(Maneuver)
+export default compose(ACTIVE_MANEUVER_SET)(Maneuver)

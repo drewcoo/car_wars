@@ -8,7 +8,7 @@ class GeometryFactory {
     return new Point({ x, y })
   }
 
-  static segment(orientation = null) {
+  static segment(orientation = '') {
     const p1 = GeometryFactory.point()
     const p2 = GeometryFactory.point()
     switch (orientation) {

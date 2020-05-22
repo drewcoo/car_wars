@@ -7,35 +7,33 @@ import { INCH } from '../../../utils/constants'
 
 describe('PhasingMove', () => {
   describe('#drift', () => {
-    let car
+    let vehicle
 
     beforeEach(() => {
-      car = GameObjectFactory.car({})
-      car.phasing.rect = car.rect.move({
-        degrees: car.rect.facing,
-        distance: car.rect.length,
+      vehicle = GameObjectFactory.vehicle({})
+      vehicle.phasing.rect = vehicle.rect.move({
+        degrees: vehicle.rect.facing,
+        distance: vehicle.rect.length,
       })
     })
 
     it.skip('left', () => {
       const distance = _.random(0, -INCH / 2)
-      const result = PhasingMove.drift({ car, distance })
-
-      expect(result.facing).degreesEqual(car.rect.facing)
-      console.log()
+      const result = PhasingMove.drift({ vehicle, distance })
+      expect(result.facing).degreesEqual(vehicle.rect.facing)
       expect(
-        car.rect.frPoint().distanceTo(result.brPoint()) + car.rect.flPoint().distanceTo(result.brPoint()),
-      ).toBeCloseTo(car.rect.frPoint().distanceTo(car.rect.flPoint()))
+        vehicle.rect.frPoint().distanceTo(result.brPoint()) + vehicle.rect.flPoint().distanceTo(result.brPoint()),
+      ).toBeCloseTo(vehicle.rect.frPoint().distanceTo(vehicle.rect.flPoint()))
     })
 
     it.skip('right', () => {
       const distance = _.random(0, INCH / 2)
-      const result = PhasingMove.drift({ car, distance })
+      const result = PhasingMove.drift({ vehicle, distance })
 
-      expect(result.facing).degreesEqual(car.rect.facing)
+      expect(result.facing).degreesEqual(vehicle.rect.facing)
       expect(
-        car.rect.frPoint().distanceTo(result.blPoint()) + car.rect.flPoint().distanceTo(result.blPoint()),
-      ).toBeCloseTo(car.rect.frPoint().distanceTo(car.rect.flPoint()))
+        vehicle.rect.frPoint().distanceTo(result.blPoint()) + vehicle.rect.flPoint().distanceTo(result.blPoint()),
+      ).toBeCloseTo(vehicle.rect.frPoint().distanceTo(vehicle.rect.flPoint()))
     })
   })
 })

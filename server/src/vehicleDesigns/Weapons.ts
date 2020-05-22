@@ -13,7 +13,7 @@ export const NULL_WEAPON = () => {
   }
 }
 
-export const MG = location => {
+export const MG = (location: string) => {
   return {
     type: 'machineGun',
     abbreviation: 'MG',
@@ -28,7 +28,7 @@ export const MG = location => {
   }
 }
 
-export const HR = location => {
+export const HR = (location: string) => {
   return {
     type: 'heavyRocket',
     abbreviation: 'HR',
@@ -43,7 +43,7 @@ export const HR = location => {
   }
 }
 
-export const RL = location => {
+export const RL = (location: string) => {
   return {
     type: 'rocketLauncher',
     abbreviation: 'RL',
@@ -58,7 +58,7 @@ export const RL = location => {
   }
 }
 
-export const L = location => {
+export const L = (location: string) => {
   return {
     type: 'laser',
     abbreviation: 'L',

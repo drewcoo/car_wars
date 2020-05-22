@@ -116,7 +116,6 @@ class Targets {
     return this.allRects().some(rect => {
       return Object.keys(rect.sides()).some(sideKey => {
         if (ignore !== null && ignore.equals(rect.side(sideKey))) {
-          console.log('ignored')
           return false
         }
         if (rect.side(sideKey).intersects(targetPoint)) {

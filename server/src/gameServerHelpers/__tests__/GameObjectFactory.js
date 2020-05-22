@@ -1,13 +1,12 @@
-import uuid from 'uuid/v4'
-import GeometryFactory from '../../utils/geometry/__tests__/GeometryFactory'
 import _ from 'lodash'
+import { v4 as uuid } from 'uuid'
+import GeometryFactory from '../../utils/geometry/__tests__/GeometryFactory'
 import { Design as DesignData } from '../../vehicleDesigns/KillerKart'
 
 class GameObjectFactory {
-  static car({ id = `car-${uuid()}`, speed = 50 }) {
+  static vehicle({ id = `car-${uuid()}`, speed = 50 }) {
     const designNode = _.cloneDeep(DesignData)
-
-    result = {
+    let result = {
       collisionDetected: false,
       collisions: [],
       color: 'beige',

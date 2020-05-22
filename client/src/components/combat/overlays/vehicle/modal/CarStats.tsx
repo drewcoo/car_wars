@@ -6,6 +6,17 @@ class CarStats extends React.Component {
   props: any
   lms: any
 
+  speed(car: any) {
+    const speedDelta = car.status.speed - car.status.speedInitThisTurn
+    const sign = speedDelta > 0 ? '+' : '' // because negative numbers have a -
+
+    return (
+      <span>
+        speed: {car.status.speed} {speedDelta === 0 ? '' : `(${sign}${speedDelta})`}
+      </span>
+    )
+  }
+
   render() {
     const lms = new LocalMatchState(this.props.matchData)
     const car = this.props.carId ? lms.car({ id: this.props.carId }) : lms.activeCar()
@@ -33,7 +44,7 @@ class CarStats extends React.Component {
         <span>hc: {car.design.attributes.handlingClass}</span>
         <br />
         <br />
-        <span>speed: {car.status.speed}</span>
+        {this.speed(car)}
         <br />
         <HandlingStats matchData={this.props.matchData} carId={this.props.carId} />
       </div>

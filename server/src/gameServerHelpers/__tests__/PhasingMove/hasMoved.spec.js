@@ -3,28 +3,28 @@ import GameObjectFactory from '../GameObjectFactory'
 
 describe('PhasingMove', () => {
   describe('#hasMoved', () => {
-    let car
+    let vehicle
 
     beforeEach(() => {
-      car = GameObjectFactory.car({})
-      Object.assign(car.phasing.rect, car.rect)
+      vehicle = GameObjectFactory.vehicle({})
+      Object.assign(vehicle.phasing.rect, vehicle.rect)
     })
 
     it('if brPoint has moved, it has moved ', () => {
-      car.phasing.rect = car.phasing.rect.move({
+      vehicle.phasing.rect = vehicle.phasing.rect.move({
         distance: 100,
-        degrees: car.phasing.rect.facing,
+        degrees: vehicle.phasing.rect.facing,
       })
-      expect(PhasingMove.hasMoved({ car })).toBe(true)
+      expect(PhasingMove.hasMoved({ vehicle })).toBe(true)
     })
 
     it('if has turned, it has moved', () => {
-      car.phasing.rect.facing += 1
-      expect(PhasingMove.hasMoved({ car })).toBe(true)
+      vehicle.phasing.rect.facing += 1
+      expect(PhasingMove.hasMoved({ vehicle })).toBe(true)
     })
 
     it('if neither moved brPoint or turned, not moved', () => {
-      expect(PhasingMove.hasMoved({ car })).toBe(false)
+      expect(PhasingMove.hasMoved({ vehicle })).toBe(false)
     })
   })
 })

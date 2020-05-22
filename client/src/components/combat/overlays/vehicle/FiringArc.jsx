@@ -149,9 +149,6 @@ class FiringArc extends React.Component {
   }
 
   render() {
-    console.log('FIRING ARC!!!')
-    console.log(this.props)
-
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
 

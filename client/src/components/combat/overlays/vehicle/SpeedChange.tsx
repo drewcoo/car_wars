@@ -28,7 +28,6 @@ class SpeedChange extends React.Component {
 
   speedText({ car, x, y, speedDelta }: { car: any; x: number; y: number; speedDelta: number }): any {
     const textHeight = 24
-    console.log(speedDelta)
     let deltaString = ''
     if (speedDelta > 0) {
       deltaString = `+${speedDelta}`

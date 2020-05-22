@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 import { DATA } from '../DATA'
 
 DATA.characters = []
@@ -71,8 +71,8 @@ export const typeDef = `
 
 export const resolvers = {
   Query: {
-    character: (parent, args, _context) /*: Character*/ => {
-      return DATA.characters.find((element) => element.id === args.id)
+    character: (parent: any, args: any) /*: Character*/ => {
+      return DATA.characters.find((element: any) => element.id === args.id)
     },
     characters: () /*: Character[]*/ => {
       return DATA.characters
@@ -80,7 +80,7 @@ export const resolvers = {
   },
 
   Mutation: {
-    createCharacter: (parent, args, _context) /*: Character*/ => {
+    createCharacter: (parent: any, args: any) /*: Character*/ => {
       const newCharacter = {
         damagePoints: 3,
         firedThisTurn: false,
@@ -118,13 +118,13 @@ export const resolvers = {
       return newCharacter
     },
 
-    improveSkill: (parent, args, _context) /*: Character*/ => {
-      const character = DATA.characters.find((element) => element.id === args.id)
-      const skill = character.skills.find((element) => element.name === args.name)
+    improveSkill: (parent: any, args: any) /*: Character*/ => {
+      const character = DATA.characters.find((element: any) => element.id === args.id)
+      const skill = character.skills.find((element: any) => element.name === args.name)
       if (!skill) {
         throw new Error(`improveSkill: skill not found: ${args.skill}`)
       }
-      let general = character.skills.find((element) => element.name === 'general')
+      let general = character.skills.find((element: any) => element.name === 'general')
       if (general < args.points) {
         throw new Error(`improveSkill: only ${general} general points, not ${args.points}`)
       }

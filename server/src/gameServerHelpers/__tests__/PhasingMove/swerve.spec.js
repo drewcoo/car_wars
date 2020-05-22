@@ -6,57 +6,57 @@ import { degreesEqual, equalsPoint } from '../../../utils/jestMatchers'
 
 describe('PhasingMove', () => {
   describe('#swerve', () => {
-    let car
+    let vehicle
 
     beforeEach(() => {
-      car = GameObjectFactory.car({})
-      car.phasing.rect = car.rect.move({
-        degrees: car.rect.facing,
-        distance: car.rect.length,
+      vehicle = GameObjectFactory.vehicle({})
+      vehicle.phasing.rect = vehicle.rect.move({
+        degrees: vehicle.rect.facing,
+        distance: vehicle.rect.length,
       })
     })
 
     it('left', () => {
       const degrees = _.random(-1, -90)
-      const result = PhasingMove.swerve({ car, degrees })
+      const result = PhasingMove.swerve({ vehicle, degrees })
 
-      expect(result.facing).degreesEqual(car.rect.facing + degrees)
+      expect(result.facing).degreesEqual(vehicle.rect.facing + degrees)
 
-      expect(car.rect.side('F').middle()).equalsPoint(result.blPoint())
+      expect(vehicle.rect.side('F').middle()).equalsPoint(result.blPoint())
     })
 
     it('left, left', () => {
       const degrees = -15
-      const initFacing = car.rect.facing
+      const initFacing = vehicle.rect.facing
 
-      let result = PhasingMove.swerve({ car, degrees })
+      let result = PhasingMove.swerve({ vehicle, degrees })
       expect(result.facing).degreesEqual(initFacing + degrees)
-      expect(car.rect.side('F').middle()).equalsPoint(result.blPoint())
-      car.phasing.rect = result
-      result = PhasingMove.swerve({ car, degrees })
+      expect(vehicle.rect.side('F').middle()).equalsPoint(result.blPoint())
+      vehicle.phasing.rect = result
+      result = PhasingMove.swerve({ vehicle, degrees })
       expect(result.facing).degreesEqual(initFacing + 2 * degrees)
-      expect(car.rect.side('F').middle()).equalsPoint(result.blPoint())
+      expect(vehicle.rect.side('F').middle()).equalsPoint(result.blPoint())
     })
 
     it('right', () => {
       const degrees = _.random(1, 90)
-      const result = PhasingMove.swerve({ car, degrees })
+      const result = PhasingMove.swerve({ vehicle, degrees })
 
-      expect(result.facing).degreesEqual(car.rect.facing + degrees)
+      expect(result.facing).degreesEqual(vehicle.rect.facing + degrees)
 
-      expect(car.rect.side('F').middle()).equalsPoint(result.brPoint())
+      expect(vehicle.rect.side('F').middle()).equalsPoint(result.brPoint())
     })
 
     it.skip("trying too far doesn't move you", () => {
       const degrees = _.random(91, 269)
-      expect(car.rect.frPoint()).equalsPoint(car.phasing.rect.brPoint())
+      expect(vehicle.rect.frPoint()).equalsPoint(vehicle.phasing.rect.brPoint())
 
-      const result = PhasingMove.swerve({ car, degrees })
+      const result = PhasingMove.swerve({ vehicle, degrees })
 
-      expect(result.facing).degreesEqual(car.rect.facing)
+      expect(result.facing).degreesEqual(vehicle.rect.facing)
 
-      expect(car.rect.frPoint()).equalsPoint(car.phasing.rect.brPoint())
-      expect(car.rect.frPoint()).equalsPoint(result.brPoint())
+      expect(vehicle.rect.frPoint()).equalsPoint(vehicle.phasing.rect.brPoint())
+      expect(vehicle.rect.frPoint()).equalsPoint(result.brPoint())
     })
   })
 })

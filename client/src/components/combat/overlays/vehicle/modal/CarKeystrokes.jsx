@@ -15,7 +15,6 @@ class CarKeystrokes extends React.Component {
   render() {
     const handlers = {
       close: (event) => {
-        console.log('car keystrokes close')
         this.props.handlers.close(event)
       },
       switchUp: (event) => {
