@@ -3,8 +3,8 @@ import { withFilter } from 'graphql-subscriptions'
 import _ from 'lodash'
 import { v4 as uuid } from 'uuid'
 import { DATA } from '../DATA'
-import Time from '../gameServerHelpers/Time'
 import Match from '../gameServerHelpers/Match'
+import Time from '../gameServerHelpers/Time'
 import Vehicle from '../gameServerHelpers/Vehicle'
 
 DATA.matches = []
@@ -190,7 +190,6 @@ export const resolvers = {
 
     matchAddCar: (parent: any, args: any) => {
       const match = Match.withId({ id: args.matchId })
-      (`matchId: ${args.matchId}`)
       if (match === undefined) {
         throw new Error(`match not found: ${args.matchId}`)
       }

@@ -33,6 +33,7 @@ resolvers.Mutation.createCompleteMatch = async (parent, args) => {
     matchId: match.id,
     mapName: args.mapName,
   })
+  
   let index = 0
   for (const elem of args.playerAndDesign) {
     let player = await resolvers.Mutation.createPlayer(null, {

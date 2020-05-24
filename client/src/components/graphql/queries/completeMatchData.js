@@ -83,10 +83,12 @@ const completeMatchData = gql`
             }
             powerPlant {
               damagePoints
+              maxDamagePoints
               type
             }
             tires {
               damagePoints
+              maxDamagePoints
               location
               type
               wheelExists
@@ -96,6 +98,7 @@ const completeMatchData = gql`
               ammo
               damage
               damagePoints
+              maxDamagePoints
               effect
               firedThisTurn
               location
@@ -202,6 +205,7 @@ const completeMatchData = gql`
       }
       characters {
         damagePoints
+        maxDamagePoints
         equipment {
           name
           weight

@@ -1,7 +1,7 @@
 import React from 'react'
 import Modal from 'react-modal'
 import { compose } from 'recompose'
-import CarInset from './CarInset'
+import CarInset from './carInset/CarInset'
 import CarStats from './CarStats'
 import Log from './Log'
 import LocalMatchState from '../../../lib/LocalMatchState'

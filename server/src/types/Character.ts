@@ -3,34 +3,6 @@ import { DATA } from '../DATA'
 
 DATA.characters = []
 
-/*
-interface PersonalEquipment {
-  name: string
-  weight: number
-}
-
-interface Skill {
-  name: string
-  points: number
-}
-
-interface Character {
-  damagePoints: number
-  equipment: PersonalEquipment[]
-  firedThisTurn: boolean
-  id: string
-  inVehicleId: string
-  log: string[]
-  matchId: string
-  name: string
-  playerId: string
-  prestige: number
-  reflexRoll: number
-  skills: Skill[]
-  wealth: number
-}
-*/
-
 export const typeDef = `
   extend type Mutation {
     improveSkill(id: ID!, name: String!, points: Int!): Character
@@ -44,6 +16,7 @@ export const typeDef = `
 
   type Character {
     damagePoints: Int!
+    maxDamagePoints: Int!
     equipment: [PersonalEquipment]
     firedThisTurn: Boolean
     id: ID!
@@ -83,6 +56,7 @@ export const resolvers = {
     createCharacter: (parent: any, args: any) /*: Character*/ => {
       const newCharacter = {
         damagePoints: 3,
+        maxDamagePoints: 3,
         firedThisTurn: false,
         equipment: [],
         id: args.id || uuid(),

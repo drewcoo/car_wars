@@ -28,11 +28,13 @@ export const typeDef = `
 
   type PowerPlant {
     damagePoints: Int!
+    maxDamagePoints: Int!
     type: String!
   }
 
   type Tire {
     damagePoints: Int!
+    maxDamagePoints: Int!
     location: String!
     type: String!
     wheelExists: Boolean!
@@ -43,6 +45,7 @@ export const typeDef = `
     ammo: Int
     damage: String!
     damagePoints: Int!
+    maxDamagePoints: Int!
     effect: String!
     firedThisTurn: Boolean!
     location: String!

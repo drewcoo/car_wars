@@ -22,30 +22,35 @@ export const Design = {
     powerPlant: {
       type: 'small',
       damagePoints: 5,
+      maxDamagePoints: 5,
     },
     tires: [
       {
         location: 'FL',
         type: 'HD',
         damagePoints: 6,
+        maxDamagePoints: 6,
         wheelExists: true,
       },
       {
         location: 'FR',
         type: 'HD',
         damagePoints: 6,
+        maxDamagePoints: 6,
         wheelExists: true,
       },
       {
         location: 'BL',
         type: 'HD',
         damagePoints: 6,
+        maxDamagePoints: 6,
         wheelExists: true,
       },
       {
         location: 'BR',
         type: 'HD',
         damagePoints: 6,
+        maxDamagePoints: 6,
         wheelExists: true,
       },
     ],

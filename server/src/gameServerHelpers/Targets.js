@@ -1,6 +1,6 @@
 import Segment from '../utils/geometry/Segment'
 import Point from '../utils/geometry/Point'
-import Weapon from './Weapon'
+import WeaponSettings from './settings/WeaponSettings'
 
 class Targets {
   constructor({ car, cars, map }) {

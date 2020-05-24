@@ -14,7 +14,7 @@
     "build:js": "babel src --out-dir build --extensions \".ts,.tsx\" --source-maps inline",
     "debug": "babel-watch --inspect 9229 src/index.js",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
-    "start": "nodemon --exec \"npm run build && node -r esm build/index.js\" --watch ./src",
+    "start": "nodemon --exec \"npm run build && node ./build/index.js\" --watch ./src",
     "test": "jest --testMatch **/__tests__/**/*.spec.js --watchAll",
     "cover": "jest --testMatch ./src/**/__tests__/**/*.spec.js --coverage"
   },

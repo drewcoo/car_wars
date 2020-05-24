@@ -1,97 +1,21 @@
 /* eslint-disable no-console */
 import React from 'react'
-import Driver from '../../../carComponents/Driver'
-import FrontMG from '../../../carComponents/FrontMG'
-import Plant from '../../../carComponents/Plant'
-import Tire from '../../../carComponents/Tire'
-import LocalMatchState from '../../../lib/LocalMatchState'
-import '../../../../../App.css'
+import InsetLayout from './InsetLayout'
+import LocalMatchState from '../../../../lib/LocalMatchState'
+import '.././../../../../../App.css'
+import Dimensions from '../../../../../../utils/Dimensions'
 
-class InsetLayout extends React.Component {
-  tire(carId, front, left) {
-    return (
-      <Tire
-        carId={carId}
-        width={this.props.width}
-        length={this.props.length}
-        front={front}
-        left={left}
-        matchData={this.props.matchData}
-      />
-    )
-  }
-
-  plant(carId) {
-    return <Plant carId={carId} width={this.props.width} length={this.props.length} matchData={this.props.matchData} />
-  }
-
-  frontMg(carId) {
-    return (
-      <FrontMG carId={carId} width={this.props.width} length={this.props.length} matchData={this.props.matchData} />
-    )
-  }
-
-  driver(carId) {
-    return <Driver carId={carId} width={this.props.width} length={this.props.length} matchData={this.props.matchData} />
-  }
-
-  armor(carId, location) {
-    const dimensions = {
-      F: { x: (this.props.width * 16) / 64, y: (this.props.length * 9) / 64 },
-      T: { x: (this.props.width * 38) / 64, y: (this.props.length * 9) / 64 },
-      L: { x: (this.props.width * 1) / 64, y: (this.props.length * 36) / 64 },
-      R: { x: (this.props.width * 63) / 64, y: (this.props.length * 36) / 64 }, // textAnchor={'end'}
-      B: { x: (this.props.width * 16) / 64, y: (this.props.length * 63) / 64 },
-      U: { x: (this.props.width * 38) / 64, y: (this.props.length * 63) / 64 },
-    }
-    const style = {
-      red: { fill: 'red' },
-      black: { fill: 'black' },
-    }
-    const DP = new LocalMatchState(this.props.matchData).car({ id: carId }).design.components.armor[location]
-    if (location === 'R') {
-      return (
-        <text
-          x={dimensions[location].x}
-          y={dimensions[location].y}
-          textAnchor={'end'}
-          style={DP < 1 ? style.red : style.black}
-        >
-          {location}:{DP}
-        </text>
-      )
-    }
-    return (
-      <text x={dimensions[location].x} y={dimensions[location].y} style={DP < 1 ? style.red : style.black}>
-        {location}:{DP}
-      </text>
-    )
-  }
-
-  render() {
-    return (
-      <g>
-        {this.armor(this.props.carId, 'F')}
-        {this.armor(this.props.carId, 'T')}
-        {this.armor(this.props.carId, 'L')}
-        {this.armor(this.props.carId, 'R')}
-        {this.armor(this.props.carId, 'B')}
-        {this.armor(this.props.carId, 'U')}
-        {this.tire(this.props.carId, true, true)}
-        {this.tire(this.props.carId, true, false)}
-        {this.tire(this.props.carId, false, true)}
-        {this.tire(this.props.carId, false, false)}
-        {this.plant(this.props.carId)}
-        {this.frontMg(this.props.carId)}
-        {this.driver(this.props.carId)}
-      </g>
-    )
-  }
+interface Props {
+  carId: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  matchData: any
 }
 
-class CarInset extends React.Component {
-  render() {
-    const initMatchData = this.props.matchData
+class CarInset extends React.Component<Props> {
+  render(): React.ReactNode {
+    const length = 400 // tempRect.length * 5/80 * INCH;
+    const width = 200 // tempRect.width * 5/80 * INCH;
+
     const lms = new LocalMatchState(this.props.matchData)
     const car = this.props.carId ? lms.car({ id: this.props.carId }) : lms.activeCar()
     if (!car) {
@@ -101,8 +25,6 @@ class CarInset extends React.Component {
     const scaling = 1 // inset ? 1 : 1;    ///5; //40/INCH : 1/10;
     const active = false
     const tempRect = active ? car.rect : car.phasing.rect
-    const length = 400 // tempRect.length * 5/80 * INCH;
-    const width = 200 // tempRect.width * 5/80 * INCH;
     const tempBrPoint = inset ? { x: width, y: length } : tempRect.brPoint()
     const tempFacing = inset ? 0 : tempRect.facing
     const opacity = active ? 1 / 2 : 1
@@ -129,7 +51,7 @@ class CarInset extends React.Component {
       strokeWidth: 3,
       opacity: opacity,
     }
-    const manyColoredFill = () => {
+    const manyColoredFill = (): string => {
       if (car.phasing.collisionDetected) {
         return 'red'
       }
@@ -138,6 +60,7 @@ class CarInset extends React.Component {
       }
       return 'white'
     }
+
     const outlineStyle = {
       fill: manyColoredFill(),
       stroke: 'black',
@@ -161,14 +84,20 @@ class CarInset extends React.Component {
                             ${rotatePoint.y}),
                      scale(${scaling}, ${scaling})`
 
-    function showInset(carId) {
+    const showInset = (): React.ReactNode => {
       if (inset) {
-        return <InsetLayout carId={carId} length={length} width={width} matchData={initMatchData} />
+        return (
+          <InsetLayout
+            carId={this.props.carId}
+            matchData={this.props.matchData}
+            carDimensions={new Dimensions({ length, width })}
+          />
+        )
       }
     }
 
     return (
-      <svg className="flexCentered" id={`${car.id}-inset`} x="0" y="0" width="200" height="400">
+      <svg className="flexCentered" id={`${car.id}-inset`} x="0" y="0" width={width} height={length}>
         {/* outline */}
         <rect
           x={tempBrPoint.x - width}
@@ -227,7 +156,7 @@ class CarInset extends React.Component {
           style={bodyStyle}
           transform={transform}
         />
-        {showInset(this.props.carId)}
+        {showInset()}
       </svg>
     )
   }

@@ -99,10 +99,10 @@ class FireModal extends React.Component {
         <div onClick={this.handleEatIt}>
           <ReactModal isOpen={true} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
             <fieldset className="ModalFieldset">
+            Targeting
               <legend style={{ color: color }}>{name}</legend>
-              waiting
+              waiting...
               <br />
-              (firing)
               <br />
             </fieldset>
           </ReactModal>
@@ -115,6 +115,7 @@ class FireModal extends React.Component {
           <ReactModal isOpen={true} className={'Modal.Content'} overlayClassName={'Modal.Overlay'}>
             <fieldset className="ModalFieldset">
               <legend style={{ color: color }}>{name}</legend>
+              Targeting
               <FireKeystrokes matchData={this.props.matchData} carId={this.props.carId} />
 
               <div className="ActionControls">
@@ -125,6 +126,7 @@ class FireModal extends React.Component {
                 <br />
                 {this.buttons(car)}
               </div>
+        
             </fieldset>
           </ReactModal>
         </div>
