@@ -239,3 +239,11 @@ body {
   background-color: black;
   /*color: 'black';*/
 }
+
+@font-face {
+  font-family: 'Segment7Standard';
+      src: url('/fonts/Segment7Standard.otf') format('opentype');
+  font-weight: normal;
+  font-style: italic;
+    }
+

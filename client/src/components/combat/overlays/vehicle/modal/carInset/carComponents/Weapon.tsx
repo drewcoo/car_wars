@@ -19,7 +19,7 @@ class Weapon extends React.Component<Props> {
     return (
       <GenericComponent
         name={this.props.weaponData.abbreviation}
-        ammo={this.props.weaponData.ammo}
+        lcdText={this.props.weaponData.ammo}
         dp={this.props.weaponData.damagePoints}
         maxDp={this.props.weaponData.maxDamagePoints}
         carDimensions={this.props.carDimensions}

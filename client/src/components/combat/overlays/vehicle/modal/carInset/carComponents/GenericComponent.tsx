@@ -2,11 +2,12 @@ import * as React from 'react'
 import Dimensions from '../../../../../../../utils/Dimensions'
 import Point from '../../../../../../../utils/geometry/Point'
 import DamageBoxes from './DamageBoxes'
+import '../../../../../../../App.css'
 
 interface Props {
   tire?: boolean
   name?: string
-  ammo?: number
+  lcdText?: number
   dp: number
   maxDp: number
   point: Point
@@ -25,18 +26,28 @@ class GenericComponent extends React.Component<Props> {
 
   render(): React.ReactNode {
     const row1 = GenericComponent.fontPx() + 1
-    const row2 = 2 * GenericComponent.fontPx()
+    const row2 = 2 * GenericComponent.fontPx() + 3
 
     const style = {
-      ammo: {
-        font: 'bold 18px Monaco',
-        fill: 'limegreen',
-        stroke: 'chartreuse',
+      lcdDisplay: {
+        stroke: 'black',
+        fill: '#669900',
+      },
+      lcdPoweredOff: {
+        fill: '#666666',
+      },
+      lcdText: {
+        fill: 'black',
+        fontFamily: 'Segment7Standard',
+      },
+      lcdTextPoweredOff: {
+        fill: '#818181',
+        fontFamily: 'Segment7Standard',
       },
       default: {
-        fill: 'white',
         stroke: 'black',
         strokeWidth: 2,
+        fill: 'floralwhite',
       },
       name: {
         fontSize: `${GenericComponent.fontPx()}px`, // default is 24
@@ -63,6 +74,29 @@ class GenericComponent extends React.Component<Props> {
 
     const destroyed = this.props.dp < 1
 
+    let lcd = <></>
+    if (this.props.lcdText) {
+      lcd = (
+        <>
+          <rect
+            x={x + 8}
+            y={y + row1 + 3}
+            width={GenericComponent.dimensions().width - 16}
+            height={GenericComponent.fontPx()}
+            style={destroyed ? style.lcdPoweredOff : style.lcdDisplay}
+          />
+          <text
+            textAnchor="middle"
+            x={x + GenericComponent.dimensions().height / 2}
+            y={y + row2}
+            style={destroyed ? style.lcdTextPoweredOff : style.lcdText}
+          >
+            {destroyed ? '88' : this.props.lcdText}
+          </text>
+        </>
+      )
+    }
+
     return (
       <svg>
         <rect
@@ -72,12 +106,11 @@ class GenericComponent extends React.Component<Props> {
           height={GenericComponent.dimensions().height}
           style={destroyed ? style.red : style.default}
         />
+        {lcd}
         <text textAnchor="middle" x={x + GenericComponent.dimensions().width / 2} y={y + row1} style={style.name}>
           {this.props.name}
         </text>
-        <text textAnchor="middle" x={x + GenericComponent.dimensions().height / 2} y={y + row2} style={style.ammo}>
-          {destroyed ? '' : this.props.ammo}
-        </text>
+
         <DamageBoxes
           centerPoint={
             new Point({
@@ -87,6 +120,7 @@ class GenericComponent extends React.Component<Props> {
           }
           edgeLength={GenericComponent.dimensions().width} /* because they're square */
           dp={this.props.dp}
+          tire={this.props.tire}
           maxDp={this.props.maxDp}
         />
       </svg>

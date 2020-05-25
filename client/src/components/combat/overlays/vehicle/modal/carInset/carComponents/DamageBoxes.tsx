@@ -29,7 +29,7 @@ class DamageBoxes extends React.Component<Props> {
           y={y - Math.floor(i / boxesPerRow) * boxSide}
           height={boxSide}
           width={boxSide}
-          fill="white"
+          fill="floralwhite"
           stroke="black"
           strokeWidth="2"
         />,
