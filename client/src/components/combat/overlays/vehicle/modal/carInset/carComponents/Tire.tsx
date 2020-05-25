@@ -52,14 +52,17 @@ class Tire extends React.Component<Props> {
 
   render(): React.ReactNode {
     const x = this.left()
-      ? 0.65 * GenericComponent.dimensions().width
+      ? 0.5 * GenericComponent.dimensions().width
       : this.props.carDimensions.width - 1.15 * GenericComponent.dimensions().width
     const y = this.front()
       ? 2.5 * GenericComponent.dimensions().height
       : this.props.carDimensions.height - 3 * GenericComponent.dimensions().height
     //(this.props.carDimensions.height * 18) / 64 : (this.props.carDimensions.height * 42) / 64
-    const width = GenericComponent.dimensions().width / 2
-    const height = GenericComponent.dimensions().height * 1.5
+    const width = GenericComponent.dimensions().width * 0.75
+    const height = GenericComponent.dimensions().height * 1.6
+
+    const boxSide = GenericComponent.dimensions().width / 5
+    const centerY = y + height / 2 + boxSide * ((this.props.tireData.maxDamagePoints / 7) % 2) + boxSide / 2
 
     return (
       <g>
@@ -67,13 +70,14 @@ class Tire extends React.Component<Props> {
           rx={this.props.carDimensions.width / 32}
           x={x}
           y={y}
-          width={width}
+          width={width * 1}
           height={height}
           style={this.tireStyle()}
         />
         <DamageBoxes
           tire={true}
-          centerPoint={new Point({ x: x + width / 2, y: y + height / 2 })}
+          centerPoint={new Point({ x: x + width / 2, y: centerY })}
+          boxSide={width / 5}
           edgeLength={width}
           dp={this.props.tireData.damagePoints}
           maxDp={this.props.tireData.maxDamagePoints}

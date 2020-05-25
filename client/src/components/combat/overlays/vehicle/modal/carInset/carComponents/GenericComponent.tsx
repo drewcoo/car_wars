@@ -97,6 +97,11 @@ class GenericComponent extends React.Component<Props> {
       )
     }
 
+    let damageBoxEdge = GenericComponent.dimensions().width
+    if (this.props.tire) {
+      damageBoxEdge *= 2
+    }
+
     return (
       <svg>
         <rect
@@ -118,7 +123,8 @@ class GenericComponent extends React.Component<Props> {
               y: y + GenericComponent.dimensions().height / 2,
             })
           }
-          edgeLength={GenericComponent.dimensions().width} /* because they're square */
+          boxSide={damageBoxEdge / 5}
+          edgeLength={damageBoxEdge} /* because they're square */
           dp={this.props.dp}
           tire={this.props.tire}
           maxDp={this.props.maxDp}

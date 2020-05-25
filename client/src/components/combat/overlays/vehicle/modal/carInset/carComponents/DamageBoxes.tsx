@@ -1,10 +1,12 @@
 import * as React from 'react'
 import Point from '../../../../../../../utils/geometry/Point'
 import uuid from 'uuid'
+import GenericComponent from './GenericComponent'
 
 interface Props {
   tire?: boolean
   centerPoint: Point
+  boxSide: number
   edgeLength: number
   dp: number
   maxDp: number
@@ -12,9 +14,8 @@ interface Props {
 
 class DamageBoxes extends React.Component<Props> {
   render(): React.ReactNode {
-    const boxesPerRow = this.props.tire ? 3 : 5
-    console.log(this.props.edgeLength)
-    const boxSide = this.props.edgeLength / boxesPerRow
+    const boxSide = GenericComponent.dimensions().width / 5
+    const boxesPerRow = this.props.tire ? Math.ceil(this.props.maxDp / 7) : this.props.edgeLength / this.props.boxSide
     const boxesInBaseRow = this.props.maxDp > boxesPerRow ? boxesPerRow : this.props.maxDp
 
     const x = this.props.centerPoint.x - (boxesInBaseRow / 2) * boxSide
@@ -40,7 +41,7 @@ class DamageBoxes extends React.Component<Props> {
             key={uuid()}
             x1={x + (i % boxesPerRow) * boxSide}
             y1={y - Math.floor(i / boxesPerRow) * boxSide}
-            x2={x + ((i % 4) + 1) * boxSide}
+            x2={x + ((i % boxesPerRow) + 1) * boxSide}
             y2={y - Math.floor(i / boxesPerRow) * boxSide + boxSide}
             stroke="black"
             strokeWidth="2"
@@ -49,10 +50,10 @@ class DamageBoxes extends React.Component<Props> {
         boxArray.push(
           <line
             key={uuid()}
-            x1={x + i * boxSide}
-            y1={y - Math.floor(i / boxesPerRow) * boxSide + boxSide}
-            x2={x + (i + 1) * boxSide}
-            y2={y - Math.floor(i / boxesPerRow) * boxSide}
+            x1={x + ((i % boxesPerRow) + 1) * boxSide}
+            y1={y - Math.floor(i / boxesPerRow) * boxSide}
+            x2={x + (i % boxesPerRow) * boxSide}
+            y2={y - Math.floor(i / boxesPerRow) * boxSide + boxSide}
             stroke="black"
             strokeWidth="2"
           />,
