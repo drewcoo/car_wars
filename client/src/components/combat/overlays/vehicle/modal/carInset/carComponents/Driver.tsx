@@ -24,6 +24,7 @@ interface CharacterData {
   playerId: string
   prestige: number
   reflexRoll: number
+  reflexTieBreaker: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   skills: any
   wealth: number

@@ -11,7 +11,7 @@ class Targets {
 
   refresh() {
     const weapon = this.car.design.components.weapons[this.car.phasing.weaponIndex]
-    const canFire = Weapon.canFire({
+    const canFire = WeaponSettings.canFire({
       weapon,
       plant: this.car.design.components.powerPlant,
     })

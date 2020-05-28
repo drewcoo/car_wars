@@ -26,14 +26,23 @@ subphases:
 
 class Time {
   static matchStart({ match }: { match: any }) {
+    const characters = Match.characters({ match })
+    const tieBreakers = _.shuffle([...Array(characters.length).keys()])
+    characters.forEach((character: any) => {
+      // BUGBUG: really only do reflexes for vehicle being piloted
+      const skillLevel = Character.skillLevel({ skill: 'driver', character })
+      character.reflexRoll = Dice.roll('1d') + (skillLevel < 0 ? 0 : skillLevel)
+      character.reflexTieBreaker = tieBreakers.shift()
+      Log.info(`reflex roll: ${character.reflexRoll}; tie breaker: ${character.reflexTieBreaker}`, character)
+    })
+
+
     const matchCars = Match.cars({ match })
     
     matchCars.forEach((vehicle: any) => {
       const driver = Vehicle.driver({ vehicle })
-
       const skillLevel = Character.skillLevel({ skill: 'driver', character: driver })
-      driver.reflexRoll = Dice.roll('1d') + (skillLevel < 0 ? 0 : skillLevel)
-      Log.info(`reflex roll: ${driver.reflexRoll}`, driver)
+
       if (driver.reflexRoll === 5) {
         vehicle.design.attributes.handlingClass += 1
         Log.info(`${driver.name}'s reflexes (${driver.reflexRoll}): HC+1`, vehicle)
@@ -121,6 +130,7 @@ class Time {
       character.firedThisTurn = false
     })
     Time.slowTheDead({ match })
+    match.time.turn.movesByPhase = MetaMovement.allMovesThisTurn({ match })
   }
 
   static subphaseCheck(name: string, match: any) {
@@ -234,6 +244,8 @@ class Time {
       vehicle.status.speed = newSpeed
     })
 
+    match.time.turn.movesByPhase = MetaMovement.allMovesThisTurn({ match })
+
     match.time.phase.playersToAckSpeedChange = _.uniq(match.time.phase.playersToAckSpeedChange)
 
     match.time.phase.subphase = '3_reveal_speed_change'
@@ -246,7 +258,9 @@ class Time {
     }
     Time.subphaseCheck('3_reveal_speed_change', match)
     Match.cars({ match }).forEach((vehicle: any) => (vehicle.phasing.damage = []))
+
     match.time.phase.unmoved = MetaMovement.canMoveThisPhase({ match })
+    //match.time.phase.unmoved = match.time.turn.movesByPhase[match.time.phase.number - 1]
     match.time.phase.subphase = '4_maneuver'
     Time.subphase4Maneuver({ match })
   }

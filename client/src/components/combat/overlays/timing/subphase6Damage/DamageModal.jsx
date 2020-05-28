@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import * as React from 'react'
 import { graphql } from 'react-apollo'
 import ReactModal from 'react-modal'
@@ -5,10 +6,8 @@ import { compose } from 'recompose'
 import uuid from 'uuid/v4'
 import '../../../../../App.css'
 import ackDamage from '../../../../graphql/mutations/ackDamage'
-import Damage from '../../vehicle/Damage'
 import LocalMatchState from '../../../lib/LocalMatchState'
 import DamageKeystrokes from './DamageKeystrokes'
-import PropTypes from 'prop-types'
 
 const ACK_DAMAGE = graphql(ackDamage, { name: 'ackDamage' })
 
@@ -23,7 +22,8 @@ class DamageModal extends React.Component {
     this.props.ackDamage({ variables: { matchId, playerId } })
   }
 
-  handleClose() {
+  handleClose(e) {
+    e.stopPropagation()
     const lms = new LocalMatchState(this.props.matchData)
     const playerId = lms.car({ id: this.props.carId }).playerId
     this.ackDamage({
@@ -44,32 +44,8 @@ class DamageModal extends React.Component {
     if (!theCar) {
       return <></>
     }
-    
-    if (!theCar) {
-      return (
-        <div onClick={this.handleEatIt}>
-          <Damage
-            key={`damCar-${car.id}`}
-            client={this.props.client}
-            matchData={new LocalMatchState(this.props.matchData).data}
-            carId={car.id}
-          />
-        </div>
-      )
-    }
 
     const showModal = this.props.matchData.match.time.phase.playersToAckDamage.includes(car.playerId)
-
-    /*
-    const allDamage = lms.cars().map(car => {
-      return (<Damage
-        key={`damCar-${car.id}`}
-        client={this.props.client}
-        matchData={new LocalMatchState(this.props.matchData).data}
-        carId={car.id}
-      />)
-    })
-    */
 
     let color = car.color,
       name = car.name

@@ -27,6 +27,7 @@ export const typeDef = `
     playerId: ID!
     prestige: Int!
     reflexRoll: Int
+    reflexTieBreaker: Int
     skills: [Skill]
     wealth: Float!
   }
@@ -67,6 +68,7 @@ export const resolvers = {
         playerId: args.playerId,
         prestige: 0,
         reflexRoll: null, // roll at beginning of combat
+        reflexTieBreaker: null, // also at beginning of combat
         skills: [
           // { name: 'areaKnowledge', points: 10}, // home town (p. 38)
           { name: 'climbing', points: 10 },

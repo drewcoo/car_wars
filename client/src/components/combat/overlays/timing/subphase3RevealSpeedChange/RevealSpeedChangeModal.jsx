@@ -44,7 +44,7 @@ class RevealSpeedChangeModal extends React.Component {
 
     const data = lms.cars().map((car) => {
       return (
-        <>
+        <div key={uuid()}>
           <span style={{ fontSize: '28px', whiteSpace: 'nowrap' }}>
             <span style={{ align: 'left', color: car.color }}>{car.name}</span>
             <span style={{ margin: '2em' }}>
@@ -52,7 +52,7 @@ class RevealSpeedChangeModal extends React.Component {
             </span>
           </span>
           <br />
-        </>
+        </div>
       )
     })
     return (
@@ -84,7 +84,7 @@ class RevealSpeedChangeModal extends React.Component {
     return (
       <>
         <RevealSpeedChangeKeystrokes matchData={this.props.matchData} carId={this.props.carId} />
-        <div onClick={this.handleEatIt}>
+        <div onClick={this.handleEatIt} >
           <ReactModal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={showModal}>
             <fieldset className="ModalFieldset">
               <legend style={{ color: color }}>{name}</legend>

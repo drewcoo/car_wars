@@ -34,6 +34,7 @@ interface Phase {
 
 interface Turn {
   number: number
+  movesThisTurn: any
 }
 
 interface MatchTime {

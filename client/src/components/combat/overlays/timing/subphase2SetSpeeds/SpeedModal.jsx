@@ -112,10 +112,10 @@ class SpeedModal extends React.Component {
           isOpen={!car.phasing.showSpeedChangeModal}
           style={this.customStyles()}
         >
-          <br />
-          <span className="flexCentered">TODO: random</span>
-          <span className="flexCentered">foo x-ing</span>
-          <br />
+          <br></br>
+          <span className="flexCentered">speed</span>
+          <span className="flexCentered">changed</span>
+          <br/>
         </ReactModal>
         <ReactModal
           className={'Modal.Content'}

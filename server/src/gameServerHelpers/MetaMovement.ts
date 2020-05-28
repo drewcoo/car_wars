@@ -1,9 +1,12 @@
 import Log from '../utils/Log'
 import Character from './Character'
 import Vehicle from './Vehicle'
+import _ from 'lodash'
+import Match from './Match'
 
 class MetaMovement {
   static canMoveThisPhase({ match }: { match: any }) {
+    /*
     function checkMove({ vehicle }: { vehicle: any }) {
       if (
         MetaMovement.distanceThisPhase({
@@ -22,9 +25,20 @@ class MetaMovement {
       .map((id: string) => Vehicle.withId({ id }))
       .filter((vehicle: any) => checkMove({ vehicle }))
       .map((vehicle: any) => vehicle.id)
+      */
+    let thisPhaseMoves = match.time.turn.movesByPhase[match.time.phase.number - 1]
+    console.log(thisPhaseMoves)
+    let result: string[] = []
+    thisPhaseMoves.forEach((speedElement: any) => {
+      speedElement.movers.forEach((car: any) => {
+        result.push(car.id)
+      })
+    })
+    console.log(result)
+    return result
   }
 
-  static distanceThisPhase({ speed, phase }: { speed: number, phase: number }) {
+  static phaseDistancesAtSpeed({ speed }: { speed: number }) {
     const MetaMovementChart = [
       [0, 0, 0, 0, 0], // 0 mph
       [0.5, 0, 0, 0, 0],
@@ -38,12 +52,75 @@ class MetaMovement {
       [1, 1, 1, 0, 1],
       [1, 1, 1, 0.5, 1],
     ]
+    let factor = Math.sign(speed)
+    let additionalInch = Math.trunc(speed / 50)
+    let result = MetaMovementChart[(speed % 50) / 5]
+    return result.map((value) => value * factor + additionalInch)
+  }
+
+  static distanceThisPhase({ speed, phase }: { speed: number, phase: number }) {
     if (phase < 1 || phase > 5) {
       throw new Error(`There is no phase ${phase}`)
     }
-    return MetaMovementChart[(speed % 50) / 5][phase - 1] + Math.floor(speed / 50)
+    return MetaMovement.phaseDistancesAtSpeed({speed})[phase - 1]
   }
 
+  static sortBySpeedAndReflex({ movers }: { movers: any }) {
+    let result = _.shuffle(movers)
+    result = _.sortBy(result, ['reflexTieBreaker'])
+    result = _.sortBy(result, ['reflexRoll']).reverse() // sort in decscending reflex roll
+    return result
+  }
+
+
+  static allMovesThisTurn ({ match } : { match: any }) {
+    let result: any[] = [[],[],[],[],[]]
+    const vehicles = match.carIds.map((id: string) => Vehicle.withId({ id }))
+    vehicles.forEach((vehicle: any) => {
+      let distances = MetaMovement.phaseDistancesAtSpeed({ speed: vehicle.status.speed })
+      for (let phase = 0; phase <= 4; phase++) {
+        if (distances[phase] !== 0) {
+          let obj: any = result[phase].find((element: any) => element['absSpeed'] === Math.abs(vehicle.status.speed))
+          if (!obj) {
+            obj = { absSpeed: Math.abs(vehicle.status.speed), movers: [] }
+            result[phase].push(obj)
+          }
+          let driver = Vehicle.driver({ vehicle })
+          obj['movers'].push({
+            id: vehicle.id,
+            color: vehicle.color, // just to make it easy to display
+            distance: distances[phase],
+            speed: vehicle.status.speed,
+            reflexRoll: driver.reflexRoll,
+            reflexTieBreaker: driver.reflexTieBreaker
+          })
+        }
+      }
+    })
+    result = result.map((movesPerPhase: any) => {
+      return movesPerPhase.map((element: any) => {
+        return {
+          absSpeed: element.absSpeed,
+          movers: MetaMovement.sortBySpeedAndReflex({ movers: element.movers })
+        }
+      })
+    })
+    return result
+  }
+
+
+
+  /*
+  static moveOrderOnPhase({ match, phase }: { match: any, phase: number }) {
+    let cars = match.map((id: string) => Vehicle.withId({ id }))
+    let carsToMove = cars.map((car) => {
+      let dist = MetaMovement.distanceThisPhase({ speed: car.status.speed, phase })
+      if ( dist !== 0) {
+
+      }
+    })
+  }
+*/
   static nextToMoveThisPhase({ match }: { match: any }) {
     if (match.time.phase.unmoved.length < 1) {
       return null

@@ -39,6 +39,17 @@ const completeMatchData = gql`
           }
           turn {
             number
+            movesByPhase {
+              absSpeed
+              movers {
+                id
+                color
+                distance
+                speed
+                reflexRoll
+                reflexTieBreaker
+              }
+            }
           }
         }
       }
@@ -219,6 +230,7 @@ const completeMatchData = gql`
         playerId
         prestige
         reflexRoll
+        reflexTieBreaker
         skills {
           name
           points

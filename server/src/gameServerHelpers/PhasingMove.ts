@@ -43,8 +43,9 @@ class PhasingMove {
         resultRect = resultRect.backRightCornerPivot(desiredFacing)
       }
     }
-
-    vehicle.phasing.difficulty = Math.ceil(Math.abs(resultRect.facing - vehicle.rect.facing) / 15)
+    let difference = Math.abs(degreesDifference ({ initial: vehicle.rect.facing, second: resultRect.facing }))
+    console.log(difference)
+    vehicle.phasing.difficulty = Math.ceil(difference / 15)
 
     return resultRect
   }

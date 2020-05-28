@@ -50,14 +50,18 @@ class SpeedKeystrokes extends React.Component {
         ViewElement(car.id)
       },
       nextSpeed: (event) => {
-        if (car.status.speedSetThisTurn) { return (<></>) }
+        if (car.status.speedSetThisTurn) {
+          return <></>
+        }
         this.speedSetter({
           id: car.id,
           speed: lms.nextSpeed({ id: car.id }),
         })
       },
       previousSpeed: (event) => {
-        if (car.status.speedSetThisTurn) { return (<></>) }
+        if (car.status.speedSetThisTurn) {
+          return <></>
+        }
         this.speedSetter({
           id: car.id,
           speed: lms.previousSpeed({ id: car.id }),
@@ -71,13 +75,7 @@ class SpeedKeystrokes extends React.Component {
       },
     }
 
-    return (
-      <HotKeys
-        attach={ document }
-        focused={ true }
-        handlers={ handlers }
-        keyMap={ this.keyMap } />
-    )
+    return <HotKeys attach={document} focused={true} handlers={handlers} keyMap={this.keyMap} />
   }
 }
 
@@ -89,7 +87,4 @@ SpeedKeystrokes.propTypes = {
   setSpeed: PropTypes.func,
 }
 
-export default compose(
-  SET_SPEED,
-  ACCEPT_SPEED
-)(SpeedKeystrokes)
+export default compose(SET_SPEED, ACCEPT_SPEED)(SpeedKeystrokes)

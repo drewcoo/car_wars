@@ -5,10 +5,9 @@ import SwitchUser from '../../combat/lib/SwitchUser'
 import LocalMatchState from '../../combat/lib/LocalMatchState'
 import Session from '../../combat/lib/Session'
 import ArenaMap from '../../combat/ArenaMap'
-import Phase from '../../combat/timing/Phase'
-import Turn from '../../combat/timing/Turn'
 import completeMatchData from '../../graphql/queries/completeMatchData'
 import '../../../App.css'
+import MoveOrder from '../../combat/overlays/timing/moveOrder/moveOrder'
 
 const MATCH_DATA = completeMatchData
 
@@ -72,10 +71,12 @@ class Match extends React.Component {
           return (
             <div>
               <div className="TitleRow">
-                <span>
+                <span style={{ margin: '10%' }}>
                   <SwitchUser matchData={matchData} onUserIdChange={this.onUserIdChange} />
-                  <Turn client={this.props.client} matchData={matchData} />
-                  <Phase client={this.props.client} matchData={matchData} />
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span>
+                <span>
+                  <MoveOrder matchData={matchData} />
                 </span>
               </div>
               <div className="MapBorder">

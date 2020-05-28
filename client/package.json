@@ -39,6 +39,7 @@
     "apollo-link-ws": "^1.0.19",
     "graphql": "^14.5.8",
     "graphql.macro": "^1.4.2",
+    "lodash": "^4.17.15",
     "math.js": "^1.1.43",
     "mathjs": "^6.0.3",
     "prop-types": "^15.7.2",
@@ -88,6 +89,7 @@
     "pnp": true
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.153",
     "@types/react-modal": "^3.10.5",
     "@types/recompose": "^0.30.7",
     "@typescript-eslint/eslint-plugin": "^2.33.0",

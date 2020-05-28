@@ -1,6 +1,7 @@
 import React from 'react'
 import Tire from './Tire'
 import Dimensions from '../../../../../../../utils/Dimensions'
+import { v4 as uuid } from 'uuid'
 
 interface TireData {
   damagePoints: number
@@ -20,7 +21,7 @@ class AllTires extends React.Component<Props> {
   tires(): React.ReactNode {
     const result: any = []
     this.props.carData.design.components.tires.forEach((tire: TireData) => {
-      result.push(<Tire tireData={tire} carDimensions={this.props.carDimensions} />)
+      result.push(<Tire key={uuid()} tireData={tire} carDimensions={this.props.carDimensions} />)
     })
     return <>{result}</>
   }

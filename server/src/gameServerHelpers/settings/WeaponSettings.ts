@@ -50,10 +50,10 @@ class WeaponSettings {
 
   static finishFiring({ vehicle, match }: { vehicle: any, match: any }) {
     const carIdIndex = match.time.phase.canTarget.indexOf(vehicle.id)
-    if (carIdIndex === -1) {
-      throw new Error(`car not able to fire: ${vehicle.id} ${vehicle.color}`)
+    if (carIdIndex !== -1) {
+      match.time.phase.canTarget.splice(carIdIndex, 1)
     }
-    match.time.phase.canTarget.splice(carIdIndex, 1)
+    
 
     Time.subphase5FireWeapons({ match })
   }

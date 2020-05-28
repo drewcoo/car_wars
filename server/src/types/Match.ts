@@ -85,6 +85,21 @@ export const typeDef = `
   
   type Turn {
     number: Int!
+    movesByPhase: [[PerPhaseMoves]]
+  }
+
+  type PerPhaseMoves {
+    absSpeed: Int
+    movers: [Movers]
+  }
+
+  type Movers {
+    id: String
+    color: String
+    distance: Float
+    speed: Int
+    reflexRoll: Int
+    reflexTieBreaker: Int
   }
 `
 
@@ -163,6 +178,7 @@ export const resolvers = {
           },
           turn: {
             number: 0,
+            movesByPhase: [[], [], [], [], []]
           },
         },
       }
@@ -247,11 +263,16 @@ export const resolvers = {
 
     ackDamage: (parent: any, args: any) => {
       const match = Match.withId({ id: args.matchId })
-      const ptadIndex = match.time.phase.playersToAckDamage.indexOf(args.playerId)
+      console.log(match.time.phase.playersToAckDamage)
+      console.log(`ack damage ${args.playerId}`)
+      _.pull(match.time.phase.playersToAckDamage, args.playerId)
+     // const ptadIndex = match.time.phase.playersToAckDamage.indexOf(args.playerId)
       /*(if (ptadIndex === -1) {
         throw new Error(`player not waiting to ack damage: ${args.playerId}`)
       }*/
-      match.time.phase.playersToAckDamage.splice(ptadIndex, 1)
+     // match.time.phase.playersToAckDamage.splice(ptadIndex, 1)
+      console.log(match.time.phase.playersToAckDamage)
+      console.log(' ')
       Time.subphase6Damage({ match })
     },
 

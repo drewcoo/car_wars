@@ -50,11 +50,12 @@ class Tire extends React.Component<Props> {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   treadStyle(): any {
     return {
       fill: 'url(#pattern-chevron)',
-        stroke: '#000000',
-        strokeWidth: 1, 
+      stroke: '#000000',
+      strokeWidth: 1,
     }
   }
 
@@ -85,8 +86,8 @@ class Tire extends React.Component<Props> {
             viewBox="0 0 10 10"
           >
             <g id="chevron">
-              <path className="left" d="M0 0l5 3v5l-5 -3z" fill='#222222' />
-              <path className="right" d="M10 0l-5 3v5l5 -3" fill='#222222' />
+              <path className="left" d="M0 0l5 3v5l-5 -3z" fill="#222222" />
+              <path className="right" d="M10 0l-5 3v5l5 -3" fill="#222222" />
             </g>
             <use x="0" y="9" href="#chevron" />
           </pattern>
