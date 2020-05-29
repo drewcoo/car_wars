@@ -21,16 +21,18 @@ class ActiveCar extends React.Component {
 
   componentDidUpdate() {
     ViewElement('shotResult') ||
-    ViewElement('reticle') ||
-    ViewElement(new LocalMatchState(this.props.matchData).activeCarId())
+      ViewElement('reticle') ||
+      ViewElement(new LocalMatchState(this.props.matchData).activeCarId())
   }
 
   eventPoint(event) {
     // First, get the page coordinates of the click or touch.
     let result
-    if (event.clientX) { // Mouse - correct coords
+    if (event.clientX) {
+      // Mouse - correct coords
       result = new Point({ x: event.pageX, y: event.pageY })
-    } else { // Otherwise assume touch - incorrect
+    } else {
+      // Otherwise assume touch - incorrect
       result = new Point({
         x: event.changedTouches[0].pageX,
         y: event.changedTouches[0].pageY,
@@ -92,7 +94,7 @@ class ActiveCar extends React.Component {
     Maneuver.turnRight({
       matchId: lms.matchId(),
       car: car,
-      fRight: (deltaDirection > 0),
+      fRight: deltaDirection > 0,
     })
     this.setState({ drag: true, lastPoint: point })
   }
@@ -111,11 +113,11 @@ class ActiveCar extends React.Component {
   render() {
     const lms = new LocalMatchState(this.props.matchData)
     if (lms.awaitAllSpeedsSet()) {
-      return (<></>)
+      return <></>
     }
     return (
       <g
-      //  onClick={this.startHandler}
+        //  onClick={this.startHandler}
         onMouseDown={this.startHandler}
         onTouchStart={this.startHandler}
         onMouseMove={this.moveHandler}
@@ -126,13 +128,7 @@ class ActiveCar extends React.Component {
         //  onMouseOut={this.handleOnMouseDragStop}
         onTouchEnd={this.stopHandler}
       >
-        <Car
-          client={this.props.client}
-          matchData={ lms.data }
-          id={ lms.activeCarId() }
-          key='active'
-          active={ true }
-        />
+        <Car client={this.props.client} matchData={lms.data} id={lms.activeCarId()} key="active" active={true} />
       </g>
     )
   }

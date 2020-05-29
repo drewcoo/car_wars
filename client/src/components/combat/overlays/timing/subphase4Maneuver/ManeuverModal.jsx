@@ -45,11 +45,26 @@ class ManeuverModal extends React.Component {
     const maneuver = car.status.maneuvers[car.phasing.maneuverIndex]
     let dirStr = ''
     let distStr = ''
-    if (maneuver === 'bend' || maneuver === 'swerve') {
+    if (maneuver === 'pivot') {
+      let deg = car.phasing.rect.facing - car.rect.facing
+      if (car.phasing.rect.brPoint().intersects(car.rect.rSide())) {
+        dirStr = 'right'
+      }
+      if (car.phasing.rect.blPoint().intersects(car.rect.lSide())) {
+        if (dirStr === 'right') {
+          dirStr = ''
+        } else {
+          dirStr = 'left'
+          deg = 360 - deg
+        }
+      }
+      distStr = `${deg}°`
+    } else if (maneuver === 'bend' || maneuver === 'swerve') {
       let deg = degreesDifference({
         initial: car.rect.facing,
         second: car.phasing.rect.facing,
-      })
+        })
+    
       if (deg > 0) dirStr = 'right'
       if (deg < 0) dirStr = 'left'
       if (deg > 180) {

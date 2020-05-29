@@ -181,11 +181,11 @@ class Time {
     Match.cars({ match }).forEach((thisCar: any) => {
       const ready = !thisCar.phasing.showSpeedChangeModal || thisCar.status.speedSetThisTurn
       allReady = allReady && ready
-      console.log(`    [${ready ? 'X' : ' '}] ${thisCar.id} - ${thisCar.color}`)
-      console.log(`        [${thisCar.phasing.showSpeedChangeModal ? ' ' : 'X'}] modal dismissed this phase`)
-      console.log(`        [${thisCar.status.speedSetThisTurn ? 'X' : ' '}] speed changed this turn`)
+      // console.log(`    [${ready ? 'X' : ' '}] ${thisCar.id} - ${thisCar.color}`)
+      // console.log(`        [${thisCar.phasing.showSpeedChangeModal ? ' ' : 'X'}] modal dismissed this phase`)
+      // console.log(`        [${thisCar.status.speedSetThisTurn ? 'X' : ' '}] speed changed this turn`)
     })
-    console.log(`[${allReady ? 'X' : ' '}] all cars ready`)
+    // console.log(`[${allReady ? 'X' : ' '}] all cars ready`)
 
     const finishedSettingSpeed = Match.cars({ match }).every((vehicle: any) => {
       return !vehicle.phasing.showSpeedChangeModal || vehicle.status.speedSetThisTurn
@@ -398,9 +398,15 @@ class Time {
         phase: match.time.phase.number,
       }) === 0.5
     if (isHalfMove) {
-      Log.info('half move', vehicle)
-      vehicle.status.maneuvers = ['half']
-      vehicle.phasing.rect = PhasingMove.straight({ vehicle, distance: INCH / 2 })
+      if (Vehicle.canSteer({ vehicle }) && Math.abs(vehicle.status.speed) == 5) {
+        Log.info('half move', vehicle)
+        vehicle.status.maneuvers = ['half', 'pivot']
+        vehicle.phasing.rect = PhasingMove.straight({ vehicle, distance: INCH / 2 })
+      } else {
+        Log.info('half move', vehicle)
+        vehicle.status.maneuvers = ['half']
+        vehicle.phasing.rect = PhasingMove.straight({ vehicle, distance: INCH / 2 })
+      }
     } else if (Vehicle.canSteer({ vehicle })) {
       Log.info('all the moves', vehicle)
       vehicle.status.maneuvers = [

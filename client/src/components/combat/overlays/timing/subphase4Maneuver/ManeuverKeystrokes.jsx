@@ -11,6 +11,7 @@ import activeManeuverPrevious from '../../../../graphql/mutations/activeManeuver
 import activeManeuverSet from '../../../../graphql/mutations/activeManeuverSet'
 import activeMoveBend from '../../../../graphql/mutations/activeMoveBend'
 import activeMoveDrift from '../../../../graphql/mutations/activeMoveDrift'
+import activeMovePivot from '../../../../graphql/mutations/activeMovePivot'
 import activeMoveStraight from '../../../../graphql/mutations/activeMoveStraight'
 import activeMoveHalfStraight from '../../../../graphql/mutations/activeMoveHalfStraight'
 import activeMoveReset from '../../../../graphql/mutations/activeMoveReset'
@@ -50,6 +51,7 @@ const ACTIVE_MOVE_FORWARD = graphql(activeMoveStraight, {
 const ACTIVE_MOVE_HALF_FORWARD = graphql(activeMoveHalfStraight, {
   name: 'activeMoveHalfStraight',
 })
+const ACTIVE_MOVE_PIVOT = graphql(activeMovePivot, { name: 'activeMovePivot' })
 const ACTIVE_MOVE_RESET = graphql(activeMoveReset, { name: 'activeMoveReset' })
 const ACTIVE_MOVE_SWERVE = graphql(activeMoveSwerve, {
   name: 'activeMoveSwerve',
@@ -129,6 +131,12 @@ class ManeuverKeystrokes extends React.Component {
     })
   }
 
+  async activeMovePivot({ id, degrees }) {
+    return this.props.activeMovePivot({
+      variables: { id: id, degrees: degrees },
+    })
+  }
+
   async activeMoveSwerve({ id, degrees }) {
     return this.props.activeMoveSwerve({
       variables: { id: id, degrees: degrees },
@@ -155,6 +163,18 @@ class ManeuverKeystrokes extends React.Component {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.activeCar()
     switch (lms.currentManeuver()) {
+      case 'half':
+        if (!car.status.maneuvers.includes('pivot')) {
+          break
+        }
+        this.activeManeuverSet({
+          id: car.id,
+          maneuverIndex: car.status.maneuvers.indexOf('pivot'),
+        })
+        this.activeMovePivot({
+          id: car.id,
+          degrees: fRight ? 15 : -15,
+        })
       case 'straight':
         // Make it easy to maneuver (bend from straight position) as long as that's possible.
         if (!car.status.maneuvers.includes('bend')) {
@@ -179,6 +199,12 @@ class ManeuverKeystrokes extends React.Component {
         this.activeMoveDrift({
           id: car.id,
           direction: fRight ? 'right' : 'left',
+        })
+        break
+      case 'pivot':
+        this.activeMovePivot({
+          id: car.id,
+          degrees: fRight ? 15 : -15,
         })
         break
       case 'swerve':
@@ -276,6 +302,7 @@ export default compose(
   ACTIVE_MOVE_RESET,
   ACTIVE_SHOW_COLLISIONS,
   ACTIVE_MOVE_BEND,
+  ACTIVE_MOVE_PIVOT,
   ACTIVE_MOVE_SWERVE,
   ACTIVE_MANEUVER_SET,
   SET_WEAPON,

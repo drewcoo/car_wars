@@ -6,6 +6,39 @@ import Vehicle from './Vehicle'
 import Rectangle from '../utils/geometry/Rectangle'
 
 class PhasingMove {
+  static pivot({ vehicle, degrees }: { vehicle: any, degrees: number }) {
+    // don't use degreesDifference here because we want angles > 180 deg
+    let onTheRight = vehicle.rect.rSide().intersects(vehicle.phasing.rect.brPoint())
+    let onTheLeft = vehicle.rect.lSide().intersects(vehicle.phasing.rect.blPoint())
+
+    const currentFacingDelta = degreesDifference({
+      initial: vehicle.rect.facing,
+      second: vehicle.phasing.rect.facing,
+    })
+    let desiredFacing = currentFacingDelta + degrees
+    
+    vehicle.phasing.rect = PhasingMove.center({ vehicle })
+    let resultRect = PhasingMove.straight({ vehicle, distance: INCH / 4 })
+    
+    if (onTheRight && onTheLeft) {
+      if (currentFacingDelta === 0) {
+        //onTheRight = !(degrees < 0)
+        onTheRight = (degrees > 0)
+      } else if (currentFacingDelta === 180) {
+        onTheRight = (degrees < 0)
+        //onTheRight = !(degrees > 0)
+      } 
+    }
+    if (onTheRight) {
+      resultRect = resultRect.backRightCornerPivot(desiredFacing)
+    } else {
+      resultRect = resultRect.backLeftCornerPivot(desiredFacing)
+    }
+  
+    vehicle.phasing.difficulty = 0
+    return resultRect
+  }
+
   static bend({ vehicle, degrees }: { vehicle: any, degrees: number }) {
     // how far already?
     const currentFacingDelta = degreesDifference({
@@ -25,9 +58,7 @@ class PhasingMove {
     const facingLeft = currentFacingDelta < 0
     const turningRight = degrees > 0
 
-    //let centeredRect = PhasingMove.center({ vehicle })
     vehicle.phasing.rect = PhasingMove.center({ vehicle })
-    //let resultRect = PhasingMove.straight({ vehicle: centered })
     let resultRect = PhasingMove.straight({ vehicle, distance: INCH })
 
     if (turningRight) {
@@ -44,7 +75,6 @@ class PhasingMove {
       }
     }
     let difference = Math.abs(degreesDifference ({ initial: vehicle.rect.facing, second: resultRect.facing }))
-    console.log(difference)
     vehicle.phasing.difficulty = Math.ceil(difference / 15)
 
     return resultRect

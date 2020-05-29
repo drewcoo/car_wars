@@ -53,6 +53,7 @@ export const typeDef = `
     activeMoveReset(id: ID!): Int
     activeShowCollisions(id: ID!): Int
     activeMoveBend(id: ID!, degrees: Int!): Int
+    activeMovePivot(id: ID!, degrees: Int!): Int
     activeMoveSwerve(id: ID!, degrees: Int!): Int
     setCarPosition(id: ID!, rect: InputRectangle): Rectangle
     setSpeed(id: ID!, speed: Int!): Int
@@ -230,7 +231,7 @@ export const resolvers = {
           handling: design.attributes.handlingClass,
           killed: false,
           lastDamageBy: [],
-          maneuvers: ['straight', 'bend', 'drift', 'swerve'],
+          maneuvers: ['straight', 'bend', 'drift', 'swerve'], // assumes speed range
           nextMove: [],
           speed: startingSpeed,
           speedInitThisTurn: startingSpeed,
@@ -287,6 +288,12 @@ export const resolvers = {
       const vehicle = Vehicle.withId({ id: args.id })
       const match = Match.withId({ id: vehicle.currentMatch })
       Actions.moveDrift({ match, vehicle, direction: args.direction })
+    },
+
+    activeMovePivot: (parent: any, args: any) => {
+      const vehicle = Vehicle.withId({ id: args.id })
+      const match = Match.withId({ id: vehicle.currentMatch })
+      Actions.movePivot({ match, vehicle, degrees: args.degrees })
     },
 
     activeMoveHalfStraight: (parent: any, args: any) => {

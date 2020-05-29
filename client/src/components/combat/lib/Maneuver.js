@@ -23,6 +23,9 @@ class Maneuver {
       case 'drift':
         store.dispatch(activeMoveDrift({ matchId: matchId, id: car.id, direction: (fRight ? 'right' : 'left') }))
         break
+      case 'pivot':
+        store.dispatch(activeMovePivot({ matchId: matchId, id: car.id, degrees: (fRight ? 15 : -15) }))
+        break
       case 'swerve':
         store.dispatch(activeTurnSwerve({ matchId: matchId, id: car.id, degrees: (fRight ? 15 : -15) }))
         break

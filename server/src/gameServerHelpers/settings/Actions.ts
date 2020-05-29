@@ -122,20 +122,24 @@ class Actions {
   }
 
   static moveHalfStraight({ vehicle }: { vehicle: any }) {
-    const distance = INCH / 2
-    // is this needed?
-    vehicle.phasing.rect = PhasingMove.center({ vehicle })
-    vehicle.phasing.rect = PhasingMove.straight({ vehicle, distance })
+    return Actions.moveStraight({ vehicle, distance: INCH /2 })
+  }
+
+  static movePivot({ match, vehicle, degrees }: { match: any, vehicle: any, degrees: number }) {
+    const cars = Match.cars({ match })
+    vehicle.phasing.rect = PhasingMove.pivot({ vehicle, degrees })
+    const targets = new Targets({ car: vehicle, cars, map: match.map })
+    targets.refresh()
   }
   
   static moveReset({ vehicle }: { vehicle: any }) {
     Actions.showHidevehicle(vehicle, 0)
   }
 
-  static moveStraight({ vehicle }: { vehicle: any }) {
+  static moveStraight({ vehicle, distance = INCH }: { vehicle: any; distance?: number }) {
     // is this needed?
     vehicle.phasing.rect = PhasingMove.center({ vehicle })
-    vehicle.phasing.rect = PhasingMove.straight({ vehicle, distance: INCH })
+    vehicle.phasing.rect = PhasingMove.straight({ vehicle, distance })
   }
 
   static moveSwerve({ match, vehicle, degrees }: { match: any, vehicle: any, degrees: number }) {
@@ -169,7 +173,9 @@ class Actions {
   static showHidevehicle(vehicle: any, manIdxDelta: number) {
     const index = (vehicle.phasing.maneuverIndex + manIdxDelta) % vehicle.status.maneuvers.length
     if (vehicle.status.maneuvers[index] === 'half') {
-      Actions.moveHalfStraight({ vehicle })
+      Actions.moveStraight({ vehicle, distance: INCH/2 })
+    } else if (vehicle.status.maneuvers[index] === 'pivot') {
+      Actions.moveStraight({ vehicle, distance: INCH/4 })
     } else {
       Actions.moveStraight({ vehicle })
     }
