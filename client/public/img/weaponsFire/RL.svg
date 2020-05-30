@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg id="rocketLauncher-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y" className="rocketLauncher">
+<svg xmlns="http://www.w3.org/2000/svg" id="rocketLauncher-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y" className="rocketLauncher">
   <g className="rocketLauncher" transform="ROTATION scale(0.7)" opacity='0'>
     <g className='rocket-flame'>
       <polygon points='-7,-3, -17,-4 -12,0, -17,4, -7,3'/>

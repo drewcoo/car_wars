@@ -209,7 +209,7 @@ export const resolvers = {
       const player = DATA.players.find((element: any) => element.id === args.playerId)
       const design = fillDesign(args.designName)
 
-      const startingSpeed = 30
+      const startingSpeed = 50
 
       const vehicle = {
         id: uuid(),

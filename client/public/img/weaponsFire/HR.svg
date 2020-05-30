@@ -1,4 +1,4 @@
-<svg id="heavyRocket-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y" className="heavyRocket">
+<svg xmlns="http://www.w3.org/2000/svg" id="heavyRocket-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y" className="heavyRocket">
   <g className="heavyRocket" transform="ROTATION scale(0.4)" opacity='0'>
     <g className="rocket-flame">
       <polygon points="-15,-4,-40,-2,-60,0,-40,2,-15,4"/>

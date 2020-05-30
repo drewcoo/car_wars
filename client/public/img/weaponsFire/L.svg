@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg id="laser-SOURCE-TARGET" className="laser">
+<svg xmlns="http://www.w3.org/2000/svg" id="laser-SOURCE-TARGET" className="laser">
     <g className="warmUpLaser" opacity='0'>
     <line x1="SOURCE_X" y1="SOURCE_Y" x2="TARGET_X" y2="TARGET_Y" stroke="orange" opacity='.2' strokeWidth='3'/>
     <line x1="SOURCE_X" y1="SOURCE_Y" x2="TARGET_X" y2="TARGET_Y" stroke="yellow" strokeWidth='1'/>

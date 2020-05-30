@@ -8,23 +8,26 @@ import RevealSpeedChangeModal from './timing/subphase3RevealSpeedChange/RevealSp
 import uuid from 'uuid/v4'
 
 import Reticle from './vehicle/Reticle'
-import Damage from './vehicle/Damage'
+import ShowDamage from './vehicle/ShowDamage'
 import SpeedChange from './vehicle/SpeedChange'
 
-class TimingOverlays extends React.Component {
-  props: any
-  lms: any
+interface Props {
+  client: any
+  matchData: any
+  id: string
+}
 
-  constructor(props: any) {
+class TimingOverlays extends React.Component<Props> {
+  constructor(props: Props) {
     super(props) // matchData and carId
     this.handleClick = this.handleClick.bind(this)
   }
 
-  handleClick(e: any) {
+  handleClick(e: any): void {
     // e.stopPropagation()
   }
 
-  render() {
+  render(): React.ReactNode {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.id })
     const subphase = this.props.matchData.match.time.phase.subphase
@@ -40,12 +43,7 @@ class TimingOverlays extends React.Component {
       case '3_reveal_speed_change':
         return (
           <>
-            <Damage
-              key={`damCar-${this.props.carId}`}
-              client={this.props.client}
-              matchData={this.props.matchData}
-              carId={this.props.id}
-            />
+            <ShowDamage key={`damCar-${this.props.id}`} matchData={this.props.matchData} carId={this.props.id} />
             <Reticle client={this.props.client} carId={this.props.id} matchData={this.props.matchData} />
             <RevealSpeedChangeModal
               key={uuid()}
@@ -77,12 +75,7 @@ class TimingOverlays extends React.Component {
         // show weapons fire animations plus damage/miss stickers
         return (
           <>
-            <Damage
-              key={`damCar-${this.props.carId}`}
-              client={this.props.client}
-              matchData={this.props.matchData}
-              carId={this.props.id}
-            />
+            <ShowDamage key={`damCar-${this.props.id}`} matchData={this.props.matchData} carId={this.props.id} />
             <DamageModal
               key={uuid()}
               client={this.props.client}
