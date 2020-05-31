@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="heavyRocket-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y" className="heavyRocket">
-  <g className="heavyRocket" transform="ROTATION scale(0.4)" opacity='0'>
+<svg
+  className="heavyRocket"
+  id="heavyRocket-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y"
+  xmlns="http://www.w3.org/2000/svg" >
+  <g className="heavyRocket" transform="ROTATION scale(0.4)">
     <g className="rocket-flame">
       <polygon points="-15,-4,-40,-2,-60,0,-40,2,-15,4"/>
       <polygon points="-10,-7,-30,-5,-20,0,-30,5,-10,7"/>
@@ -31,17 +34,22 @@
     </g>
     <g id="HRnose">
       <polygon points="50,-5,65,-2,65,2,50,5" fill="blue"/>
-    </g> 
+    </g>
+
     <animateMotion
-      begin="0.00s"
+      begin="heavyRocket.begin"
       dur="DURATIONs"
-      repeatCount="indefinite"
+      repeatCount="1"
       path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y "/>
     <animate
-      attributeType="XML"
-      attributeName="opacity"
-      values="1"
-      dur=".03s"
-      repeatCount="indefinite"/>
+      begin="0s;heavyRocket2.end"
+      dur="DURATIONs"
+      id="heavyRocket"
+      repeatCount="1"/>
+    <animate
+      begin="heavyRocket.end"
+      dur="DURATIONs"
+      id="heavyRocket2"
+      repeatCount="2"/>
   </g>
 </svg>

@@ -83,7 +83,7 @@ class WeaponSettings {
     Log.info(`toHit: ${weapon.toHit} - roll is ${toHit} damage: ${weapon.damage}`, vehicle)
 
     const damageDice = toHit >= weapon.toHit ? weapon.damage : '0d'
-    weapon.ammo--
+    if (weapon !== null) weapon.ammo--
     Vehicle.driver({ vehicle }).firedThisTurn = true
     weapon.firedThisTurn = true
 

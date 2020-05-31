@@ -4,6 +4,7 @@ import '../overlays/timing/moveOrder/moveOrder'
 
 import LocalMatchState from '../lib/LocalMatchState'
 import MoveOrder from '../overlays/timing/moveOrder/moveOrder'
+import uuid from 'uuid'
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,10 +14,10 @@ interface Props {
 class Phase extends React.Component<Props> {
   render(): React.ReactNode {
     return (
-      <span id="phase" className="Timekeeping">
+      <span key={uuid()} id="phase" className="Timekeeping">
         Phase: {new LocalMatchState(this.props.matchData).time().phase.number}
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <MoveOrder matchData={this.props.matchData} />
+        <MoveOrder key={uuid()} matchData={this.props.matchData} />
       </span>
     )
   }

@@ -23,7 +23,6 @@ class RevealSpeedChangeModal extends React.Component {
 
   handleClose() {
     const lms = new LocalMatchState(this.props.matchData)
-    const car = lms.car({ id: this.props.carId })
     const playerId = lms.car({ id: this.props.carId }).playerId
     this.ackSpeedChange({
       matchId: this.props.matchData.match.id,

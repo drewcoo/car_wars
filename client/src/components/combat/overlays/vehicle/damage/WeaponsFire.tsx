@@ -20,18 +20,6 @@ class WeaponsFire extends React.Component<Props> {
     */
   }
 
-  durationFactor(): number {
-    const base = 1
-    switch (this.props.damage.source.weapon) {
-      case 'heavyRocket':
-        return 2 * base
-      case 'rocketLauncher':
-        return 1.5 * base
-      default:
-        return 1 * base
-    }
-  }
-
   svgFile(): string {
     switch (this.props.damage.source.weapon) {
       case 'machineGun':
@@ -48,11 +36,26 @@ class WeaponsFire extends React.Component<Props> {
     }
   }
 
+  durationFactor(): number {
+    const base = 1
+    switch (this.props.damage.source.weapon) {
+      case 'heavyRocket':
+        return 2 * base
+      case 'laser':
+        return 1.5 * base
+      case 'machineGun':
+        return 0.5 * base
+      case 'rocketLauncher':
+        return 1.5 * base
+      default:
+        return 1 * base
+    }
+  }
+
   render(): React.ReactNode {
     const source = this.props.damage.source.point
     const target = this.props.damage.target.point
     const rotation = (Math.atan2(target.y - source.y, target.x - source.x) * 180) / Math.PI
-
     const preProcess = (code: string): string => {
       let result = code.replace(/ROTATION/g, `rotate(${rotation})`)
       result = result.replace(/SOURCE_X/g, `${source.x}`)
@@ -66,7 +69,7 @@ class WeaponsFire extends React.Component<Props> {
     return (
       <>
         {this.sounds()}
-        <SVG src={this.svgFile()} preProcessor={(code): string => preProcess(code)} />
+        <SVG src={this.svgFile()} duration={this.durationFactor()} preProcessor={(code): string => preProcess(code)} />
       </>
     )
   }

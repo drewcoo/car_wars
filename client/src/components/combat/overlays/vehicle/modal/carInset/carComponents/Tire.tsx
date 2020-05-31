@@ -31,7 +31,7 @@ class Tire extends React.Component<Props> {
   tireStyle(): any {
     if (this.props.tireData.damagePoints >= 1) {
       return {
-        fill: 'black',
+        fill: '#444444',
         stroke: 'black',
         strokeWidth: 1,
       }
@@ -54,7 +54,7 @@ class Tire extends React.Component<Props> {
   treadStyle(): any {
     return {
       fill: 'url(#pattern-chevron)',
-      stroke: '#000000',
+      stroke: 'black',
       strokeWidth: 1,
     }
   }
@@ -86,8 +86,8 @@ class Tire extends React.Component<Props> {
             viewBox="0 0 10 10"
           >
             <g id="chevron">
-              <path className="left" d="M0 0l5 3v5l-5 -3z" fill="#222222" />
-              <path className="right" d="M10 0l-5 3v5l5 -3" fill="#222222" />
+              <path className="left" d="M0 0l5 3v5l-5 -3z" fill="black" />
+              <path className="right" d="M10 0l-5 3v5l5 -3" fill="black" />
             </g>
             <use x="0" y="9" href="#chevron" />
           </pattern>

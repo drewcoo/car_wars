@@ -42,11 +42,7 @@ class MoveOrder extends React.Component<Props> {
                 1
               </text>
           */
-          result.push(
-            <>
-              <circle key={uuid()} cx={cx} cy={cy} r="2" fill={mover.color} />
-            </>,
-          )
+          result.push(<circle key={uuid()} cx={cx} cy={cy} r="2" fill={mover.color} />)
         } else {
           result.push(
             <circle key={uuid()} cx={cx} cy={cy} r="2" fill={mover.color}>
@@ -64,8 +60,20 @@ class MoveOrder extends React.Component<Props> {
     })
 
     return (
-      <svg viewBox={`0 0 ${maxX} ${maxY}`} width="5%" xmlns="http://www.w3.org/2000/svg">
-        <text textAnchor="middle" className="RegularText" x="10" y="18" fill={current ? 'white' : '#333333'}>
+      <svg
+        viewBox={`0 0 ${maxX} ${maxY}`}
+        key={`Phase${phaseNumber}-${uuid()}`}
+        width="5%"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <text
+          textAnchor="middle"
+          key={`Phase${phaseNumber}-${uuid()}`}
+          className="RegularText"
+          x="10"
+          y="18"
+          fill={current ? 'white' : '#333333'}
+        >
           {phaseNumber}
         </text>
         {result}
@@ -76,18 +84,18 @@ class MoveOrder extends React.Component<Props> {
   render(): React.ReactNode {
     return (
       <>
-        <svg viewBox="0 0 60 20" width="5%" xmlns="http://www.w3.org/2000/svg">
-          <text textAnchor="middle" className="RegularText" x="25" y="18" fill="white">
+        <svg key="TurnVerbiage" viewBox="0 0 60 20" width="5%" xmlns="http://www.w3.org/2000/svg">
+          <text key={uuid()} textAnchor="middle" className="RegularText" x="25" y="18" fill="white">
             Turn:
           </text>
         </svg>
-        <svg viewBox={`0 0 25 20`} width="5%" xmlns="http://www.w3.org/2000/svg">
-          <text textAnchor="middle" className="RegularText" x="10" y="18" fill="white">
+        <svg key="Turn" viewBox={`0 0 25 20`} width="5%" xmlns="http://www.w3.org/2000/svg">
+          <text key={uuid()} textAnchor="middle" className="RegularText" x="10" y="18" fill="white">
             {this.props.matchData.match.time.turn.number}
           </text>
         </svg>
-        <svg viewBox="0 0 60 20" width="5%" xmlns="http://www.w3.org/2000/svg">
-          <text textAnchor="middle" className="RegularText" x="25" y="18" fill="white">
+        <svg key="PhaseVerbiage" viewBox="0 0 60 20" width="5%" xmlns="http://www.w3.org/2000/svg">
+          <text key={uuid()} textAnchor="middle" className="RegularText" x="25" y="18" fill="white">
             Phase:
           </text>
         </svg>

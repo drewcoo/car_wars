@@ -15,11 +15,10 @@ class Weapon extends React.Component<Props> {
     const x = this.props.point.x
     const y = this.props.point.y
 
-    console.log(this.props.weaponData)
     return (
       <GenericComponent
         name={this.props.weaponData.abbreviation}
-        lcdText={this.props.weaponData.ammo}
+        lcdText={this.props.weaponData.requiresPlant ? '--' : this.props.weaponData.ammo}
         dp={this.props.weaponData.damagePoints}
         maxDp={this.props.weaponData.maxDamagePoints}
         carDimensions={this.props.carDimensions}

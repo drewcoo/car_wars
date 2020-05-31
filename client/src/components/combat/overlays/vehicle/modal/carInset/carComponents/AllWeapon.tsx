@@ -38,57 +38,33 @@ class AllWeapons extends React.Component<Props> {
   }
   frontWeapons(): React.ReactNode {
     const weapons = this.props.carData.design.components.weapons.filter((weapon: WeaponData) => weapon.location === 'F')
-    console.log('FRONT')
-    console.log(weapons)
-    if (weapons.length === 0) {
-      return <></>
-    }
-    console.log(weapons[0])
+    if (weapons.length === 0) return <></>
     const point = new Point({ x: 0, y: -0.29 * this.props.carDimensions.height })
     const weaponData = weapons[0]
-
     return <Weapon carDimensions={this.props.carDimensions} weaponData={weaponData} point={point} />
   }
 
   leftWeapons(): React.ReactNode {
     const weapons = this.props.carData.design.components.weapons.filter((weapon: WeaponData) => weapon.location === 'L')
-    console.log('LEFT')
-    console.log(weapons)
-    if (weapons.length === 0) {
-      return <></>
-    }
-    console.log(weapons[0])
+    if (weapons.length === 0) return <></>
     const point = new Point({ x: -0.25 * this.props.carDimensions.width, y: 0.05 * this.props.carDimensions.height })
     const weaponData = weapons[0]
-
     return <Weapon carDimensions={this.props.carDimensions} weaponData={weaponData} point={point} />
   }
 
   rightWeapons(): React.ReactNode {
     const weapons = this.props.carData.design.components.weapons.filter((weapon: WeaponData) => weapon.location === 'R')
-    console.log('RIGHT')
-    console.log(weapons)
-    if (weapons.length === 0) {
-      return <></>
-    }
-    console.log(weapons[0])
+    if (weapons.length === 0) return <></>
     const point = new Point({ x: 0.25 * this.props.carDimensions.width, y: 0.05 * this.props.carDimensions.height })
     const weaponData = weapons[0]
-
     return <Weapon carDimensions={this.props.carDimensions} weaponData={weaponData} point={point} />
   }
 
   backWeapons(): React.ReactNode {
     const weapons = this.props.carData.design.components.weapons.filter((weapon: WeaponData) => weapon.location === 'B')
-    console.log('BACK')
-    console.log(weapons)
-    if (weapons.length === 0) {
-      return <></>
-    }
-    console.log(weapons[0])
+    if (weapons.length === 0) return <></>
     const point = new Point({ x: 0, y: 0.37 * this.props.carDimensions.height })
     const weaponData = weapons[0]
-
     return <Weapon carDimensions={this.props.carDimensions} weaponData={weaponData} point={point} />
   }
 

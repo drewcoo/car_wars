@@ -4,32 +4,46 @@
     <line x1="SOURCE_X" y1="SOURCE_Y" x2="TARGET_X" y2="TARGET_Y" stroke="orange" opacity='.2' strokeWidth='3'/>
     <line x1="SOURCE_X" y1="SOURCE_Y" x2="TARGET_X" y2="TARGET_Y" stroke="yellow" strokeWidth='1'/>
     <animate
-      attributeType='XML'
       attributeName='stroke-opacity'
-      values='-1;0;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1;-1'
-      dur="DURATION"
-      repeatCount='indefinite'/>
-    <animate
       attributeType='XML'
-      attributeName='opacity'
-      values='-1;-1;-1;1;1;1;1;1'
+      begin="laser.begin"
       dur="DURATION"
-      repeatCount='indefinite'/>
+      repeatCount='1'
+      values='-1;0;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1;-1' />
+    <animate
+      attributeName='opacity'
+      attributeType='XML'
+      begin="laser.begin"
+      dur="DURATION"
+      repeatCount='1'
+      values='-1;-1;-1;1;1;1;1;1' />
   </g>
   <g className="fullStrengthLaser" opacity='0'>
-    <line x1="SOURCE_X" y1="SOURCE_Y" x2="TARGET_X" y2="TARGET_Y" stroke="orange" opacity='.2' strokeWidth='5'/>
-    <line x1="SOURCE_X" y1="SOURCE_Y" x2="TARGET_X" y2="TARGET_Y" stroke="white" strokeWidth='1'/>
+    <line x1="SOURCE_X" y1="SOURCE_Y" x2="TARGET_X" y2="TARGET_Y" stroke="orange" opacity='.4' strokeWidth='5'/>
+    <line x1="SOURCE_X" y1="SOURCE_Y" x2="TARGET_X" y2="TARGET_Y" stroke="white" strokeWidth='2'/>
     <animate
-      attributeType='XML'
       attributeName='stroke-opacity'
-      values='-1;0;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1;-1'
-      dur="DURATION"
-      repeatCount='indefinite'/>
-    <animate
       attributeType='XML'
-      attributeName='opacity'
-      values='-1;-1;-1;-1;-1;1;1;1'
+      begin="laser.begin"
       dur="DURATION"
-      repeatCount='indefinite'/>
+      repeatCount='1'
+      values='-1;0;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1;-1' />
+    <animate
+      attributeName='opacity'
+      attributeType='XML'
+      begin="laser.begin"
+      dur="DURATION"
+      repeatCount='1'
+      values='-1;-1;-1;-1;-1;1;1;1'/>
+    <animate
+      begin="0s;laser2.end"
+      dur="DURATIONs"
+      id="laser"
+      repeatCount="1"/>
+    <animate
+      begin="laser.end"
+      dur="DURATIONs"
+      id="laser2"
+      repeatCount="2"/>
   </g>
 </svg>

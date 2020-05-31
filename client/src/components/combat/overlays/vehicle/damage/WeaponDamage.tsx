@@ -24,9 +24,9 @@ class WeaponDamage extends React.Component<Props> {
 
   damageOrMiss(): React.ReactNode {
     if (this.props.damage.target.damage === 0) {
-      return <Whoosh damage={this.props.damage} />
+      return <Whoosh damage={this.props.damage} followWeapon={this.props.damage.source.weapon} />
     } else {
-      return <Splat damage={this.props.damage} />
+      return <Splat damage={this.props.damage} followWeapon={this.props.damage.source.weapon} />
     }
   }
 

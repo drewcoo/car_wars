@@ -175,6 +175,7 @@ class ManeuverKeystrokes extends React.Component {
           id: car.id,
           degrees: fRight ? 15 : -15,
         })
+        break
       case 'straight':
         // Make it easy to maneuver (bend from straight position) as long as that's possible.
         if (!car.status.maneuvers.includes('bend')) {

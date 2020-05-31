@@ -19,7 +19,7 @@ class SwitchUser extends React.Component {
     const lms = new LocalMatchState(this.props.matchData)
     return lms.players().map((player) => {
       return (
-        <option key={player.id} value={player.id} style={{ color: player.color }}>
+        <option key={player.id} value={player.id} style={{ color: player.color, fontSize: '50px' }}>
           {player.name}
         </option>
       )
@@ -47,7 +47,7 @@ class SwitchUser extends React.Component {
           className="Options"
           id={this.thisId}
           value={this.state.userId}
-          style={{ color: color }}
+          style={{ color: color, fontSize: '50px' }}
           onChange={this.onChange}
         >
           {this.listUsers()}

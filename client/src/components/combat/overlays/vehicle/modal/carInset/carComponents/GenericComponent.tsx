@@ -75,7 +75,7 @@ class GenericComponent extends React.Component<Props> {
     const destroyed = this.props.dp < 1
 
     let lcd = <></>
-    if (this.props.lcdText) {
+    if (typeof this.props.lcdText !== 'undefined') {
       lcd = (
         <>
           <rect

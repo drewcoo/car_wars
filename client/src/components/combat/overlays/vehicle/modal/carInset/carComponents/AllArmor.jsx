@@ -1,10 +1,8 @@
 import React from 'react'
-import LocalMatchState from '../../../../../lib/LocalMatchState'
 
 /*
 interface Props {
   carData: any
-  
   carDimensions: Dimensions
 }
 */

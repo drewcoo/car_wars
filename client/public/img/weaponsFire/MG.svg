@@ -1,81 +1,85 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" id="machineGun-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y" className="machineGun">
-  <g className="machineGun" opacity='0'>
+  <g className="machineGun" opacity='1'>
   <circle key="volley-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y-0" r="1" fill="gray" stroke="black">
       <animateMotion
-        begin="0s"
+        begin="machineGun.begin"
         dur="DURATIONs"
         path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y"
-        repeatCount='indefinite'/>
+        repeatCount='2'/>
     </circle>
     <circle key="volley-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y-1" r="1" fill="gray" stroke="black">
       <animateMotion
-        begin="0.02s"
+        begin="machineGun.begin+0.02s"
         dur="DURATIONs"
         path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y"
-        repeatCount='indefinite'/>
+        repeatCount='2'/>
     </circle>
     <circle key="volley-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y-2" r="1" fill="gray" stroke="black">
       <animateMotion
-        begin="0.04s"
+        begin="machineGun.begin+0.04s"
         dur="DURATIONs"
         path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y"
-        repeatCount='indefinite'/>
+        repeatCount='2'/>
     </circle>
     <circle key="volley-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y-3" r="1" fill="gray" stroke="black">
       <animateMotion
-        begin="0.06s"
+        begin="machineGun.begin+0.06s"
         dur="DURATIONs"
         path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y"
-        repeatCount='indefinite'/>
+        repeatCount='2'/>
     </circle>
     <circle key="volley-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y-4" r="1" fill="gray" stroke="black">
       <animateMotion
-        begin="0.08s"
+        begin="machineGun.begin+0.08s"
         dur="DURATIONs"
         path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y"
-        repeatCount='indefinite'/>
+        repeatCount='2'/>
     </circle>
     <circle key="volley-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y-5" r="1" fill="gray" stroke="black">
       <animateMotion
-        begin="0.10s"
+        begin="machineGun.begin+0.10s"
         dur="DURATIONs"
         path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y"
-        repeatCount='indefinite'/>
+        repeatCount='2'/>
     </circle>
     <circle key="volley-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y-6" r="1" fill="gray" stroke="black">
       <animateMotion
-        begin="0.12s"
+        begin="machineGun.begin+0.12s"
         dur="DURATIONs"
         path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y"
-        repeatCount='indefinite'/>
+        repeatCount='2'/>
     </circle>
     <circle key="volley-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y-7" r="1" fill="gray" stroke="black">
       <animateMotion
-        begin="0.14s"
+        begin="machineGun.begin+0.14s"
         dur="DURATIONs"
         path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y"
-        repeatCount='indefinite'/>
+        repeatCount='2'/>
     </circle>
     <circle key="volley-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y-8" r="1" fill="gray" stroke="black">
       <animateMotion
-        begin="0.16s"
+        begin="machineGun.begin+0.16s"
         dur="DURATIONs"
         path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y"
-        repeatCount='indefinite'/>
+        repeatCount='2'/>
     </circle>
     <circle key="volley-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y-9" r="1" fill="gray" stroke="black">
       <animateMotion
-        begin="0.18s"
+        begin="machineGun.begin+0.18s"
         dur="DURATIONs"
         path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y"
-        repeatCount='indefinite'/>
+        repeatCount='2'/>
     </circle>
     <animate
-      attributeType="XML"
-      attributeName="opacity"
-      values="1"
-      dur=".03s"
-      repeatCount="indefinite"/>
+      begin="0s;machineGun2.end"
+      dur="DURATIONs"
+      id="machineGun"
+      repeatCount="2"/>
+    <animate
+      begin="machineGun.end"
+      dur="DURATIONs"
+      id="machineGun2"
+      repeatCount="2"/>
   </g>
 </svg>

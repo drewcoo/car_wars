@@ -97,12 +97,14 @@ class SpeedModal extends React.Component {
       bugMeNot: this.handleBugMeNot,
     }
 
+    /*
     let color = car.color,
       name = car.name
     if (this.props.matchData.match.time.phase.moving) {
       color = lms.car({ id: this.props.matchData.match.time.phase.moving }).color
       name = lms.car({ id: this.props.matchData.match.time.phase.moving }).name
     }
+    */
 
     return (
       <div onClick={this.handleEatIt}>
@@ -115,7 +117,7 @@ class SpeedModal extends React.Component {
           <br></br>
           <span className="flexCentered">speed</span>
           <span className="flexCentered">changed</span>
-          <br/>
+          <br />
         </ReactModal>
         <ReactModal
           className={'Modal.Content'}

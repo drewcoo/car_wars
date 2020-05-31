@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" id="rocketLauncher-SOURCE_X-SOURCE_Y-TARGET_X-TARGET_Y" className="rocketLauncher">
-  <g className="rocketLauncher" transform="ROTATION scale(0.7)" opacity='0'>
+  <g className="rocketLauncher" transform="ROTATION scale(0.7)">
     <g className='rocket-flame'>
       <polygon points='-7,-3, -17,-4 -12,0, -17,4, -7,3'/>
       <polygon points='-10,-2, -20,-1, -34,0, -20,1, -10,2'/>
@@ -30,15 +30,19 @@
       <polygon points="18,-3,21,-1,21,1,18,3" fill='blue' stroke='darkolivegreen'/>
     </g>
     <animateMotion
-      begin="0.00s"
+      begin="rocketLauncher.begin"
       dur="DURATIONs"
-      repeatCount="indefinite"
+      repeatCount="1"
       path="MSOURCE_X,SOURCE_Y LTARGET_X,TARGET_Y "/>
     <animate
-      attributeType="XML"
-      attributeName="opacity"
-      values="1"
-      dur=".03s"
-      repeatCount="indefinite"/>
+      begin="0s;rocketLauncher2.end"
+      dur="DURATIONs"
+      id="rocketLauncher"
+      repeatCount="1"/>
+    <animate
+      begin="rocketLauncher.end"
+      dur="DURATIONs"
+      id="rocketLauncher2"
+      repeatCount="2"/>
   </g>
 </svg>
