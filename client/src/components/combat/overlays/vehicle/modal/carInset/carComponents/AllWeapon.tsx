@@ -41,7 +41,14 @@ class AllWeapons extends React.Component<Props> {
     if (weapons.length === 0) return <></>
     const point = new Point({ x: 0, y: -0.29 * this.props.carDimensions.height })
     const weaponData = weapons[0]
-    return <Weapon carDimensions={this.props.carDimensions} weaponData={weaponData} point={point} />
+    return (
+      <Weapon
+        carDimensions={this.props.carDimensions}
+        poweredDown={this.props.carData.design.components.powerPlant.damagePoints <= 0}
+        weaponData={weaponData}
+        point={point}
+      />
+    )
   }
 
   leftWeapons(): React.ReactNode {
@@ -49,7 +56,14 @@ class AllWeapons extends React.Component<Props> {
     if (weapons.length === 0) return <></>
     const point = new Point({ x: -0.25 * this.props.carDimensions.width, y: 0.05 * this.props.carDimensions.height })
     const weaponData = weapons[0]
-    return <Weapon carDimensions={this.props.carDimensions} weaponData={weaponData} point={point} />
+    return (
+      <Weapon
+        carDimensions={this.props.carDimensions}
+        poweredDown={this.props.carData.design.components.powerPlant.damagePoints <= 0}
+        weaponData={weaponData}
+        point={point}
+      />
+    )
   }
 
   rightWeapons(): React.ReactNode {
@@ -57,7 +71,14 @@ class AllWeapons extends React.Component<Props> {
     if (weapons.length === 0) return <></>
     const point = new Point({ x: 0.25 * this.props.carDimensions.width, y: 0.05 * this.props.carDimensions.height })
     const weaponData = weapons[0]
-    return <Weapon carDimensions={this.props.carDimensions} weaponData={weaponData} point={point} />
+    return (
+      <Weapon
+        carDimensions={this.props.carDimensions}
+        poweredDown={this.props.carData.design.components.powerPlant.damagePoints <= 0}
+        weaponData={weaponData}
+        point={point}
+      />
+    )
   }
 
   backWeapons(): React.ReactNode {
@@ -65,7 +86,14 @@ class AllWeapons extends React.Component<Props> {
     if (weapons.length === 0) return <></>
     const point = new Point({ x: 0, y: 0.37 * this.props.carDimensions.height })
     const weaponData = weapons[0]
-    return <Weapon carDimensions={this.props.carDimensions} weaponData={weaponData} point={point} />
+    return (
+      <Weapon
+        carDimensions={this.props.carDimensions}
+        poweredDown={this.props.carData.design.components.powerPlant.damagePoints <= 0}
+        weaponData={weaponData}
+        point={point}
+      />
+    )
   }
 
   render(): React.ReactNode {

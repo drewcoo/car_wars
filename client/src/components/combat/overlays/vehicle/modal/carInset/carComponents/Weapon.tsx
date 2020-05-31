@@ -5,9 +5,10 @@ import Dimensions from '../../../../../../../utils/Dimensions'
 
 interface Props {
   carDimensions: Dimensions
+  point: Point
+  poweredDown: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   weaponData: any
-  point: Point
 }
 
 class Weapon extends React.Component<Props> {
@@ -17,12 +18,13 @@ class Weapon extends React.Component<Props> {
 
     return (
       <GenericComponent
-        name={this.props.weaponData.abbreviation}
-        lcdText={this.props.weaponData.requiresPlant ? '--' : this.props.weaponData.ammo}
-        dp={this.props.weaponData.damagePoints}
-        maxDp={this.props.weaponData.maxDamagePoints}
         carDimensions={this.props.carDimensions}
+        dp={this.props.weaponData.damagePoints}
+        lcdText={this.props.weaponData.requiresPlant ? '--' : this.props.weaponData.ammo}
+        maxDp={this.props.weaponData.maxDamagePoints}
+        name={this.props.weaponData.abbreviation}
         point={new Point({ x, y })}
+        poweredDown={this.props.poweredDown}
       />
     )
   }

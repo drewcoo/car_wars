@@ -5,13 +5,14 @@ import DamageBoxes from './DamageBoxes'
 import '../../../../../../../App.css'
 
 interface Props {
-  tire?: boolean
-  name?: string
-  lcdText?: number
-  dp: number
-  maxDp: number
-  point: Point
   carDimensions: Dimensions
+  dp: number
+  lcdText?: number
+  maxDp: number
+  name?: string
+  poweredDown?: boolean
+  point: Point
+  tire?: boolean
 }
 
 class GenericComponent extends React.Component<Props> {
@@ -72,7 +73,7 @@ class GenericComponent extends React.Component<Props> {
     const x = centerX + this.props.point.x - GenericComponent.dimensions().width / 2
     const y = centerY + this.props.point.y - GenericComponent.dimensions().height / 2
 
-    const destroyed = this.props.dp < 1
+    const outage = this.props.dp < 1 || this.props.poweredDown
 
     let lcd = <></>
     if (typeof this.props.lcdText !== 'undefined') {
@@ -83,15 +84,15 @@ class GenericComponent extends React.Component<Props> {
             y={y + row1 + 3}
             width={GenericComponent.dimensions().width - 16}
             height={GenericComponent.fontPx()}
-            style={destroyed ? style.lcdPoweredOff : style.lcdDisplay}
+            style={outage ? style.lcdPoweredOff : style.lcdDisplay}
           />
           <text
             textAnchor="middle"
             x={x + GenericComponent.dimensions().height / 2}
             y={y + row2}
-            style={destroyed ? style.lcdTextPoweredOff : style.lcdText}
+            style={outage ? style.lcdTextPoweredOff : style.lcdText}
           >
-            {destroyed ? '88' : this.props.lcdText}
+            {outage ? '88' : this.props.lcdText}
           </text>
         </>
       )
@@ -109,7 +110,7 @@ class GenericComponent extends React.Component<Props> {
           y={y}
           width={GenericComponent.dimensions().width}
           height={GenericComponent.dimensions().height}
-          style={destroyed ? style.red : style.default}
+          style={outage ? style.red : style.default}
         />
         {lcd}
         <text textAnchor="middle" x={x + GenericComponent.dimensions().width / 2} y={y + row1} style={style.name}>
