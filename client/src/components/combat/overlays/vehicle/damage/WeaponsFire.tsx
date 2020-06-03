@@ -2,6 +2,7 @@ import * as React from 'react'
 import SVG from 'react-inlinesvg'
 import Damage from '../../../../../types/Damage'
 // import Sound from 'react-sound'
+import Point from '../../../../../utils/geometry/Point'
 
 interface Props {
   damage: Damage
@@ -37,18 +38,20 @@ class WeaponsFire extends React.Component<Props> {
   }
 
   durationFactor(): number {
-    const base = 1
+    const srcPoint = new Point(this.props.damage.source.point)
+    const tgtPoint = new Point(this.props.damage.target.point)
+    const distance = srcPoint.distanceTo(tgtPoint)
     switch (this.props.damage.source.weapon) {
       case 'heavyRocket':
-        return 2 * base
+        return 0.004 * distance
       case 'laser':
-        return 1.5 * base
+        return 0.006 * distance
       case 'machineGun':
-        return 0.5 * base
+        return 0.002 * distance
       case 'rocketLauncher':
-        return 1.5 * base
+        return 0.006 * distance
       default:
-        return 1 * base
+        return 0.004 * distance
     }
   }
 
