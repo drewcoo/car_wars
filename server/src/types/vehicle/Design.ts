@@ -5,6 +5,7 @@ export const typeDef = `
     name: String!
     attributes: DesignAttributes!
     components: Components!
+    imageFile: String!
   }
 
   ${ComponentTypes}

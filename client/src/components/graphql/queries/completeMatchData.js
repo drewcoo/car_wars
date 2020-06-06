@@ -118,6 +118,7 @@ const completeMatchData = gql`
               type
             }
           }
+          imageFile
         }
         log
         modals {

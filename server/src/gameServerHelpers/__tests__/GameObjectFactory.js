@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { v4 as uuid } from 'uuid'
 import GeometryFactory from '../../utils/geometry/__tests__/GeometryFactory'
-import { Design as DesignData } from '../../vehicleDesigns/KillerKart'
+import { Design as DesignData } from '../../vehicle/designs/KillerKart'
 
 class GameObjectFactory {
   static vehicle({ id = `car-${uuid()}`, speed = 50 }) {

@@ -37,7 +37,7 @@ resolvers.Mutation.createCompleteMatch = async (parent, args) => {
   let index = 0
   for (const elem of args.playerAndDesign) {
     let player = await resolvers.Mutation.createPlayer(null, {
-        name: elem.playerName,
+      name: elem.playerName,
       color: elem.playerColor,
       id: elem.playerId,
     })
@@ -85,8 +85,6 @@ resolvers.Query.completeMatchData = async (parent, args) => {
   const players = await Promise.map(cars, (car) => {
     return resolvers.Query.player(null, { id: car.playerId })
   })
-  // write every time we're queried
-  // process.stdout.write('.')
   return {
     match: match,
     cars: cars,

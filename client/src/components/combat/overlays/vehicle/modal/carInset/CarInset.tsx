@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import React from 'react'
+import SVG from 'react-inlinesvg'
 import InsetLayout from './InsetLayout'
 import LocalMatchState from '../../../../lib/LocalMatchState'
 import '.././../../../../../App.css'
@@ -29,28 +30,6 @@ class CarInset extends React.Component<Props> {
     const tempFacing = inset ? 0 : tempRect.facing
     const opacity = active ? 1 / 2 : 1
 
-    const bodyStyle = {
-      fill: car.color,
-      stroke: 'black',
-      strokeWidth: 5,
-      opacity: opacity,
-    }
-    const roofStyle = {
-      fill: car.color,
-      opacity: opacity,
-    }
-    const mainBodyStyle = {
-      fill: car.color,
-      stroke: 'black',
-      strokeWidth: 2,
-      opacity: opacity,
-    }
-    const glassStyle = {
-      fill: 'white',
-      stroke: 'gray',
-      strokeWidth: 3,
-      opacity: opacity,
-    }
     const manyColoredFill = (): string => {
       if (car.phasing.collisionDetected) {
         return 'red'
@@ -67,13 +46,6 @@ class CarInset extends React.Component<Props> {
       strokeWidth: 5,
       opacity: car.phasing.collisionDetected ? 1 : opacity,
     }
-
-    const margin = width / 6
-    const smidge = width / 15 // bug?
-    const hoodLength = 6 * margin
-    const windshieldMargin = 2 * margin - smidge / 2
-    const roofLength = 3 * margin
-    const roofWidth = width - 1.75 * windshieldMargin
 
     const rotatePoint = {
       x: tempBrPoint.x,
@@ -95,10 +67,14 @@ class CarInset extends React.Component<Props> {
         )
       }
     }
+    /*
+    x={tempBrPoint.x - width}
+          y={tempBrPoint.y - length}
+    */
 
+    console.log(car.design.imageFile)
     return (
       <svg className="flexCentered" id={`${car.id}-inset`} x="0" y="0" width={width} height={length}>
-        {/* outline */}
         <rect
           x={tempBrPoint.x - width}
           y={tempBrPoint.y - length}
@@ -107,55 +83,16 @@ class CarInset extends React.Component<Props> {
           style={outlineStyle}
           transform={transform}
         />
-        {/* body */}
-        <rect
-          rx={width / 4}
-          x={tempBrPoint.x - width + margin}
-          y={tempBrPoint.y - length + 2 * margin}
-          width={width - 2 * margin}
-          height={length - 3 * margin}
-          style={mainBodyStyle}
-          transform={transform}
+
+        <SVG
+          x={0}
+          y={0}
+          width={width}
+          height={length}
+          style={{ opacity: opacity, fill: car.color }}
+          src={car.design.imageFile}
         />
-        {/* windshield/back window */}
-        <rect
-          rx={width / 8}
-          x={tempBrPoint.x - width + windshieldMargin}
-          y={tempBrPoint.y - length + 5.5 * margin}
-          width={width - 2 * windshieldMargin}
-          height={1.5 * roofLength}
-          style={glassStyle}
-          transform={transform}
-        />
-        {/* side windows */}
-        <rect
-          rx={width / 8}
-          x={tempBrPoint.x - width / 2 - (roofWidth + smidge) / 2}
-          y={tempBrPoint.y - length + hoodLength + 2 * smidge}
-          width={roofWidth + smidge}
-          height={roofLength - smidge}
-          style={glassStyle}
-          transform={transform}
-        />
-        {/* roof */}
-        <rect
-          rx={width / 8}
-          x={tempBrPoint.x - width / 2 - roofWidth / 2}
-          y={tempBrPoint.y - length + hoodLength + (smidge * 3) / 2}
-          width={roofWidth}
-          height={roofLength}
-          style={roofStyle}
-          transform={transform}
-        />
-        {/* front pip */}
-        <circle
-          visibility={!inset ? 'visible' : 'hidden'}
-          cx={tempBrPoint.x - width / 2}
-          cy={tempBrPoint.y - length + 2 + smidge}
-          r={width / 16}
-          style={bodyStyle}
-          transform={transform}
-        />
+
         {showInset()}
       </svg>
     )

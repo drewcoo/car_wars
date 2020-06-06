@@ -3,10 +3,13 @@ import { INCH } from '../../../../utils/constants'
 import '../../../../App.css'
 import LocalMatchState from '../../lib/LocalMatchState'
 
-class Reticle extends React.Component {
-  lms: any
-  props: any
-  drawReticle = ({ x, y, name = '' }: { x: number; y: number; name: string }) => {
+interface Props {
+  carId: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  matchData: any
+}
+class Reticle extends React.Component<Props> {
+  drawReticle({ x, y, name = '' }: { x: number; y: number; name: string }): React.ReactNode {
     return (
       <g key={`target-${x}=${y}`} className="Reticle">
         <text className="ReticleText" x={x + 12} y={y - 12}>
@@ -21,7 +24,7 @@ class Reticle extends React.Component {
     )
   }
 
-  draw() {
+  draw(): React.ReactNode {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
     if (!car || !lms.canFire({ car })) {
@@ -58,7 +61,7 @@ class Reticle extends React.Component {
     }
   }
 
-  render() {
+  render(): React.ReactNode {
     return <>{this.draw()}</>
   }
 }

@@ -239,6 +239,14 @@ body {
   background-color: black;
   /*color: 'black';*/
 }
+.SetupPage {
+  background: black;
+  border-color: #5b5b5b;
+  color: white;
+  font-family: fantasy;
+  font-size: 30px;
+  font-variant: small-caps;
+}
 
 @font-face {
   font-family: 'Segment7Standard';

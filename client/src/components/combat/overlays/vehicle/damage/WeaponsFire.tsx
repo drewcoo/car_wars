@@ -72,7 +72,7 @@ class WeaponsFire extends React.Component<Props> {
     return (
       <>
         {this.sounds()}
-        <SVG src={this.svgFile()} duration={this.durationFactor()} preProcessor={(code): string => preProcess(code)} />
+        <SVG src={this.svgFile()} preProcessor={(code): string => preProcess(code)} />
       </>
     )
   }

@@ -13,6 +13,7 @@ const pubsub = new PubSub()
 
 export const typeDef = `
   extend type Mutation {
+    
     addMatch: Match
     createCompleteMatch(mapName: String!, playerAndDesign: [CarInput!]): Match
     matchAddCar(matchId: ID!, carId: ID!): Match
@@ -37,6 +38,7 @@ export const typeDef = `
     matches: [Match]
     match(matchId: ID!): Match
     nothings(matchId: ID!): [LittleNothing]
+    setupOptions: SetupOptions
   }
 
   extend type Subscription {
@@ -101,6 +103,10 @@ export const typeDef = `
     reflexRoll: Int
     reflexTieBreaker: Int
   }
+
+  type SetupOptions {
+    designs: [Design]
+  }
 `
 
 const allTheNothings: any = {}
@@ -140,6 +146,10 @@ export const resolvers = {
       }
       return allTheNothings[args.matchId]
     },
+
+    setupOptions: () => {
+      return { designs: DATA.designs }
+    }
   },
 
   Subscription: {
@@ -263,25 +273,13 @@ export const resolvers = {
 
     ackDamage: (parent: any, args: any) => {
       const match = Match.withId({ id: args.matchId })
-      console.log(match.time.phase.playersToAckDamage)
-      console.log(`ack damage ${args.playerId}`)
       _.pull(match.time.phase.playersToAckDamage, args.playerId)
-     // const ptadIndex = match.time.phase.playersToAckDamage.indexOf(args.playerId)
-      /*(if (ptadIndex === -1) {
-        throw new Error(`player not waiting to ack damage: ${args.playerId}`)
-      }*/
-     // match.time.phase.playersToAckDamage.splice(ptadIndex, 1)
-      console.log(match.time.phase.playersToAckDamage)
-      console.log(' ')
       Time.subphase6Damage({ match })
     },
 
     ackSpeedChange: (parent: any, args: any) => {
       const match = Match.withId({ id: args.matchId })
       const index = match.time.phase.playersToAckSpeedChange.indexOf(args.playerId)
-      /*if (index === -1) {
-        throw new Error(`player not waiting to ack speed change: ${args.playerId}`)
-      }*/
       match.time.phase.playersToAckSpeedChange.splice(index, 1)
       Time.subphase3RevealSpeedChange({ match })
     },

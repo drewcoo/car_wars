@@ -43,6 +43,7 @@ class Match extends React.Component {
           if (document.getElementById('navOptions')) {
             document.getElementById('navOptions').style.display = 'none'
           }
+          console.log(data)
 
           const matchData = data.completeMatchData
           matchData.location = this.props.location

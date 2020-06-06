@@ -17,24 +17,23 @@ class List extends React.Component {
       throw new Error('no data')
     }
     const { loading, matches, error } = this.props.data
-    if (loading) return (<div>loading </div>)
-    if (error) return (<div>{error} </div>)
+    if (loading) return <div>loading </div>
+    if (error) return <div>{error} </div>
 
     return (
       <ul>
-        { matches.map(m => {
+        {matches.map((m) => {
           return (
-            <span key={ m.id }>
-              { m.status }{': '}
-              <Link
-                style={ this.colorStyle() }
-                to={`/match/${m.id}`}
-              >
-                { m.id }
-              </Link><br/>
+            <span key={m.id}>
+              {m.status}
+              {': '}
+              <Link style={this.colorStyle()} to={`/match/${m.id}`}>
+                {m.id}
+              </Link>
+              <br />
             </span>
           )
-        }) }
+        })}
       </ul>
     )
   }
@@ -53,11 +52,7 @@ class List extends React.Component {
     if (document.getElementById('navOptions')) {
       document.getElementById('navOptions').style.display = ''
     }
-    return (
-      <div style={ this.colorStyle() }>
-        { this.listList() }
-      </div>
-    )
+    return <div style={this.colorStyle()}>{this.listList()}</div>
   }
 }
 

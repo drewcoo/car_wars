@@ -8,14 +8,14 @@ import Maneuver from '../gameServerHelpers/settings/Maneuver'
 import Speed from '../gameServerHelpers/settings/Speed'
 import WeaponSettings from '../gameServerHelpers/settings/WeaponSettings'
 import Vehicle from '../gameServerHelpers/Vehicle'
-import { Design as DesignData } from '../vehicleDesigns/KillerKart'
+//import { Design as DesignData } from '../vehicle/designs/KillerKart'
 import { typeDef as DesignTypes } from './vehicle/Design'
 
 DATA.cars = []
 
 const fillDesign = (designName: string) => {
-  // BUGBUG: force Killer Kart right now
-  return _.cloneDeep(DesignData)
+  let result: any = DATA.designs.find((element: any) => element.name === designName)
+  return _.cloneDeep(result)
 }
 
 // why is there a collisionDetected bool if there's a collisions array?
@@ -67,6 +67,7 @@ export const typeDef = `
   extend type Query {
     car(id: ID!): Car
     cars: [Car]
+    designs: [Design]
     driver(carId: ID!): CrewMember
     modals(carId: ID!): [Modal]
   }
@@ -194,6 +195,9 @@ export const resolvers = {
     cars: () => {
       return DATA.cars
     },
+    designs: () => {
+      return DATA.designs
+    },
     driver: (parent: any, args: any) => {
       const car = Vehicle.withId({ id: args.carId })
       return Vehicle.driver({ vehicle: car })
@@ -208,7 +212,6 @@ export const resolvers = {
     createCar: (parent: any, args: any) => {
       const player = DATA.players.find((element: any) => element.id === args.playerId)
       const design = fillDesign(args.designName)
-
       const startingSpeed = 50
 
       const vehicle = {
@@ -240,7 +243,7 @@ export const resolvers = {
       }
 
       args.crew.forEach((crewMember: any) => {
-        const seat = vehicle.design.components.crew.find((seat) => seat.role === crewMember.role)
+        const seat = vehicle.design.components.crew.find((seat: any) => seat.role === crewMember.role)
         if (!seat) {
           throw new Error(`no seat for a ${crewMember.role}!`)
         }

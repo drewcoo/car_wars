@@ -3,10 +3,15 @@ import LocalMatchState from '../../lib/LocalMatchState'
 import Rectangle from '../../../../utils/geometry/Rectangle'
 import '../../../../App.css'
 
-class KillMessage extends React.Component {
-  props: any
+interface Props {
+  carId: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  matchData: any
+}
 
-  msgStyle() {
+class KillMessage extends React.Component<Props> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  msgStyle(): any {
     return {
       fill: 'black',
       stroke: 'white',
@@ -17,7 +22,8 @@ class KillMessage extends React.Component {
     }
   }
 
-  nameStyle(color: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  nameStyle(color: string): any {
     return {
       fill: color,
       stroke: 'white',
@@ -27,7 +33,7 @@ class KillMessage extends React.Component {
     }
   }
 
-  render() {
+  render(): React.ReactNode {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
     if (!car.status.killed) {
@@ -41,17 +47,10 @@ class KillMessage extends React.Component {
     const x = rect.center().x
     const y = rect.center().y
 
-    /*
-    <text x = {x} y = {y + 35} style={this.nameStyle(killerPlayer.color)}>
-    {killerPlayer.name}
-    </text>
-    */
-
     return (
       <g>
         <image x={x - 16} y={y - 30} width="45" height="45" href="/img/skull_and_bones.svg" />
         <text x={x} y={y} style={this.msgStyle()} dy="0">
-          {/* <tspan text-anchor="middle" >killed by</tspan> */}
           <tspan textAnchor="middle" x={x} dy="1em" style={this.nameStyle(killerPlayer.color)}>
             {killerPlayer.name}
           </tspan>

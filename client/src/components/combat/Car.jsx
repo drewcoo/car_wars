@@ -1,13 +1,13 @@
+import PropTypes from 'prop-types'
 import * as React from 'react'
-
+import SVG from 'react-inlinesvg'
 import '../../App.css'
 import { INCH } from '../../utils/constants'
 import Rectangle from '../../utils/geometry/Rectangle'
-import KillMessage from './overlays/vehicle/KillMessage'
 import LocalMatchState from './lib/LocalMatchState'
-import CarModal from './overlays/vehicle/modal/CarModal'
 import TimingOverlays from './overlays/TimingOverlays'
-import PropTypes from 'prop-types'
+import KillMessage from './overlays/vehicle/KillMessage'
+import CarModal from './overlays/vehicle/modal/CarModal'
 
 class Car extends React.Component {
   constructor(props) {
@@ -43,6 +43,18 @@ class Car extends React.Component {
       return opacity
     }
     return 0
+  }
+
+  opacity() {
+    const lms = new LocalMatchState(this.props.matchData)
+    let result = 1
+    if (lms.isActiveCar({ id: this.props.id }) && !this.props.active && !lms.awaitAllSpeedsSet()) {
+      result = 0.5
+    }
+    if (this.props.shadow) {
+      result = 1 / 4
+    }
+    return result
   }
 
   wipeoutLabel(car, x, y) {
@@ -104,111 +116,22 @@ class Car extends React.Component {
     )
   }
 
-  style(car) {
-    const opacity = () => {
-      const lms = new LocalMatchState(this.props.matchData)
-      let result = 1
-      if (lms.isActiveCar({ id: this.props.id }) && !this.props.active && !lms.awaitAllSpeedsSet()) {
-        result = 0.5
-      }
-      if (this.props.shadow) {
-        result = 1 / 4
-      }
-      return result
-    }
-
-    return {
-      Body: {
-        fill: car.color,
-        stroke: 'black',
-        strokeWidth: 3,
-        opacity: opacity(),
-      },
-      Roof: {
-        fill: car.color,
-        opacity: opacity(),
-      },
-      MainBody: {
-        fill: car.color,
-        stroke: 'black',
-        strokeWidth: 2,
-        opacity: opacity(),
-      },
-      Glass: {
-        fill: 'white',
-        stroke: 'gray',
-        strokeWidth: 3,
-        opacity: opacity(),
-      },
-      Outline: {
-        fill: this.manyColoredFill(),
-        stroke: 'black',
-        strokeWidth: 2,
-        opacity: this.collisionDetected ? 1 : opacity(),
-        fillOpacity: this.manyColoredOpacity(opacity()),
-      },
-    }
-  }
-
   vehicleVisualDesign({ car, tempRect, transform }) {
-    const margin = tempRect.width / 6
-    const smidge = tempRect.width / 15 // bug?
-    const hoodLength = 6 * margin
-    const windshieldMargin = 2 * margin - smidge / 2
-    const roofLength = 3 * margin
-    const roofWidth = tempRect.width - 1.75 * windshieldMargin
+    const x = tempRect.brPoint().x - tempRect.width //+ margin
+    const y = tempRect.brPoint().y - tempRect.length //+ 2 * margin
+
+    console.log(car.design.imageFile)
 
     return (
-      <>
-        {/* body */}
-        <rect
-          rx={tempRect.width / 4}
-          x={tempRect.brPoint().x - tempRect.width + margin}
-          y={tempRect.brPoint().y - tempRect.length + 2 * margin}
-          width={tempRect.width - 2 * margin}
-          height={tempRect.length - 3 * margin}
-          style={this.style(car).MainBody}
-          transform={transform}
-        />
-        {/* windshield/back window */}
-        <rect
-          rx={tempRect.width / 8}
-          x={tempRect.brPoint().x - tempRect.width + windshieldMargin}
-          y={tempRect.brPoint().y - tempRect.length + 5.5 * margin}
-          height={1.5 * roofLength}
-          width={tempRect.width - 2 * windshieldMargin}
-          style={this.style(car).Glass}
-          transform={transform}
-        />
-        {/* side windows */}
-        <rect
-          rx={tempRect.width / 8}
-          x={tempRect.brPoint().x - tempRect.width / 2 - (roofWidth + smidge) / 2}
-          y={tempRect.brPoint().y - tempRect.length + hoodLength + 2 * smidge}
-          width={roofWidth + smidge}
-          height={roofLength - smidge}
-          style={this.style(car).Glass}
-          transform={transform}
-        />
-        {/* roof */}
-        <rect
-          rx={tempRect.width / 8}
-          x={tempRect.brPoint().x - tempRect.width / 2 - roofWidth / 2}
-          y={tempRect.brPoint().y - tempRect.length + hoodLength + (smidge * 3) / 2}
-          width={roofWidth}
-          height={roofLength}
-          style={this.style(car).Roof}
-          transform={transform}
-        />
-        {/* front pip */}
+      <g transform={`rotate(${tempRect.facing + 90} ${x + tempRect.width} ${y + tempRect.length})`}>
+        <SVG src={car.design.imageFile} x={x} y={y} style={{ opacity: this.opacity(), fill: car.color }} />
         <circle
           cx={tempRect.brPoint().x - tempRect.width / 2}
-          cy={tempRect.brPoint().y - tempRect.length + 2 + smidge}
+          cy={tempRect.brPoint().y - 0.95 * tempRect.length + 2}
           r={tempRect.width / 16}
-          style={this.style(car).Body}
-          transform={transform}
+          style={{ fill: 'black', stroke: 'black' }}
         />
-      </>
+      </g>
     )
   }
 
@@ -279,7 +202,13 @@ class Car extends React.Component {
             y={tempRect.brPoint().y - tempRect.length}
             width={tempRect.width}
             height={tempRect.length}
-            style={this.style(car).Outline}
+            style={{
+              fill: this.manyColoredFill(),
+              stroke: 'black',
+              strokeWidth: 2,
+              opacity: this.collisionDetected ? 1 : this.opacity(),
+              fillOpacity: this.manyColoredOpacity(this.opacity()),
+            }}
             transform={transform}
           />
           {this.vehicleVisualDesign({ car, tempRect, transform })}

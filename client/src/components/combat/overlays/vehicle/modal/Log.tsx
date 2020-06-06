@@ -2,17 +2,22 @@ import * as React from 'react'
 import LocalMatchState from '../../../lib/LocalMatchState'
 import uuid from 'uuid/v4'
 
-class Log extends React.Component {
-  props: any
-  lms: any
+interface Props {
+  carId: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  matchData: any
+}
 
-  entries(car: any) {
+class Log extends React.Component<Props> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  entries(car: any): React.ReactNode {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return car.log.map((entry: any) => {
       return <li key={uuid()}>{entry}</li>
     })
   }
 
-  render() {
+  render(): React.ReactNode {
     const lms = new LocalMatchState(this.props.matchData)
     const car = this.props.carId ? lms.car({ id: this.props.carId }) : lms.activeCar()
     // const car = new LocalMatchState(this.props.matchData).activeCar()
