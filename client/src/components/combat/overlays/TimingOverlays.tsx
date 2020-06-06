@@ -12,7 +12,9 @@ import ShowDamage from './vehicle/ShowDamage'
 import SpeedChange from './vehicle/SpeedChange'
 
 interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   client: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   matchData: any
   id: string
 }
@@ -40,11 +42,12 @@ class TimingOverlays extends React.Component<Props> {
         return (
           <SpeedModal key={uuid()} client={this.props.client} matchData={this.props.matchData} carId={this.props.id} />
         )
+
       case '3_reveal_speed_change':
         return (
           <>
             <ShowDamage key={`damCar-${this.props.id}`} matchData={this.props.matchData} carId={this.props.id} />
-            <Reticle client={this.props.client} carId={this.props.id} matchData={this.props.matchData} />
+            <Reticle carId={this.props.id} matchData={this.props.matchData} />
             <RevealSpeedChangeModal
               key={uuid()}
               client={this.props.client}

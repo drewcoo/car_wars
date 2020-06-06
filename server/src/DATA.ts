@@ -7,9 +7,9 @@ fs.readFile(`./src/vehicle/components/weapons.json`, 'utf8', (err, data) => {
 })
 
 const designs: any = []
-fs.readdir('./src/vehicle/newDesigns', (err, files) => {
+fs.readdir('./src/vehicle/designs', (err, files) => {
   files.forEach(fileName => {
-    fs.readFile(`./src/vehicle/newDesigns/${fileName}`, 'utf8', (err, data) => {
+    fs.readFile(`./src/vehicle/designs/${fileName}`, 'utf8', (err, data) => {
       let json = JSON.parse(data)
       json.components.weapons = json.components.weapons.map((weapon: any) => {
         let found = _.cloneDeep(WEAPONS.find((elem: any) => elem.abbreviation === weapon.abbreviation))
