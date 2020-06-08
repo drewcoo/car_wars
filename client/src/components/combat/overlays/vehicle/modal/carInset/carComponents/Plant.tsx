@@ -18,7 +18,7 @@ class Plant extends React.Component<Props> {
         dp={this.props.carData.design.components.powerPlant.damagePoints}
         maxDp={this.props.carData.design.components.powerPlant.maxDamagePoints}
         carDimensions={this.props.carDimensions}
-        point={new Point({ x: 0, y: -0.1 * this.props.carDimensions.height })}
+        point={new Point({ x: 0, y: -0.15 * this.props.carDimensions.height })}
       />
     )
   }

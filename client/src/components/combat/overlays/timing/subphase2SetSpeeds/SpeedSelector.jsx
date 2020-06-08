@@ -44,15 +44,16 @@ class SpeedSelector extends React.Component {
   }
 
   listSpeedChanges(car) {
-    var result = []
-    for (var i = 0; i < car.phasing.speedChanges.length; i++) {
+    const result = []
+    for (let i = 0; i < car.phasing.speedChanges.length; i++) {
       result.push(
         <option
           key={i}
           value={i}
-          style={{ backgroundColor: this.speedColor(car, i), fontSize: '50px', color: 'black' }}>
-          { car.phasing.speedChanges[i].speed }
-        </option>
+          style={{ backgroundColor: this.speedColor(car, i), fontSize: '50px', color: 'black' }}
+        >
+          {car.phasing.speedChanges[i].speed}
+        </option>,
       )
     }
     return result
@@ -60,7 +61,11 @@ class SpeedSelector extends React.Component {
 
   label() {
     if (!this.props.noLabel) {
-      return (<><u>S</u>peed:&nbsp;&nbsp;</>)
+      return (
+        <>
+          <u>S</u>peed:&nbsp;&nbsp;
+        </>
+      )
     }
   }
 
@@ -69,10 +74,10 @@ class SpeedSelector extends React.Component {
     const car = lms.car({ id: this.props.carId })
     return (
       <>
-        { this.label() }
+        {this.label()}
         <select
-          className='Options'
-          id={ this.thisId }
+          className="Options"
+          id={this.thisId}
           style={{
             fontSize: '90px',
             backgroundColor: this.speedColor(car, car.phasing.speedChangeIndex),
@@ -81,15 +86,14 @@ class SpeedSelector extends React.Component {
             width: '130px',
             borderColor: 'floralwhite',
           }}
-          value={ car.phasing.speedChangeIndex }
-          onChange={ this.onChange }>
-          { this.listSpeedChanges(car) }
+          value={car.phasing.speedChangeIndex}
+          onChange={this.onChange}
+        >
+          {this.listSpeedChanges(car)}
         </select>
       </>
     )
   }
 }
 
-export default compose(
-  SET_SPEED
-)(SpeedSelector)
+export default compose(SET_SPEED)(SpeedSelector)

@@ -19,6 +19,7 @@ interface Props {
 
 class AllTires extends React.Component<Props> {
   tires(): React.ReactNode {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: any = []
     this.props.carData.design.components.tires.forEach((tire: TireData) => {
       result.push(<Tire key={uuid()} tireData={tire} carDimensions={this.props.carDimensions} />)

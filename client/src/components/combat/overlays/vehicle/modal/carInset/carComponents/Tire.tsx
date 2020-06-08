@@ -64,8 +64,8 @@ class Tire extends React.Component<Props> {
       ? 0.5 * GenericComponent.dimensions().width
       : this.props.carDimensions.width - 1.25 * GenericComponent.dimensions().width
     const y = this.front()
-      ? 2.5 * GenericComponent.dimensions().height
-      : this.props.carDimensions.height - 3 * GenericComponent.dimensions().height
+      ? 1.9 * GenericComponent.dimensions().height
+      : this.props.carDimensions.height - 3.5 * GenericComponent.dimensions().height
     //(this.props.carDimensions.height * 18) / 64 : (this.props.carDimensions.height * 42) / 64
     const width = GenericComponent.dimensions().width * 0.75
     const height = GenericComponent.dimensions().height * 1.6

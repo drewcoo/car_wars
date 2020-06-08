@@ -39,7 +39,7 @@ class AllWeapons extends React.Component<Props> {
   frontWeapons(): React.ReactNode {
     const weapons = this.props.carData.design.components.weapons.filter((weapon: WeaponData) => weapon.location === 'F')
     if (weapons.length === 0) return <></>
-    const point = new Point({ x: 0, y: -0.29 * this.props.carDimensions.height })
+    const point = new Point({ x: 0, y: -0.36 * this.props.carDimensions.height })
     const weaponData = weapons[0]
     return (
       <Weapon
@@ -54,7 +54,7 @@ class AllWeapons extends React.Component<Props> {
   leftWeapons(): React.ReactNode {
     const weapons = this.props.carData.design.components.weapons.filter((weapon: WeaponData) => weapon.location === 'L')
     if (weapons.length === 0) return <></>
-    const point = new Point({ x: -0.25 * this.props.carDimensions.width, y: 0.05 * this.props.carDimensions.height })
+    const point = new Point({ x: -0.25 * this.props.carDimensions.width, y: 0 * this.props.carDimensions.height })
     const weaponData = weapons[0]
     return (
       <Weapon
@@ -69,7 +69,7 @@ class AllWeapons extends React.Component<Props> {
   rightWeapons(): React.ReactNode {
     const weapons = this.props.carData.design.components.weapons.filter((weapon: WeaponData) => weapon.location === 'R')
     if (weapons.length === 0) return <></>
-    const point = new Point({ x: 0.25 * this.props.carDimensions.width, y: 0.05 * this.props.carDimensions.height })
+    const point = new Point({ x: 0.25 * this.props.carDimensions.width, y: 0 * this.props.carDimensions.height })
     const weaponData = weapons[0]
     return (
       <Weapon
@@ -84,7 +84,7 @@ class AllWeapons extends React.Component<Props> {
   backWeapons(): React.ReactNode {
     const weapons = this.props.carData.design.components.weapons.filter((weapon: WeaponData) => weapon.location === 'B')
     if (weapons.length === 0) return <></>
-    const point = new Point({ x: 0, y: 0.37 * this.props.carDimensions.height })
+    const point = new Point({ x: 0, y: 0.36 * this.props.carDimensions.height })
     const weaponData = weapons[0]
     return (
       <Weapon

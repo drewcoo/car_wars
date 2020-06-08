@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import * as React from 'react'
 import SVG from 'react-inlinesvg'
 import '../../App.css'
@@ -9,8 +8,24 @@ import TimingOverlays from './overlays/TimingOverlays'
 import KillMessage from './overlays/vehicle/KillMessage'
 import CarModal from './overlays/vehicle/modal/CarModal'
 
-class Car extends React.Component {
-  constructor(props) {
+interface Props {
+  active?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  client: any
+  id: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  matchData: any
+  shadow?: boolean
+}
+
+interface State {
+  showModal: boolean
+}
+
+class Car extends React.Component<Props, State> {
+  collisionDetected: boolean
+
+  constructor(props: Props) {
     super(props)
     this.collisionDetected = false
     this.state = {
@@ -20,19 +35,19 @@ class Car extends React.Component {
     this.handleClose = this.handleClose.bind(this)
   }
 
-  handleClose() {
+  handleClose(): void {
     this.setState({ showModal: false })
   }
 
-  handleClick() {
+  handleClick(): void {
     this.setState({ showModal: !this.state.showModal })
   }
 
-  manyColoredFill() {
+  manyColoredFill(): string {
     return this.collisionDetected ? 'red' : 'white'
   }
 
-  manyColoredOpacity(opacity) {
+  manyColoredOpacity(opacity: number): number {
     if (this.collisionDetected) {
       return 1
     }
@@ -45,7 +60,7 @@ class Car extends React.Component {
     return 0
   }
 
-  opacity() {
+  opacity(): number {
     const lms = new LocalMatchState(this.props.matchData)
     let result = 1
     if (lms.isActiveCar({ id: this.props.id }) && !this.props.active && !lms.awaitAllSpeedsSet()) {
@@ -57,7 +72,8 @@ class Car extends React.Component {
     return result
   }
 
-  wipeoutLabel(car, x, y) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  wipeoutLabel(car: any, x: number, y: number): React.ReactNode {
     const lms = new LocalMatchState(this.props.matchData)
     const isMovingCar = car.id === lms.activeCarId()
     if (isMovingCar && (this.props.shadow || !this.props.active)) {
@@ -101,7 +117,7 @@ class Car extends React.Component {
     return <g></g>
   }
 
-  strobeMoving() {
+  strobeMoving(): React.ReactNode {
     if (!this.props.active) {
       return
     }
@@ -116,7 +132,8 @@ class Car extends React.Component {
     )
   }
 
-  vehicleVisualDesign({ car, tempRect, transform }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  vehicleVisualDesign({ car, tempRect }: { car: any; tempRect: Rectangle }): React.ReactNode {
     const x = tempRect.brPoint().x - tempRect.width //+ margin
     const y = tempRect.brPoint().y - tempRect.length //+ 2 * margin
 
@@ -135,7 +152,7 @@ class Car extends React.Component {
     )
   }
 
-  render() {
+  render(): React.ReactNode {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.id })
 
@@ -182,7 +199,9 @@ class Car extends React.Component {
       }
     }
 
-    this.collisionDetected = this.props.active ? car.phasing.collisionDetected : car.collisionDetected
+    if (this.props.active) {
+      this.collisionDetected = car.phasing.collisionDetected
+    }
 
     const rotatePoint = {
       x: tempRect.brPoint().x,
@@ -211,7 +230,7 @@ class Car extends React.Component {
             }}
             transform={transform}
           />
-          {this.vehicleVisualDesign({ car, tempRect, transform })}
+          {this.vehicleVisualDesign({ car, tempRect })}
           {this.strobeMoving()}
         </g>
         <CarModal
@@ -227,14 +246,6 @@ class Car extends React.Component {
       </svg>
     )
   }
-}
-
-Car.propTypes = {
-  active: PropTypes.bool,
-  client: PropTypes.object,
-  id: PropTypes.string,
-  matchData: PropTypes.object,
-  shadow: PropTypes.bool,
 }
 
 export default Car

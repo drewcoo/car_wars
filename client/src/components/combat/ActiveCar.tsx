@@ -1,13 +1,24 @@
 import * as React from 'react'
 import Car from './Car'
-import Maneuver from './lib/Maneuver'
 import Point from '../../utils/geometry/Point'
-import { degreesDifference } from '../../utils/conversions'
 import LocalMatchState from './lib/LocalMatchState'
 import ViewElement from './lib/ViewElement'
 
-class ActiveCar extends React.Component {
-  constructor(props) {
+interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  client: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  matchData: any
+}
+
+interface State {
+  drag: boolean
+  firstPoint: Point | null
+  lastPoint: Point | null
+}
+
+class ActiveCar extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props)
     this.state = {
       drag: false,
@@ -19,13 +30,13 @@ class ActiveCar extends React.Component {
     this.stopHandler = this.stopHandler.bind(this)
   }
 
-  componentDidUpdate() {
-    ViewElement('shotResult') ||
-      ViewElement('reticle') ||
-      ViewElement(new LocalMatchState(this.props.matchData).activeCarId())
+  componentDidUpdate(): void {
+    const activeCar = new LocalMatchState(this.props.matchData).activeCarId()
+    ViewElement('shotResult') || ViewElement('reticle') || ViewElement(activeCar)
   }
 
-  eventPoint(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  eventPoint(event: any): Point {
     // First, get the page coordinates of the click or touch.
     let result
     if (event.clientX) {
@@ -41,29 +52,37 @@ class ActiveCar extends React.Component {
 
     // Now convert to the relative coords of the active car on the ArenaMap.
     const bodyBounding = document.body.getBoundingClientRect()
-    const elemBounding = document.getElementById('ArenaMap').getBoundingClientRect()
+    const elem: HTMLElement | null = document.getElementById('ArenaMap')
+    if (!elem) {
+      throw new Error(`Can't find ArenaMap element!`)
+    }
+    const elemBounding = elem.getBoundingClientRect()
     result.x -= elemBounding.left + bodyBounding.left
     result.y -= elemBounding.top + bodyBounding.top
     return result.toFixed(0)
   }
 
-  handleOnDrag(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handleOnDrag(event: any): void {
     this.moveHandler(event)
   }
 
-  handleOnDragStop(event) {
-    this.stopHandler(event)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handleOnDragStop(): void {
+    this.stopHandler()
   }
 
-  startHandler(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  startHandler(event: any): void {
     const point = this.eventPoint(event)
     this.setState({ drag: false, firstPoint: point, lastPoint: point })
   }
 
-  moveHandler(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  moveHandler(event: any): void {
     if (this.state.firstPoint === null) {
       if (this.state.drag === false) {
-        this.stopHandler(event)
+        this.stopHandler()
       }
       return
     }
@@ -78,41 +97,28 @@ class ActiveCar extends React.Component {
     // left of the current position of the active car? Not sure.
     // Should talk it out.
     //
-    const lms = new LocalMatchState(this.props.matchData)
-    const car = lms.activeCar()
-
     const swipeMagnitude = this.state.firstPoint.distanceTo(point) // this.state.lastPoint)
     if (swipeMagnitude < 1) {
-      this.stopHandler(event)
+      this.stopHandler()
       return
     }
-    const swipeDirection = this.state.firstPoint.degreesTo(this.state.lastPoint)
-    const deltaDirection = degreesDifference({
-      initial: car.phasing.rect.facing,
-      second: swipeDirection,
-    })
-    Maneuver.turnRight({
-      matchId: lms.matchId(),
-      car: car,
-      fRight: deltaDirection > 0,
-    })
+    if (!this.state.lastPoint || !this.state.firstPoint) {
+      throw new Error(`first and last points must be set!`)
+    }
     this.setState({ drag: true, lastPoint: point })
   }
 
-  stopHandler(event) {
-    if (this.state.drag) {
-      // stop dragging
-    } else {
-      // not a drag but a click
-      const lms = new LocalMatchState(this.props.matchData)
-      Maneuver.next({ matchId: lms.matchId(), car: lms.activeCar() })
-    }
+  stopHandler(): void {
     this.setState({ drag: false, firstPoint: null, lastPoint: null })
   }
 
-  render() {
+  render(): React.ReactNode {
     const lms = new LocalMatchState(this.props.matchData)
     if (lms.awaitAllSpeedsSet()) {
+      return <></>
+    }
+    const acid = lms.activeCarId()
+    if (!acid) {
       return <></>
     }
     return (
@@ -128,7 +134,7 @@ class ActiveCar extends React.Component {
         //  onMouseOut={this.handleOnMouseDragStop}
         onTouchEnd={this.stopHandler}
       >
-        <Car client={this.props.client} matchData={lms.data} id={lms.activeCarId()} key="active" active={true} />
+        <Car client={this.props.client} shadow={false} matchData={lms.data} id={acid} key="active" active={true} />
       </g>
     )
   }

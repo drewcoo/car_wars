@@ -1,6 +1,9 @@
-const ViewElement = (id) => {
-  const element = document.getElementById(id)
-  if (!element) {
+const ViewElement = (id: string | null): boolean => {
+  let element
+  if (id) {
+    element = document.getElementById(id)
+  }
+  if (!id || !element) {
     console.log(`element ${id} not found`)
     return false
   }

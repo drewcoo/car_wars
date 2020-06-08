@@ -3,19 +3,30 @@ import LocalMatchState from './LocalMatchState'
 import Session from './Session'
 import '../../../App.css'
 
+interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  matchData: any
+  matchId: string
+}
+
+interface State {
+  userId: string | null
+}
+
 //
 // if 'godmode' is in the URL search string, show this
 //
-class SwitchUser extends React.Component {
-  constructor(props) {
+class SwitchUser extends React.Component<Props, State> {
+  thisId: string
+
+  constructor(props: Props) {
     super(props)
-    this.matchId = props.matchId
     this.thisId = 'switchUser'
     this.state = { userId: localStorage.getItem('playerId') }
     this.onChange = this.onChange.bind(this)
   }
 
-  listUsers() {
+  listUsers(): React.ReactNode {
     const lms = new LocalMatchState(this.props.matchData)
     return lms.players().map((player) => {
       return (
@@ -26,20 +37,28 @@ class SwitchUser extends React.Component {
     })
   }
 
-  onChange(event) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onChange(event: any): void {
     this.setState({ userId: event.target.value })
     localStorage.setItem('playerId', event.target.value)
-    document.getElementById(this.thisId).blur()
+    const elem = document.getElementById(this.thisId)
+    if (!elem) {
+      throw new Error(`Cannot find element with id ${this.thisId}`)
+    }
+    elem.blur()
     window.location.reload(false)
   }
 
-  render() {
+  render(): React.ReactNode {
     const whoiam = Session.whoami(this.props.matchData)
     if (!Session.godMode(this.props.matchData)) {
       return <span className="StartGame">{whoiam}</span>
     }
 
     const lms = new LocalMatchState(this.props.matchData)
+    if (!this.state.userId) {
+      throw new Error(`there is no player with id ${this.state.userId}`)
+    }
     const color = lms.player({ id: this.state.userId }).color
     return (
       <span>

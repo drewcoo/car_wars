@@ -1,8 +1,19 @@
 import Point from '../../../utils/geometry/Point'
 
-const ClickToPoint = ({ clickEvent, boundingViewport = 'ArenaMap' }) => {
+const ClickToPoint = ({
+  clickEvent,
+  boundingViewport = 'ArenaMap',
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  clickEvent: any
+  boundingViewport: string
+}): Point => {
   const bodyBounding = document.body.getBoundingClientRect()
-  const elemBounding = document.getElementById(boundingViewport).getBoundingClientRect()
+  const bvp = document.getElementById(boundingViewport)
+  if (bvp === null || bvp.getBoundingClientRect() === null) {
+    throw new Error('no bounding viewport found')
+  }
+  const elemBounding = bvp.getBoundingClientRect()
 
   console.log(clickEvent)
   console.log(`x: ${clickEvent.clientX} - (${elemBounding.left} + ${bodyBounding.left})`)

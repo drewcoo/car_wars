@@ -1,16 +1,22 @@
 import Rectangle from '../../../utils/geometry/Rectangle'
 
 class LocalMatchState {
-  constructor(data) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(data: any) {
     this.data = data
     if (!data) throw new Error('no match data!')
   }
 
-  car({ id }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  car({ id }: { id: string }): any {
     if (id === null) {
       return null
     }
-    const result = this.data.cars.find((car) => car.id === id)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = this.data.cars.find((car: any) => car.id === id)
     if (result.phasing.rect) {
       result.phasing.rect = new Rectangle(result.phasing.rect)
     }
@@ -18,9 +24,11 @@ class LocalMatchState {
     return result
   }
 
-  cars() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cars(): any[] {
     const result = this.data.cars
-    result.forEach((car) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    result.forEach((car: any) => {
       if (car.phasing.rect) {
         car.phasing.rect = new Rectangle(car.phasing.rect)
       }
@@ -29,60 +37,73 @@ class LocalMatchState {
     return result
   }
 
-  awaitAllSpeedsSet() {
-    return this.data.cars.some((car) => {
+  awaitAllSpeedsSet(): boolean[] {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return this.data.cars.some((car: any) => {
       return car.phasing.showSpeedChangeModal === true
     })
   }
 
-  isActiveCar({ id }) {
+  isActiveCar({ id }: { id: string }): boolean {
     return id === this.data.match.time.phase.moving
   }
 
-  activeCar() {
-    return this.car({ id: this.activeCarId() })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  activeCar(): any {
+    const id: string | null = this.activeCarId()
+    if (!id) {
+      return null
+    }
+    return this.car({ id })
   }
 
-  activeCarId() {
+  activeCarId(): string | null {
     if (this.awaitAllSpeedsSet()) {
       return null
     }
     return this.data.match.time.phase.moving
   }
 
-  currentManeuver() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  currentManeuver(): any {
     const car = this.activeCar()
     return car.status.maneuvers[car.phasing.maneuverIndex]
   }
 
-  activePlayer() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  activePlayer(): any {
     if (!this.activePlayerId()) {
       return null
     }
-    return this.data.players.find((player) => player.id === this.activePlayerId())
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return this.data.players.find((player: any) => player.id === this.activePlayerId())
   }
 
-  activePlayerId() {
+  activePlayerId(): string | null {
     if (!this.activeCar()) {
       return null
     }
     return this.activeCar().playerId
   }
 
-  player({ id }) {
-    return this.data.players.find((player) => player.id === id)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  player({ id }: { id: string }): any {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return this.data.players.find((player: any) => player.id === id)
   }
 
-  players() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  players(): any[] {
     return this.data.players
   }
 
-  currentWeapon({ car = this.activeCar() }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  currentWeapon({ car = this.activeCar() }): any {
     const weaponIndex = car.phasing.weaponIndex
     return car.design.components.weapons[weaponIndex]
   }
 
-  canFire({ car = this.activeCar() }) {
+  canFire({ car = this.activeCar() }): boolean {
     const weaponCanFire =
       this.currentWeapon({ car }).location !== 'none' &&
       this.currentWeapon({ car }).damagePoints > 0 &&
@@ -93,37 +114,44 @@ class LocalMatchState {
     return weaponCanFire && driverCanFire
   }
 
-  driver({ car = this.activeCar() }) {
-    const driverId = car.design.components.crew.find((person) => person.role === 'driver').id
-    return this.data.characters.find((element) => element.id === driverId)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  driver({ car = this.activeCar() }): any {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const driverId = car.design.components.crew.find((person: any) => person.role === 'driver').id
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return this.data.characters.find((element: any) => element.id === driverId)
   }
 
-  map() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  map(): any {
     const result = this.data.match.map
-    result.wallData.forEach((wall) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    result.wallData.forEach((wall: any) => {
       wall.rect = new Rectangle(wall.rect)
     })
     return result
   }
 
-  mapSize() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  mapSize(): any {
     return this.data.match.map.size
   }
 
-  match() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  match(): any {
     return this.data.match
   }
 
-  matchId() {
+  matchId(): string {
     return this.data.match.id
   }
 
-  speed({ id }) {
+  speed({ id }: { id: string }): number {
     const phasing = this.car({ id }).phasing
     return phasing.speedChanges[phasing.speedChangeIndex].speed
   }
 
-  nextSpeed({ id }) {
+  nextSpeed({ id }: { id: string }): number {
     const phasing = this.car({ id }).phasing
     let newIndex = phasing.speedChangeIndex + 1
     if (newIndex > phasing.speedChanges.length - 1) {
@@ -132,7 +160,7 @@ class LocalMatchState {
     return phasing.speedChanges[newIndex].speed
   }
 
-  previousSpeed({ id }) {
+  previousSpeed({ id }: { id: string }): number {
     const phasing = this.car({ id }).phasing
     let newIndex = phasing.speedChangeIndex - 1
     if (newIndex < 0) {
@@ -141,29 +169,31 @@ class LocalMatchState {
     return phasing.speedChanges[newIndex].speed
   }
 
-  setSpeedIndex({ id, speedIndex }) {
+  setSpeedIndex({ id, speedIndex }: { id: string; speedIndex: number }): number {
     const phasing = this.car({ id }).phasing
     phasing.speedChangeIndex = speedIndex
 
     return phasing.speedChanges[phasing.speedChangeIndex].speed
   }
 
-  target({ id, targetId }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  target({ id, targetIndex }: { id: string; targetIndex: number }): any[] {
     const allTargets = this.car({ id }).phasing.targets
-    return allTargets[targetId]
+    return allTargets[targetIndex]
   }
 
-  currentTarget({ id }) {
-    const targetId = this.currentTargetIndex({ id })
-    return this.target({ id, targetId })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  currentTarget({ id }: { id: string }): any {
+    const targetIndex = this.currentTargetIndex({ id })
+    return this.target({ id, targetIndex })
   }
 
-  currentTargetIndex({ id }) {
+  currentTargetIndex({ id }: { id: string }): number {
     const phasing = this.car({ id }).phasing
     return phasing.targetIndex
   }
 
-  nextTarget({ id }) {
+  nextTarget({ id }: { id: string }): number {
     let index = this.car({ id }).phasing.targetIndex
     const array = this.car({ id }).phasing.targets
     index = (index + 1) % array.length
@@ -171,7 +201,7 @@ class LocalMatchState {
     return array[index]
   }
 
-  previousTarget({ id }) {
+  previousTarget({ id }: { id: string }): number {
     let index = this.car({ id }).phasing.targetIndex
     const array = this.car({ id }).phasing.targets
     index = (index - 1 + array.length) % array.length
@@ -179,15 +209,16 @@ class LocalMatchState {
     return array[index]
   }
 
-  setTarget({ id, index }) {
+  setTarget({ id, index }: { id: string; index: number }): void {
     this.car({ id }).phasing.targetIndex = index
   }
 
-  weaponIndex({ id }) {
+  weaponIndex({ id }: { id: string }): number {
     return this.car({ id }).phasing.weaponIndex
   }
 
-  nextWeapon({ id }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  nextWeapon({ id }: { id: string }): any {
     const array = this.car({ id }).design.components.weapons
     let index = this.car({ id }).phasing.weaponIndex
     index = (index + 1) % array.length
@@ -195,7 +226,8 @@ class LocalMatchState {
     return array[index]
   }
 
-  previousWeapon({ id }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  previousWeapon({ id }: { id: string }): any {
     const array = this.car({ id }).design.components.weapons
     let index = this.car({ id }).phasing.weaponIndex
     index = (index - 1 + array.length) % array.length
@@ -203,17 +235,19 @@ class LocalMatchState {
     return array[index]
   }
 
-  setWeaponIndex({ id, index }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setWeaponIndex({ id, index }: { id: string; index: number }): any {
     const array = this.car({ id }).design.components.weapons
     this.car({ id }).phasing.weaponIndex = index
     return array[index]
   }
 
-  subphase() {
+  subphase(): string {
     return this.data.match.time.phase.subphase
   }
 
-  time() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  time(): any {
     return this.data.match.time
   }
 }
