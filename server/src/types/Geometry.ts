@@ -29,23 +29,3 @@ export const typeDef = `
     points: [Point]
   }
 `
-
-export const resolvers = {
-  Query: {
-    points: () => {
-      return points
-    },
-    rectangles: () => {
-      return rectangles
-    },
-  },
-
-  Mutation: {
-    addPoint: (parent, args, context) => {
-      const val = { x: args.x, y: args.y }
-      const result = { x: args.point.x, y: args.point.y }
-      points.push(result)
-      return result
-    },
-  },
-}

@@ -42,7 +42,6 @@ class ArenaMap extends React.Component<Props> {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addCars(lms: any): React.ReactNode {
-    console.log('foo')
     return (
       <>
         {Object.values(lms.cars()).map((car) => {

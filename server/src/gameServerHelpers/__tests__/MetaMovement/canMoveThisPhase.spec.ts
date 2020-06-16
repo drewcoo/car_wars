@@ -2,10 +2,10 @@ import MetaMovement from '../../MetaMovement'
 import GameObjectFactory from '../GameObjectFactory'
 import Vehicle from '../../Vehicle'
 
-xdescribe('MetaMovement', () => {
+describe('MetaMovement', () => {
   Vehicle.withId = jest.fn()
 
-  let vehicle0, vehicle1, match0, match1, _data
+  let vehicle0: any, vehicle1: any, match0: any, match1: any, _data: any
 
   beforeEach(() => {
     vehicle0 = GameObjectFactory.vehicle({ id: 'vehicle0', speed: 40 })
@@ -29,24 +29,28 @@ xdescribe('MetaMovement', () => {
 
   describe('#canMoveThisPhase', () => {
     beforeEach(() => {
-      Vehicle.withId.mockReturnValueOnce(vehicle0)
-      Vehicle.withId.mockReturnValueOnce(vehicle1)
+      Vehicle.withId = jest.fn().mockImplementation(() => vehicle0)
+      Vehicle.withId = jest.fn().mockImplementation(() => vehicle1)
     })
 
-    it('phase 4: vehicle0 moves 0; vehicle1 moves 1', () => {
+    xit('phase 4: vehicle0 moves 0; vehicle1 moves 1', () => {
+      // instead, maybe call MetaMovement.allMovesThisturn({ match })
+      // and mock Vehicle.withId({ id }) to inject the Vehicle data
+      // but can I mock it so that calling with different ids returns different data
+      // or do I just use matches with one vehicle for the test?
+      console.log(match0)
       expect(
         MetaMovement.canMoveThisPhase({
-          match: _data.matches.find((elem) => elem.id === match0.id),
-          _data,
+          //match: _data.matches.find((elem: any) => elem.id === match0.id)
+          match: match0
         }),
       ).toEqual([vehicle1.id])
     })
 
-    it('phase 5: vehicle0 moves 1; vehicle1 moves 1', () => {
+    xit('phase 5: vehicle0 moves 1; vehicle1 moves 1', () => {
       expect(
         MetaMovement.canMoveThisPhase({
-          match: _data.matches.find((elem) => elem.id === match1.id),
-          _data,
+          match: _data.matches.find((elem: any) => elem.id === match1.id)
         }),
       ).toEqual([vehicle0.id, vehicle1.id])
     })

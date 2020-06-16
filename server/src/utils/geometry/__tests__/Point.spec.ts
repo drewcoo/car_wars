@@ -1,6 +1,5 @@
 import { COMPASS } from '../../constants'
-/* eslint-disable-next-line no-unused-vars */
-import { degreesEqual } from '../../jestMatchers'
+import '../../jestMatchers'
 import Point from '../Point'
 import GeometryFactory from './GeometryFactory'
 

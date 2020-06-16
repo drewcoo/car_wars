@@ -8,15 +8,9 @@ import Maneuver from '../gameServerHelpers/settings/Maneuver'
 import Speed from '../gameServerHelpers/settings/Speed'
 import WeaponSettings from '../gameServerHelpers/settings/WeaponSettings'
 import Vehicle from '../gameServerHelpers/Vehicle'
-//import { Design as DesignData } from '../vehicle/designs/KillerKart'
 import { typeDef as DesignTypes } from './vehicle/Design'
 
 DATA.cars = []
-
-const fillDesign = (designName: string) => {
-  let result: any = DATA.designs.find((element: any) => element.name === designName)
-  return _.cloneDeep(result)
-}
 
 // why is there a collisionDetected bool if there's a collisions array?
 // color is dupe of player color!
@@ -159,14 +153,25 @@ export const typeDef = `
   }
 
   type Status {
-    killed: Boolean
+    direction: VehicleDirection
     handling: Int!
+    killed: Boolean
     lastDamageBy: [ID!]
     maneuvers: [String!]
     nextMove: [NextMove]
     speed: Int!
     speedInitThisTurn: Int!
     speedSetThisTurn: Boolean
+  }
+
+  type VehicleDirection {
+    forward: Boolean
+    canChange: Moment
+  }
+
+  type Moment {
+    turn: Int
+    phase: Int
   }
 
   union PointOrSegment = Point | Segment
@@ -211,8 +216,18 @@ export const resolvers = {
   Mutation: {
     createCar: (parent: any, args: any) => {
       const player = DATA.players.find((element: any) => element.id === args.playerId)
-      const design = fillDesign(args.designName)
+
+      const designOriinal: any = DATA.designs.find((element: any) => element.name === args.designName)
+      const design = _.cloneDeep(designOriinal)
+
       const startingSpeed = 50
+      const startingDirection = {
+        forward: startingSpeed < 0 ? false : true,
+        canChange: {
+          turn: 100,
+          phase: 6
+        }
+      }
 
       const vehicle = {
         id: uuid(),
@@ -231,6 +246,7 @@ export const resolvers = {
         },
         rect: null,
         status: {
+          direction: startingDirection,
           handling: design.attributes.handlingClass,
           killed: false,
           lastDamageBy: [],

@@ -1,12 +1,11 @@
 import PhasingMove from '../../PhasingMove'
 import GameObjectFactory from '../GameObjectFactory'
 import _ from 'lodash'
-/* eslint-disable-next-line no-unused-vars */
-import { degreesEqual, equalsPoint } from '../../../utils/jestMatchers'
+import '../../../utils/jestMatchers'
 
 describe('PhasingMove', () => {
   describe('#swerve', () => {
-    let vehicle
+    let vehicle: any
 
     beforeEach(() => {
       vehicle = GameObjectFactory.vehicle({})

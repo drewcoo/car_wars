@@ -4,15 +4,14 @@ import GameObjectFactory from '../GameObjectFactory'
 
 describe('Collisions', () => {
   describe('#clear', () => {
-    Match.cars = jest.fn()
     const vehicle = GameObjectFactory.vehicle({})
-    Match.cars.mockReturnValue([vehicle])
 
     beforeEach(() => {
       vehicle.phasing.collisionDetected = false
       vehicle.collisionDetected = false
-      vehicle.phasing.collisions = []
-      vehicle.collisions = []
+      vehicle.phasing.collisions = [] as any
+      vehicle.collisions = [] as any
+      Match.cars = jest.fn().mockImplementation(() => [vehicle])
     })
 
     it('clears non-phasing .collisionDetected', () => {
@@ -28,7 +27,7 @@ describe('Collisions', () => {
     })
 
     it('clears non-phasing collisions array', () => {
-      vehicle.collisions = ['bar', 'baz']
+      vehicle.collisions.push({ bar: '2' })// = ['bar', 'baz']
       Collisions.clear({ match: 'foo' })
       expect(vehicle.collisions.length).toEqual(0)
     })

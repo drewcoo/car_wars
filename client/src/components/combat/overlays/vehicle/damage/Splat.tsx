@@ -22,12 +22,12 @@ class Splat extends React.Component<Props> {
     radiusMultiplier?: number
   }): string {
     function inner(radians: number): string {
-      const radius = 10 + Math.random() * 5
+      const radius = 12
       return `${x + radius * Math.cos(radians)},${y + radius * Math.sin(radians)} `
     }
 
     function outer(radians: number): string {
-      const radius = radiusMultiplier * (10 + Math.random() * 5)
+      const radius = radiusMultiplier * (15)
       return `${x + radius * Math.cos(radians)},${y + radius * Math.sin(radians)} `
     }
 
@@ -74,21 +74,13 @@ class Splat extends React.Component<Props> {
           points={`${this.polylineStar({
             x: point.x,
             y: point.y,
-            pointCount: 8,
+            pointCount: 12,
             offset: 0.3 * offset,
             radiusMultiplier: 1.4,
           })}`}
           fill={'yellow'}
         />
-        <polyline
-          points={`${this.polylineStar({ x: point.x, y: point.y, pointCount: 8, offset: offset })}`}
-          fill={'red'}
-        />
-        <polyline
-          points={`${this.polylineStar({ x: point.x, y: point.y, pointCount: 8, radiusMultiplier: 0.8 })}`}
-          fill={'orange'}
-        />
-        <circle cx={point.x} cy={point.y} r={15} fill={'white'}></circle>
+        <circle cx={point.x} cy={point.y} r={12} fill={'white'}></circle>
         <text x={point.x} y={point.y + 7} textAnchor={'middle'} className={'DamageText'}>
           {damage}
         </text>

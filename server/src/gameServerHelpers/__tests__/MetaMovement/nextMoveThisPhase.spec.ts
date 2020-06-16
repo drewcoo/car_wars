@@ -3,7 +3,7 @@ import GameObjectFactory from '../GameObjectFactory'
 
 xdescribe('MetaMovement', () => {
   describe('#nextToMoveThisPhase', () => {
-    let vehicle0, vehicle1, vehicle2, match, _data
+    let vehicle0: any, vehicle1: any, vehicle2: any, match: any, _data: any
 
     beforeEach(() => {
       vehicle0 = GameObjectFactory.vehicle({ id: 'vehicle0', speed: 40 })
@@ -22,13 +22,13 @@ xdescribe('MetaMovement', () => {
 
     it('when everyone has moved, returns null', () => {
       match.time.phase.unmoved = []
-      expect(MetaMovement.nextToMoveThisPhase({ match, _data })).toBeNull()
+      expect(MetaMovement.nextToMoveThisPhase({ match })).toBeNull()
     })
 
     xit('greatest Math.abs(speed) next', () => {
       match.time.phase.number = 1
       match.time.phase.unmoved = [vehicle0.id, vehicle1.id, vehicle2.id]
-      expect(MetaMovement.nextToMoveThisPhase({ match, _data })).toEqual(vehicle1.id)
+      expect(MetaMovement.nextToMoveThisPhase({ match })).toEqual(vehicle1.id)
     })
   })
 })

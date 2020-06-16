@@ -2,12 +2,12 @@ import Vehicle from '../../Vehicle'
 import GameObjectFactory from '../GameObjectFactory'
 
 describe('Vehicle', () => {
-  Vehicle.driverAwake = jest.fn()
-  Vehicle.plantOut = jest.fn()
-  Vehicle.weaponsOut = jest.fn()
-  let vehicle
+  let vehicle: any
 
   beforeEach(() => {
+    Vehicle.driverAwake = jest.fn().mockImplementation(() => true)
+    Vehicle.plantWorking = jest.fn().mockImplementation(() => true)
+    Vehicle.weaponsOut = jest.fn().mockImplementation(() => false)
     vehicle = GameObjectFactory.vehicle({})
   })
 
@@ -24,20 +24,20 @@ describe('Vehicle', () => {
       })
 
       it('driver out', () => {
-        Vehicle.driverAwake.mockReturnValueOnce(false)
+        Vehicle.driverAwake = jest.fn().mockImplementation(() => false)
         expect(Vehicle.isKilled({ vehicle })).toBe(true)
       })
 
       it('plant and weapons out', () => {
-        Vehicle.plantOut.mockReturnValueOnce(true)
-        Vehicle.weaponsOut.mockReturnValueOnce(true)
+        Vehicle.plantWorking = jest.fn().mockImplementation(() => false)
+        Vehicle.weaponsOut = jest.fn().mockImplementation(() => true)
         expect(Vehicle.isKilled({ vehicle })).toBe(true)
       })
 
       it('is only stopped, not dead', () => {
-        Vehicle.driverAwake.mockReturnValueOnce(true)
-        Vehicle.plantOut.mockReturnValueOnce(false)
-        Vehicle.weaponsOut.mockReturnValueOnce(false)
+        Vehicle.driverAwake = jest.fn().mockImplementation(() => true)
+        Vehicle.plantWorking = jest.fn().mockImplementation(() => true)
+        Vehicle.weaponsOut = jest.fn().mockImplementation(() => false)
         expect(vehicle.status.killed).not.toBe(true)
         expect(Vehicle.isKilled({ vehicle })).toBe(false)
       })

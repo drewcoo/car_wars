@@ -1,9 +1,10 @@
 import Point from '../Point'
 import Segment from '../Segment'
 import Rectangle from '../Rectangle'
-import { degreesEqual } from '../../conversions'
 import GeometryFactory from './GeometryFactory'
 import { COMPASS } from '../../constants'
+import '../../jestMatchers'
+
 
 describe('Rectangle', () => {
   describe('points', () => {
@@ -127,19 +128,19 @@ describe('Rectangle', () => {
     const rectangle = GeometryFactory.rectangle({})
 
     it('#flAngle is 30 deg counterclockwise from facing', () => {
-      expect(degreesEqual(rectangle.flAngle(), rectangle.facing - 30)).toBe(true)
+      expect(rectangle.flAngle()).degreesEqual(rectangle.facing - 30)
     })
 
     it('#frAngle is 30 deg clockwise from facing', () => {
-      expect(degreesEqual(rectangle.frAngle(), rectangle.facing + 30)).toBe(true)
+      expect(rectangle.frAngle()).degreesEqual(rectangle.facing + 30)
     })
 
     it('#blAngle is (180 + 30) deg clockwise from facing ', () => {
-      expect(degreesEqual(rectangle.blAngle(), rectangle.facing + 210)).toBe(true)
+      expect(rectangle.blAngle()).degreesEqual(rectangle.facing + 210)
     })
 
     it('#brAngle is (180 - 30) deg clockwise from facing', () => {
-      expect(degreesEqual(rectangle.brAngle(), rectangle.facing + 150)).toBe(true)
+      expect(rectangle.brAngle()).degreesEqual(rectangle.facing + 150)
     })
   })
 
@@ -159,7 +160,7 @@ describe('Rectangle', () => {
       expect(translated instanceof Rectangle).toBe(true)
       expect(translated.brPoint() instanceof Point).toBe(true)
       const actual = original.brPoint().degreesTo(translated.brPoint())
-      expect(degreesEqual(actual, degrees)).toBe(true)
+      expect(actual).degreesEqual(degrees)
     })
   })
 
@@ -172,7 +173,7 @@ describe('Rectangle', () => {
         .distanceTo(rectangle.flPoint())
         .toFixed(0),
     )
-    expect(result.facing).toEqual(rectangle.facing + 180)
+    expect(result.facing).degreesEqual(rectangle.facing + 180)
     expect(doubleLength).toEqual(2 * result.length)
   })
 

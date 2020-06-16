@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "jest": {
-    "verbose": true
+    "verbose": true,
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testRegex": "(\\.(spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ]
   },
   "main": "index.js",
   "scripts": {
@@ -15,8 +24,8 @@
     "debug": "babel-watch --inspect 9229 src/index.js",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "start": "nodemon --exec \"npm run build && node ./build/index.js\" --watch ./src",
-    "test": "jest --testMatch **/__tests__/**/*.spec.js --watchAll",
-    "cover": "jest --testMatch ./src/**/__tests__/**/*.spec.js --coverage"
+    "test": "jest",
+    "cover": "jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -43,7 +52,9 @@
     "jest": "^26.0.1",
     "lint-staged": "^10.2.2",
     "metro-react-native-babel-preset": "^0.59.0",
-    "prettier-eslint": "^9.0.1"
+    "prettier-eslint": "^9.0.1",
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.5"
   },
   "dependencies": {
     "@babel/polyfill": "^7.8.7",
@@ -60,7 +71,6 @@
     "nodemon": "^2.0.4",
     "qs-middleware": "^1.0.3",
     "source-map-loader": "^0.2.4",
-    "typescript": "^3.7.5",
     "uuid": "^3.4.0"
   },
   "husky": {

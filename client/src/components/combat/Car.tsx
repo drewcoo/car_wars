@@ -137,16 +137,21 @@ class Car extends React.Component<Props, State> {
     const x = tempRect.brPoint().x - tempRect.width //+ margin
     const y = tempRect.brPoint().y - tempRect.length //+ 2 * margin
 
-    console.log(car.design.imageFile)
-
     return (
       <g transform={`rotate(${tempRect.facing + 90} ${x + tempRect.width} ${y + tempRect.length})`}>
         <SVG src={car.design.imageFile} x={x} y={y} style={{ opacity: this.opacity(), fill: car.color }} />
-        <circle
-          cx={tempRect.brPoint().x - tempRect.width / 2}
-          cy={tempRect.brPoint().y - 0.95 * tempRect.length + 2}
-          r={tempRect.width / 16}
-          style={{ fill: 'black', stroke: 'black' }}
+        <polygon
+          points={`
+           ${tempRect.brPoint().x - 0.5 * tempRect.width}, ${tempRect.brPoint().y - 1.5 * tempRect.length}
+           ${tempRect.brPoint().x - 0.8 * tempRect.width}, ${tempRect.brPoint().y - 1.3 * tempRect.length}
+           ${tempRect.brPoint().x - 0.6 * tempRect.width}, ${tempRect.brPoint().y - 1.3 * tempRect.length}
+           ${tempRect.brPoint().x - 0.6 * tempRect.width}, ${tempRect.brPoint().y - 1.1 * tempRect.length}
+           ${tempRect.brPoint().x - 0.4 * tempRect.width}, ${tempRect.brPoint().y - 1.1 * tempRect.length}
+           ${tempRect.brPoint().x - 0.4 * tempRect.width}, ${tempRect.brPoint().y - 1.3 * tempRect.length}
+           ${tempRect.brPoint().x - 0.2 * tempRect.width}, ${tempRect.brPoint().y - 1.3 * tempRect.length}`}
+          fill={car.color}
+          opacity={0.3}
+          stroke="black"
         />
       </g>
     )

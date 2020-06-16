@@ -3,7 +3,7 @@ import GameObjectFactory from '../GameObjectFactory'
 
 describe('PhasingMove', () => {
   describe('#hasMoved', () => {
-    let vehicle
+    let vehicle: any
 
     beforeEach(() => {
       vehicle = GameObjectFactory.vehicle({})

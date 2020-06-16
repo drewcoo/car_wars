@@ -141,13 +141,11 @@ class Rectangle {
 
   // can make this take direction of movement later
   backLeftCornerPivot(degrees: number): Rectangle {
-    const blp = this.blPoint()
-    return new Rectangle({
-      _brPoint: this.brPoint().rotateAround({ fixedPoint: blp, degrees: degrees }),
-      facing: this.facing += degrees,
-      length: this.length,
-      width: this.width,
-    })
+    const result = this.clone()
+    const blp = result.blPoint()
+    result._brPoint = result.brPoint().rotateAround({ fixedPoint: blp, degrees: degrees })
+    result.facing += degrees
+    return result
   }
 
   // can make this take direction of movement later

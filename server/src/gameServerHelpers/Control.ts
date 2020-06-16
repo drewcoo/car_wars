@@ -186,7 +186,7 @@ class Control {
   // a.k.a. Crash Table 1
   static maneuverCheck({ vehicle, forceCrashTable2Roll = false }: { vehicle: any, forceCrashTable2Roll?: boolean }) {
     Log.info('maneuver check', vehicle)
-
+    
     const characterId = Vehicle.driverId({ vehicle })
     const character = Character.withId({ id: characterId })
     const skillLevel = Character.skillLevel({ skill: 'driver', character })

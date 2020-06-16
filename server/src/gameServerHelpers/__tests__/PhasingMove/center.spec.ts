@@ -4,7 +4,7 @@ import Rectangle from '../../../utils/geometry/Rectangle'
 
 describe('PhasingMove', () => {
   describe('#center', () => {
-    let vehicle
+    let vehicle: any
 
     beforeEach(() => {
       vehicle = GameObjectFactory.vehicle({})

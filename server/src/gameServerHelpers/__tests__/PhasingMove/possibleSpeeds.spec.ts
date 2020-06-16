@@ -4,10 +4,7 @@ import GameObjectFactory from '../GameObjectFactory'
 
 describe('PhasingMove', () => {
   describe('#possibleSpeeds', () => {
-    Vehicle.canAccelerate = jest.fn()
-    Vehicle.canBrake = jest.fn()
-
-    let vehicle
+    let vehicle: any
 
     beforeEach(() => {
       vehicle = GameObjectFactory.vehicle({})
@@ -17,15 +14,15 @@ describe('PhasingMove', () => {
 
     describe('no acceleration', () => {
       it('or braking', () => {
-        Vehicle.canAccelerate.mockReturnValueOnce(false)
-        Vehicle.canBrake.mockReturnValueOnce(false)
+        Vehicle.canAccelerate = jest.fn().mockImplementation(() => false)
+        Vehicle.canBrake = jest.fn().mockImplementation(() => false)
         const expected = [{ damageDice: '', difficulty: 0, speed: 5 }]
         expect(PhasingMove.possibleSpeeds({ vehicle })).toEqual(expected)
       })
 
       it('but can brake', () => {
-        Vehicle.canAccelerate.mockReturnValueOnce(false)
-        Vehicle.canBrake.mockReturnValueOnce(true)
+        Vehicle.canAccelerate = jest.fn().mockImplementation(() => false)
+        Vehicle.canBrake = jest.fn().mockImplementation(() => true)
         // set to lower speed to make this simple
         const expected = [
           { damageDice: '', difficulty: 0, speed: 0 },
@@ -36,8 +33,8 @@ describe('PhasingMove', () => {
     })
 
     it('has full range - also damage for some decel', () => {
-      Vehicle.canAccelerate.mockReturnValueOnce(true)
-      Vehicle.canBrake.mockReturnValueOnce(true)
+      Vehicle.canAccelerate = jest.fn().mockImplementation(() => true)
+      Vehicle.canBrake = jest.fn().mockImplementation(() => true)
       vehicle.status.speed = 35
       const expected = [
         { damageDice: '0d+2', difficulty: 7, speed: 0 },

@@ -1,12 +1,12 @@
 import _ from 'lodash'
 import PhasingMove from '../../PhasingMove'
 import GameObjectFactory from '../GameObjectFactory'
-/* eslint-disable-next-line no-unused-vars */
-import { degreesEqual } from '../../../utils/jestMatchers'
+import '../../../utils/jestMatchers'
+import Rectangle from '../../../utils/geometry/Rectangle'
 
 describe('PhasingMove', () => {
   describe('#straight', () => {
-    let vehicle, distance, init, moved
+    let vehicle, distance: number, init: Rectangle, moved: Rectangle
 
     beforeEach(() => {
       vehicle = GameObjectFactory.vehicle({})

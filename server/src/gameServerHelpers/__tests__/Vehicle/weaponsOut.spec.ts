@@ -3,11 +3,11 @@ import GameObjectFactory from '../GameObjectFactory'
 
 describe('Vehicle', () => {
   describe('#weaponsOut', () => {
-    let vehicle, weapons
+    let vehicle: any, weapons: any
 
     beforeEach(() => {
       vehicle = GameObjectFactory.vehicle({})
-      weapons = vehicle.design.components.weapons.filter(elem => elem.type !== 'none')
+      weapons = vehicle.design.components.weapons.filter((elem: any) => elem.type !== 'none')
     })
 
     it('vehicle has none', () => {
@@ -20,13 +20,13 @@ describe('Vehicle', () => {
     })
 
     it('weapons require plant but plant out', () => {
-      weapons.forEach(w => (w.requiresPlant = true))
+      weapons.forEach((weapon: any) => (weapon.requiresPlant = true))
       vehicle.design.components.powerPlant.damagePoints = 0
       expect(Vehicle.weaponsOut({ vehicle })).toBe(true)
     })
 
     it('weapons all destroyed', () => {
-      weapons.forEach(w => (w.damagePoints = 0))
+      weapons.forEach((weapon: any) => (weapon.damagePoints = 0))
       expect(Vehicle.weaponsOut({ vehicle })).toBe(true)
     })
   })

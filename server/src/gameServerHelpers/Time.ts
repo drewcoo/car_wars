@@ -77,18 +77,20 @@ class Time {
     // mph per turn (more if you put on the brakes).
 
     const vehicles = Match.cars({ match })
+    
     vehicles.forEach((vehicle: any) => {
-      const driverOut = !Vehicle.driverAwake({ vehicle })
-      const plantOut = Vehicle.plantOut({ vehicle })
-      const needMoreWheels = !Vehicle.enoughWheels({ vehicle })
+      const driverAwake = Vehicle.driverAwake({ vehicle })
+      const plantWorking = Vehicle.plantWorking({ vehicle })
+      const enoughWheels = Vehicle.enoughWheels({ vehicle })
+
       Log.info(
-        `slowTheDead: driverOut[${driverOut ? 'X' : ' '}] plantOut[${plantOut ? 'X' : ' '}] needMoreWheels[${
-          needMoreWheels ? 'X' : ' '
+        `slowTheDead: driverAwake[${driverAwake ? 'X' : ' '}] plantWorking[${plantWorking ? 'X' : ' '}] enoughWheels[${
+          enoughWheels ? 'X' : ' '
         }]`,
         vehicle,
       )
-      const amountSlowed = needMoreWheels ? 30 : 5
-      if (driverOut || plantOut || needMoreWheels) {
+      const amountSlowed = enoughWheels ? 5 : 30
+      if (!driverAwake || !plantWorking || !enoughWheels) {
         if (vehicle.status.speed > 0) {
           vehicle.status.speed -= amountSlowed
         }

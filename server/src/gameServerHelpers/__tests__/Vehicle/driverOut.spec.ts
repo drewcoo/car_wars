@@ -2,21 +2,21 @@ import Vehicle from '../../Vehicle'
 import GameObjectFactory from '../GameObjectFactory'
 
 describe('Vehicle', () => {
-  let vehicle, driver
+  let vehicle: any, driver: any
 
   beforeEach(() => {
     vehicle = GameObjectFactory.vehicle({})
-    driver = vehicle.design.components.crew.find((elem) => elem.role === 'driver')
+    driver = vehicle.design.components.crew.find((elem: any) => elem.role === 'driver')
   })
 
   xdescribe('#driverOut', () => {
     it('driver injured - not out', () => {
       driver.damagePoints = 2
-      expect(Vehicle.driverOut({ vehicle })).toBe(false)
+      expect(Vehicle.driverAwake({ vehicle })).toBe(true)
     })
     it('driver unconscious - out', () => {
       driver.damagePoints = 1
-      expect(Vehicle.driverOut({ vehicle })).toBe(true)
+      expect(Vehicle.driverAwake({ vehicle })).toBe(false)
     })
   })
 })

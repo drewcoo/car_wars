@@ -11,6 +11,7 @@ class Log {
       target.log.push(`${message}`)
     }
     const color = target ? target.color : ''
+    if (color === 'beige') return // test cars are beige
     console.log(`${color}: ${message}`)
     if(!target) {
       console.log('NO TARGET!')

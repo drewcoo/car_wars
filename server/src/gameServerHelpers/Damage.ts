@@ -4,20 +4,24 @@ import Log from '../utils/Log'
 import Character from './Character'
 import Control from './Control'
 import Vehicle from './Vehicle'
+import Point from '../utils/geometry/Point'
 
 class Damage {
-  static damageAllTires({ car, damageDice }) /*: void */ {
+  static damageAllTires({ car, damageDice }: { car: any, damageDice: string }): void {
     const points = {
       FL: car.rect.flPoint(),
       FR: car.rect.frPoint(),
       BL: car.rect.blPoint(),
       BR: car.rect.brPoint(),
     }
-    car.design.components.tires.forEach((tire) => {
+    car.design.components.tires.forEach((tire: any) => {
+      const loc: any = tire.location
+      const pts: any = points
+      const tirePoint: any = pts[loc]
       car.phasing.damage.push({
         target: {
           location: tire.location,
-          point: points[tire.location],
+          point: tirePoint,
           damageDice: damageDice,
         },
         message: 'tire damage',
@@ -39,7 +43,7 @@ class Damage {
   //
   //
 
-  static dealDamage({ damageRecord }) /*: any*/ {
+  static dealDamage({ damageRecord }: { damageRecord: any }): any {
     const car = damageRecord.target.car
     const damage = (damageRecord.target.damage = Dice.roll(damageRecord.target.damageDice))
     const location = damageRecord.target.location
@@ -230,9 +234,9 @@ class Damage {
   // no longer steer, accelerate, or brake.
   //
 
-  static damageTire({ car, damage, location, hazard }) /*: number*/ {
+  static damageTire({ car, damage, location, hazard }: { car: any, damage: number, location: string, hazard: number }): number {
     Log.info(`${damage} damage to ${location} tire`, car)
-    const tire = car.design.components.tires.find((tire) => {
+    const tire = car.design.components.tires.find((tire: any) => {
       return tire.location === location
     })
     Log.info(`tire has ${tire.damagePoints} DP`, car)
@@ -250,8 +254,8 @@ class Damage {
       }
 
       // This is when a car first loses two wheels.
-      if (Vehicle.numberOfWheels() === 2) {
-        Control.maneuverCheck({ car })
+      if (Vehicle.numberOfWheels({ vehicle: car }) === 2) {
+        Control.maneuverCheck({ vehicle: car })
       }
 
       // nothing to damage
@@ -264,7 +268,7 @@ class Damage {
     // no blowthrough?
     if (tire.damagePoints < 0) {
       remaining = -tire.damagePoints
-      Log.info(remaining, car)
+      Log.info(`${remaining}`, car)
       tire.damagePoints = 0
     }
     if (tire.damagePoints === 0) {
@@ -285,7 +289,7 @@ class Damage {
     return remaining
   }
 
-  static damageArmor({ car, damage, location }) /*: number*/ {
+  static damageArmor({ car, damage, location }: { car: any, damage: number, location: string }): number {
     Log.info(`${damage} damage to ${location} armor`, car)
     car.design.components.armor[location] -= damage
     let remaining = 0
@@ -296,9 +300,9 @@ class Damage {
     return remaining
   }
 
-  static damageWeapons({ car, damage, location }) /*: number*/ {
+  static damageWeapons({ car, damage, location }: { car: any, damage: number, location: string }): number {
     // randomly choose which weapon is hit
-    const thisSideWeapons = car.design.components.weapons.filter((weapon) => weapon.location === location)
+    const thisSideWeapons = car.design.components.weapons.filter((weapon: any) => weapon.location === location)
 
     if (thisSideWeapons.length < 1) {
       return damage
@@ -318,7 +322,7 @@ class Damage {
     return remaining
   }
 
-  static damageInterior({ car, damage, hazard }) /*: number*/ {
+  static damageInterior({ car, damage, hazard }: { car: any, damage: number, hazard: number }): number {
     if (damage < 1) {
       Log.info('0 damage to interior', car)
       return 0
@@ -337,7 +341,7 @@ class Damage {
     return remaining
   }
 
-  static damagePlant({ car, damage }) /*: number*/ {
+  static damagePlant({ car, damage }: { car: any, damage: number }): number {
     Log.info(`${damage} damage to plant`, car)
     car.design.components.powerPlant.damagePoints -= damage
     let remaining = 0
@@ -376,12 +380,12 @@ class Damage {
   // until it stops or hits something.
   //
   //
-  static damageCrew({ car, damage, hazard }) /*: number*/ {
+  static damageCrew({ car, damage, hazard }: { car: any, damage: number, hazard: number }): number {
     if (damage < 1) {
       return 0
     }
 
-    const randomCrewSlot /*: any*/ = (car) => {
+    const randomCrewSlot = (car: any): any => {
       const crew = car.design.components.crew
       return crew[_.random(0, crew.length - 1)]
     }

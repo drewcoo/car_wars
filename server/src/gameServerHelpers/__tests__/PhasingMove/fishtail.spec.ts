@@ -1,11 +1,10 @@
 import PhasingMove from '../../PhasingMove'
 import GameObjectFactory from '../GameObjectFactory'
-/* eslint-disable-next-line no-unused-vars */
-import { degreesEqual } from '../../../utils/jestMatchers'
+require('../../../utils/jestMatchers')
 
 describe('PhasingMove', () => {
   describe('#fishtail', () => {
-    let vehicle, initialFacing
+    let vehicle: any, initialFacing: number
 
     beforeEach(() => {
       vehicle = GameObjectFactory.vehicle({})

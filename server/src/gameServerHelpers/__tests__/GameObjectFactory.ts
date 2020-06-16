@@ -1,21 +1,106 @@
 import _ from 'lodash'
 import { v4 as uuid } from 'uuid'
 import GeometryFactory from '../../utils/geometry/__tests__/GeometryFactory'
-import { Design as DesignData } from '../../vehicle/designs/KillerKart'
 
 class GameObjectFactory {
+  static KillerKart() {
+    return {
+      "name": "Killer Kart",
+      "attributes": {
+        "size": "subcompact",
+        "chassis": "std",
+        "suspension": "hvy",
+        "cost": 3848,
+        "weight": 2300,
+        "topSpeed": 135,
+        "acceleration": 10,
+        "handlingClass": 4
+      },
+      "components": {
+        "armor": {
+          "type": "standard",
+          "F": 5,
+          "R": 3,
+          "L": 3,
+          "B": 3,
+          "T": 2,
+          "U": 2
+        },
+        "crew": [{
+          "id": "",
+          "role": "driver",
+          "firedThisTurn": false
+        }],
+        "powerPlant": {
+          "type": "medium",
+          "damagePoints": 8,
+          "maxDamagePoints": 8
+        },
+        "tires": [{
+            "damagePoints": 6,
+            "maxDamagePoints": 6,
+            "location": "FL",
+            "type": "HD",
+            "wheelExists": true
+          },
+          {
+            "damagePoints": 6,
+            "maxDamagePoints": 6,
+            "location": "FR",
+            "type": "HD",
+            "wheelExists": true
+          },
+          {
+            "damagePoints": 6,
+            "maxDamagePoints": 6,
+            "location": "BL",
+            "type": "HD",
+            "wheelExists": true
+          },
+          {
+            "damagePoints": 6,
+            "maxDamagePoints": 6,
+            "location": "BR",
+            "type": "HD",
+            "wheelExists": true
+          }
+        ],
+        "weapons": [
+          {
+            "abbreviation": "n/a",
+            "location": "none"
+          },
+          {
+            "abbreviation": "MG",
+            "location": "F",
+              "type": "machineGun",
+              "ammo": 20,
+              "toHit": 7,
+              "damage": "1d",
+              "damagePoints": 3,
+              "maxDamagePoints": 3,
+              "effect": "area",
+              "firedThisTurn": false,
+              "requiresPlant": false
+          }
+        ]
+      },
+      "imageFile": "/img/vehicleBody/X-10.svg"
+    }
+  }
+
   static vehicle({ id = `car-${uuid()}`, speed = 50 }) {
-    const designNode = _.cloneDeep(DesignData)
+    let designNode = GameObjectFactory.KillerKart()
     let result = {
       collisionDetected: false,
-      collisions: [],
+      collisions: [] as any,
       color: 'beige',
       design: designNode,
       id: id,
       log: [],
       phasing: {
         collisionDetected: false,
-        collisions: [],
+        collisions: [] as any,
         damage: [],
         difficulty: 0,
         maneuverIndex: 0,
@@ -61,8 +146,8 @@ class GameObjectFactory {
   }
 
   //GameObjectFactory.putCrewInVehicle({ vehicle: car, crewMember: driver })
-  static putCrewInVehicle({ crewLocation = 'driver', crewMember, vehicle }) {
-    const crewSlot = vehicle.design.components.crew.find((element) => element.role === crewLocation)
+  static putCrewInVehicle({ crewLocation = 'driver', crewMember, vehicle }: { crewLocation?: string; crewMember: any; vehicle: any }) {
+    const crewSlot = vehicle.design.components.crew.find((element: any) => element.role === crewLocation)
     crewSlot.id = crewMember.id
     crewMember.inVehicleId = vehicle.id
   }
@@ -131,23 +216,19 @@ class GameObjectFactory {
     }
   }
 
-  static driver() {
-    return GameObjectFactory.crewMember({ role: 'driver' })
-  }
-
-  static putVehicleInMatch({ match, vehicle }) {
+  static putVehicleInMatch({ match, vehicle }: { match: any, vehicle: any }) {
     match.carIds.push(vehicle.id)
     // vehicle. matchId // does not exist yet
   }
 
-  static putCharacterInMatch({ match, character }) {
+  static putCharacterInMatch({ match, character }: { match: any, character: any }) {
     character.matchId = match.id
     match.characterIds.push(character.id)
   }
 
-  static match({ id = `match-${uuid()}` }) {
+  static match({ id = `match-${uuid()}`, vehicleIds = [] }: { id?: string, vehicleIds?: string[] }) {
     return {
-      carIds: [],
+      carIds: vehicleIds,
       characterIds: [],
       id: id,
       // map
