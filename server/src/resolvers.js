@@ -33,7 +33,7 @@ resolvers.Mutation.createCompleteMatch = async (parent, args) => {
     matchId: match.id,
     mapName: args.mapName,
   })
-  
+
   let index = 0
   for (const elem of args.playerAndDesign) {
     let player = await resolvers.Mutation.createPlayer(null, {
@@ -52,6 +52,7 @@ resolvers.Mutation.createCompleteMatch = async (parent, args) => {
       playerId: player.id,
       designName: elem.designName,
       crew: [{ role: 'driver', id: character.id }],
+      startingSpeed: 20,
     })
     player = await resolvers.Mutation.addCar(null, {
       carId: car.id,
@@ -75,14 +76,16 @@ resolvers.Mutation.createCompleteMatch = async (parent, args) => {
 
 resolvers.Query.completeMatchData = async (parent, args) => {
   const match = await resolvers.Query.match(null, { matchId: args.matchId })
-  if (!match) { return {} }
-  const cars = await Promise.map(match.carIds, (carId) => {
+  if (!match) {
+    return {}
+  }
+  const cars = await Promise.map(match.carIds, carId => {
     return resolvers.Query.car(null, { id: carId })
   })
-  const characters = await Promise.map(match.characterIds, (characterId) => {
+  const characters = await Promise.map(match.characterIds, characterId => {
     return resolvers.Query.character(null, { id: characterId })
   })
-  const players = await Promise.map(cars, (car) => {
+  const players = await Promise.map(cars, car => {
     return resolvers.Query.player(null, { id: car.playerId })
   })
   return {

@@ -113,7 +113,7 @@ const allTheNothings: any = {}
 
 const NOTHING_CHANNEL = 'nothing_channel'
 
-const addNothing = ({ matchId, msg }: { matchId: string, msg: string }) => {
+const addNothing = ({ matchId, msg }: { matchId: string; msg: string }) => {
   const id = uuid()
   let previousId = ''
   if (allTheNothings[matchId] && allTheNothings[matchId].length > 0) {
@@ -149,7 +149,7 @@ export const resolvers = {
 
     setupOptions: () => {
       return { designs: DATA.designs }
-    }
+    },
   },
 
   Subscription: {
@@ -178,7 +178,7 @@ export const resolvers = {
         status: 'new',
         time: {
           phase: {
-            number: 0,
+            number: 5,
             moving: null,
             subphase: '1_start',
             unmoved: [],
@@ -188,7 +188,7 @@ export const resolvers = {
           },
           turn: {
             number: 0,
-            movesByPhase: [[], [], [], [], []]
+            movesByPhase: [[], [], [], [], []],
           },
         },
       }

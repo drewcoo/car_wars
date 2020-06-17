@@ -70,7 +70,7 @@ class FireModal extends React.Component {
     return (
       <div>
         <button onClick={this.handleFire} className={'ReactModal__Buttons'} style={{ float: 'left' }}>
-          Fire
+          <u>F</u>ire
         </button>
         <button onClick={this.handleClose} className={'ReactModal__Buttons'}>
           Done

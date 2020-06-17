@@ -64,10 +64,12 @@ class Match {
   }
 
   static characters({ match }: { match: any }) {
-    return match.characterIds.map((characterId: string) => DATA.characters.find((character: any) => character.id === characterId))
+    return match.characterIds.map((characterId: string) =>
+      DATA.characters.find((character: any) => character.id === characterId),
+    )
   }
 
-  static map ({ match }: { match: any }) {
+  static map({ match }: { match: any }) {
     return match.map
   }
 

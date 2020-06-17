@@ -47,20 +47,20 @@ class DamageModal extends React.Component {
 
     const showModal = this.props.matchData.match.time.phase.playersToAckDamage.includes(car.playerId)
 
+    /*
     let color = car.color,
       name = car.name
     if (this.props.matchData.match.time.phase.moving) {
       color = lms.car({ id: this.props.matchData.match.time.phase.moving }).color
       name = lms.car({ id: this.props.matchData.match.time.phase.moving }).name
     }
+    */
 
     return (
       <>
         <div onClick={this.handleEatIt}>
           <ReactModal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={showModal}>
             <fieldset className="ModalFieldset">
-              <legend style={{ color: color }}>{name}</legend>
-
               <DamageKeystrokes matchData={this.props.matchData} carId={this.props.carId} />
               <span className="flexCentered">review</span>
               <span className="flexCentered">damage</span>
@@ -74,7 +74,6 @@ class DamageModal extends React.Component {
           </ReactModal>
           <ReactModal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={!showModal}>
             <fieldset className="ModalFieldset">
-              <legend style={{ color: color }}>{name}</legend>
               <br />
               waiting
               <br />

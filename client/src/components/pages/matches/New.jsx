@@ -20,8 +20,8 @@ class MatchNew extends React.Component {
     this.players = this.createPlayers([
       { name: 'Alice', color: 'red', startingPositions: [0] },
       { name: 'Bob', color: 'blue', startingPositions: [1] },
-      { name: 'Carol', color: 'green', startingPositions: [2] },
-      { name: 'Donald', color: 'purple', startingPositions: [3] },
+      //{ name: 'Carol', color: 'green', startingPositions: [2] },
+      //{ name: 'Donald', color: 'purple', startingPositions: [3] },
     ])
     this.handleCarNameChange = this.handleCarNameChange.bind(this)
     this.handleColorChange = this.handleColorChange.bind(this)
@@ -69,14 +69,14 @@ class MatchNew extends React.Component {
   }
 
   handleCarNameChange(event) {
-    const [_junk, playerId, vehicleId] = event.target.id.match(/carname-p(.*)-v(.*)/)
+    const [, playerId, vehicleId] = event.target.id.match(/carname-p(.*)-v(.*)/)
     const vehicle = this.players[playerId].cars.find((element) => element.id === vehicleId)
     vehicle.name = event.target.value
     this.setState({ value: event.target.value })
   }
 
   handleDesignChange(event) {
-    const [_junk, playerId, vehicleId] = event.target.id.match(/design-p(.*)-v(.*)/)
+    const [, playerId, vehicleId] = event.target.id.match(/design-p(.*)-v(.*)/)
     const vehicle = this.players[playerId].cars.find((element) => element.id === vehicleId)
     vehicle.designName = event.target.value
     this.setState({ value: event.target.value })

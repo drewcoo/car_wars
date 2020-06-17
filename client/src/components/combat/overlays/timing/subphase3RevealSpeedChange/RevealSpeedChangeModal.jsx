@@ -34,7 +34,7 @@ class RevealSpeedChangeModal extends React.Component {
     e.stopPropagation()
   }
 
-  changeList(lms) {
+  changeList(lms, showOk) {
     const speedDeltaStr = (car) => {
       const delta = car.status.speed - car.status.speedInitThisTurn
       const sign = delta > 0 ? '+' : '' // because negative numbers have a -
@@ -50,14 +50,35 @@ class RevealSpeedChangeModal extends React.Component {
               {car.status.speed} mph {speedDeltaStr(car)}
             </span>
           </span>
-          <br />
         </div>
       )
     })
+
+    const buttonOrNot = () => {
+      if (!showOk) {
+        return <span className="flexCentered">waiting . . .</span>
+      }
+      return (
+        <span className="flexCentered">
+          <button onClick={this.handleClose} className={'ReactModal__Buttons'} style={{ float: 'right' }}>
+            &nbsp;&nbsp;Ok&nbsp;&nbsp;
+          </button>
+        </span>
+      )
+    }
+
+    /*
+    const legendStyle = {
+      textShadow: '-2px 2px 0 #000, 2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000',
+    }
+    */
+
     return (
-      <fieldset>
-        <legend>Speed Changes</legend>
+      <fieldset className={'ModalFieldset'}>
+        <legend className={'ModalLegend'}>Speed Changes</legend>
         {data}
+        <br />
+        {buttonOrNot()}
       </fieldset>
     )
   }
@@ -73,35 +94,12 @@ class RevealSpeedChangeModal extends React.Component {
 
     const showModal = this.props.matchData.match.time.phase.playersToAckSpeedChange.includes(car.playerId)
 
-    let color = car.color,
-      name = car.name
-    if (this.props.matchData.match.time.phase.moving) {
-      color = lms.car({ id: this.props.matchData.match.time.phase.moving }).color
-      name = lms.car({ id: this.props.matchData.match.time.phase.moving }).name
-    }
-
     return (
       <>
         <RevealSpeedChangeKeystrokes matchData={this.props.matchData} carId={this.props.carId} />
-        <div onClick={this.handleEatIt} >
-          <ReactModal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={showModal}>
-            <fieldset className="ModalFieldset">
-              <legend style={{ color: color }}>{name}</legend>
-              {this.changeList(lms)}
-              <span className="flexCentered">
-                <button onClick={this.handleClose} className={'ReactModal__Buttons'}>
-                  Ok
-                </button>
-                <br />
-              </span>
-            </fieldset>
-          </ReactModal>
-          <ReactModal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={!showModal}>
-            <fieldset className="ModalFieldset">
-              <legend style={{ color: color }}>{name}</legend>
-              {this.changeList(lms)}
-              <span className="flexCentered">waiting . . .</span>
-            </fieldset>
+        <div onClick={this.handleEatIt}>
+          <ReactModal className={'Modal.Content'} overlayClassName={'Modal.Overlay'} key={uuid()} isOpen={true}>
+            {this.changeList(lms, showModal)}
           </ReactModal>
         </div>
       </>

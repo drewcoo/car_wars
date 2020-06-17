@@ -42,7 +42,7 @@ describe('MetaMovement', () => {
       expect(
         MetaMovement.canMoveThisPhase({
           //match: _data.matches.find((elem: any) => elem.id === match0.id)
-          match: match0
+          match: match0,
         }),
       ).toEqual([vehicle1.id])
     })
@@ -50,7 +50,7 @@ describe('MetaMovement', () => {
     xit('phase 5: vehicle0 moves 1; vehicle1 moves 1', () => {
       expect(
         MetaMovement.canMoveThisPhase({
-          match: _data.matches.find((elem: any) => elem.id === match1.id)
+          match: _data.matches.find((elem: any) => elem.id === match1.id),
         }),
       ).toEqual([vehicle0.id, vehicle1.id])
     })

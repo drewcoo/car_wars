@@ -6,40 +6,40 @@ import Vehicle from './Vehicle'
 import Rectangle from '../utils/geometry/Rectangle'
 
 class PhasingMove {
-  static pivot({ vehicle, degrees }: { vehicle: any, degrees: number }) {
+  static pivot({ vehicle, degrees }: { vehicle: any; degrees: number }) {
     // don't use degreesDifference here because we want angles > 180 deg
     let onTheRight = vehicle.rect.rSide().intersects(vehicle.phasing.rect.brPoint())
-    let onTheLeft = vehicle.rect.lSide().intersects(vehicle.phasing.rect.blPoint())
+    const onTheLeft = vehicle.rect.lSide().intersects(vehicle.phasing.rect.blPoint())
 
     const currentFacingDelta = degreesDifference({
       initial: vehicle.rect.facing,
       second: vehicle.phasing.rect.facing,
     })
-    let desiredFacing = currentFacingDelta + degrees
-    
+    const desiredFacing = currentFacingDelta + degrees
+
     vehicle.phasing.rect = PhasingMove.center({ vehicle })
     let resultRect = PhasingMove.straight({ vehicle, distance: INCH / 4 })
-    
+
     if (onTheRight && onTheLeft) {
       if (currentFacingDelta === 0) {
         //onTheRight = !(degrees < 0)
-        onTheRight = (degrees > 0)
+        onTheRight = degrees > 0
       } else if (currentFacingDelta === 180) {
-        onTheRight = (degrees < 0)
+        onTheRight = degrees < 0
         //onTheRight = !(degrees > 0)
-      } 
+      }
     }
     if (onTheRight) {
       resultRect = resultRect.backRightCornerPivot(desiredFacing)
     } else {
       resultRect = resultRect.backLeftCornerPivot(desiredFacing)
     }
-  
+
     vehicle.phasing.difficulty = 0
     return resultRect
   }
 
-  static bend({ vehicle, degrees }: { vehicle: any, degrees: number }) {
+  static bend({ vehicle, degrees }: { vehicle: any; degrees: number }) {
     // how far already?
     const currentFacingDelta = degreesDifference({
       initial: vehicle.rect.facing,
@@ -74,7 +74,7 @@ class PhasingMove {
         resultRect = resultRect.backRightCornerPivot(desiredFacing)
       }
     }
-    let difference = Math.abs(degreesDifference ({ initial: vehicle.rect.facing, second: resultRect.facing }))
+    const difference = Math.abs(degreesDifference({ initial: vehicle.rect.facing, second: resultRect.facing }))
     vehicle.phasing.difficulty = Math.ceil(difference / 15)
 
     return resultRect
@@ -96,7 +96,7 @@ class PhasingMove {
     return vehicle.rect.clone()
   }
 
-  static drift({ vehicle, distance }: { vehicle: any, distance: number }) {
+  static drift({ vehicle, distance }: { vehicle: any; distance: number }) {
     // BUGBUG:
     // how far already?
     /*
@@ -143,7 +143,7 @@ class PhasingMove {
     return vehicle.phasing.rect
   }
 
-  static fishtail({ vehicle, direction, degrees }: { vehicle: any, direction: string, degrees: number }) {
+  static fishtail({ vehicle, direction, degrees }: { vehicle: any; direction: string; degrees: number }) {
     Log.info(`fishtail ${direction} ${degrees} degrees!`, vehicle)
     if (direction === 'left') {
       vehicle.phasing.rect = vehicle.phasing.rect.frontLeftCornerPivot(degrees)
@@ -155,7 +155,7 @@ class PhasingMove {
     return direction
   }
 
-  static straight({ vehicle, distance = INCH }: { vehicle: any, distance: number }) {
+  static straight({ vehicle, distance = INCH }: { vehicle: any; distance: number }) {
     return vehicle.rect.move({ distance, degrees: vehicle.phasing.rect.facing })
   }
 
@@ -163,8 +163,21 @@ class PhasingMove {
     return !new Rectangle(vehicle.rect).equals(new Rectangle(vehicle.phasing.rect))
   }
 
+  ///
   static possibleSpeeds({ vehicle }: { vehicle: any }) {
-    const setSpeeds = ({ currentSpeed, topSpeed, acceleration, canAccelerate, canBrake }: { currentSpeed: number, topSpeed: number, acceleration: number, canAccelerate: boolean, canBrake: boolean }) => {
+    const setSpeeds = ({
+      currentSpeed,
+      topSpeed,
+      acceleration,
+      canAccelerate,
+      canBrake,
+    }: {
+      currentSpeed: number
+      topSpeed: number
+      acceleration: number
+      canAccelerate: boolean
+      canBrake: boolean
+    }) => {
       const acc = canAccelerate ? acceleration : 0
       // BUGBUG: Only does straight
       const possibleMax = currentSpeed + acc
@@ -172,6 +185,11 @@ class PhasingMove {
       // no more than 45 slower without special equipment
       const possibleMin = canBrake ? currentSpeed - 45 : currentSpeed
       const min = possibleMin >= 0 ? possibleMin : 0
+      console.log()
+      console.log(vehicle.color)
+      console.log(`min: ${min}`)
+      console.log(`max: ${max}`)
+      console.log()
       const result = []
       for (let i = min; i <= max; i += 5) {
         result.push({ speed: i, difficulty: 0, damageDice: '' })
@@ -187,7 +205,7 @@ class PhasingMove {
       canBrake: Vehicle.canBrake({ vehicle }),
     })
 
-    let index = result.findIndex((change) => change.speed === vehicle.status.speed) - 3
+    let index = result.findIndex(change => change.speed === vehicle.status.speed) - 3
 
     // unclear how to handle > 45mph deceleration - see p.9
     const difficulties = [
@@ -207,11 +225,13 @@ class PhasingMove {
       index--
     }
 
+    console.log(result)
+
     return result
   }
 
   static reset({ vehicle }: { vehicle: any }) {
-    const possibles = this.possibleSpeeds({ vehicle })
+    const possibles = PhasingMove.possibleSpeeds({ vehicle })
 
     vehicle.phasing = {
       collisionDetected: false,
@@ -222,7 +242,7 @@ class PhasingMove {
       maneuverIndex: 0,
       rect: vehicle.rect ? vehicle.rect.clone() : null,
       showSpeedChangeModal: false,
-      speedChangeIndex: possibles.findIndex((possible) => possible.speed === vehicle.status.speed),
+      speedChangeIndex: possibles.findIndex(possible => possible.speed === vehicle.status.speed),
       speedChanges: possibles,
       targetIndex: vehicle.phasing.targetIndex,
       targets: [],
@@ -245,7 +265,7 @@ class PhasingMove {
   }
 
   // controlled skid skids on next move
-  static swerve({ vehicle, degrees }: { vehicle: any, degrees: number }) {
+  static swerve({ vehicle, degrees }: { vehicle: any; degrees: number }) {
     const currentFacingDelta = degreesDifference({
       initial: vehicle.rect.facing,
       second: vehicle.phasing.rect.facing,

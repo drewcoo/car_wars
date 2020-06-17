@@ -1,0 +1,49 @@
+name: CI
+on: [push]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        id: [client, server]
+    steps:
+    - name: "check out"
+      uses: actions/checkout@v2
+    - name: lint
+      run: |
+        cd ${{ matrix.id }}
+        npm install
+        npm run lint
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        id: [client, server]
+    steps:
+    - name: "check out"
+      uses: actions/checkout@v2
+    - name: test
+      run: |
+        cd ${{ matrix.id }}
+        npm install
+        npm run build
+        npm run test:coverage
+    - name: Coveralls Parallel
+      uses: coverallsapp/github-action@master
+      with:
+        base-path: ./${{ matrix.id }}
+        github-token: ${{ secrets.github_token }}
+        flag-name: run-${{ matrix.id }}
+        parallel: true
+        path-to-lcov: ./${{ matrix.id }}/coverage/lcov.info
+  finish:
+    needs: [unit]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true

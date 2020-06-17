@@ -2,7 +2,6 @@ import { DATA } from '../DATA'
 import Character from './Character'
 import Log from '../utils/Log'
 
-
 class Vehicle {
   static canAccelerate({ vehicle }: { vehicle: any }) {
     const plantOk = vehicle.design.components.powerPlant.damagePoints > 0
@@ -21,7 +20,7 @@ class Vehicle {
     return Vehicle.driver({ vehicle }).damagePoints > 1
   }
 
-  static driver({ vehicle }: { vehicle: any}): any {
+  static driver({ vehicle }: { vehicle: any }): any {
     return Character.withId({ id: Vehicle.driverId({ vehicle }) })
   }
 
@@ -54,7 +53,8 @@ class Vehicle {
     return vehicle.design.components.powerPlant.damagePoints !== 0
   }
 
-  static weaponsOut({ vehicle }: { vehicle: any }) {``
+  static weaponsOut({ vehicle }: { vehicle: any }) {
+    ;``
     Log.info('in weapons out', vehicle)
     const workingWeapon = vehicle.design.components.weapons.find((weapon: any) => {
       const plantSitchOk =

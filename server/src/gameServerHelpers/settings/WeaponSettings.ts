@@ -8,7 +8,7 @@ import Time from '../Time'
 import Vehicle from '../Vehicle'
 
 class WeaponSettings {
-  static setTarget({ vehicle, targetIndex }: { vehicle: any, targetIndex: number }) {
+  static setTarget({ vehicle, targetIndex }: { vehicle: any; targetIndex: number }) {
     if (targetIndex < 0 || targetIndex >= vehicle.phasing.targets.length) {
       throw new Error(`Target index out of range: ${targetIndex}`)
     }
@@ -16,7 +16,7 @@ class WeaponSettings {
     return targetIndex
   }
 
-  static setWeapon({ vehicle, weaponIndex }: { vehicle: any, weaponIndex: number }) {
+  static setWeapon({ vehicle, weaponIndex }: { vehicle: any; weaponIndex: number }) {
     if (weaponIndex < 0 || weaponIndex >= vehicle.design.components.weapons.length) {
       throw new Error(`Weapon index out of range: ${weaponIndex}`)
     }
@@ -28,7 +28,6 @@ class WeaponSettings {
     const crewMemberCanFire = vehicle.design.components.crew.find((crewSlot: any) => {
       ///********************* */
       const crewMember: any = Character.withId({ id: crewSlot.id })
-
 
       return crewMember.damagePoints > 1 && !crewMember.firedThisTurn
     })
@@ -48,17 +47,16 @@ class WeaponSettings {
     return weaponIndex
   }
 
-  static finishFiring({ vehicle, match }: { vehicle: any, match: any }) {
+  static finishFiring({ vehicle, match }: { vehicle: any; match: any }) {
     const carIdIndex = match.time.phase.canTarget.indexOf(vehicle.id)
     if (carIdIndex !== -1) {
       match.time.phase.canTarget.splice(carIdIndex, 1)
     }
-    
 
     Time.subphase5FireWeapons({ match })
   }
 
-  static fireWeapon({ vehicle, target }: { vehicle: any, target: any }) {
+  static fireWeapon({ vehicle, target }: { vehicle: any; target: any }) {
     Log.info('fire!', vehicle)
     if (!WeaponSettings.passFiringChecks({ vehicle })) {
       Log.info('cannot fire', vehicle)
@@ -109,10 +107,9 @@ class WeaponSettings {
 
     Time.subphase5FireWeapons({ match })
   }
-      
 
   ///////////////////////////////
-  static canFire({ weapon, plant }: { weapon: any, plant: any }) {
+  static canFire({ weapon, plant }: { weapon: any; plant: any }) {
     const plantDisabled = plant.damagePoints < 1
     return !(
       weapon.location === 'none' ||

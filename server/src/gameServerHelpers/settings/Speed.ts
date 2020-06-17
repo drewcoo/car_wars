@@ -1,51 +1,64 @@
 import Control from '../Control'
+import Match from '../Match'
 import Vehicle from '../Vehicle'
 import Time from '../Time'
 import Point from '../../utils/geometry/Point'
 import Log from '../../utils/Log'
 
 class Speed {
-  static accept({ vehicle, match, bugMeNot }: { vehicle: any, match: any, bugMeNot: boolean }) {
-      if (vehicle.status.speedSetThisTurn) {
-        return
+  static accept({ vehicle, match, bugMeNot }: { vehicle: any; match: any; bugMeNot: boolean }) {
+    console.log(`Speed.accept(${vehicle.color})`)
+    if (vehicle.status.speedSetThisTurn) {
+      return
+    }
+
+    const newSpeed = vehicle.phasing.speedChanges[vehicle.phasing.speedChangeIndex]
+    Log.info(`${vehicle.status.speed} -> ${newSpeed.speed}`, vehicle)
+    const speedChanged = newSpeed.speed !== vehicle.status.speed
+
+    if (speedChanged && newSpeed.speed === 0) {
+      const match = Match.withId({ id: vehicle.currentMatch })
+      if (newSpeed.speed === 0) {
+        vehicle.status.direction.canChange.turn = match.time.turn.number + 1
+        vehicle.status.direction.canChange.phase = match.time.phase.number
+      } else if (vehicle.status.speed === 0) {
+        vehicle.status.direction.canChange.turn = 100
+        vehicle.status.direction.forward = newSpeed.speed > 0 ? true : false
       }
+    }
 
-      const newSpeed = vehicle.phasing.speedChanges[vehicle.phasing.speedChangeIndex]
-      Log.info(`${vehicle.status.speed} -> ${newSpeed.speed}`, vehicle)
-      const speedChanged = newSpeed.speed !== vehicle.status.speed
+    if (speedChanged || bugMeNot) {
+      Log.info(`speed change: ${vehicle.status.speed}MPH -> ${newSpeed.speed}MPH`, vehicle)
+      vehicle.status.speedSetThisTurn = true
+    }
 
-      if (speedChanged || bugMeNot) {
-        Log.info(`speed change: ${vehicle.status.speed}MPH -> ${newSpeed.speed}MPH`, vehicle)
-        vehicle.status.speedSetThisTurn = true
+    if (speedChanged && newSpeed.damageDice !== '') {
+      // deal with the damage and handling roll after everyone moves
+      const points: { [index: string]: any } = {
+        FL: vehicle.rect.flPoint(),
+        FR: vehicle.rect.frPoint(),
+        BL: vehicle.rect.blPoint(),
+        BR: vehicle.rect.brPoint(),
       }
+      vehicle.design.components.tires.forEach((tire: any) => {
+        vehicle.phasing.damage.push({
+          target: {
+            location: tire.location,
+            point: points[tire.location],
+            damageDice: newSpeed.damageDice,
+          },
 
-      if (speedChanged && newSpeed.damageDice !== '') {
-        // deal with the damage and handling roll after everyone moves
-        const points: { [index: string]: any } = {
-          FL: vehicle.rect.flPoint(),
-          FR: vehicle.rect.frPoint(),
-          BL: vehicle.rect.blPoint(),
-          BR: vehicle.rect.brPoint(),
-        }
-        vehicle.design.components.tires.forEach((tire: any) => {
-          vehicle.phasing.damage.push({
-            target: {
-              location: tire.location,
-              point: points[tire.location],
-              damageDice: newSpeed.damageDice,
-            },
-
-            message: 'tire damage',
-          })
+          message: 'tire damage',
         })
-      }
+      })
+    }
 
-      vehicle.phasing.showSpeedChangeModal = false
+    vehicle.phasing.showSpeedChangeModal = false
 
-      Time.subphase2SetSpeeds({ match })
+    Time.subphase2SetSpeeds({ match })
   }
 
-  static set({ vehicle, speed}: { vehicle: any, speed: number }) {
+  static set({ vehicle, speed }: { vehicle: any; speed: number }) {
     if (vehicle.status.speedSetThisTurn) {
       return
     }

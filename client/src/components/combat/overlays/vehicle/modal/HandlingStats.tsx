@@ -22,8 +22,7 @@ class HandlingStats extends React.Component {
         <>
           <br />
           <span style={{ color: 'red' }}>
-            {car.phasing.damage[0].target.damageDice}{' '}
-            {car.phasing.damage[0].message}
+            {car.phasing.damage[0].target.damageDice} {car.phasing.damage[0].message}
           </span>
         </>
       )
@@ -33,21 +32,15 @@ class HandlingStats extends React.Component {
 
   render() {
     const lms = new LocalMatchState(this.props.matchData)
-    const car = this.props.carId
-      ? lms.car({ id: this.props.carId })
-      : lms.activeCar()
+    const car = this.props.carId ? lms.car({ id: this.props.carId }) : lms.activeCar()
     if (!car) {
       return null
     }
     return (
       <div style={{ fontSize: '24px' }}>
-        <span style={DangerColorizer.handlingStatusColorizer(car)}>
-          handling: {car.status.handling}
-        </span>
+        <span style={DangerColorizer.handlingStatusColorizer(car)}>handling: {car.status.handling}</span>
         <br />
-        <span style={DangerColorizer.handlingDifficultyColorizer(car)}>
-          D{car.phasing.difficulty} maneuver
-        </span>
+        <span style={DangerColorizer.handlingDifficultyColorizer(car)}>D{car.phasing.difficulty} maneuver</span>
         {this.damageDice(car)}
         <br />
         {this.collisionMessage(car)}

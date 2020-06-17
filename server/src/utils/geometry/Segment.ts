@@ -5,9 +5,8 @@ import { degreesParallel } from '../conversions'
 import Vehicle from '../../gameServerHelpers/Vehicle'
 
 interface Segment {
-  points : Point[]
+  points: Point[]
 }
-
 
 class Segment {
   constructor(points: [Point, Point]) {

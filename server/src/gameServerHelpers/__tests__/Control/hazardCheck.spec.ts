@@ -35,7 +35,7 @@ describe('Control', () => {
       })
 
       it('roll 5-8: major fishtail', () => {
-        Dice.roll  = jest.fn().mockImplementation(() => _.random(5, 8))
+        Dice.roll = jest.fn().mockImplementation(() => _.random(5, 8))
         expect(Control.hazardCheck({ vehicle, difficulty })).toEqual('major fishtail')
         const nextMove: any = vehicle.status.nextMove[0]
         expect(nextMove.fishtailDistance).toEqual(30)
@@ -43,7 +43,7 @@ describe('Control', () => {
       })
 
       it('roll 9,10: minor fishtail & roll Crash Table 1', () => {
-        Dice.roll  = jest.fn().mockImplementation(() => _.random(9, 10))
+        Dice.roll = jest.fn().mockImplementation(() => _.random(9, 10))
         expect(Control.hazardCheck({ vehicle, difficulty })).toEqual('minor fishtail and roll on Crash Table 1')
         const nextMove: any = vehicle.status.nextMove[0]
         expect(nextMove.fishtailDistance).toEqual(15)
@@ -51,7 +51,7 @@ describe('Control', () => {
       })
 
       it('roll 11-14: major fishtail & roll Crash Table 1', () => {
-        Dice.roll  = jest.fn().mockImplementation(() => _.random(11, 14))
+        Dice.roll = jest.fn().mockImplementation(() => _.random(11, 14))
         expect(Control.hazardCheck({ vehicle, difficulty })).toEqual('major fishtail and roll on Crash Table 1')
         const nextMove: any = vehicle.status.nextMove[0]
         expect(nextMove.fishtailDistance).toEqual(30)
@@ -59,8 +59,10 @@ describe('Control', () => {
       })
 
       it('roll 15 or more: major & minor fishtail & Crash Table 1', () => {
-        Dice.roll  = jest.fn().mockImplementation(() => _.random(15, 20))
-        expect(Control.hazardCheck({ vehicle, difficulty })).toEqual('major and minor fishtail and roll on Crash Table 1')
+        Dice.roll = jest.fn().mockImplementation(() => _.random(15, 20))
+        expect(Control.hazardCheck({ vehicle, difficulty })).toEqual(
+          'major and minor fishtail and roll on Crash Table 1',
+        )
         const nextMove: any = vehicle.status.nextMove[0]
         expect(nextMove.fishtailDistance).toEqual(45)
         expect(['left', 'right']).toContain(nextMove.spinDirection)

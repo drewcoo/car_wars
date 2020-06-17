@@ -5,7 +5,6 @@ import GeometryFactory from './GeometryFactory'
 import { COMPASS } from '../../constants'
 import '../../jestMatchers'
 
-
 describe('Rectangle', () => {
   describe('points', () => {
     describe('valid', () => {

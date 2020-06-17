@@ -179,9 +179,9 @@ class Car extends React.Component<Props, State> {
     if (this.props.shadow && nextMove) {
       if (nextMove.fishtailDistance !== 0) {
         if (nextMove.spinDirection === 'left') {
-          tempRect = tempRect.leftFrontCornerPivot(nextMove.fishtailDistance)
+          tempRect = tempRect.frontLeftCornerPivot(nextMove.fishtailDistance)
         } else if (nextMove.spinDirection === 'right') {
-          tempRect = tempRect.rightFrontCornerPivot(-nextMove.fishtailDistance)
+          tempRect = tempRect.frontRightCornerPivot(-nextMove.fishtailDistance)
         } else {
           throw new Error(`direction unknown: ${nextMove.spinDirection}`)
         }
@@ -245,7 +245,11 @@ class Car extends React.Component<Props, State> {
           carId={car.id}
           client={this.props.client}
         />
-        <TimingOverlays client={this.props.client} matchData={this.props.matchData} id={car.id} />
+        {this.props.active || this.props.shadow ? (
+          <></>
+        ) : (
+          <TimingOverlays client={this.props.client} matchData={this.props.matchData} id={car.id} />
+        )}
         <KillMessage matchData={this.props.matchData} carId={car.id} />
         {this.wipeoutLabel(car, tempRect.center().x - 30, tempRect.center().y)}
       </svg>

@@ -113,8 +113,12 @@ describe('Point', () => {
         expect(rectangle.center().intersects(rectangle)).toBe(true)
       })
 
-      it.skip('intersects other ways', () => {})
-      it.skip('does not intesrsect', () => {})
+      it.skip('intersects other ways', () => {
+        /* todo */
+      })
+      it.skip('does not intesrsect', () => {
+        /* todo */
+      })
     })
   })
 

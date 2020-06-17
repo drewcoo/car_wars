@@ -1,3 +1,6 @@
+![CI](https://github.com/drewcoo/car_wars/workflows/CI/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/drewcoo/car_wars/badge.svg?branch=%238_reverse)](https://coveralls.io/github/drewcoo/car_wars?branch=%238_reverse)
+
 # Car Wars
 An attempt to computerize the paper-and-pencil game Car Wars, my favorite game by far from . . . back then.
 

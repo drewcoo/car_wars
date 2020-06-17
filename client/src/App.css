@@ -213,7 +213,7 @@ body {
     font-family: fantasy;
     font-size: 50px;
     font-variant: small-caps;
-    opacity: 0.75;
+    opacity: 0.6;
   }
 .ReactModal__Overlay {
     background-color: rgba(0,0,0, 0.5);
@@ -237,7 +237,12 @@ body {
   border: 5px groove white;
   border-radius: 15px;
   background-color: black;
-  /*color: 'black';*/
+  padding-top: 0px;
+}
+.ModalLegend {
+  color: white;
+  
+  text-shadow: -2px 2px 0 #000, 2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000;
 }
 .SetupPage {
   background: black;

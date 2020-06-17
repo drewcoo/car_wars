@@ -59,6 +59,7 @@ class SpeedModal extends React.Component {
   leftButton() {
     const lms = new LocalMatchState(this.props.matchData)
     const car = lms.car({ id: this.props.carId })
+    console.log(car)
     const speedChanged = car.status.speed !== parseInt(car.phasing.speedChanges[car.phasing.speedChangeIndex].speed)
 
     if (speedChanged) {
@@ -114,9 +115,9 @@ class SpeedModal extends React.Component {
           isOpen={!car.phasing.showSpeedChangeModal}
           style={this.customStyles()}
         >
-          <br></br>
-          <span className="flexCentered">speed</span>
-          <span className="flexCentered">changed</span>
+          <br />
+          <span className="flexCentered">&nbsp;&nbsp;speed&nbsp;&nbsp;</span>
+          <span className="flexCentered">is set</span>
           <br />
         </ReactModal>
         <ReactModal

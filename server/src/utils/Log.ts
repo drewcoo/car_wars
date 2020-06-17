@@ -12,8 +12,8 @@ class Log {
     }
     const color = target ? target.color : ''
     if (color === 'beige') return // test cars are beige
-    console.log(`${color}: ${message}`)
-    if(!target) {
+    //console.log(`${color}: ${message}`)
+    if (!target) {
       console.log('NO TARGET!')
       console.log(message)
     } else {
@@ -23,7 +23,6 @@ class Log {
         Log.info(`${target.name}: ${message}`, vehicle)
       }
     }
-    
   }
 }
 export default Log

@@ -217,16 +217,16 @@ export const resolvers = {
     createCar: (parent: any, args: any) => {
       const player = DATA.players.find((element: any) => element.id === args.playerId)
 
-      const designOriinal: any = DATA.designs.find((element: any) => element.name === args.designName)
-      const design = _.cloneDeep(designOriinal)
+      const designOriginal: any = DATA.designs.find((element: any) => element.name === args.designName)
+      const design = _.cloneDeep(designOriginal)
 
-      const startingSpeed = 50
+      const startingSpeed = args.startingSpeed ? args.startingSpeed : 50
       const startingDirection = {
         forward: startingSpeed < 0 ? false : true,
         canChange: {
-          turn: 100,
-          phase: 6
-        }
+          turn: startingSpeed === 0 ? 1 : 100,
+          phase: 1,
+        },
       }
 
       const vehicle = {
@@ -264,7 +264,7 @@ export const resolvers = {
           throw new Error(`no seat for a ${crewMember.role}!`)
         }
         seat.id = crewMember.id
-        seat.firedThisTurn= false
+        seat.firedThisTurn = false
       })
 
       PhasingMove.reset({ vehicle })
@@ -317,7 +317,7 @@ export const resolvers = {
 
     activeMoveHalfStraight: (parent: any, args: any) => {
       const vehicle = Vehicle.withId({ id: args.id })
-      Actions.moveHalfStraight({ vehicle})
+      Actions.moveHalfStraight({ vehicle })
     },
 
     activeMoveReset: (parent: any, args: any) => {
@@ -358,6 +358,7 @@ export const resolvers = {
       const vehicle = Vehicle.withId({ id: args.id })
       const match = Match.withId({ id: vehicle.currentMatch })
       Speed.accept({ vehicle, match, bugMeNot: args.bugMeNot })
+      console.log('back here')
     },
 
     setTarget: (parent: any, args: any) => {

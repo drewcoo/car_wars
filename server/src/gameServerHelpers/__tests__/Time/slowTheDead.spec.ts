@@ -13,7 +13,7 @@ describe('Time', () => {
     Match.cars = jest.fn().mockImplementation(() => [vehicle])
 
     beforeEach(() => {
-      speedBefore = vehicle.status.speed  
+      speedBefore = vehicle.status.speed
     })
 
     it("doesn't slow vehicles when driver alert, plant working, and enough wheels", () => {

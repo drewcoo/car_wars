@@ -10,6 +10,7 @@ class Dice {
     if (!rollString.match(/\d+d/)) {
       throw new TypeError('requires number followed by "d"')
     }
+    // eslint-disable-next-line prefer-const
     let [dice, modifier] = rollString.split('d').map(elem => {
       return parseInt(elem)
     })

@@ -14,9 +14,11 @@ interface Props {
 }
 
 class ArenaMap extends React.Component<Props> {
+  /*
   constructor(props: Props) {
     super(props)
   }
+  */
 
   componentDidMount(): void {
     const lms = new LocalMatchState(this.props.matchData)

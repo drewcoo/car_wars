@@ -37,7 +37,17 @@ class Rectangle {
   // Or does that only apply to vehicles, which have rectangles?
   //
   // bugbug - not ANY
-  constructor({ _brPoint, facing, length = INCH, width = INCH/2 }: { _brPoint: Point, facing: number, length?: number, width?: number }) {
+  constructor({
+    _brPoint,
+    facing,
+    length = INCH,
+    width = INCH / 2,
+  }: {
+    _brPoint: Point
+    facing: number
+    length?: number
+    width?: number
+  }) {
     this._brPoint = new Point(_brPoint)
     this.facing = (facing + 360) % 360
     this.length = length
@@ -129,7 +139,7 @@ class Rectangle {
 
   // returns a new rectangle, moved direction and distance from here
   // can make this take direction of movement later
-  move({ degrees, distance, slide = false }: { degrees: number, distance: number, slide?: boolean }): Rectangle {
+  move({ degrees, distance, slide = false }: { degrees: number; distance: number; slide?: boolean }): Rectangle {
     const result = new Rectangle({
       _brPoint: this.brPoint().move({ degrees, distance }),
       facing: slide ? this.facing : degrees,
@@ -176,11 +186,11 @@ class Rectangle {
   // TODO: Should I aslo have some kind of drifty, sidling move here? One that
   // can take into account direction of movement?
 
-  intersects(thing: (Point | Segment | Rectangle)): boolean {
+  intersects(thing: Point | Segment | Rectangle): boolean {
     return this.isIntersecting(thing)
   }
 
-  isIntersecting(thing: (Point | Segment | Rectangle)): boolean {
+  isIntersecting(thing: Point | Segment | Rectangle): boolean {
     return Intersection.exists(this, thing)
   }
 
@@ -195,19 +205,19 @@ class Rectangle {
 
   sides(): Sides {
     return {
-      'B': this.bSide(),
-      'F': this.fSide(),
-      'L': this.lSide(),
-      'R': this.rSide(),
+      B: this.bSide(),
+      F: this.fSide(),
+      L: this.lSide(),
+      R: this.rSide(),
     }
   }
 
   corners(): Corners {
     return {
-      'FL': this.flPoint(),
-      'FR': this.frPoint(),
-      'BL': this.blPoint(),
-      'BR': this.brPoint(),
+      FL: this.flPoint(),
+      FR: this.frPoint(),
+      BL: this.blPoint(),
+      BR: this.brPoint(),
     }
   }
 
@@ -243,7 +253,7 @@ class Rectangle {
   }
 
   // BUGBUG: Need to change FRBL to FACE.F and check for type FACE instead
-  pointIsInArc({ point, arcName }: { point: Point, arcName: string }): boolean {
+  pointIsInArc({ point, arcName }: { point: Point; arcName: string }): boolean {
     const direction = this.center().degreesTo(point) // + this.facing
     switch (arcName) {
       case 'F':

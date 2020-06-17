@@ -1,7 +1,7 @@
 import Point from '../Point'
 import { COMPASS } from '../../constants'
 import { degreesEqual } from '../../conversions'
-import Factory from './Factory'
+import GeometryFactory from './GeometryFactory'
 
 describe('Point', () => {
   describe('#rotateAround', () => {
@@ -24,13 +24,13 @@ describe('Point', () => {
 
   describe('#clone', () => {
     it('works', () => {
-      const point = Factory.Point()
+      const point = GeometryFactory.point()
       expect(point.clone().equals(point)).toBe(true)
     })
   })
 
   describe('#toFixed', () => {
-    const initial = Factory.Point()
+    const initial = GeometryFactory.point()
     const digits = 2
     const fixed = initial.toFixed(digits)
     expect(initial.x.toFixed(digits) === fixed.x)

@@ -7,7 +7,7 @@ import Vehicle from './Vehicle'
 import Point from '../utils/geometry/Point'
 
 class Damage {
-  static damageAllTires({ car, damageDice }: { car: any, damageDice: string }): void {
+  static damageAllTires({ car, damageDice }: { car: any; damageDice: string }): void {
     const points = {
       FL: car.rect.flPoint(),
       FR: car.rect.frPoint(),
@@ -234,7 +234,17 @@ class Damage {
   // no longer steer, accelerate, or brake.
   //
 
-  static damageTire({ car, damage, location, hazard }: { car: any, damage: number, location: string, hazard: number }): number {
+  static damageTire({
+    car,
+    damage,
+    location,
+    hazard,
+  }: {
+    car: any
+    damage: number
+    location: string
+    hazard: number
+  }): number {
     Log.info(`${damage} damage to ${location} tire`, car)
     const tire = car.design.components.tires.find((tire: any) => {
       return tire.location === location
@@ -289,7 +299,7 @@ class Damage {
     return remaining
   }
 
-  static damageArmor({ car, damage, location }: { car: any, damage: number, location: string }): number {
+  static damageArmor({ car, damage, location }: { car: any; damage: number; location: string }): number {
     Log.info(`${damage} damage to ${location} armor`, car)
     car.design.components.armor[location] -= damage
     let remaining = 0
@@ -300,7 +310,7 @@ class Damage {
     return remaining
   }
 
-  static damageWeapons({ car, damage, location }: { car: any, damage: number, location: string }): number {
+  static damageWeapons({ car, damage, location }: { car: any; damage: number; location: string }): number {
     // randomly choose which weapon is hit
     const thisSideWeapons = car.design.components.weapons.filter((weapon: any) => weapon.location === location)
 
@@ -322,7 +332,7 @@ class Damage {
     return remaining
   }
 
-  static damageInterior({ car, damage, hazard }: { car: any, damage: number, hazard: number }): number {
+  static damageInterior({ car, damage, hazard }: { car: any; damage: number; hazard: number }): number {
     if (damage < 1) {
       Log.info('0 damage to interior', car)
       return 0
@@ -341,7 +351,7 @@ class Damage {
     return remaining
   }
 
-  static damagePlant({ car, damage }: { car: any, damage: number }): number {
+  static damagePlant({ car, damage }: { car: any; damage: number }): number {
     Log.info(`${damage} damage to plant`, car)
     car.design.components.powerPlant.damagePoints -= damage
     let remaining = 0
@@ -380,7 +390,7 @@ class Damage {
   // until it stops or hits something.
   //
   //
-  static damageCrew({ car, damage, hazard }: { car: any, damage: number, hazard: number }): number {
+  static damageCrew({ car, damage, hazard }: { car: any; damage: number; hazard: number }): number {
     if (damage < 1) {
       return 0
     }

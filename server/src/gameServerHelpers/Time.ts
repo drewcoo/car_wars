@@ -15,6 +15,7 @@ import Rectangle from '../utils/geometry/Rectangle'
 
 /*
 subphases:
+0_increment_time
 1_start
 2_set_speeds
 3_reveal_speed_change
@@ -36,9 +37,8 @@ class Time {
       Log.info(`reflex roll: ${character.reflexRoll}; tie breaker: ${character.reflexTieBreaker}`, character)
     })
 
-
     const matchCars = Match.cars({ match })
-    
+
     matchCars.forEach((vehicle: any) => {
       const driver = Vehicle.driver({ vehicle })
       const skillLevel = Character.skillLevel({ skill: 'driver', character: driver })
@@ -60,7 +60,7 @@ class Time {
       vehicle.phasing.showSpeedChangeModal = true
     })
     match.status = 'started'
-    Time.subphase1Start({ match })
+    Time.subphase0IncrementTime({ match })
   }
 
   static slowTheDead({ match }: { match: any }) {
@@ -77,7 +77,7 @@ class Time {
     // mph per turn (more if you put on the brakes).
 
     const vehicles = Match.cars({ match })
-    
+
     vehicles.forEach((vehicle: any) => {
       const driverAwake = Vehicle.driverAwake({ vehicle })
       const plantWorking = Vehicle.plantWorking({ vehicle })
@@ -138,12 +138,14 @@ class Time {
   static subphaseCheck(name: string, match: any) {
     if (match.time.phase.subphase !== name) {
       switch (match.time.phase.subphase) {
+        case '0_increment_time':
+          return Time.subphase0IncrementTime({ match })
         case '1_start':
           return Time.subphase1Start({ match })
         case '2_set_speeds':
           return Time.subphase2SetSpeeds({ match })
         case '3_reveal_speed_change':
-           return Time.subphase3RevealSpeedChange({ match })
+          return Time.subphase3RevealSpeedChange({ match })
         case '4_maneuver':
           return Time.subphase4Maneuver({ match })
         case '5_fire_weapons':
@@ -158,9 +160,17 @@ class Time {
     }
   }
 
-  static subphase1Start({ match }: { match: any }) {
-    Time.subphaseCheck('1_start', match)
-    match.time.phase.number = (match.time.phase.number % 5) + 1
+  static subphase0IncrementTime({ match }: { match: any }) {
+    Time.subphaseCheck('0_increment_time', match)
+    console.log()
+    console.log('PHASE')
+    console.log(match.time.phase.number)
+    match.time.phase.number = (match.time.phase.number + 1) % 5
+    if (match.time.phase.number < 1) {
+      match.time.phase.number += 5
+    }
+    console.log(match.time.phase.number)
+    console.log()
     if (match.time.phase.number === 1) {
       Time.nextTurn({ match })
       Match.cars({ match }).forEach((vehicle: any) => {
@@ -168,6 +178,12 @@ class Time {
         vehicle.status.speedInitThisTurn = vehicle.status.speed
       })
     }
+    Time.subphase1Start({ match })
+  }
+
+  static subphase1Start({ match }: { match: any }) {
+    Time.subphaseCheck('1_start', match)
+
     match.time.phase.unmoved = MetaMovement.canMoveThisPhase({ match })
     Match.cars({ match }).forEach((vehicle: any) => {
       vehicle.phasing.showSpeedChangeModal = !vehicle.status.speedSetThisTurn
@@ -177,7 +193,8 @@ class Time {
   }
 
   static subphase2SetSpeeds({ match }: { match: any }) {
-//    Time.subphaseCheck('2_set_speeds', match)
+    console.log(`turn: ${match.time.turn.number}, phase: ${match.time.phase.number}, subphase 2 (set speeds)`)
+    //    Time.subphaseCheck('2_set_speeds', match)
     // do we need to start a new phase?
     let allReady = true
     Match.cars({ match }).forEach((thisCar: any) => {
@@ -244,6 +261,10 @@ class Time {
 
       vehicle.status.speedSetThisTurn = true
       vehicle.status.speed = newSpeed
+
+      const possibles = PhasingMove.possibleSpeeds({ vehicle })
+      vehicle.phasing.speedChanges = possibles
+      vehicle.phasing.speedChangeIndex = possibles.findIndex(possible => possible.speed === vehicle.status.speed)
     })
 
     match.time.turn.movesByPhase = MetaMovement.allMovesThisTurn({ match })
@@ -277,7 +298,7 @@ class Time {
     }
     match.time.phase.canTarget = Match.cars({ match })
       .filter((vehicle: any) => {
-        // just driver for now 
+        // just driver for now
         const crewMember = Vehicle.driver({ vehicle })
         return !(crewMember.firedThisTurn || crewMember.damagePoints < 1)
       })
@@ -332,8 +353,10 @@ class Time {
       vehicle.phasing.damage = []
     })
 
+    //match.time.phase += 1
+
     match.time.phase.subphase = '1_start'
-    Time.subphase1Start({ match })
+    Time.subphase0IncrementTime({ match })
   }
 
   static fishtailIfNeeded({ vehicle }: { vehicle: any }) {
@@ -360,7 +383,7 @@ class Time {
     })
   }
 
-  static nonfishtailForcedMove({ vehicle, match }: { vehicle: any, match: any }) {
+  static nonfishtailForcedMove({ vehicle, match }: { vehicle: any; match: any }) {
     const forcedMove = vehicle.status.nextMove[0]
     if (typeof forcedMove === 'undefined') {
       return false
@@ -392,7 +415,7 @@ class Time {
     return true
   }
 
-  static regularMove({ vehicle, match }: { vehicle: any, match: any }) {
+  static regularMove({ vehicle, match }: { vehicle: any; match: any }) {
     vehicle.phasing.rect = vehicle.rect.clone()
     const isHalfMove =
       MetaMovement.distanceThisPhase({
@@ -430,8 +453,8 @@ class Time {
     }
   }
 
-  static prepareActiveMover({ match, carId }: { match: any, carId: string }) {
-    let vehicle = Match.cars({ match }).find((obj: any) => obj.id === carId)
+  static prepareActiveMover({ match, carId }: { match: any; carId: string }) {
+    const vehicle = Match.cars({ match }).find((obj: any) => obj.id === carId)
     vehicle.rect = PhasingMove.center({ vehicle })
 
     if (vehicle.status.speed === 0) {

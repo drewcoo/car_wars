@@ -56,7 +56,7 @@ class Intersection {
     const segFL = new Segment([rectangle.flPoint(), point])
     const segBR = new Segment([rectangle.brPoint(), point])
     const segBL = new Segment([rectangle.blPoint(), point])
-    const outside = (
+    const outside =
       Intersection.segmentSegmentExists({ segment: segFR, segment2: rectangle.bSide() }) ||
       Intersection.segmentSegmentExists({ segment: segFR, segment2: rectangle.lSide() }) ||
       Intersection.segmentSegmentExists({ segment: segFL, segment2: rectangle.bSide() }) ||
@@ -65,7 +65,6 @@ class Intersection {
       Intersection.segmentSegmentExists({ segment: segBR, segment2: rectangle.lSide() }) ||
       Intersection.segmentSegmentExists({ segment: segBL, segment2: rectangle.fSide() }) ||
       Intersection.segmentSegmentExists({ segment: segBL, segment2: rectangle.rSide() })
-    )
     return !outside
   }
 
@@ -87,10 +86,12 @@ class Intersection {
 
     // BUGBUG back collisions not handled!
     // Also this is missed up for sidling into things like with bootleggers.
-    return (Intersection.segmentRectangleExists({ rectangle, segment: rectangle2.fSide() }) ||
-            Intersection.segmentRectangleExists({ rectangle, segment: rectangle2.lSide() }) ||
-            Intersection.segmentRectangleExists({ rectangle, segment: rectangle2.bSide() }) ||
-            Intersection.segmentRectangleExists({ rectangle, segment: rectangle2.rSide() }))
+    return (
+      Intersection.segmentRectangleExists({ rectangle, segment: rectangle2.fSide() }) ||
+      Intersection.segmentRectangleExists({ rectangle, segment: rectangle2.lSide() }) ||
+      Intersection.segmentRectangleExists({ rectangle, segment: rectangle2.bSide() }) ||
+      Intersection.segmentRectangleExists({ rectangle, segment: rectangle2.rSide() })
+    )
   }
 
   static rectangleSegmentExists({ segment, rectangle }) {
@@ -103,15 +104,19 @@ class Intersection {
 
   static segmentRectangleExists({ segment, rectangle }) {
     const sidesIntersectSegment = () => {
-      return (Intersection.segmentSegmentExists({ segment, segment2: rectangle.fSide() }) ||
-                Intersection.segmentSegmentExists({ segment, segment2: rectangle.rSide() }) ||
-                Intersection.segmentSegmentExists({ segment, segment2: rectangle.bSide() }) ||
-                Intersection.segmentSegmentExists({ segment, segment2: rectangle.lSide() }))
+      return (
+        Intersection.segmentSegmentExists({ segment, segment2: rectangle.fSide() }) ||
+        Intersection.segmentSegmentExists({ segment, segment2: rectangle.rSide() }) ||
+        Intersection.segmentSegmentExists({ segment, segment2: rectangle.bSide() }) ||
+        Intersection.segmentSegmentExists({ segment, segment2: rectangle.lSide() })
+      )
     }
 
     const segmentIsInsideRectangle = () => {
-      return (Intersection.pointRectangleExists({ point: segment.points[0], rectangle }) ||
-                Intersection.pointRectangleExists({ point: segment.points[1], rectangle }))
+      return (
+        Intersection.pointRectangleExists({ point: segment.points[0], rectangle }) ||
+        Intersection.pointRectangleExists({ point: segment.points[1], rectangle })
+      )
     }
     // Also if a segment has both points inside the rect, call it intersecting.
     // We can check just one point.
@@ -123,26 +128,35 @@ class Intersection {
   static segmentSegmentExists({ segment, segment2 }) {
     // from Stack Overflow - url forgotten
     const copypasta = (a: number, b: number, c: number, d: number, p: number, q: number, r: number, s: number) => {
-      var det: number, gamma: number, lambda: number
-      det = (c - a) * (s - q) - (r - p) * (d - b)
-      if (det === 0) { return false }
-      lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det
-      gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det
-      return (lambda > 0 && lambda < 1) && (gamma > 0 && gamma < 1)
+      const det = (c - a) * (s - q) - (r - p) * (d - b)
+      if (det === 0) {
+        return false
+      }
+      const lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det
+      const gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det
+      return lambda > 0 && lambda < 1 && gamma > 0 && gamma < 1
     }
 
     const crosses = () => {
-      return copypasta(segment.points[0].x, segment.points[0].y,
-        segment.points[1].x, segment.points[1].y,
-        segment2.points[0].x, segment2.points[0].y,
-        segment2.points[1].x, segment2.points[1].y)
+      return copypasta(
+        segment.points[0].x,
+        segment.points[0].y,
+        segment.points[1].x,
+        segment.points[1].y,
+        segment2.points[0].x,
+        segment2.points[0].y,
+        segment2.points[1].x,
+        segment2.points[1].y,
+      )
     }
 
     const touchesOrOverlaps = () => {
-      return (Intersection.pointSegmentExists({ segment, point: segment2.points[0] }) ||
-              Intersection.pointSegmentExists({ segment, point: segment2.points[1] }) ||
-              Intersection.pointSegmentExists({ segment: segment2, point: segment.points[0] }) ||
-              Intersection.pointSegmentExists({ segment: segment2, point: segment.points[1] }))
+      return (
+        Intersection.pointSegmentExists({ segment, point: segment2.points[0] }) ||
+        Intersection.pointSegmentExists({ segment, point: segment2.points[1] }) ||
+        Intersection.pointSegmentExists({ segment: segment2, point: segment.points[0] }) ||
+        Intersection.pointSegmentExists({ segment: segment2, point: segment.points[1] })
+      )
       /*
         segment.containsPoint(segment2.points[0]) ||
               segment.containsPoint(segment2.points[1]) ||

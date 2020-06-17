@@ -22,7 +22,6 @@ const typeDefs = [
 `,
 ]
 
-
 typeDefs.push(Car)
 typeDefs.push(Character)
 typeDefs.push(Geometry)

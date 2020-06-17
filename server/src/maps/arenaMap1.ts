@@ -3,7 +3,19 @@ import Rectangle from '../utils/geometry/Rectangle'
 import Point from '../utils/geometry/Point'
 import { v4 as uuid } from 'uuid'
 
-const wallRect = ({ x, y, facing, length, width = INCH / 4 }: { x: number, y: number, facing: number, length?: number, width?: number }) => {
+const wallRect = ({
+  x,
+  y,
+  facing,
+  length,
+  width = INCH / 4,
+}: {
+  x: number
+  y: number
+  facing: number
+  length?: number
+  width?: number
+}) => {
   return new Rectangle({
     _brPoint: new Point({ x: x, y: y }),
     facing: facing,
@@ -12,7 +24,7 @@ const wallRect = ({ x, y, facing, length, width = INCH / 4 }: { x: number, y: nu
   })
 }
 
-const startingPosition = ({ x, y, facing }: { x: number, y: number, facing: number }) => {
+const startingPosition = ({ x, y, facing }: { x: number; y: number; facing: number }) => {
   return new Rectangle({
     _brPoint: new Point({ x: x, y: y }),
     facing: facing,

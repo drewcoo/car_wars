@@ -10,9 +10,9 @@ const designs: any = []
 fs.readdir('./src/vehicle/designs', (err, files) => {
   files.forEach(fileName => {
     fs.readFile(`./src/vehicle/designs/${fileName}`, 'utf8', (err, data) => {
-      let json = JSON.parse(data)
+      const json = JSON.parse(data)
       json.components.weapons = json.components.weapons.map((weapon: any) => {
-        let found = _.cloneDeep(WEAPONS.find((elem: any) => elem.abbreviation === weapon.abbreviation))
+        const found = _.cloneDeep(WEAPONS.find((elem: any) => elem.abbreviation === weapon.abbreviation))
         found.location = weapon.location
         return found
       })
