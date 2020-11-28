@@ -26,6 +26,7 @@ class Reticle extends React.Component<Props> {
 
   draw(): React.ReactNode {
     const lms = new LocalMatchState(this.props.matchData)
+    if (lms.time().phase.subphase !== '5_fire_weapons') return
     const car = lms.car({ id: this.props.carId })
     if (!car || !lms.canFire({ car })) {
       return

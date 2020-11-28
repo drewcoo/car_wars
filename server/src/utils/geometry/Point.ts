@@ -7,7 +7,7 @@ class Point {
   x: number
   y: number
 
-  constructor({ x, y }: { x: number, y: number }) {
+  constructor({ x, y }: { x: number; y: number }) {
     this.x = x
     this.y = y
   }
@@ -54,7 +54,7 @@ class Point {
   }
 
   move({ degrees, radians, distance }: { degrees?: number; radians?: number; distance: number }): Point {
-/*
+    /*
     if (!radians && !degrees) {
       throw new Error('MUST pass at least one of degrees or radians')
     }
@@ -67,7 +67,7 @@ class Point {
     })
   }
 
-  rotateAround({fixedPoint, degrees}: { fixedPoint: Point; degrees: number }): Point {
+  rotateAround({ fixedPoint, degrees }: { fixedPoint: Point; degrees: number }): Point {
     const radians = degreesToRadians(degrees) + Math.atan2(this.y - fixedPoint.y, this.x - fixedPoint.x)
     const dist = fixedPoint.distanceTo(this)
     const newX = Math.cos(radians) * dist + fixedPoint.x

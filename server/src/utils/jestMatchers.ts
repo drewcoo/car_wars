@@ -2,6 +2,7 @@ import { degreesDifference, degreesEqual } from './conversions'
 import Point from './geometry/Point'
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
     interface Matchers<R> {
       degreesEqual(arg2: number): R
@@ -13,7 +14,8 @@ declare global {
 expect.extend({
   degreesEqual(arg1, arg2) {
     return {
-      message: () => `received: ${arg1}°; expected: ${arg2}° (difference: ${degreesDifference({ initial: arg1, second: arg2 })}°)`,
+      message: () =>
+        `received: ${arg1}°; expected: ${arg2}° (difference: ${degreesDifference({ initial: arg1, second: arg2 })}°)`,
       // message: () => `received: ${arg1}; expected: ${arg2}`,
       pass: degreesEqual(arg1, arg2),
     }

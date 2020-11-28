@@ -3,24 +3,59 @@ import Point from './Point'
 import Segment from './Segment'
 import { FACE, INCH } from '../constants'
 
+enum SideStrings {
+  B = 'B',
+  F = 'F',
+  L = 'L',
+  R = 'R',
+}
+
+interface Sides {
+  B: Segment
+  F: Segment
+  L: Segment
+  R: Segment
+}
+
+interface Corners {
+  FL: Point
+  FR: Point
+  BL: Point
+  BR: Point
+}
+
 class Rectangle {
+  _brPoint: Point
+  facing: number
+  length: number
+  width: number
+
   //
   // TODO: Add this.movementDirection so that I can handle moving in reverse?
   // Or bootleggers?
   //
   // Or does that only apply to vehicles, which have rectangles?
   //
-  _brPoint: Point
-  facing: FACE
-  length: number
-  width: number
-
   // bugbug - not ANY
-  constructor(rectData: any) {
-    this._brPoint = new Point(rectData._brPoint || rectData.brPoint)
-    this.facing = (rectData.facing + 360) % 360
-    this.length = rectData.length || INCH
-    this.width = rectData.width || INCH / 2
+  constructor({
+    _brPoint,
+    facing,
+    length = INCH,
+    width = INCH / 2,
+  }: {
+    _brPoint: Point
+    facing: number
+    length?: number
+    width?: number
+  }) {
+    this._brPoint = new Point(_brPoint)
+    this.facing = (facing + 360) % 360
+    this.length = length
+    this.width = width
+  }
+
+  hello(): string {
+    return 'hello'
   }
 
   brPoint(): Point {
@@ -28,15 +63,24 @@ class Rectangle {
   }
 
   blPoint(): Point {
-    return this._brPoint.move({ degrees: (this.facing + FACE.LEFT), distance: this.width })
+    return this._brPoint.move({
+      degrees: this.facing + FACE.LEFT,
+      distance: this.width,
+    })
   }
 
   frPoint(): Point {
-    return this._brPoint.move({ degrees: (this.facing + FACE.FRONT), distance: this.length })
+    return this._brPoint.move({
+      degrees: this.facing + FACE.FRONT,
+      distance: this.length,
+    })
   }
 
   flPoint(): Point {
-    return this.blPoint().move({ degrees: (this.facing + FACE.FRONT), distance: this.length })
+    return this.blPoint().move({
+      degrees: this.facing + FACE.FRONT,
+      distance: this.length,
+    })
   }
 
   center(): Point {
@@ -86,7 +130,7 @@ class Rectangle {
 
   clone(): Rectangle {
     return new Rectangle({
-      brPoint: this.brPoint(),
+      _brPoint: new Point({ x: this.brPoint().x, y: this.brPoint().y }),
       facing: this.facing,
       length: this.length,
       width: this.width,
@@ -95,26 +139,18 @@ class Rectangle {
 
   // returns a new rectangle, moved direction and distance from here
   // can make this take direction of movement later
-  move({ degrees, distance, slide = false }: { degrees: number, distance: number, slide: boolean }): Rectangle {
-    return new Rectangle({
-      brPoint: this._brPoint.move({ degrees, distance }),
+  move({ degrees, distance, slide = false }: { degrees: number; distance: number; slide?: boolean }): Rectangle {
+    const result = new Rectangle({
+      _brPoint: this.brPoint().move({ degrees, distance }),
       facing: slide ? this.facing : degrees,
       length: this.length,
       width: this.width,
     })
-  }
-
-  slide({ degrees, distance }: { degrees: number, distance: number}): Rectangle {
-    return new Rectangle({
-      brPoint: this._brPoint.move({ degrees, distance }),
-      facing: this.facing, // || this.facing, //????
-      length: this.length,
-      width: this.width,
-    })
+    return result
   }
 
   // can make this take direction of movement later
-  leftBackCornerPivot(degrees: number) {
+  backLeftCornerPivot(degrees: number): Rectangle {
     const result = this.clone()
     const blp = result.blPoint()
     result._brPoint = result.brPoint().rotateAround({ fixedPoint: blp, degrees: degrees })
@@ -123,7 +159,15 @@ class Rectangle {
   }
 
   // can make this take direction of movement later
-  leftFrontCornerPivot(degrees: number) {
+  backRightCornerPivot(degrees: number): Rectangle {
+    const result = this.clone()
+    result._brPoint = result.brPoint().rotateAround({ fixedPoint: this.brPoint(), degrees })
+    result.facing += degrees
+    return result
+  }
+
+  // can make this take direction of movement later
+  frontLeftCornerPivot(degrees: number): Rectangle {
     const result = this.clone()
     const flp = result.flPoint()
     result._brPoint = result.brPoint().rotateAround({ fixedPoint: flp, degrees: degrees })
@@ -132,35 +176,9 @@ class Rectangle {
   }
 
   // can make this take direction of movement later
-  rightBackCornerPivot(degrees: number) {
-    const result = this.clone()
-    result._brPoint = result.brPoint().rotateAround({ fixedPoint: this.brPoint(), degrees })
-    result.facing += degrees
-    return result
-  }
-
-  // can make this take direction of movement later
-  rightFrontCornerPivot(degrees: number) {
+  frontRightCornerPivot(degrees: number): Rectangle {
     const result = this.clone()
     result._brPoint = result.brPoint().rotateAround({ fixedPoint: this.frPoint(), degrees })
-    result.facing += degrees
-    return result
-  }
-
-  // can make this take direction of movement later
-  leftCornerTurn(degrees: number): Rectangle {
-    const result: Rectangle = this.clone()
-    const brp: Point = result.brPoint()
-    const blp: Point = result.blPoint()
-    result._brPoint = brp.rotateAround({ fixedPoint: blp, degrees: degrees })
-    result.facing += degrees
-    return result
-  }
-
-  // can make this take direction of movement later
-  rightCornerTurn(degrees: number): Rectangle {
-    const result = this.clone()
-    result._brPoint = result.brPoint().rotateAround({ fixedPoint: this.brPoint(), degrees })
     result.facing += degrees
     return result
   }
@@ -168,20 +186,24 @@ class Rectangle {
   // TODO: Should I aslo have some kind of drifty, sidling move here? One that
   // can take into account direction of movement?
 
-  intersects(thing: any): boolean { return this.isIntersecting(thing) }
+  intersects(thing: Point | Segment | Rectangle): boolean {
+    return this.isIntersecting(thing)
+  }
 
-  isIntersecting(thing: any): boolean { return Intersection.exists(this, thing) }
+  isIntersecting(thing: Point | Segment | Rectangle): boolean {
+    return Intersection.exists(this, thing)
+  }
 
-  points(): [Point, Point, Point, Point] {
+  points(): Point[] {
     return [this.brPoint(), this.blPoint(), this.frPoint(), this.flPoint()]
   }
 
   // abbr is short for abbreviation!
-  side(abbr: string) {
+  side(abbr: SideStrings): Segment {
     return this.sides()[abbr]
   }
 
-  sides(): any {
+  sides(): Sides {
     return {
       B: this.bSide(),
       F: this.fSide(),
@@ -190,16 +212,28 @@ class Rectangle {
     }
   }
 
+  corners(): Corners {
+    return {
+      FL: this.flPoint(),
+      FR: this.frPoint(),
+      BL: this.blPoint(),
+      BR: this.brPoint(),
+    }
+  }
+
   angleIsBetween(_query: number, _left: number, _right: number): boolean {
     // revisit this - JS mod operator is funky
-    let query = _query % 360
-    let left = _left % 360
-    let right = _right % 360
-    // Deal with arc spanning the 0/360 crossover
-    if (left < 0) { left += 360 }
-    if (right < left) { right += 360 }
-    if (query < left) { query += 360 }
-    return (left <= query) && (query <= right)
+    let max = ((_right - _left) % 360) - 720
+    while (max < 0) {
+      max += 360
+    }
+
+    let query = ((_query - _left) % 360) - 720
+    while (query < 0) {
+      query += 360
+    }
+
+    return query < max
   }
 
   arcForPoint(point: Point): string {
@@ -219,8 +253,8 @@ class Rectangle {
   }
 
   // BUGBUG: Need to change FRBL to FACE.F and check for type FACE instead
-  pointIsInArc({ point, arcName }: { point: Point, arcName: string }): boolean {
-    const direction: number = this.center().degreesTo(point) // + this.facing
+  pointIsInArc({ point, arcName }: { point: Point; arcName: string }): boolean {
+    const direction = this.center().degreesTo(point) // + this.facing
     switch (arcName) {
       case 'F':
         return this.angleIsBetween(direction, this.flAngle(), this.frAngle())

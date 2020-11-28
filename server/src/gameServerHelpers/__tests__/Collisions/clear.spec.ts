@@ -27,7 +27,7 @@ describe('Collisions', () => {
     })
 
     it('clears non-phasing collisions array', () => {
-      vehicle.collisions.push({ bar: '2' })// = ['bar', 'baz']
+      vehicle.collisions.push({ bar: '2' }) // = ['bar', 'baz']
       Collisions.clear({ match: 'foo' })
       expect(vehicle.collisions.length).toEqual(0)
     })

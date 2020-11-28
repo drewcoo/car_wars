@@ -27,7 +27,7 @@ class Splat extends React.Component<Props> {
     }
 
     function outer(radians: number): string {
-      const radius = radiusMultiplier * (15)
+      const radius = radiusMultiplier * 15
       return `${x + radius * Math.cos(radians)},${y + radius * Math.sin(radians)} `
     }
 

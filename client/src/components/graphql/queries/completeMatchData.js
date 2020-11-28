@@ -199,6 +199,13 @@ const completeMatchData = gql`
           }
         }
         status {
+          direction {
+            forward
+            canChange {
+              turn
+              phase
+            }
+          }
           handling
           killed
           lastDamageBy

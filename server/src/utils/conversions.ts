@@ -20,8 +20,9 @@ export const degreesParallel = (d1: number, d2: number) => {
   return ((180 + d1) % 180).toFixed(2) === ((180 + d2) % 180).toFixed(2)
 }
 
+// eslint-disable-next-line @typescript-eslint/class-name-casing
 interface degreesDifference {
-  initial: number,
+  initial: number
   second: number
 }
 export const degreesDifference = ({ initial, second }: degreesDifference) => {

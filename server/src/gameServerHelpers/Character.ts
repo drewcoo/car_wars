@@ -5,7 +5,7 @@ class Character {
     return DATA.characters.find((element: any) => element.id === id)
   }
 
-  static skillLevel({ skill, character }: { skill: string, character: any }) {
+  static skillLevel({ skill, character }: { skill: string; character: any }) {
     // use level === -1 as code for not even base level skill
     let points = character.skills.find((element: any) => element.name === skill).points
     let level = -1

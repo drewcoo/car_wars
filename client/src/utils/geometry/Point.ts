@@ -7,7 +7,7 @@ class Point {
   x: number
   y: number
 
-  constructor({ x, y } : { x: number, y: number}) {
+  constructor({ x, y }: { x: number; y: number }) {
     this.x = x
     this.y = y
   }
@@ -28,20 +28,20 @@ class Point {
   }
 
   equals(point2: Point): boolean {
-    return this.x.toFixed(2) === point2.x.toFixed(2) &&
-           this.y.toFixed(2) === point2.y.toFixed(2)
+    return this.x.toFixed(2) === point2.x.toFixed(2) && this.y.toFixed(2) === point2.y.toFixed(2)
   }
 
   degreesTo(point: Point): number {
-    return (Math.atan2((point.y - this.y), (point.x - this.x)) * 180 / Math.PI)
+    return (Math.atan2(point.y - this.y, point.x - this.x) * 180) / Math.PI
   }
 
   distanceTo(point: Point): number {
-    return Math.sqrt(Math.pow(this.x - point.x, 2) +
-                     Math.pow(this.y - point.y, 2))
+    return Math.sqrt(Math.pow(this.x - point.x, 2) + Math.pow(this.y - point.y, 2))
   }
 
-  intersects(thing: any): boolean { return this.isIntersecting(thing) }
+  intersects(thing: any): boolean {
+    return this.isIntersecting(thing)
+  }
 
   isIntersecting(thing: Point | Segment | Rectangle): boolean {
     if (thing instanceof Point) {
@@ -53,7 +53,7 @@ class Point {
     return Intersection.rectanglePointExists({ rectangle: thing, point: this }) || false
   }
 
-  move({ degrees, radians, distance } : { degrees?: number, radians?: number, distance: number }): Point {
+  move({ degrees, radians, distance }: { degrees?: number; radians?: number; distance: number }): Point {
     if (radians === undefined && degrees === undefined) {
       throw new Error('MUST pass at least one of degrees or radians')
     }
@@ -66,9 +66,8 @@ class Point {
     })
   }
 
-  rotateAround({ fixedPoint, degrees } : { fixedPoint: Point, degrees: number }): Point {
-    const radians = degreesToRadians(degrees) +
-                      Math.atan2((this.y - fixedPoint.y), (this.x - fixedPoint.x))
+  rotateAround({ fixedPoint, degrees }: { fixedPoint: Point; degrees: number }): Point {
+    const radians = degreesToRadians(degrees) + Math.atan2(this.y - fixedPoint.y, this.x - fixedPoint.x)
     const dist = fixedPoint.distanceTo(this)
     const newX = Math.cos(radians) * dist + fixedPoint.x
     const newY = Math.sin(radians) * dist + fixedPoint.y

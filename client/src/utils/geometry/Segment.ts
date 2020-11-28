@@ -21,10 +21,7 @@ class Segment {
   }
 
   isParallelTo(segment2: Segment): boolean {
-    return degreesParallel(
-      this.points[0].degreesTo(this.points[1]),
-      segment2.points[0].degreesTo(segment2.points[1])
-    )
+    return degreesParallel(this.points[0].degreesTo(this.points[1]), segment2.points[0].degreesTo(segment2.points[1]))
   }
 
   isColinearWith(segment2: Segment): boolean {
@@ -33,13 +30,19 @@ class Segment {
   }
 
   equals(segment2: Segment): boolean {
-    return ((this.points[0].equals(segment2.points[0]) && this.points[1].equals(segment2.points[1])) ||
-            (this.points[0].equals(segment2.points[1]) && this.points[1].equals(segment2.points[0])))
+    return (
+      (this.points[0].equals(segment2.points[0]) && this.points[1].equals(segment2.points[1])) ||
+      (this.points[0].equals(segment2.points[1]) && this.points[1].equals(segment2.points[0]))
+    )
   }
 
-  intersects(thing: any): boolean { return this.isIntersecting(thing) }
+  intersects(thing: any): boolean {
+    return this.isIntersecting(thing)
+  }
 
-  isIntersecting(thing: any): boolean { return Intersection.exists(this, thing) }
+  isIntersecting(thing: any): boolean {
+    return Intersection.exists(this, thing)
+  }
 
   skew(segment2: Segment): number {
     const thisDir = (this.points[0].degreesTo(this.points[1]) + 360) % 180

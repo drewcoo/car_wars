@@ -25,7 +25,7 @@ class Collisions {
     return Math.ceil(weight / 4000) - 1
   }
 
-  static detect({ cars, map, thisCar }: { cars: any, map: any, thisCar: any }) {
+  static detect({ cars, map, thisCar }: { cars: any; map: any; thisCar: any }) {
     const walls = map.wallData
     const match = Match.withVehicle({ vehicle: thisCar })
     // clear old collision data just in case
@@ -35,7 +35,7 @@ class Collisions {
   }
 
   // BUGBUG: Assumes straight movement; not reverse.
-  static detectWithCars({ cars, thisCar }: { cars: any, thisCar: any }) {
+  static detectWithCars({ cars, thisCar }: { cars: any; thisCar: any }) {
     cars.forEach((car: any) => {
       if (car.id === thisCar.id) {
         return
@@ -179,7 +179,7 @@ class Collisions {
   }
 
   // BUGBUG: Assumes straight movement; not reverse.
-  static detectWithWalls({ thisCar, walls }: { thisCar: any, walls: any }) {
+  static detectWithWalls({ thisCar, walls }: { thisCar: any; walls: any }) {
     // shortcut - premature optimization?
     if (thisCar.phasing.collisionDetected) {
       return
@@ -192,7 +192,7 @@ class Collisions {
         thisCar.phasing.collisionDetected = true
         Log.info(`detect ${thisCar.color} car collisions with walls`, thisCar)
         const collisionInfo = {
-          damage:'',// 0,
+          damage: '', // 0,
           damageModifier: 0,
           handlingStatus: 0,
           newSpeed: 0,
@@ -235,7 +235,7 @@ class Collisions {
     return result
   }
 
-  static isSideswipe({ rammer, rammed }: { rammer: any, rammed: any }) {
+  static isSideswipe({ rammer, rammed }: { rammer: any; rammed: any }) {
     let delta = Math.abs(((rammer.phasing.rect.facing + 360) % 360) - ((rammed.rect.facing + 360) % 360))
     // first mod to one side
     delta %= 180
@@ -271,7 +271,7 @@ class Collisions {
     }
   }
 
-  static resolve({ vehicle, collision }: { vehicle: any, collision: any }) {
+  static resolve({ vehicle, collision }: { vehicle: any; collision: any }) {
     /*
   Need to figure out mechanics for these:
 
@@ -286,7 +286,6 @@ decides what type of collision it is."
 the vehicles are still in contact are not new
 collisions"
   */
-
     // have a game object class
     // let this be a collision of objects.
     // deal.
@@ -297,7 +296,7 @@ collisions"
     */
   }
 
-  static temporarySpeed({ thisDM, otherDM, speed }: { thisDM: any, otherDM: any, speed: number }) {
+  static temporarySpeed({ thisDM, otherDM, speed }: { thisDM: any; otherDM: any; speed: number }) {
     if (thisDM <= 0) {
       throw new Error(`invalid DM: ${thisDM}`)
     }

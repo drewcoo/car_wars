@@ -3,6 +3,23 @@
   "version": "1.0.0",
   "description": "",
   "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!<rootDir>/node_modules/",
+      "!<rootDir>/path/to/dir/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 0,
+        "functions": 0,
+        "lines": 0,
+        "statements": 0
+      }
+    },
+    "coverageReporters": [
+      "html",
+      "lcov"
+    ],
     "verbose": true,
     "transform": {
       ".(ts|tsx)": "ts-jest"
@@ -21,11 +38,11 @@
     "build": "tsc",
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir build --extensions \".ts,.tsx\" --source-maps inline",
-    "debug": "babel-watch --inspect 9229 src/index.js",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "debug": "nodemon --inspect build/index.js 9229",
+    "lint": "eslint src/**/*.{js,ts,tsx} --quiet --fix",
     "start": "nodemon --exec \"npm run build && node ./build/index.js\" --watch ./src",
     "test": "jest",
-    "cover": "jest --coverage"
+    "test:coverage": "jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -52,6 +69,7 @@
     "jest": "^26.0.1",
     "lint-staged": "^10.2.2",
     "metro-react-native-babel-preset": "^0.59.0",
+    "nodemon": "^2.0.4",
     "prettier-eslint": "^9.0.1",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.5"
@@ -63,14 +81,15 @@
     "apollo-server-express": "^2.9.16",
     "awesome-typescript-loader": "^5.2.1",
     "bluebird": "^3.7.2",
+    "bufferutil": "^4.0.1",
     "commonjs": "0.0.1",
     "express": "^4.17.1",
     "graphql": "^14.5.8",
     "graphql-tools": "^4.0.6",
     "node": "^14.2.0",
-    "nodemon": "^2.0.4",
     "qs-middleware": "^1.0.3",
     "source-map-loader": "^0.2.4",
+    "utf-8-validate": "^5.0.2",
     "uuid": "^3.4.0"
   },
   "husky": {

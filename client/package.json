@@ -8,10 +8,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 90,
-        "functions": 90,
-        "lines": 90,
-        "statements": 90
+        "branches": 0,
+        "functions": 0,
+        "lines": 0,
+        "statements": 0
       }
     },
     "coverageReporters": [
@@ -65,9 +65,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "lint": "eslint src/**/*.{js,ts,tsx} --quiet --fix",
     "test": "react-scripts test --testMatch **/__tests__/**/*.spec.js",
-    "test:coverage": "npm test -- --coverage --verbose --watchAll",
+    "test:coverage": "npm test -- --coverage --verbose --watchAll=false",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

@@ -10,7 +10,7 @@ import Targets from '../Targets'
 import Time from '../Time'
 
 class Actions {
-  static acceptMove({ vehicle, match }: { vehicle: any, match: any }) {
+  static acceptMove({ vehicle, match }: { vehicle: any; match: any }) {
     Log.info(vehicle.status.maneuvers[vehicle.phasing.maneuverIndex], vehicle)
     if (!PhasingMove.hasMoved({ vehicle })) {
       Log.info('vehicle hasn not moved yet. return', vehicle)
@@ -106,14 +106,14 @@ class Actions {
     vehicle = Time.subphase4Maneuver({ match })
   }
 
-  static moveBend({ match, vehicle, degrees }: { match: any, vehicle: any, degrees: number }) {
+  static moveBend({ match, vehicle, degrees }: { match: any; vehicle: any; degrees: number }) {
     const cars = Match.cars({ match })
     vehicle.phasing.rect = PhasingMove.bend({ vehicle, degrees })
     const targets = new Targets({ car: vehicle, cars, map: match.map })
     targets.refresh()
   }
 
-  static moveDrift({ match, vehicle, direction }: { match: any, vehicle: any, direction: string }) {
+  static moveDrift({ match, vehicle, direction }: { match: any; vehicle: any; direction: string }) {
     const cars = Match.cars({ match })
     const distance = direction === 'right' ? INCH / 4 : -INCH / 4
     vehicle.phasing.rect = PhasingMove.drift({ vehicle, distance })
@@ -122,16 +122,16 @@ class Actions {
   }
 
   static moveHalfStraight({ vehicle }: { vehicle: any }) {
-    return Actions.moveStraight({ vehicle, distance: INCH /2 })
+    return Actions.moveStraight({ vehicle, distance: INCH / 2 })
   }
 
-  static movePivot({ match, vehicle, degrees }: { match: any, vehicle: any, degrees: number }) {
+  static movePivot({ match, vehicle, degrees }: { match: any; vehicle: any; degrees: number }) {
     const cars = Match.cars({ match })
     vehicle.phasing.rect = PhasingMove.pivot({ vehicle, degrees })
     const targets = new Targets({ car: vehicle, cars, map: match.map })
     targets.refresh()
   }
-  
+
   static moveReset({ vehicle }: { vehicle: any }) {
     Actions.showHidevehicle(vehicle, 0)
   }
@@ -142,7 +142,7 @@ class Actions {
     vehicle.phasing.rect = PhasingMove.straight({ vehicle, distance })
   }
 
-  static moveSwerve({ match, vehicle, degrees }: { match: any, vehicle: any, degrees: number }) {
+  static moveSwerve({ match, vehicle, degrees }: { match: any; vehicle: any; degrees: number }) {
     const cars = Match.cars({ match })
     vehicle.phasing.rect = PhasingMove.swerve({ vehicle, degrees })
     const targets = new Targets({ car: vehicle, cars, map: match.map })
@@ -173,9 +173,9 @@ class Actions {
   static showHidevehicle(vehicle: any, manIdxDelta: number) {
     const index = (vehicle.phasing.maneuverIndex + manIdxDelta) % vehicle.status.maneuvers.length
     if (vehicle.status.maneuvers[index] === 'half') {
-      Actions.moveStraight({ vehicle, distance: INCH/2 })
+      Actions.moveStraight({ vehicle, distance: INCH / 2 })
     } else if (vehicle.status.maneuvers[index] === 'pivot') {
-      Actions.moveStraight({ vehicle, distance: INCH/4 })
+      Actions.moveStraight({ vehicle, distance: INCH / 4 })
     } else {
       Actions.moveStraight({ vehicle })
     }

@@ -1,29 +1,29 @@
 import Point from '../Point'
 import Segment from '../Segment'
-import Factory from './Factory'
+import GeometryFactory from './GeometryFactory'
 
 describe('Segment', () => {
   describe('#length', () => {
     it('is distance between points', () => {
-      const segment = Factory.Segment()
+      const segment = GeometryFactory.segment()
       expect(segment.length()).toEqual(segment.points[0].distanceTo(segment.points[1]))
     })
   })
 
   describe('#isParallelTo', () => {
     it('vertical lines are parallel', () => {
-      expect(Factory.Segment('vertical').isParallelTo(Factory.Segment('vertical'))).toBe(true)
+      expect(GeometryFactory.segment('vertical').isParallelTo(GeometryFactory.segment('vertical'))).toBe(true)
     })
 
     it('horizontal lines are parallel', () => {
-      expect(Factory.Segment('horizontal').isParallelTo(Factory.Segment('horizontal'))).toBe(true)
+      expect(GeometryFactory.segment('horizontal').isParallelTo(GeometryFactory.segment('horizontal'))).toBe(true)
     })
   })
 
   describe('#isColinearWith', () => {
     it('is vertical colinear', () => {
-      const seg1 = Factory.Segment('vertical')
-      const seg2 = Factory.Segment('vertical')
+      const seg1 = GeometryFactory.segment('vertical')
+      const seg2 = GeometryFactory.segment('vertical')
       seg2.points[0].x = seg1.points[1].x
       seg2.points[1].x = seg1.points[1].x
       expect(seg1.isColinearWith(seg2)).toBe(true)
@@ -102,27 +102,27 @@ describe('Segment', () => {
 
   describe('#skew', () => {
     it('both vertical', () => {
-      const seg1 = Factory.Segment('vertical')
-      const seg2 = Factory.Segment('vertical')
+      const seg1 = GeometryFactory.segment('vertical')
+      const seg2 = GeometryFactory.segment('vertical')
       expect(seg1.skew(seg2)).toEqual(0)
     })
 
     it('both horizontal', () => {
-      const seg1 = Factory.Segment('horizontal')
-      const seg2 = Factory.Segment('horizontal')
+      const seg1 = GeometryFactory.segment('horizontal')
+      const seg2 = GeometryFactory.segment('horizontal')
       expect(seg1.skew(seg2)).toEqual(0)
     })
 
     it('the crossed', () => {
-      const seg1 = Factory.Segment('vertical')
-      const seg2 = Factory.Segment('horizontal')
+      const seg1 = GeometryFactory.segment('vertical')
+      const seg2 = GeometryFactory.segment('horizontal')
       expect(seg1.skew(seg2)).toEqual(90)
     })
   })
 
   describe('#touchesOrOverlaps', () => {
     it('one', () => {
-      const seg = Factory.Segment()
+      const seg = GeometryFactory.segment()
       const pt = new Point({
         x: (seg.points[0].x + seg.points[1].x) / 2,
         y: (seg.points[0].y + seg.points[1].y) / 2,

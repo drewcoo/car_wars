@@ -43,7 +43,7 @@ class Control {
 
   static statusIndex = [7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
 
-  static checkNeeded({ speed, handlingStatus }: { speed: number, handlingStatus: number }) {
+  static checkNeeded({ speed, handlingStatus }: { speed: number; handlingStatus: number }) {
     const row = Control.row({ speed })
     const column = Control.statusIndex.indexOf(handlingStatus)
     return row[column]
@@ -64,10 +64,11 @@ class Control {
   // pass in a car and get everything from it?
   // also set everything on it, including moving it plus future moves
   // a.k.a. Crash Table 2
-  static hazardCheck({ vehicle, difficulty }: { vehicle: any, difficulty: number }) {
+  static hazardCheck({ vehicle, difficulty }: { vehicle: any; difficulty: number }) {
     let result = 'pass'
     Log.info(
-      `hazard check, modified handling: ${vehicle.status.handling} - ${difficulty} = ${vehicle.status.handling - difficulty}`,
+      `hazard check, modified handling: ${vehicle.status.handling} - ${difficulty} = ${vehicle.status.handling -
+        difficulty}`,
       vehicle,
     )
     vehicle.status.handling = Control.normalizeHandlingStatus(vehicle.status.handling - difficulty)
@@ -106,7 +107,9 @@ class Control {
     }
 
     const spinDirection =
-    vehicle.status.nextMove[0].spinDirection !== '' ? vehicle.status.nextMove[0].spinDirection : Control.spinDirection()
+      vehicle.status.nextMove[0].spinDirection !== ''
+        ? vehicle.status.nextMove[0].spinDirection
+        : Control.spinDirection()
     Log.info(`fishtail to the ${spinDirection}`, vehicle)
     const oldDistance = Math.abs(vehicle.status.nextMove[0].fishtailDistance)
 
@@ -184,9 +187,9 @@ class Control {
   // pass in a car and get everything from it?
   // also set everything on it, including moving it plus future moves
   // a.k.a. Crash Table 1
-  static maneuverCheck({ vehicle, forceCrashTable2Roll = false }: { vehicle: any, forceCrashTable2Roll?: boolean }) {
+  static maneuverCheck({ vehicle, forceCrashTable2Roll = false }: { vehicle: any; forceCrashTable2Roll?: boolean }) {
     Log.info('maneuver check', vehicle)
-    
+
     const characterId = Vehicle.driverId({ vehicle })
     const character = Character.withId({ id: characterId })
     const skillLevel = Character.skillLevel({ skill: 'driver', character })
@@ -327,7 +330,6 @@ class Control {
       const quarterTurns = Math.ceil(vehicle.status.speed / 20)
       Log.info(`${quarterTurns} quarter turns`, vehicle)
       for (let i = 0; i < quarterTurns; i++) {
-
         if (typeof vehicle.status.nextMove[i] === 'undefined') {
           vehicle.status.nextMove[i] = { fishtailDistance: 0 }
         }
