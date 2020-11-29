@@ -27,6 +27,7 @@ const completeMatchData = gql`
             }
           }
         }
+        status
         time {
           phase {
             number

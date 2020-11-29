@@ -36,12 +36,13 @@ class Vehicle {
     // A "kill" is scored when an enemy vehicle can no longer move or fire, either
     // because of a direct attack, a crash during combat, surrender of the occupants,
     // or other circumstance
-    const statusKilled = typeof vehicle.status.killed !== 'undefined' && vehicle.status.killed === true
+    let result = typeof vehicle.status.killed !== 'undefined' && vehicle.status.killed === true
     const stopped = vehicle.status.speed === 0
     const noDriver = !Vehicle.driverAwake({ vehicle })
     const noPlant = !Vehicle.plantWorking({ vehicle })
     const noWeapons = Vehicle.weaponsOut({ vehicle })
-    const result = statusKilled || (stopped && (noDriver || (noPlant && noWeapons)))
+    result = result || noDriver
+    result = result || (noPlant && noWeapons && stopped)
     return result
   }
 
