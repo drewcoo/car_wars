@@ -358,7 +358,7 @@ export const resolvers = {
       const vehicle = Vehicle.withId({ id: args.id })
       const match = Match.withId({ id: vehicle.currentMatch })
       Speed.accept({ vehicle, match, bugMeNot: args.bugMeNot })
-      console.log('back here')
+      console.log('speed accepted')
     },
 
     setTarget: (parent: any, args: any) => {

@@ -49,7 +49,7 @@ class KillMessage extends React.Component<Props> {
 
     return (
       <g>
-        <image x={x - 16} y={y - 30} width="45" height="45" href="/img/skull_and_bones.svg" />
+        <image x={x - 20} y={y - 30} width="60" height="60" href="/img/skull_and_bones.svg" />
         <text x={x} y={y} style={this.msgStyle()} dy="0">
           <tspan textAnchor="middle" x={x} dy="1em" style={this.nameStyle(killerPlayer.color)}>
             {killerPlayer.name}

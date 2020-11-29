@@ -24,7 +24,7 @@ class Weapon extends React.Component<Props> {
         maxDp={this.props.weaponData.maxDamagePoints}
         name={this.props.weaponData.abbreviation}
         point={new Point({ x, y })}
-        poweredDown={this.props.poweredDown}
+        poweredDown={this.props.weaponData.requiresPlant && this.props.poweredDown}
       />
     )
   }

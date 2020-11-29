@@ -93,8 +93,7 @@ class Time {
       if (!driverAwake || !plantWorking || !enoughWheels) {
         if (vehicle.status.speed > 0) {
           vehicle.status.speed -= amountSlowed
-        }
-        if (vehicle.status.speed < 0) {
+        } else if (vehicle.status.speed < 0) {
           vehicle.status.speed += amountSlowed
         }
         if (Vehicle.isKilled({ vehicle })) {
@@ -136,6 +135,9 @@ class Time {
   }
 
   static subphaseCheck(name: string, match: any) {
+    console.log()
+    console.log(match.time.phase.subphase)
+    console.log(name)
     if (match.time.phase.subphase !== name) {
       switch (match.time.phase.subphase) {
         case '0_increment_time':
@@ -160,24 +162,62 @@ class Time {
     }
   }
 
+  static gameOver({ match }: { match: any }) {
+    const living = Match.cars({ match }).filter((vehicle: any) => {
+      if (Vehicle.isKilled({ vehicle })) {
+        vehicle.status.killed = true
+      }
+      return !Vehicle.isKilled({ vehicle })
+    })
+
+    console.log('winner?')
+    console.log(living)
+    console.log(`living: ${living.length}`)
+
+    if (living.length > 1) {
+      return false
+    }
+
+    console.log()
+    console.log('**********************************')
+    console.log(` GAME OVER: ${match.id} !!!`)
+    console.log('**********************************')
+    console.log()
+    match.carIds.map((carId: string) => {
+      Vehicle.withId({ id: carId }).currentMatch = null
+    })
+    match.status = 'finished'
+    return true
+  }
+
   static subphase0IncrementTime({ match }: { match: any }) {
     Time.subphaseCheck('0_increment_time', match)
     console.log()
-    console.log('PHASE')
-    console.log(match.time.phase.number)
+    console.log(`was PHASE ${match.time.phase.number}`)
+
+    if (Time.gameOver({ match })) {
+      console.log('return something about game over')
+      console.log()
+      console.log()
+      // something about Match.finishMatch({ id: match.id }) ??
+      return
+    }
+
     match.time.phase.number = (match.time.phase.number + 1) % 5
     if (match.time.phase.number < 1) {
       match.time.phase.number += 5
     }
-    console.log(match.time.phase.number)
+    console.log(`now PHASE ${match.time.phase.number}`)
     console.log()
     if (match.time.phase.number === 1) {
       Time.nextTurn({ match })
       Match.cars({ match }).forEach((vehicle: any) => {
-        vehicle.status.speedSetThisTurn = false
+        //vehicle.status.speedSetThisTurn = false
+        vehicle.status.speedSetThisTurn = vehicle.phasing.speedChanges.length == 1
         vehicle.status.speedInitThisTurn = vehicle.status.speed
       })
     }
+    match.time.phase.subphase = '1_start'
     Time.subphase1Start({ match })
   }
 
@@ -196,22 +236,27 @@ class Time {
     console.log(`turn: ${match.time.turn.number}, phase: ${match.time.phase.number}, subphase 2 (set speeds)`)
     //    Time.subphaseCheck('2_set_speeds', match)
     // do we need to start a new phase?
-    let allReady = true
-    Match.cars({ match }).forEach((thisCar: any) => {
-      const ready = !thisCar.phasing.showSpeedChangeModal || thisCar.status.speedSetThisTurn
-      allReady = allReady && ready
-      // console.log(`    [${ready ? 'X' : ' '}] ${thisCar.id} - ${thisCar.color}`)
-      // console.log(`        [${thisCar.phasing.showSpeedChangeModal ? ' ' : 'X'}] modal dismissed this phase`)
-      // console.log(`        [${thisCar.status.speedSetThisTurn ? 'X' : ' '}] speed changed this turn`)
-    })
-    // console.log(`[${allReady ? 'X' : ' '}] all cars ready`)
 
-    const finishedSettingSpeed = Match.cars({ match }).every((vehicle: any) => {
-      return !vehicle.phasing.showSpeedChangeModal || vehicle.status.speedSetThisTurn
+    Match.cars({ match }).forEach((vehicle: any) => {
+      /* something later? */
     })
+
+    function finishedSettingSpeed(cars: any[]) {
+      let allReady = true
+      cars.forEach((thisCar: any) => {
+        const ready = !thisCar.phasing.showSpeedChangeModal || thisCar.status.speedSetThisTurn
+        allReady = allReady && ready
+        console.log(`    [${ready ? 'X' : ' '}] ${thisCar.id} - ${thisCar.color}`)
+        console.log(`        [${thisCar.phasing.showSpeedChangeModal ? ' ' : 'X'}] modal dismissed this phase`)
+        console.log(`        [${thisCar.status.speedSetThisTurn ? 'X' : ' '}] speed changed this turn`)
+      })
+      console.log(`[${allReady ? 'X' : ' '}] all cars ready`)
+      return allReady
+    }
 
     /// prep for subphase_3_revealSpeedChange
-    if (finishedSettingSpeed) {
+    if (finishedSettingSpeed(Match.cars({ match }))) {
+      console.log('prep for subphase 3 . . .')
       match.time.phase.subphase = 'prep_for_subphase_3_revealSpeedChange'
       Time.prepForSubphase3RevealSpeedChange({ match })
     }
@@ -300,7 +345,7 @@ class Time {
       .filter((vehicle: any) => {
         // just driver for now
         const crewMember = Vehicle.driver({ vehicle })
-        return !(crewMember.firedThisTurn || crewMember.damagePoints < 1)
+        return !(crewMember.firedThisTurn || crewMember.damagePoints < 1 || Vehicle.weaponsOut({ vehicle }))
       })
       .map((vehicle: any) => vehicle.id)
 
@@ -355,7 +400,7 @@ class Time {
 
     //match.time.phase += 1
 
-    match.time.phase.subphase = '1_start'
+    match.time.phase.subphase = '0_increment_time' //'1_start'
     Time.subphase0IncrementTime({ match })
   }
 

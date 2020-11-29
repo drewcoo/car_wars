@@ -257,6 +257,10 @@ class PhasingMove {
     }
 
     vehicle.phasing.controlChecksForSpeedChanges = vehicle.phasing.speedChanges.map((setting: any) => {
+      console.log({
+        speed: setting.speed,
+        checks: Control.row({ speed: setting.speed }),
+      })
       return {
         speed: setting.speed,
         checks: Control.row({ speed: setting.speed }),

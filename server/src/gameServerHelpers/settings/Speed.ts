@@ -27,7 +27,13 @@ class Speed {
       }
     }
 
-    if (speedChanged || bugMeNot) {
+    console.log()
+    console.log('===================')
+    console.log(vehicle.phasing.speedChanges)
+    console.log('===================')
+    console.log()
+
+    if (speedChanged || bugMeNot || vehicle.phasing.speedChanges.length == 1) {
       Log.info(`speed change: ${vehicle.status.speed}MPH -> ${newSpeed.speed}MPH`, vehicle)
       vehicle.status.speedSetThisTurn = true
     }

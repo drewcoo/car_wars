@@ -4,6 +4,7 @@ import SpeedModal from './timing/subphase2SetSpeeds/SpeedModal'
 import ManeuverModal from './timing/subphase4Maneuver/ManeuverModal'
 import FireModal from './timing/subphase5FireWeapons/FireModal'
 import DamageModal from './timing/subphase6Damage/DamageModal'
+import MatchOverModal from './MatchOverModal'
 import RevealSpeedChangeModal from './timing/subphase3RevealSpeedChange/RevealSpeedChangeModal'
 import uuid from 'uuid/v4'
 
@@ -35,6 +36,9 @@ class TimingOverlays extends React.Component<Props> {
     const subphase = this.props.matchData.match.time.phase.subphase
 
     switch (subphase) {
+      case '0_increment_time':
+        console.log(this.props.matchData)
+        return <MatchOverModal />
       case '1_start':
         break
       case '2_set_speeds':
